@@ -72,14 +72,10 @@ const DepartmentPage: React.FC<DepartmentPageProps> = ({
   const deptStr = Array.isArray(dept) ? dept[0] : dept ?? "";
 
   useEffect(() => {
-    if (process.env.NODE_ENV === "development") {
+    if (courses.length === 0) {
       loadData(`${yearStr}/${termStr}/${deptStr}`, setCourses);
     }
   }, [yearStr, termStr, deptStr]);
-
-  if (router.isFallback) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div className="page courses-page">

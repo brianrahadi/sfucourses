@@ -63,18 +63,14 @@ const YearTermPage: React.FC<YearTermPageProps> = ({
   );
   const { year, term } = router.query;
 
-  useEffect(() => {
-    if (process.env.NODE_ENV === "development") {
-      loadData(`${year}/${term}/`, setDepartments);
-    }
-  }, [year, term]);
-
-  if (router.isFallback) {
-    return <div>Loading...</div>;
-  }
-
   const yearStr = Array.isArray(year) ? year[0] : year ?? "";
   const termStr = Array.isArray(term) ? term[0] : term ?? "";
+
+  useEffect(() => {
+    if (process.env.NODE_ENV === "development") {
+      loadData(`${yearStr}/${termStr}/`, setDepartments);
+    }
+  }, [yearStr, termStr]);
 
   return (
     <div className="page courses-page">
@@ -87,17 +83,18 @@ const YearTermPage: React.FC<YearTermPageProps> = ({
         </section>
         <section className="requirements-section">
           <div className={`courses-container`}>
-            {departments.map((dept) => (
-              <a
-                key={dept.value}
-                href={`/explore/${yearStr}/${termStr}/${dept.value}`}
-              >
-                <Button
-                  label={`${dept.text}${dept?.name ? ` - ${dept.name}` : ""}`}
-                  type="secondary"
-                />
-              </a>
-            ))}
+            {!router.isFallback &&
+              departments.map((dept) => (
+                <a
+                  key={dept.value}
+                  href={`/explore/${yearStr}/${termStr}/${dept.value}`}
+                >
+                  <Button
+                    label={`${dept.text}${dept?.name ? ` - ${dept.name}` : ""}`}
+                    type="secondary"
+                  />
+                </a>
+              ))}
           </div>
         </section>
       </main>
