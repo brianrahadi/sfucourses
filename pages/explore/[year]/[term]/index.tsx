@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { loadData } from "utils";
 import { Department } from "types/course";
+import { GetStaticPaths } from "next";
 
 export const getStaticPaths: GetStaticPaths = async () => {
   return {
