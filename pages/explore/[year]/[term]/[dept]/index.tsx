@@ -6,6 +6,13 @@ import { useRouter } from "next/router";
 import { loadData } from "utils";
 import { Course } from "types/course";
 
+export const getStaticPaths: GetStaticPaths = async () => {
+  return {
+    paths: [],
+    fallback: true,
+  };
+};
+
 const DepartmentPage: React.FC = () => {
   // Parse the JSON data using Zod schemas
   const router = useRouter();

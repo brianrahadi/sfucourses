@@ -5,6 +5,13 @@ import { useRouter } from "next/router";
 import { loadData } from "utils";
 import { Department } from "types/course";
 
+export const getStaticPaths: GetStaticPaths = async () => {
+  return {
+    paths: [],
+    fallback: true,
+  };
+};
+
 const YearTermPage: React.FC = () => {
   const router = useRouter();
   const [departments, setDepartments] = useState<Department[]>([]);

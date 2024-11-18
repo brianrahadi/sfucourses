@@ -5,6 +5,14 @@ import { DescriptiveSection, Section } from "types/course";
 import { SidebarCourse } from "components/SidebarCourse";
 import { useRouter } from "next/router";
 import { loadData, loadMultipleData } from "utils";
+import { GetStaticPaths } from "next";
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  return {
+    paths: [],
+    fallback: true,
+  };
+};
 
 const CoursePage: React.FC = () => {
   // Parse the JSON data using Zod schemas
