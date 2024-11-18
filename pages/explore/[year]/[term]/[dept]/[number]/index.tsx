@@ -2,12 +2,13 @@ import { Button, Hero } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useEffect, useState } from "react";
 import { Course, Department, DescriptiveSection, Section } from "types/course";
-import { SidebarCourse } from "components/SidebarCourse";
 import { useRouter } from "next/router";
 import { TERM, YEAR, getData, loadData, loadMultipleData } from "utils";
 import { GetStaticPaths, GetStaticProps } from "next";
 
 interface CoursePageProps {
+  initialSections?: Section[];
+  initialDescriptiveSections?: DescriptiveSection[];
   params?: {
     year: string;
     term: string;
@@ -30,7 +31,6 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const allPaths = Object.entries(deptCourseDict)
     .filter(([dept, courses]) => dept === "cmpt" || dept === "math")
     .map(([dept, courses]) => {
-      // For each department, map over the courses and return a new array of objects
       return courses.map((course) => ({
         params: {
           year: YEAR,
@@ -58,22 +58,42 @@ export const getStaticProps: GetStaticProps<CoursePageProps> = async ({
   }
 
   const { year, term, dept, number } = params;
+  const yearStr = Array.isArray(year) ? year[0] : year;
+  const termStr = Array.isArray(term) ? term[0] : term;
+  const deptStr = Array.isArray(dept) ? dept[0] : dept;
+  const numberStr = Array.isArray(number) ? number[0] : number;
 
-  return {
-    props: {
-      params: { year, term, dept, number } as any,
-    },
-    revalidate: 3600,
-  };
+  try {
+    const courses: Course[] = await getData(
+      `${yearStr}/${termStr}/${deptStr}/${numberStr}`
+    );
+    return {
+      props: {
+        initialCourses: courses,
+        params: { yearStr, termStr, deptStr, numberStr } as any,
+      },
+      // Revalidate every day
+      revalidate: 86400, // 24 hours
+    };
+  } catch (error) {
+    console.error("Error loading CoursePage:", error);
+    return {
+      notFound: true,
+    };
+  }
 };
 
-const CoursePage: React.FC = () => {
+const CoursePage: React.FC<CoursePageProps> = ({
+  initialSections,
+  initialDescriptiveSections,
+  params,
+}) => {
   // Parse the JSON data using Zod schemas
   const router = useRouter();
   const [descriptiveSections, setDescriptiveSections] = useState<
     DescriptiveSection[]
-  >([]);
-  const [sections, setSections] = useState<Section[]>([]);
+  >(initialDescriptiveSections || []);
+  const [sections, setSections] = useState<Section[]>(initialSections || []);
   const [sectionShown, setSectionShown] = useState<Section | null>(null);
 
   const { year, term, dept, number } = router.query;
@@ -110,7 +130,19 @@ const CoursePage: React.FC = () => {
               sections[0].title &&
               `- ${sections[0].title}`}
           </h1>
+          <p>{descriptiveSections[0].info.description}</p>
+          {descriptiveSections[0].info.notes && (
+            <p>{descriptiveSections[0].info.notes}</p>
+          )}
+          <p>
+            Prerequisites:{" "}
+            {descriptiveSections[0].info.prerequisites !== ""
+              ? descriptiveSections[0].info.prerequisites
+              : "None"}
+          </p>
         </section>
+        <br />
+        <h2>Sections</h2>
         <section className="requirements-section">
           <div className={`sections-container`}>
             {descriptiveSections.map((section) => {
