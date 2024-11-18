@@ -15,33 +15,8 @@ interface YearTermPageProps {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  // Pre-render current and upcoming terms
-  const currentDate = new Date();
-  const currentYear = currentDate.getFullYear();
-
-  const popularPaths = [
-    {
-      params: {
-        year: currentYear.toString(),
-        term: "spring",
-      },
-    },
-    {
-      params: {
-        year: currentYear.toString(),
-        term: "fall",
-      },
-    },
-    {
-      params: {
-        year: (currentYear + 1).toString(),
-        term: "spring",
-      },
-    },
-  ];
-
   return {
-    paths: popularPaths,
+    paths: [],
     fallback: true,
   };
 };
