@@ -14,7 +14,7 @@ export const Dropdown: React.FC<DropdownProps> = ({ id, title, content }) => {
         {title}
         <img src={ChevronDownIcon.src} alt="Chevron" />
       </label>
-      <p className="content">{content}</p>
+      <p className="content" dangerouslySetInnerHTML={{ __html: content }}></p>
     </div>
   );
 };
