@@ -1,0 +1,15 @@
+@import "../variables.scss";
+
+.page {
+  background-color: var(--colour-neutral-1200);
+  min-height: 91vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+
+  .main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
