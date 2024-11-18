@@ -2,7 +2,7 @@ import { Button, Hero } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { getData, loadData } from "utils";
+import { TERM, YEAR, getData, loadData } from "utils";
 import { Department } from "types/course";
 import { GetStaticPaths, GetStaticProps } from "next";
 
@@ -16,7 +16,14 @@ interface YearTermPageProps {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   return {
-    paths: [],
+    paths: [
+      {
+        params: {
+          year: YEAR,
+          term: TERM,
+        },
+      },
+    ],
     fallback: true,
   };
 };

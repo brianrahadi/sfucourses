@@ -1,10 +1,10 @@
 import { Button, Hero } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useEffect, useState } from "react";
-import { DescriptiveSection, Section } from "types/course";
+import { Course, Department, DescriptiveSection, Section } from "types/course";
 import { SidebarCourse } from "components/SidebarCourse";
 import { useRouter } from "next/router";
-import { loadData, loadMultipleData } from "utils";
+import { TERM, YEAR, getData, loadData, loadMultipleData } from "utils";
 import { GetStaticPaths, GetStaticProps } from "next";
 
 interface CoursePageProps {
@@ -17,8 +17,32 @@ interface CoursePageProps {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
+  const allDepts: Department[] = await getData(`${YEAR}/${TERM}`);
+  const deptCourseDict: Record<string, Course[]> = Object.fromEntries(
+    await Promise.all(
+      allDepts.map(async (dept) => {
+        const courses = await getData(`${YEAR}/${TERM}/${dept.value}`);
+        return [dept.value, courses] as [string, Course[]];
+      })
+    )
+  );
+
+  const allPaths = Object.entries(deptCourseDict)
+    .map(([dept, courses]) => {
+      // For each department, map over the courses and return a new array of objects
+      return courses.map((course) => ({
+        params: {
+          year: YEAR,
+          term: TERM,
+          dept: dept,
+          number: course.value,
+        },
+      }));
+    })
+    .flat();
+
   return {
-    paths: [],
+    paths: allPaths,
     fallback: true,
   };
 };
