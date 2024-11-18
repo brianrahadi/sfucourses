@@ -67,7 +67,7 @@ const YearTermPage: React.FC<YearTermPageProps> = ({
   const termStr = Array.isArray(term) ? term[0] : term ?? "";
 
   useEffect(() => {
-    if (process.env.NODE_ENV === "development") {
+    if (departments.length === 0) {
       loadData(`${yearStr}/${termStr}/`, setDepartments);
     }
   }, [yearStr, termStr]);
@@ -83,18 +83,17 @@ const YearTermPage: React.FC<YearTermPageProps> = ({
         </section>
         <section className="requirements-section">
           <div className={`courses-container`}>
-            {!router.isFallback &&
-              departments.map((dept) => (
-                <a
-                  key={dept.value}
-                  href={`/explore/${yearStr}/${termStr}/${dept.value}`}
-                >
-                  <Button
-                    label={`${dept.text}${dept?.name ? ` - ${dept.name}` : ""}`}
-                    type="secondary"
-                  />
-                </a>
-              ))}
+            {departments.map((dept) => (
+              <a
+                key={dept.value}
+                href={`/explore/${yearStr}/${termStr}/${dept.value}`}
+              >
+                <Button
+                  label={`${dept.text}${dept?.name ? ` - ${dept.name}` : ""}`}
+                  type="secondary"
+                />
+              </a>
+            ))}
           </div>
         </section>
       </main>

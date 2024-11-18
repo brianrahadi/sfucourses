@@ -3,8 +3,8 @@ import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useEffect, useState } from "react";
 import { SidebarCourse } from "components/SidebarCourse";
 import { useRouter } from "next/router";
-import { getData, loadData } from "utils";
-import { Course } from "types/course";
+import { TERM, YEAR, getData, loadData } from "utils";
+import { Course, Department } from "types/course";
 import { GetStaticPaths, GetStaticProps } from "next";
 
 interface DepartmentPageProps {
@@ -17,8 +17,17 @@ interface DepartmentPageProps {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
+  const allDepts: Department[] = await getData(`${YEAR}/${TERM}`);
+  const allPaths = allDepts.map((dept) => ({
+    params: {
+      year: YEAR,
+      term: TERM,
+      dept: dept.value,
+    },
+  }));
+
   return {
-    paths: [],
+    paths: allPaths,
     fallback: true,
   };
 };
