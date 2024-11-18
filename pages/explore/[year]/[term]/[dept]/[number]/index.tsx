@@ -5,12 +5,40 @@ import { DescriptiveSection, Section } from "types/course";
 import { SidebarCourse } from "components/SidebarCourse";
 import { useRouter } from "next/router";
 import { loadData, loadMultipleData } from "utils";
-import { GetStaticPaths } from "next";
+import { GetStaticPaths, GetStaticProps } from "next";
+
+interface CoursePageProps {
+  params?: {
+    year: string;
+    term: string;
+    dept: string;
+    number: string;
+  };
+}
 
 export const getStaticPaths: GetStaticPaths = async () => {
   return {
     paths: [],
     fallback: true,
+  };
+};
+
+export const getStaticProps: GetStaticProps<CoursePageProps> = async ({
+  params,
+}) => {
+  if (!params?.year || !params?.term || !params?.dept || !params?.number) {
+    return {
+      notFound: true,
+    };
+  }
+
+  const { year, term, dept, number } = params;
+
+  return {
+    props: {
+      params: { year, term, dept, number } as any,
+    },
+    revalidate: 3600,
   };
 };
 
