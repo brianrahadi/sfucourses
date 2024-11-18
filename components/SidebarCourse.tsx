@@ -112,23 +112,23 @@ export const SidebarCourse: React.FC<SidebarCourseProps> = ({
       <div className="course-info">
         <p className="space-between">
           <b>
-            {descriptiveSections[0].info.dept}{" "}
-            {descriptiveSections[0].info.number} (
-            {descriptiveSections[0].info.units})
+            {descriptiveSections?.[0]?.info?.dept}{" "}
+            {descriptiveSections?.[0]?.info?.number} (
+            {descriptiveSections?.[0]?.info?.units})
           </b>
           <span className="close-sidebar" onClick={closeCourseShown}>
             Close
           </span>
         </p>
-        <h2>{descriptiveSections[0].info.title}</h2>
-        <p>{descriptiveSections[0].info.description}</p>
-        {descriptiveSections[0].info.notes && (
+        <h2>{descriptiveSections?.[0]?.info?.title}</h2>
+        <p>{descriptiveSections?.[0]?.info?.description}</p>
+        {descriptiveSections?.[0]?.info?.notes && (
           <p>{descriptiveSections[0].info.notes}</p>
         )}
         <p>
           Prerequisites:{" "}
-          {descriptiveSections[0].info.prerequisites !== ""
-            ? descriptiveSections[0].info.prerequisites
+          {descriptiveSections?.[0]?.info?.prerequisites !== ""
+            ? descriptiveSections?.[0]?.info?.prerequisites
             : "None"}
         </p>
       </div>
