@@ -38,6 +38,25 @@ export async function loadData(
   }
 }
 
+export async function getData(queryString: string): Promise<any> {
+  const url = `${BASE_URL}?${queryString}`;
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      if (response.status === 404) {
+        throw new Error("404");
+      }
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const json = await response.json();
+    return json;
+  } catch (error) {
+    console.error(`Error fetching ${url}:`, error);
+  }
+}
+
 export async function loadMultipleData(
   queryStrings: string[],
   setData: Dispatch<SetStateAction<any[]>>

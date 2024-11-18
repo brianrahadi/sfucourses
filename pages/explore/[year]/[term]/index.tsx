@@ -2,7 +2,7 @@ import { Button, Hero } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { loadData } from "utils";
+import { getData, loadData } from "utils";
 import { Department } from "types/course";
 import { GetStaticPaths, GetStaticProps } from "next";
 
@@ -31,12 +31,16 @@ export const getStaticProps: GetStaticProps<YearTermPageProps> = async ({
   }
 
   const { year, term } = params;
+  const yearStr = Array.isArray(year) ? year[0] : year;
+  const termStr = Array.isArray(term) ? term[0] : term;
 
   try {
+    const departments: Department[] = await getData(`${yearStr}/${termStr}`);
+
     return {
       props: {
-        initialDepartments: [],
-        params: { year, term } as any,
+        initialDepartments: departments,
+        params: { yearStr, termStr } as any,
       },
       // Revalidate every day
       revalidate: 86400, // 24 hours
@@ -49,17 +53,22 @@ export const getStaticProps: GetStaticProps<YearTermPageProps> = async ({
   }
 };
 
-const YearTermPage: React.FC = () => {
+const YearTermPage: React.FC<YearTermPageProps> = ({
+  initialDepartments,
+  params,
+}) => {
   const router = useRouter();
-  const [departments, setDepartments] = useState<Department[]>([]);
+  const [departments, setDepartments] = useState<Department[]>(
+    initialDepartments || []
+  );
   const { year, term } = router.query;
+
+  if (router.isFallback) {
+    return <div>Loading...</div>;
+  }
 
   const yearStr = Array.isArray(year) ? year[0] : year ?? "";
   const termStr = Array.isArray(term) ? term[0] : term ?? "";
-
-  useEffect(() => {
-    loadData(`${yearStr}/${termStr}`, setDepartments);
-  }, [yearStr, termStr]);
 
   return (
     <div className="page courses-page">
