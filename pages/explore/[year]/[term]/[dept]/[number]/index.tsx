@@ -130,14 +130,14 @@ const CoursePage: React.FC<CoursePageProps> = ({
               sections[0].title &&
               `- ${sections[0].title}`}
           </h1>
-          <p>{descriptiveSections[0].info.description}</p>
-          {descriptiveSections[0].info.notes && (
+          <p>{descriptiveSections[0]?.info?.description}</p>
+          {descriptiveSections[0]?.info?.notes && (
             <p>{descriptiveSections[0].info.notes}</p>
           )}
           <p>
             Prerequisites:{" "}
-            {descriptiveSections[0].info.prerequisites !== ""
-              ? descriptiveSections[0].info.prerequisites
+            {descriptiveSections[0]?.info?.prerequisites !== ""
+              ? descriptiveSections[0]?.info?.prerequisites
               : "None"}
           </p>
         </section>
@@ -147,16 +147,19 @@ const CoursePage: React.FC<CoursePageProps> = ({
           <div className={`sections-container`}>
             {descriptiveSections.map((section) => {
               return (
-                <div key={section.info.classNumber}>
-                  <p>{section.info.section}</p>
-                  <p>{section.instructor[0].name}</p>
-                  <p>{section.courseSchedule[0].campus}</p>
+                <div key={section?.info?.classNumber}>
+                  <p>{section?.info?.section}</p>
+                  <p>{section?.instructor?.[0]?.name}</p>
+                  <p>
+                    {section?.courseSchedule?.[0]?.campus || "Unknown campus"}
+                  </p>
                   <ul>
-                    {section.courseSchedule.map((schedule) => {
+                    {section?.courseSchedule?.map((schedule) => {
                       return (
-                        <li key={schedule.sectionCode}>
-                          {schedule.days}; {schedule.startTime}-
-                          {schedule.endTime}
+                        <li key={schedule?.sectionCode}>
+                          {schedule?.days || "Unknown days"};{" "}
+                          {schedule?.startTime}
+                          {schedule?.endTime && ` - ${schedule?.endTime}`}
                         </li>
                       );
                     })}

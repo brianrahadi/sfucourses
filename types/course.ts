@@ -81,7 +81,7 @@ export type Department = {
    * The full name of the department.
    * Example: "Computer Science".
    */
-  name?: string;
+  name: string;
 };
 
 export type Course = {
@@ -145,56 +145,56 @@ export type Section = {
 };
 
 export type DescriptiveSection = {
-  info: {
-    notes: string;
-    deliveryMethod: string;
-    description: string;
-    section: string;
-    units: string;
-    title: string;
-    type: string;
-    classNumber: string;
-    departmentalUgradNotes: string;
-    prerequisites: string;
-    number: string;
-    requiredReadingNotes: string;
-    registrarNotes: string;
-    shortNote: string;
-    outlinePath: string;
-    term: string;
-    gradingNotes: string;
-    corequisites: string;
-    dept: string;
-    degreeLevel: string;
-    specialTopic: string;
-    courseDetails: string;
-    materials: string;
-    name: string;
-    designation: string;
+  info?: {
+    notes?: string;
+    deliveryMethod?: string;
+    description?: string;
+    section?: string;
+    units?: string;
+    title?: string;
+    type?: string;
+    classNumber?: string;
+    departmentalUgradNotes?: string;
+    prerequisites?: string;
+    number?: string;
+    requiredReadingNotes?: string;
+    registrarNotes?: string;
+    shortNote?: string;
+    outlinePath?: string;
+    term?: string;
+    gradingNotes?: string;
+    corequisites?: string;
+    dept?: string;
+    degreeLevel?: string;
+    specialTopic?: string;
+    courseDetails?: string;
+    materials?: string;
+    name?: string;
+    designation?: string;
   };
   instructor: Array<{
-    profileUrl: string;
-    commonName: string;
-    firstName: string;
-    lastName: string;
-    phone: string;
-    roleCode: string;
-    name: string;
-    officeHours: string;
-    office: string;
-    email: string;
+    profileUrl?: string;
+    commonName?: string;
+    firstName?: string;
+    lastName?: string;
+    phone?: string;
+    roleCode?: string;
+    name?: string;
+    officeHours?: string;
+    office?: string;
+    email?: string;
   }>;
   courseSchedule: Array<{
-    endDate: string;
-    campus: string;
-    days: string;
-    sectionCode: string;
-    startTime: string;
+    endDate?: string;
+    campus?: string;
+    days?: string;
+    sectionCode?: string;
+    startTime?: string;
     isExam: boolean;
-    endTime: string;
-    startDate: string;
+    endTime?: string;
+    startDate?: string;
   }>;
   requiredText: Array<{
-    details: string;
+    details?: string;
   }>;
 };
