@@ -1,14 +1,18 @@
 import { Dispatch, MouseEventHandler, SetStateAction } from "react";
-import { Course, SectionsPerTerm } from "types/course";
+// import { Course, SectionsPerTerm } from "types/course";
 
 interface SidebarCourseProps {
-  course: Course;
+  course: {
+    text: string;
+    value: string;
+    title: string;
+  };
   closeCourseShown: MouseEventHandler<HTMLSpanElement>;
 }
 
 interface SectionsPerTermProps {
   title: string;
-  sectionsPerTerm: SectionsPerTerm;
+  sectionsPerTerm: any;
 }
 
 const SectionsPerTermDisplay: React.FC<SectionsPerTermProps> = ({
@@ -16,12 +20,13 @@ const SectionsPerTermDisplay: React.FC<SectionsPerTermProps> = ({
   sectionsPerTerm,
 }) => {
   return (
-    <div className="course-info course-last-sections">
-      <h2>
-        {title} - {sectionsPerTerm.term}
-      </h2>
-      <div className="sections-container">
-        {sectionsPerTerm.sections
+    <></>
+    // <div className="course-info course-last-sections">
+    //   <h2>
+    //     {title} - {sectionsPerTerm.term}
+    //   </h2>
+    //   <div className="sections-container">
+    /* {sectionsPerTerm.sections
           .filter((s) => s.info.type !== "n")
           .map((section) => {
             const instructorNames =
@@ -51,9 +56,9 @@ const SectionsPerTermDisplay: React.FC<SectionsPerTermProps> = ({
                 </ul>
               </div>
             );
-          })}
-      </div>
-    </div>
+          })} */
+    //   </div>
+    // </div>
   );
 };
 
@@ -63,7 +68,8 @@ export const SidebarCourse: React.FC<SidebarCourseProps> = ({
 }) => {
   return (
     <div className="sidebar-course">
-      <div className="course-info">
+      a
+      {/* <div className="course-info">
         <p className="space-between">
           <b>
             {course.info.dept} {course.info.number} ({course.info.units})
@@ -93,7 +99,7 @@ export const SidebarCourse: React.FC<SidebarCourseProps> = ({
         />
       ) : (
         <h2>Currently not offered for {course.future_sections.term}</h2>
-      )}
+      )} */}
     </div>
   );
 };

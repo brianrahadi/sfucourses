@@ -1,5 +1,5 @@
 interface HeroProps {
-  subtitle: string;
+  subtitle?: string;
   title: string;
   backgroundImage: string;
 }
