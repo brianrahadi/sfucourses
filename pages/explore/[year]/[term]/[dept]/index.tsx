@@ -101,12 +101,6 @@ const DepartmentPage: React.FC<DepartmentPageProps> = ({
     );
   }
 
-  useEffect(() => {
-    if (process.env.NODE_ENV === "development") {
-      loadData(`${year}/${term}/${dept}`, setCourses);
-    }
-  }, [year, term, dept]);
-
   return (
     <div className="page courses-page">
       <Hero title={`${dept} courses @ sfu`} backgroundImage={HeroImage.src} />
