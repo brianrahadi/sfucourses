@@ -63,6 +63,12 @@ const YearTermPage: React.FC<YearTermPageProps> = ({
   );
   const { year, term } = router.query;
 
+  useEffect(() => {
+    if (process.env.NODE_ENV === "development") {
+      loadData(`${year}/${term}/`, setDepartments);
+    }
+  }, [year, term]);
+
   if (router.isFallback) {
     return <div>Loading...</div>;
   }

@@ -1,6 +1,6 @@
 import { Hero } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SidebarCourse } from "components/SidebarCourse";
 import { useRouter } from "next/router";
 import { loadData } from "utils";
@@ -24,7 +24,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
       params: {
         year: "2025",
         term: "spring",
-        dept: "CMPT",
+        dept: "cmpt",
       },
     },
     // Add more popular departments as needed
@@ -100,6 +100,12 @@ const DepartmentPage: React.FC<DepartmentPageProps> = ({
       </div>
     );
   }
+
+  useEffect(() => {
+    if (process.env.NODE_ENV === "development") {
+      loadData(`${year}/${term}/${dept}`, setCourses);
+    }
+  }, [year, term, dept]);
 
   return (
     <div className="page courses-page">
