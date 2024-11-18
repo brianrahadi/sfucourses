@@ -4,10 +4,7 @@ import { useEffect, useState } from "react";
 import { DescriptiveSection, Section } from "types/course";
 import { SidebarCourse } from "components/SidebarCourse";
 import { useRouter } from "next/router";
-import { capitalize, loadData, loadMultipleData } from "utils";
-
-const COURSES_JSON_URL =
-  "https://raw.githubusercontent.com/ssss-sfu/course-explorer-script/main/result/courses.json";
+import { loadData, loadMultipleData } from "utils";
 
 const CoursePage: React.FC = () => {
   // Parse the JSON data using Zod schemas
@@ -16,7 +13,7 @@ const CoursePage: React.FC = () => {
     DescriptiveSection[]
   >([]);
   const [sections, setSections] = useState<Section[]>([]);
-  const [sectionShown, setSectionShown] = useState<any | null>(null);
+  const [sectionShown, setSectionShown] = useState<Section | null>(null);
 
   const { year, term, dept, number } = router.query;
 
@@ -27,7 +24,7 @@ const CoursePage: React.FC = () => {
 
   useEffect(() => {
     loadData(`${yearStr}/${termStr}/${deptStr}/${numberStr}`, setSections);
-  }, []);
+  }, [yearStr, termStr, deptStr, numberStr]);
 
   useEffect(() => {
     if (sections.length === 0) return;
@@ -36,7 +33,7 @@ const CoursePage: React.FC = () => {
         `${yearStr}/${termStr}/${deptStr}/${numberStr}/${section.value}`
     );
     loadMultipleData(sectionUrls, setDescriptiveSections);
-  }, [sections]);
+  }, [sections, yearStr, termStr, deptStr, numberStr]);
 
   return (
     <div className="page courses-page">
@@ -57,14 +54,14 @@ const CoursePage: React.FC = () => {
           <div className={`sections-container`}>
             {descriptiveSections.map((section) => {
               return (
-                <div>
+                <div key={section.info.classNumber}>
                   <p>{section.info.section}</p>
                   <p>{section.instructor[0].name}</p>
                   <p>{section.courseSchedule[0].campus}</p>
                   <ul>
                     {section.courseSchedule.map((schedule) => {
                       return (
-                        <li>
+                        <li key={schedule.sectionCode}>
                           {schedule.days}; {schedule.startTime}-
                           {schedule.endTime}
                         </li>

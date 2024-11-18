@@ -15,7 +15,7 @@ const YearTermPage: React.FC = () => {
 
   useEffect(() => {
     loadData(`${yearStr}/${termStr}`, setDepartments);
-  }, []);
+  }, [yearStr, termStr]);
 
   return (
     <div className="page courses-page">
@@ -29,7 +29,10 @@ const YearTermPage: React.FC = () => {
         <section className="requirements-section">
           <div className={`courses-container`}>
             {departments.map((dept) => (
-              <a href={`/explore/${yearStr}/${termStr}/${dept.value}`}>
+              <a
+                key={dept.value}
+                href={`/explore/${yearStr}/${termStr}/${dept.value}`}
+              >
                 <Button
                   label={`${dept.text}${dept?.name ? ` - ${dept.name}` : ""}`}
                   type="secondary"

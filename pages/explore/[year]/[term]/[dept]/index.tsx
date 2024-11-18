@@ -6,9 +6,6 @@ import { useRouter } from "next/router";
 import { loadData } from "utils";
 import { Course } from "types/course";
 
-const COURSES_JSON_URL =
-  "https://raw.githubusercontent.com/ssss-sfu/course-explorer-script/main/result/courses.json";
-
 const DepartmentPage: React.FC = () => {
   // Parse the JSON data using Zod schemas
   const router = useRouter();
@@ -23,7 +20,7 @@ const DepartmentPage: React.FC = () => {
 
   useEffect(() => {
     loadData(`${yearStr}/${termStr}/${deptStr}`, setCourses);
-  }, []);
+  }, [yearStr, termStr, deptStr]);
 
   return (
     <div className="page courses-page">

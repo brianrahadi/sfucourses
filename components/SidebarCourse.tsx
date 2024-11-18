@@ -1,4 +1,13 @@
-import { Dispatch, MouseEventHandler, SetStateAction } from "react";
+import { useRouter } from "next/router";
+import {
+  Dispatch,
+  MouseEventHandler,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react";
+import { DescriptiveSection, Section } from "types/course";
+import { loadData, loadMultipleData } from "utils";
 // import { Course, SectionsPerTerm } from "types/course";
 
 interface SidebarCourseProps {
@@ -66,29 +75,64 @@ export const SidebarCourse: React.FC<SidebarCourseProps> = ({
   course,
   closeCourseShown,
 }) => {
+  const router = useRouter();
+
+  const [sections, setSections] = useState<Section[]>([]);
+  const [descriptiveSections, setDescriptiveSections] = useState<
+    DescriptiveSection[]
+  >([]);
+
+  const { year, term, dept, number } = router.query;
+
+  const yearStr = Array.isArray(year) ? year[0] : year ?? "";
+  const termStr = Array.isArray(term) ? term[0] : term ?? "";
+  const deptStr = Array.isArray(dept) ? dept[0] : dept ?? "";
+  const numberStr = Array.isArray(number) ? number[0] : number ?? "";
+
+  useEffect(() => {
+    setDescriptiveSections([]);
+    loadData(`${yearStr}/${termStr}/${deptStr}/${course.value}`, setSections);
+  }, [course]);
+
+  useEffect(() => {
+    if (sections.length === 0) return;
+    const sectionUrls = sections.map(
+      (section) =>
+        `${yearStr}/${termStr}/${deptStr}/${course.value}/${section.value}`
+    );
+    loadMultipleData(sectionUrls, setDescriptiveSections);
+  }, [sections]);
+
+  useEffect(() => {}, [descriptiveSections]);
+
+  if (descriptiveSections.length == 0) return <div></div>;
+
   return (
     <div className="sidebar-course">
-      a
-      {/* <div className="course-info">
+      <div className="course-info">
         <p className="space-between">
           <b>
-            {course.info.dept} {course.info.number} ({course.info.units})
+            {descriptiveSections[0].info.dept}{" "}
+            {descriptiveSections[0].info.number} (
+            {descriptiveSections[0].info.units})
           </b>
           <span className="close-sidebar" onClick={closeCourseShown}>
             Close
           </span>
         </p>
-        <h2>{course.info.title}</h2>
-        <p>{course.info.description}</p>
-        {course.info.notes && <p>{course.info.notes}</p>}
+        <h2>{descriptiveSections[0].info.title}</h2>
+        <p>{descriptiveSections[0].info.description}</p>
+        {descriptiveSections[0].info.notes && (
+          <p>{descriptiveSections[0].info.notes}</p>
+        )}
         <p>
           Prerequisites:{" "}
-          {course.info.prerequisites !== ""
-            ? course.info.prerequisites
+          {descriptiveSections[0].info.prerequisites !== ""
+            ? descriptiveSections[0].info.prerequisites
             : "None"}
         </p>
       </div>
-      <SectionsPerTermDisplay
+      {/* <SectionsPerTermDisplay
         title="Last offering"
         sectionsPerTerm={course.last_sections}
       />
