@@ -84,39 +84,3 @@ export async function loadMultipleData(
     console.error("Error fetching multiple URLs:", error);
   }
 }
-
-const fun = async () => {
-  const allDepts: Department[] = await getData(`${YEAR}/${TERM}`);
-  const deptCourseDict: Record<string, Course[]> = Object.fromEntries(
-    await Promise.all(
-      allDepts.map(async (dept) => {
-        const courses = await getData(`${YEAR}/${TERM}/${dept.value}`);
-        return [dept.value, courses] as [string, Course[]];
-      })
-    )
-  );
-
-  const allPaths = Object.entries(deptCourseDict)
-    .map(([dept, courses]) => {
-      // For each department, map over the courses and return a new array of objects
-      return courses.map((course) => {
-        if (course.value) {
-          console.log(course.value);
-        }
-
-        return {
-          params: {
-            year: YEAR,
-            term: TERM,
-            dept: dept,
-            number: course.value,
-          },
-        };
-      });
-    })
-    .flat();
-
-  // console.log(allPaths);
-};
-
-fun();
