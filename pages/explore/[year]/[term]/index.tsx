@@ -89,9 +89,10 @@ const YearTermPage: React.FC<YearTermPageProps> = ({
           </h1>
         </section>
         <section className="requirements-section">
-          <div className={`courses-container`}>
+          <div className="courses-container">
             {departments.map((dept) => (
               <a
+                className="node"
                 key={dept.value}
                 href={`/explore/${yearStr}/${termStr}/${dept.value}`}
               >
