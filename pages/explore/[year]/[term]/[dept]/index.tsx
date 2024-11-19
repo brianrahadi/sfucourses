@@ -3,12 +3,14 @@ import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useEffect, useState } from "react";
 import { SidebarCourse } from "components/SidebarCourse";
 import { useRouter } from "next/router";
-import { TERM, YEAR, getData, loadData } from "utils";
+import { TERM, YEAR, getData, getDepartmentName, loadData } from "utils";
 import { Course, Department } from "types/course";
 import { GetStaticPaths, GetStaticProps } from "next";
+import DepartmentsJson from "@jsons/depts";
 
 interface DepartmentPageProps {
   initialCourses?: Course[];
+  initialDeptName?: string;
   params?: {
     year: string;
     term: string;
@@ -69,21 +71,23 @@ export const getStaticProps: GetStaticProps<DepartmentPageProps> = async ({
 
 const DepartmentPage: React.FC<DepartmentPageProps> = ({
   initialCourses,
+  initialDeptName,
   params,
 }) => {
   // Parse the JSON data using Zod schemas
   const router = useRouter();
   const [courseShown, setCourseShown] = useState<Course | null>(null);
   const [courses, setCourses] = useState<Course[]>(initialCourses || []);
-
   const { year, term, dept } = router.query;
 
   const yearStr = Array.isArray(year) ? year[0] : year ?? "";
   const termStr = Array.isArray(term) ? term[0] : term ?? "";
   const deptStr = Array.isArray(dept) ? dept[0] : dept ?? "";
 
+  const departmentName = getDepartmentName(DepartmentsJson, deptStr);
+
   useEffect(() => {
-    if (courses.length === 0) {
+    if (!courses.length) {
       loadData(`${yearStr}/${termStr}/${deptStr}`, setCourses);
     }
   }, [yearStr, termStr, deptStr]);
@@ -91,7 +95,7 @@ const DepartmentPage: React.FC<DepartmentPageProps> = ({
   return (
     <div className="page courses-page">
       <Hero
-        title={`${deptStr} courses @ sfu`}
+        title={`${departmentName} courses @ sfu`}
         backgroundImage={HeroImage.src}
       />
       <main className="container">

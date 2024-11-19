@@ -72,7 +72,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({
 
   return (
     <div className="page courses-page">
-      <Hero title="course schedules @ sfu" backgroundImage={HeroImage.src} />
+      <Hero title="schedule courses @ sfu" backgroundImage={HeroImage.src} />
       <main className="container">
         <section className="main-content">
           <h1>

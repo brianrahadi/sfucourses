@@ -84,3 +84,24 @@ export async function loadMultipleData(
     console.error("Error fetching multiple URLs:", error);
   }
 }
+
+export async function loadDepartmentName(
+  year: string,
+  term: string,
+  deptValue: string,
+  setDeptName: Dispatch<SetStateAction<string | null>>
+): Promise<void> {
+  const json: Department[] = await getData(`${year}/${term}`);
+  const deptName = json.find((dept) => dept.value === deptValue)?.name;
+  setDeptName(deptName?.toLowerCase() || null);
+}
+
+export function getDepartmentName(
+  departments: Department[],
+  deptValue: string
+): string | null {
+  return (
+    departments.find((dept) => dept.value === deptValue)?.name.toLowerCase() ||
+    null
+  );
+}

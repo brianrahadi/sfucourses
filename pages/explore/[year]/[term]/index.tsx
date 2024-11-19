@@ -81,7 +81,7 @@ const YearTermPage: React.FC<YearTermPageProps> = ({
 
   return (
     <div className="page courses-page">
-      <Hero title="courses @ sfu" backgroundImage={HeroImage.src} />
+      <Hero title="explore courses @ sfu" backgroundImage={HeroImage.src} />
       <main className="container">
         <section className="main-content">
           <h1>
