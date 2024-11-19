@@ -29,7 +29,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   );
 
   const allPaths = Object.entries(deptCourseDict)
-    .filter(([dept, courses]) => dept === "cmpt" || dept === "math")
+    // .filter(([dept, courses]) => dept === "cmpt" || dept === "math")
     .map(([dept, courses]) => {
       return courses.map((course) => ({
         params: {
@@ -64,12 +64,23 @@ export const getStaticProps: GetStaticProps<CoursePageProps> = async ({
   const numberStr = Array.isArray(number) ? number[0] : number;
 
   try {
-    const courses: Course[] = await getData(
+    const sections: Section[] = await getData(
       `${yearStr}/${termStr}/${deptStr}/${numberStr}`
+    );
+
+    const sectionsPath = sections.map(
+      (section) =>
+        `${yearStr}/${termStr}/${deptStr}/${numberStr}/${section.value}`
+    );
+    const descriptiveSections: DescriptiveSection[] = await Promise.all(
+      sectionsPath.map(async (path) => {
+        return await getData(path);
+      })
     );
     return {
       props: {
-        initialCourses: courses,
+        initialSections: sections,
+        initialDescriptiveSections: descriptiveSections,
         params: { yearStr, termStr, deptStr, numberStr } as any,
       },
       // Revalidate every day
