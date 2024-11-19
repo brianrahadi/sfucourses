@@ -12,10 +12,8 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }: AppProps) => {
     <>
       <Helmet pageTitle={router.pathname} />
       <HeaderNav />
-      <Component key={router.asPath}>
-        {...pageProps}
-        <Analytics />
-      </Component>
+      <Component {...pageProps} key={router.asPath} />
+      <Analytics />
       <Footer />
     </>
   );
