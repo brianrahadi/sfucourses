@@ -3,6 +3,7 @@ import { Hero } from "@components";
 import LandingPageHeroImg from "@images/landing-page-hero.jpg";
 import Link from "next/link";
 import { TERM, YEAR } from "utils";
+import LandingPageHeroSrc from "../public/images/landing-page/hero.jpg";
 
 interface LandingPageProps {}
 
@@ -12,7 +13,7 @@ const LandingPage: FC<LandingPageProps> = () => {
       <Hero
         title="sfucourses.com"
         subtitle="welcome to"
-        backgroundImage={LandingPageHeroImg.src}
+        backgroundImage={LandingPageHeroSrc.src}
       />
       <main>
         <article className="container discover-ssss">

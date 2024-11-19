@@ -40,7 +40,7 @@
     max-width: unset;
     text-align: center;
     background: linear-gradient(180deg, #141515 0%, rgba(20, 21, 21, 0.75) 100%),
-      url("../../public/images/landing-page-hero.jpg");
+      url("https://images.unsplash.com/photo-1621290444502-b1d7dfcb202f?q=80&w=2003&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
     background-position: center;
     background-size: cover;
     padding-top: 12rem;
@@ -106,27 +106,7 @@
             rgba(20, 21, 21, 0) 0%,
             #141515 100%
           ),
-          url("../../public/images/landing-page/discover-ssss-events.png");
-        background-size: cover;
-        background-position: center;
-      }
-      .discover-ssss__link-item:nth-child(2) {
-        background: linear-gradient(
-            180deg,
-            rgba(20, 21, 21, 0) 0%,
-            #141515 100%
-          ),
-          url("../../public/images/landing-page/discover-ssss-get-involved.png");
-        background-size: cover;
-        background-position: center;
-      }
-      .discover-ssss__link-item:nth-child(3) {
-        background: linear-gradient(
-            180deg,
-            rgba(20, 21, 21, 0) 0%,
-            #141515 100%
-          ),
-          url("../../public/images/landing-page/discover-ssss-about-us.png");
+          url("../../public/images/landing-page/discover-ssss-main.png");
         background-size: cover;
         background-position: center;
       }
@@ -189,15 +169,7 @@
         }
 
         .discover-ssss__link-item:nth-child(1)::before {
-          background-image: url("../../public/images/landing-page/discover-ssss-events.png");
-        }
-
-        .discover-ssss__link-item:nth-child(2)::before {
-          background-image: url("../../public/images/landing-page/discover-ssss-get-involved.png");
-        }
-
-        .discover-ssss__link-item:nth-child(3)::before {
-          background-image: url("../../public/images/landing-page/discover-ssss-about-us.png");
+          background-image: url("../../public/images/landing-page/schedule.jpg");
         }
       }
     }

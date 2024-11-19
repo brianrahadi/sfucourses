@@ -9,8 +9,8 @@ export const Helmet: React.FC<HelmetProps> = ({ pageTitle = "" }) => {
   pageTitle = pageTitle.replace("-", " ");
   pageTitle = capitalizeWords(pageTitle);
 
-  const defaultTitle: string = "Software Systems Student Society";
-  const title: string = `${pageTitle} | SSSS`;
+  const defaultTitle: string = "sfucourses";
+  const title: string = "sfucourses";
   const hasPageTitle: boolean = pageTitle.trim() !== "";
 
   function capitalizeWords(item: string): string {
