@@ -15,6 +15,7 @@ interface CoursePageProps {
     dept: string;
     number: string;
   };
+  notFound?: boolean;
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -31,14 +32,16 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const allPaths = Object.entries(deptCourseDict)
     .filter(([dept, courses]) => dept === "cmpt" || dept === "math")
     .map(([dept, courses]) => {
-      return courses.map((course) => ({
-        params: {
-          year: YEAR,
-          term: TERM,
-          dept: dept,
-          number: course.value,
-        },
-      }));
+      return courses
+        .filter((c) => c.title)
+        .map((course) => ({
+          params: {
+            year: YEAR,
+            term: TERM,
+            dept: dept,
+            number: course.value,
+          },
+        }));
     })
     .flat();
 
@@ -64,9 +67,9 @@ export const getStaticProps: GetStaticProps<CoursePageProps> = async ({
   const numberStr = Array.isArray(number) ? number[0] : number;
 
   try {
-    const sections: Section[] = await getData(
-      `${yearStr}/${termStr}/${deptStr}/${numberStr}`
-    );
+    const data = await getData(`${yearStr}/${termStr}/${deptStr}/${numberStr}`);
+
+    const sections: Section[] = data;
 
     const sectionsPath = sections.map(
       (section) =>
@@ -98,6 +101,7 @@ const CoursePage: React.FC<CoursePageProps> = ({
   initialSections,
   initialDescriptiveSections,
   params,
+  notFound,
 }) => {
   // Parse the JSON data using Zod schemas
   const router = useRouter();

@@ -18,13 +18,15 @@ interface DepartmentPageProps {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const allDepts: Department[] = await getData(`${YEAR}/${TERM}`);
-  const allPaths = allDepts.map((dept) => ({
-    params: {
-      year: YEAR,
-      term: TERM,
-      dept: dept.value,
-    },
-  }));
+  const allPaths = allDepts
+    .filter((dept) => dept.name)
+    .map((dept) => ({
+      params: {
+        year: YEAR,
+        term: TERM,
+        dept: dept.value,
+      },
+    }));
 
   return {
     paths: allPaths,
