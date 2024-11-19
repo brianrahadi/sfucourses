@@ -46,7 +46,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
     .flat();
 
   return {
-    paths: allPaths,
+    paths: [],
     fallback: true,
   };
 };
@@ -129,6 +129,7 @@ const CoursePage: React.FC<CoursePageProps> = ({
         `${yearStr}/${termStr}/${deptStr}/${numberStr}/${section.value}`
     );
     loadMultipleData(sectionUrls, setDescriptiveSections);
+    // loadData(sectionUrls[0], (data) => setDescriptiveSections([data]));
   }, [sections, yearStr, termStr, deptStr, numberStr]);
 
   return (
