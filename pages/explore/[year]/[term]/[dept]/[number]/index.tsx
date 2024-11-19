@@ -29,7 +29,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   );
 
   const allPaths = Object.entries(deptCourseDict)
-    // .filter(([dept, courses]) => dept === "cmpt" || dept === "math")
+    .filter(([dept, courses]) => dept === "cmpt" || dept === "math")
     .map(([dept, courses]) => {
       return courses.map((course) => ({
         params: {
