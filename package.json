@@ -13,6 +13,12 @@
     "format:check": "npx prettier --check ."
   },
   "dependencies": {
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
+    "@mui/icons-material": "^6.1.7",
+    "@mui/material": "^6.1.7",
+    "@mui/styles": "^6.1.7",
+    "@mui/x-data-grid": "^7.22.2",
     "@portabletext/react": "^3.0.11",
     "@sanity/image-url": "^1.0.2",
     "@sanity/ui": "^1.8.3",

@@ -10,3 +10,4 @@ export { EventsCalendar } from "./EventsCalendar";
 export { ProfileCard } from "./ProfileCard";
 export { SocialIcon } from "./SocialIcon";
 export { SidebarCourse } from "./SidebarCourse";
+export { EnhancedTable } from "./EnhancedTable";

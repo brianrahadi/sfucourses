@@ -84,6 +84,10 @@ export type Department = {
   name: string;
 };
 
+export type DepartmentRowData = Department & {
+  id: number;
+};
+
 export type Course = {
   /**
    * The course code displayed to users.
@@ -103,6 +107,10 @@ export type Course = {
    * Example: "Professional Responsibility and Technical Writing".
    */
   title: string;
+};
+
+export type CourseRowData = Course & {
+  id: number;
 };
 
 export type Section = {

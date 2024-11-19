@@ -1,6 +1,5 @@
 import { Button, Hero } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
-import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { TERM, YEAR, getData, loadData } from "utils";
 import { Department } from "types/course";

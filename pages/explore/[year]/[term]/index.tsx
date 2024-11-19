@@ -1,4 +1,4 @@
-import { Button, Hero } from "@components";
+import { Button, EnhancedTable, Hero } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
@@ -90,7 +90,8 @@ const YearTermPage: React.FC<YearTermPageProps> = ({
         </section>
         <section className="requirements-section">
           <div className={`courses-container`}>
-            {departments.map((dept) => (
+            <EnhancedTable rows={departments} />
+            {/* {departments.map((dept) => (
               <a
                 key={dept.value}
                 href={`/explore/${yearStr}/${termStr}/${dept.value}`}
@@ -100,7 +101,7 @@ const YearTermPage: React.FC<YearTermPageProps> = ({
                   type="secondary"
                 />
               </a>
-            ))}
+            ))} */}
           </div>
         </section>
       </main>
