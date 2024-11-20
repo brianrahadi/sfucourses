@@ -1,6 +1,7 @@
 import React, { FC } from "react";
-import { Dropdown } from "@components";
+import { Dropdown, Hero } from "@components";
 import faqs from "@jsons/faqs.json";
+import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 
 interface Link {
   text: string;
@@ -15,28 +16,25 @@ interface FAQ {
 const FaqPage: FC = () => {
   return (
     <div className="page resources-page">
-      <main>
-        <header className="container hero">
-          <p>faq</p>
-          <h1>frequently asked questions</h1>
+      <Hero
+        title="frequently asked questions"
+        backgroundImage={HeroImage.src}
+      />
+      <main className="container">
+        <header>
+          <h2>faqs</h2>
         </header>
 
-        <article className="container">
-          <header>
-            <h2>faqs</h2>
-          </header>
-
-          <div>
-            {faqs.map(({ title, content }: FAQ, id: number) => (
-              <Dropdown
-                key={id}
-                id={id.toString()}
-                title={title}
-                content={content}
-              />
-            ))}
-          </div>
-        </article>
+        <div>
+          {faqs.map(({ title, content }: FAQ, id: number) => (
+            <Dropdown
+              key={id}
+              id={id.toString()}
+              title={title}
+              content={content}
+            />
+          ))}
+        </div>
       </main>
     </div>
   );

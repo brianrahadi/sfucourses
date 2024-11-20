@@ -198,3 +198,10 @@ export type DescriptiveSection = {
     details?: string;
   }>;
 };
+
+export type BreadcrumbLink = {
+  year: string;
+  term: string;
+  dept?: string;
+  number?: string;
+};

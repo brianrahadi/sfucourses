@@ -5,6 +5,8 @@ import { Course, Department, DescriptiveSection, Section } from "types/course";
 import { useRouter } from "next/router";
 import { TERM, YEAR, getData, loadData, loadMultipleData } from "utils";
 import { GetStaticPaths, GetStaticProps } from "next";
+import Link from "next/link";
+import { Breadcrumb } from "components/Breadcrumb";
 
 interface CoursePageProps {
   initialSections?: Section[];
@@ -140,6 +142,12 @@ const CoursePage: React.FC<CoursePageProps> = ({
       />
       <main className="container">
         <section className="main-content">
+          <Breadcrumb
+            year={yearStr}
+            term={termStr}
+            dept={deptStr}
+            number={numberStr}
+          />
           <h1>
             {deptStr} {numberStr}{" "}
             {sections.length > 0 &&

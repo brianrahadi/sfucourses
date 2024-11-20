@@ -8,6 +8,7 @@ import { Course, Department } from "types/course";
 import { GetStaticPaths, GetStaticProps } from "next";
 import Departments from "@jsons/depts";
 import Link from "next/link";
+import { Breadcrumb } from "components/Breadcrumb";
 
 interface DepartmentPageProps {
   initialCourses?: Course[];
@@ -101,6 +102,7 @@ const DepartmentPage: React.FC<DepartmentPageProps> = ({
       />
       <main className="container">
         <section className="main-content">
+          <Breadcrumb year={yearStr} term={termStr} dept={deptStr} />
           <h1>
             {termStr} {yearStr} {deptStr} courses
           </h1>

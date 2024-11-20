@@ -6,6 +6,7 @@ import { TERM, YEAR, getData, loadData } from "utils";
 import { Department } from "types/course";
 import { GetStaticPaths, GetStaticProps } from "next";
 import Link from "next/link";
+import { Breadcrumb } from "components/Breadcrumb";
 
 interface YearTermPageProps {
   initialDepartments?: Department[];
@@ -85,6 +86,7 @@ const YearTermPage: React.FC<YearTermPageProps> = ({
       <Hero title="explore courses @ sfu" backgroundImage={HeroImage.src} />
       <main className="container">
         <section className="main-content">
+          <Breadcrumb year={yearStr} term={termStr} />
           <h1>
             {termStr} {yearStr} courses
           </h1>
