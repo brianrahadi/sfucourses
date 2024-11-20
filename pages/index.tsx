@@ -11,14 +11,14 @@ const LandingPage: FC<LandingPageProps> = () => {
   return (
     <div className="page landing-page">
       <Hero
-        title="sfucourses.com"
-        subtitle="welcome to"
+        title="sfucourses"
+        subtitle="explore and schedule the best course plan at"
         backgroundImage={LandingPageHeroSrc.src}
       />
       <main>
         <article className="container discover-ssss">
           <header>
-            <h2>discover courses at sfu</h2>
+            <h2>discover courses at simon fraser university</h2>
           </header>
           <a
             className="discover-ssss__main-link-item"

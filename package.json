@@ -19,6 +19,7 @@
     "@sanity/vision": "^3.18.1",
     "@types/react-big-calendar": "^1.8.4",
     "@vercel/analytics": "^1.4.1",
+    "@vercel/speed-insights": "^1.1.0",
     "date-fns": "^2.29.3",
     "fs": "^0.0.1-security",
     "gray-matter": "^4.0.3",
