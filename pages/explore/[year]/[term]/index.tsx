@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { TERM, YEAR, getData, loadData } from "utils";
 import { Department } from "types/course";
 import { GetStaticPaths, GetStaticProps } from "next";
+import Link from "next/link";
 
 interface YearTermPageProps {
   initialDepartments?: Department[];
@@ -91,7 +92,7 @@ const YearTermPage: React.FC<YearTermPageProps> = ({
         <section className="requirements-section">
           <div className="courses-container">
             {departments.map((dept) => (
-              <a
+              <Link
                 className="node"
                 key={dept.value}
                 href={`/explore/${yearStr}/${termStr}/${dept.value}`}
@@ -100,7 +101,7 @@ const YearTermPage: React.FC<YearTermPageProps> = ({
                   label={`${dept.text}${dept?.name ? ` - ${dept.name}` : ""}`}
                   type="secondary"
                 />
-              </a>
+              </Link>
             ))}
           </div>
         </section>

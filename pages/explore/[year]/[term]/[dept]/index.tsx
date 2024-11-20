@@ -1,4 +1,4 @@
-import { Hero } from "@components";
+import { Button, Hero } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useEffect, useState } from "react";
 import { SidebarCourse } from "components/SidebarCourse";
@@ -6,7 +6,8 @@ import { useRouter } from "next/router";
 import { TERM, YEAR, getData, getDepartmentName, loadData } from "utils";
 import { Course, Department } from "types/course";
 import { GetStaticPaths, GetStaticProps } from "next";
-import DepartmentsJson from "@jsons/depts";
+import Departments from "@jsons/depts";
+import Link from "next/link";
 
 interface DepartmentPageProps {
   initialCourses?: Course[];
@@ -84,7 +85,7 @@ const DepartmentPage: React.FC<DepartmentPageProps> = ({
   const termStr = Array.isArray(term) ? term[0] : term ?? "";
   const deptStr = Array.isArray(dept) ? dept[0] : dept ?? "";
 
-  const departmentName = getDepartmentName(DepartmentsJson, deptStr);
+  const departmentName = getDepartmentName(Departments, deptStr);
 
   useEffect(() => {
     if (!courses.length) {
@@ -107,20 +108,18 @@ const DepartmentPage: React.FC<DepartmentPageProps> = ({
         <section className="requirements-section">
           <div className={`courses-container`}>
             {courses.map((course) => (
-              <div
-                className="btn secondary course-node"
-                key={`${course.text}`}
-                onClick={() =>
-                  setCourseShown(course !== courseShown ? course : null)
-                }
+              <Link
+                className="node"
+                key={course.value}
+                href={`/explore/${yearStr}/${termStr}/${deptStr}/${course.value}`}
               >
-                {`${course.text}${course.title ? ` - ${course.title}` : ""} - `}
-                <a
-                  href={`/explore/${yearStr}/${termStr}/${deptStr}/${course.value}`}
-                >
-                  link
-                </a>
-              </div>
+                <Button
+                  label={`${course.text}${
+                    course?.title ? ` - ${course.title}` : ""
+                  }`}
+                  type="secondary"
+                />
+              </Link>
             ))}
           </div>
           {courseShown && (
