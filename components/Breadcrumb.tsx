@@ -12,11 +12,7 @@ export const Breadcrumb: React.FC<BreadcrumbLink> = ({
       className="breadcrumb"
       style={{ display: "flex", gap: "8px", alignItems: "center" }}
     >
-      <Link href="/" style={{ textDecoration: "none" }}>
-        home
-      </Link>
-      <span>&gt;</span> {/* Separator */}
-      {dept ? (
+      {dept && (
         <>
           <Link
             href={`/explore/${year}/${term}`}
@@ -26,10 +22,6 @@ export const Breadcrumb: React.FC<BreadcrumbLink> = ({
           </Link>
           <span>&gt;</span> {/* Separator */}
         </>
-      ) : (
-        <span className="last-child">
-          {term} {year}
-        </span>
       )}
       {number ? (
         <>
