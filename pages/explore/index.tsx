@@ -37,7 +37,10 @@ const ExplorePage: React.FC<ExplorePageProps> = ({ initialOutlines }) => {
         <section className="requirements-section">
           <div className="courses-container">
             {outlines.map((outline) => (
-              <CourseCard course={outline} />
+              <CourseCard
+                key={outline.dept + outline.number}
+                course={outline}
+              />
               // <Link
               //     className="node"
               //     key={outline.dept + outline.number}
