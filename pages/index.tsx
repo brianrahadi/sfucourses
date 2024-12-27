@@ -20,17 +20,14 @@ const LandingPage: FC<LandingPageProps> = () => {
           <header>
             <h2>discover courses at simon fraser university</h2>
           </header>
-          <a
-            className="discover-ssss__main-link-item"
-            href={`/explore/${YEAR}/${TERM}`}
-          >
+          <a className="discover-ssss__main-link-item" href={`/explore`}>
             <h3>explore</h3>
             <p>master the course planning game</p>
           </a>
 
           <section className="discover-ssss__link-items">
             <Link
-              href={`/schedule/${YEAR}/${TERM}`}
+              href={`/explore-term/${YEAR}/${TERM}`}
               className="discover-ssss__link-item"
             >
               <h3>schedule</h3>

@@ -3,7 +3,9 @@ import { Course, Department } from "types/course";
 
 export const YEAR = "2025";
 export const TERM = "spring";
-export const BASE_URL = "http://www.sfu.ca/bin/wcm/course-outlines";
+
+// export const BASE_URL = "https://sfucourses-api.onrender.com/v1/rest";
+export const BASE_URL = "http://localhost:8080/v1/rest";
 
 export function formatDate(date: string) {
   return new Date(date).toLocaleDateString("en-US", {
@@ -17,11 +19,15 @@ export function capitalize(str: string) {
   return String(str).charAt(0).toUpperCase() + String(str).slice(1);
 }
 
+export function numberWithCommas(str: number) {
+  return str.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 export async function loadData(
   queryString: string,
   setData: Dispatch<SetStateAction<any>>
 ): Promise<void> {
-  const url = `${BASE_URL}?${queryString}`;
+  const url = `${BASE_URL}${queryString}`;
 
   try {
     const response = await fetch(url);
@@ -40,7 +46,7 @@ export async function loadData(
 }
 
 export async function getData(queryString: string): Promise<any> {
-  const url = `${BASE_URL}?${queryString}`;
+  const url = `${BASE_URL}${queryString}`;
 
   try {
     const response = await fetch(url);

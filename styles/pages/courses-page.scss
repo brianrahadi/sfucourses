@@ -18,10 +18,9 @@
 .courses-container {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  flex-direction: column;
   gap: 0.75em;
   margin: 2em;
-  justify-content: center;
 
   // .node {
   //   flex: 1 1 0px;
