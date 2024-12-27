@@ -30,7 +30,8 @@ const ExplorePage: React.FC<ExplorePageProps> = ({ initialOutlines }) => {
       <main className="container">
         <section className="main-content">
           <h1>
-            discover all {outlines && numberWithCommas(outlines.length)} sfu
+            discover all{" "}
+            {outlines.length > 0 && numberWithCommas(outlines.length)} sfu
             courses
           </h1>
         </section>
