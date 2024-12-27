@@ -22,7 +22,7 @@ const ExplorePage: React.FC<ExplorePageProps> = ({ initialOutlines }) => {
     if (outlines.length === 0) {
       loadData("/outlines/all", setOutlines);
     }
-  }, []);
+  }, [outlines]);
 
   return (
     <div className="page courses-page">
