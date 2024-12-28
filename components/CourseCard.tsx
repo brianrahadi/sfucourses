@@ -1,10 +1,10 @@
 // import { CourseTerms } from './CourseTerms';
 import Link from "next/link";
 import { CourseOutline } from "types/api-types";
+import { Highlight } from "@components";
 
 type CourseCardProps = {
   course: CourseOutline;
-  //   className: string;
   query?: string;
 };
 
@@ -14,15 +14,8 @@ export const CourseCard = ({ course, query }: CourseCardProps) => {
       ? course.description.slice(0, 400) + " ..."
       : course.description;
 
-  const headerText = `${course.dept} ${course.number} - ${course.title}`;
-  const stringArr = [headerText, course.description, course.notes];
+  const header = `${course.dept} ${course.number} - ${course.title}`;
 
-  if (
-    query &&
-    !stringArr.some((str) => str.toLowerCase().includes(query.toLowerCase()))
-  ) {
-    return <></>;
-  }
   return (
     <Link
       href={`/course`}
@@ -31,18 +24,17 @@ export const CourseCard = ({ course, query }: CourseCardProps) => {
     >
       <div>
         <div className="course-title dark">
-          {headerText}
-          {/* {query ? (
-            <
-              text={`${spliceCourseCode(course._id, ' ')} - ${course.title}`}
-              query={query}
-            />
-          ) : (
-            `${spliceCourseCode(course._id, ' ')} - ${course.title}`
-          )} */}
+          {query ? <Highlight text={header} query={query} /> : <p>{header}</p>}
         </div>
-        {/* <CourseTerms course={course} variant='small' query={query} /> */}
-        <p className="course-description">{course.description}</p>
+        {query ? (
+          <Highlight
+            text={course.description}
+            query={query}
+            className="course-description"
+          />
+        ) : (
+          <p className="course-description">{courseDescriptionShortened}</p>
+        )}
       </div>
     </Link>
   );

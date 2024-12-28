@@ -73,6 +73,10 @@ $desktop-min-width: 1025px;
   }
 }
 
+.text-underline {
+  text-decoration: underline;
+}
+
 main {
   // ensures footer sticks on bottom if not enough main content
   flex: 1;

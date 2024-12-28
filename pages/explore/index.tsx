@@ -58,6 +58,7 @@ const ExplorePage: React.FC<ExplorePageProps> = ({ initialOutlines }) => {
 
     setMaxVisibleCoursesLength(filteredCourses.length);
     setVisibleCourses(slicedCourses);
+    setSliceIndex(CHUNK_SIZE);
   };
 
   // precondition: defined courses
@@ -75,10 +76,7 @@ const ExplorePage: React.FC<ExplorePageProps> = ({ initialOutlines }) => {
     });
   };
 
-  useEffect(() => {
-    setSliceIndex(CHUNK_SIZE);
-    onFilterChange();
-  }, [query]);
+  useEffect(onFilterChange, [query]);
 
   useEffect(() => {
     if (!courses) {

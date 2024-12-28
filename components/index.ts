@@ -8,3 +8,4 @@ export { Accordion } from "./Accordion";
 export { Dropdown } from "./Dropdown";
 export { SocialIcon } from "./SocialIcon";
 export { SidebarCourse } from "./SidebarCourse";
+export { Highlight } from "./Highlight";
