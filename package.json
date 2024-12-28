@@ -29,6 +29,7 @@
     "react-big-calendar": "^1.6.9",
     "react-calendar": "^4.2.1",
     "react-dom": "18.2.0",
+    "react-feather": "^2.0.10",
     "react-infinite-scroll-component": "^6.1.0",
     "react-is": "^18.2.0"
   },

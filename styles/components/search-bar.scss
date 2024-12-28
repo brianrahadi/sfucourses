@@ -1,0 +1,47 @@
+@import "../variables.scss";
+
+.search-bar {
+  position: relative;
+  background: var(--colour-neutral-1100) 100%;
+  width: 35rem;
+  height: 3rem;
+  width: 100%;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+
+  &__icon-wrapper {
+    position: absolute;
+    inset-block: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    padding-left: 0.75rem;
+  }
+
+  &__icon {
+    transition: stroke 0.2s ease;
+    stroke: #9ca3af;
+
+    &--selected {
+      stroke: var(--colour-sosy-green-500);
+    }
+  }
+
+  &__input-wrapper {
+    width: 100%;
+  }
+
+  &__input {
+    width: 100%;
+    padding-left: 2.5rem;
+    background: var(--colour-neutral-1100) 100%;
+    border: 0;
+    outline: none;
+    font-size: 1.25rem;
+
+    &:active {
+      border: 0;
+    }
+  }
+}

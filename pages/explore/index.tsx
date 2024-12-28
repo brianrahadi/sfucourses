@@ -8,52 +8,123 @@ import Link from "next/link";
 import { Breadcrumb } from "components/Breadcrumb";
 import { CourseOutline } from "types/api-types";
 import { CourseCard } from "components/CourseCard";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { SearchBar } from "components/SearchBar";
 
 interface ExplorePageProps {
   initialOutlines?: CourseOutline[];
 }
 
 const ExplorePage: React.FC<ExplorePageProps> = ({ initialOutlines }) => {
-  const [outlines, setOutlines] = useState<CourseOutline[]>(
-    initialOutlines || []
+  const [courses, setCourses] = useState<CourseOutline[] | undefined>(
+    initialOutlines || undefined
   );
+  const [visibleCourses, setVisibleCourses] = useState<
+    CourseOutline[] | undefined
+  >([]);
+  const [maxVisibleCoursesLength, setMaxVisibleCoursesLength] = useState<
+    number | undefined
+  >();
+  const [sliceIndex, setSliceIndex] = useState(20);
+  const [query, setQuery] = useState<string>("");
+  const [searchSelected, setSearchSelected] = useState<boolean>(false);
+  const CHUNK_SIZE = 20;
+
+  // const filters = {
+  //     query: query ? query : null,
+  // }
+
+  const loadMore = () => {
+    if (!courses) {
+      return;
+    }
+
+    const filteredCourses = filterCoursesByQuery();
+    const nextCourses = filteredCourses.slice(
+      sliceIndex,
+      sliceIndex + CHUNK_SIZE
+    );
+    setVisibleCourses((prev) => [...(prev || []), ...nextCourses]);
+    setSliceIndex((prev) => prev + CHUNK_SIZE);
+  };
+
+  const onFilterChange = () => {
+    if (!courses) {
+      return;
+    }
+
+    const filteredCourses = filterCoursesByQuery();
+    const slicedCourses = filteredCourses.slice(0, sliceIndex);
+
+    setMaxVisibleCoursesLength(filteredCourses.length);
+    setVisibleCourses(slicedCourses);
+  };
+
+  // precondition: defined courses
+  const filterCoursesByQuery = () => {
+    if (!query) {
+      return courses!;
+    }
+    return courses!.filter((outline) => {
+      const headerText = `${outline.dept} ${outline.number} - ${outline.title}`;
+      const stringArr = [headerText, outline.description];
+      const isQuerySubstring = stringArr.some((str) =>
+        str.toLowerCase().includes(query.toLowerCase())
+      );
+      return isQuerySubstring;
+    });
+  };
 
   useEffect(() => {
-    if (outlines.length === 0) {
-      loadData("/outlines/all", setOutlines);
+    setSliceIndex(CHUNK_SIZE);
+    onFilterChange();
+  }, [query]);
+
+  useEffect(() => {
+    if (!courses) {
+      loadData("/outlines/all", (res) => setCourses(res.data)).then();
     }
-  }, [outlines]);
+    if (courses) {
+      setVisibleCourses(courses.slice(0, CHUNK_SIZE));
+      setMaxVisibleCoursesLength(courses.length);
+    }
+  }, [courses]);
 
   return (
     <div className="page courses-page">
-      <Hero title="explore courses @ sfu" backgroundImage={HeroImage.src} />
+      <Hero
+        title={`explore ${
+          courses && numberWithCommas(courses.length) + " "
+        }courses @ sfu`}
+        backgroundImage={HeroImage.src}
+      />
       <main className="container">
-        <section className="main-content">
-          <h1>
-            discover all{" "}
-            {outlines.length > 0 && numberWithCommas(outlines.length)} sfu
-            courses
-          </h1>
-        </section>
         <section className="requirements-section">
-          <div className="courses-container">
-            {outlines.map((outline) => (
-              <CourseCard
-                key={outline.dept + outline.number}
-                course={outline}
-              />
-              // <Link
-              //     className="node"
-              //     key={outline.dept + outline.number}
-              //     href={`/explore/${outline.dept}/${outline.number}`}
-              // >
-              //     <Button
-              //         label={`${outline.dept}${outline.number ? ` ${outline.number}` : ""} - ${outline.title} - ${outline.description}`}
-              //         type="secondary"
-              //     />
-              // </Link>
-            ))}
-          </div>
+          {visibleCourses && (
+            <>
+              <InfiniteScroll
+                dataLength={visibleCourses.length}
+                hasMore={visibleCourses.length < (maxVisibleCoursesLength || 0)}
+                loader={<p>Loading...</p>}
+                next={loadMore}
+                className="courses-container"
+              >
+                <SearchBar
+                  handleInputChange={(value) => setQuery(value)}
+                  searchSelected={searchSelected}
+                  setSearchSelected={setSearchSelected}
+                  placeholder="Search by course code, title, description or instructor name"
+                />
+                {visibleCourses.map((outline) => (
+                  <CourseCard
+                    key={outline.dept + outline.number}
+                    course={outline}
+                    query={query}
+                  />
+                ))}
+              </InfiniteScroll>
+            </>
+          )}
         </section>
       </main>
     </div>

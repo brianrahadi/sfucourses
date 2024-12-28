@@ -5,15 +5,24 @@ import { CourseOutline } from "types/api-types";
 type CourseCardProps = {
   course: CourseOutline;
   //   className: string;
-  //   query?: string;
+  query?: string;
 };
 
-export const CourseCard = ({ course }: CourseCardProps) => {
+export const CourseCard = ({ course, query }: CourseCardProps) => {
   const courseDescriptionShortened =
     course.description.length > 400
       ? course.description.slice(0, 400) + " ..."
       : course.description;
 
+  const headerText = `${course.dept} ${course.number} - ${course.title}`;
+  const stringArr = [headerText, course.description, course.notes];
+
+  if (
+    query &&
+    !stringArr.some((str) => str.toLowerCase().includes(query.toLowerCase()))
+  ) {
+    return <></>;
+  }
   return (
     <Link
       href={`/course`}
@@ -22,7 +31,7 @@ export const CourseCard = ({ course }: CourseCardProps) => {
     >
       <div>
         <div className="course-title dark">
-          {`${course.dept} ${course.number} - ${course.title}`}
+          {headerText}
           {/* {query ? (
             <
               text={`${spliceCourseCode(course._id, ' ')} - ${course.title}`}
@@ -33,7 +42,7 @@ export const CourseCard = ({ course }: CourseCardProps) => {
           )} */}
         </div>
         {/* <CourseTerms course={course} variant='small' query={query} /> */}
-        <div className="course-description">{course.description}</div>
+        <p className="course-description">{course.description}</p>
       </div>
     </Link>
   );
