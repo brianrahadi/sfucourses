@@ -209,7 +209,9 @@ export const ExploreFilter: React.FC = () => {
         </p>
         <div className="explore-filter__section__row">
           {levels.map((level) => {
-            return <FilterButton label={level} isSelected={false} />;
+            return (
+              <FilterButton key={level} label={level} isSelected={false} />
+            );
           })}
         </div>
       </div>
@@ -219,7 +221,7 @@ export const ExploreFilter: React.FC = () => {
         </p>
         <div className="explore-filter__section__row">
           {terms.map((term) => {
-            return <FilterButton label={term} isSelected={false} />;
+            return <FilterButton key={term} label={term} isSelected={false} />;
           })}
         </div>
       </div>
