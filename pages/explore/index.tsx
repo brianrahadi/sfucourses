@@ -60,7 +60,7 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
       return;
     }
 
-    const filteredCourses = filterCoursesByQuery(courses);
+    const filteredCourses = filterCourses(courses);
     const nextCourses = filteredCourses.slice(
       sliceIndex,
       sliceIndex + CHUNK_SIZE
@@ -74,15 +74,20 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
       return;
     }
 
-    const subjectFilteredCourse = filterCourseBySubjects(courses);
-    const levelFilteredCourse = filterCoursesByLevels(subjectFilteredCourse);
-    const termFilteredCourse = filterCoursesByTerms(levelFilteredCourse);
-    const filteredCourses = filterCoursesByQuery(termFilteredCourse);
+    const filteredCourses = filterCourses(courses);
     const slicedCourses = filteredCourses.slice(0, sliceIndex);
 
     setMaxVisibleCoursesLength(filteredCourses.length);
     setVisibleCourses(slicedCourses);
     setSliceIndex(CHUNK_SIZE);
+  };
+
+  const filterCourses = (courses: CourseOutline[]) => {
+    const subjectFilteredCourse = filterCourseBySubjects(courses);
+    const levelFilteredCourse = filterCoursesByLevels(subjectFilteredCourse);
+    const termFilteredCourse = filterCoursesByTerms(levelFilteredCourse);
+    const filteredCourses = filterCoursesByQuery(termFilteredCourse);
+    return filteredCourses;
   };
 
   // precondition: defined courses
