@@ -74,7 +74,8 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
       return;
     }
 
-    const levelFilteredCourse = filterCoursesByLevels(courses);
+    const subjectFilteredCourse = filterCourseBySubjects(courses);
+    const levelFilteredCourse = filterCoursesByLevels(subjectFilteredCourse);
     const termFilteredCourse = filterCoursesByTerms(levelFilteredCourse);
     const filteredCourses = filterCoursesByQuery(termFilteredCourse);
     const slicedCourses = filteredCourses.slice(0, sliceIndex);
@@ -97,6 +98,16 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
       );
       return isQuerySubstring;
     });
+  };
+
+  const filterCourseBySubjects = (courses: CourseOutline[]) => {
+    if (subjects.selected.length == 0) {
+      return courses;
+    }
+
+    const selectedSubjectsSet = new Set(subjects.selected);
+
+    return courses.filter((course) => selectedSubjectsSet.has(course.dept));
   };
 
   const filterCoursesByLevels = (courses: CourseOutline[]) => {
@@ -130,7 +141,12 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
     });
   };
 
-  useEffect(onFilterChange, [query, levels.selected, terms.selected]);
+  useEffect(onFilterChange, [
+    query,
+    subjects.selected,
+    levels.selected,
+    terms.selected,
+  ]);
 
   useEffect(() => {
     if (!courses || !totalCoursesCount || courses.length < totalCoursesCount) {

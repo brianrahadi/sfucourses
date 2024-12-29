@@ -94,7 +94,7 @@ export const SUBJECTS = [
 ];
 
 const subjectOptions = SUBJECTS.map((subj) => {
-  return { value: subj.toLowerCase(), label: subj };
+  return { value: subj, label: subj };
 });
 
 const colourNeutral1000 = "#323434";
@@ -193,12 +193,13 @@ export const ExploreFilter: React.FC<ExploreFilters> = ({
           styles={customStyles}
           placeholder={""}
           // onChange={}
-          // onChange={(e) => {
-          //   const values = e.;
-          //   for (const v of values) {
-
-          //   }
-          // }}
+          onChange={(e) => {
+            const selectedSubjects = [];
+            for (const subject of e.values()) {
+              selectedSubjects.push(subject.value);
+            }
+            subjects.setSelected(selectedSubjects);
+          }}
         />
       </div>
       <div className="explore-filter__section">
