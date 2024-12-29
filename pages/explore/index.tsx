@@ -1,20 +1,46 @@
 import { ExploreFilter, Hero } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useEffect, useState } from "react";
-import { loadData, numberWithCommas } from "utils";
+import { getData, loadData, numberWithCommas } from "utils";
 import { CourseOutline } from "types/api-types";
 import { CourseCard } from "components/CourseCard";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { SearchBar } from "components/SearchBar";
 import { useExploreFilters } from "hooks/UseExploreFilters";
+import { GetStaticProps } from "next";
 
 interface ExplorePageProps {
-  initialOutlines?: CourseOutline[];
+  initialCourses?: CourseOutline[];
+  totalCoursesCount?: number;
 }
 
-const ExplorePage: React.FC<ExplorePageProps> = ({ initialOutlines }) => {
+export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
+  try {
+    const res = await getData("/outlines/all?limit=100");
+    const courses: CourseOutline[] = res.data;
+    const totalCoursesCount = res.total_count;
+
+    return {
+      props: {
+        initialCourses: courses,
+        totalCoursesCount: totalCoursesCount,
+      },
+      revalidate: 86400, // 24 hours
+    };
+  } catch (error) {
+    console.error("Error getting all courses", error);
+    return {
+      notFound: true,
+    };
+  }
+};
+
+const ExplorePage: React.FC<ExplorePageProps> = ({
+  initialCourses,
+  totalCoursesCount = 3306,
+}) => {
   const [courses, setCourses] = useState<CourseOutline[] | undefined>(
-    initialOutlines || undefined
+    initialCourses || undefined
   );
   const [visibleCourses, setVisibleCourses] = useState<
     CourseOutline[] | undefined
@@ -74,8 +100,8 @@ const ExplorePage: React.FC<ExplorePageProps> = ({ initialOutlines }) => {
   useEffect(onFilterChange, [query]);
 
   useEffect(() => {
-    if (!courses) {
-      loadData("/outlines/all", (res) => setCourses(res.data)).then();
+    if (!courses || courses.length < totalCoursesCount) {
+      loadData("/outlines/all", (res) => setCourses(res.data));
     }
     if (courses) {
       setVisibleCourses(courses.slice(0, CHUNK_SIZE));
