@@ -37,7 +37,7 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
 
 const ExplorePage: React.FC<ExplorePageProps> = ({
   initialCourses,
-  totalCoursesCount = 3306,
+  totalCoursesCount,
 }) => {
   const [courses, setCourses] = useState<CourseOutline[] | undefined>(
     initialCourses || undefined
@@ -100,8 +100,11 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
   useEffect(onFilterChange, [query]);
 
   useEffect(() => {
-    if (!courses || courses.length < totalCoursesCount) {
-      loadData("/outlines/all", (res) => setCourses(res.data));
+    if (!courses || !totalCoursesCount || courses.length < totalCoursesCount) {
+      loadData("/outlines/all", (res) => {
+        totalCoursesCount = res.total_count;
+        setCourses(res.data);
+      });
     }
     if (courses) {
       setVisibleCourses(courses.slice(0, CHUNK_SIZE));
