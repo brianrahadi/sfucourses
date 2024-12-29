@@ -60,7 +60,7 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
       return;
     }
 
-    const filteredCourses = filterCoursesByQuery();
+    const filteredCourses = filterCoursesByQuery(courses);
     const nextCourses = filteredCourses.slice(
       sliceIndex,
       sliceIndex + CHUNK_SIZE
@@ -74,7 +74,9 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
       return;
     }
 
-    const filteredCourses = filterCoursesByQuery();
+    const levelFilteredCourse = filterCoursesByLevels(courses);
+    const termFilteredCourse = filterCoursesByTerms(courses);
+    const filteredCourses = filterCoursesByQuery(termFilteredCourse);
     const slicedCourses = filteredCourses.slice(0, sliceIndex);
 
     setMaxVisibleCoursesLength(filteredCourses.length);
@@ -83,11 +85,11 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
   };
 
   // precondition: defined courses
-  const filterCoursesByQuery = () => {
+  const filterCoursesByQuery = (courses: CourseOutline[]) => {
     if (!query) {
-      return courses!;
+      return courses;
     }
-    return courses!.filter((outline) => {
+    return courses.filter((outline) => {
       const headerText = `${outline.dept} ${outline.number} - ${outline.title} (${outline.units})`;
       const stringArr = [headerText, outline.description];
       const isQuerySubstring = stringArr.some((str) =>
@@ -97,7 +99,38 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
     });
   };
 
-  useEffect(onFilterChange, [query]);
+  const filterCoursesByLevels = (courses: CourseOutline[]) => {
+    if (levels.selected.length == 0) {
+      return courses;
+    }
+
+    const levelsFirstChar = levels.selected.map((level) => +level[0]);
+    return courses.filter((course) => {
+      const courseLevelFirstChar = +course.number[0];
+      return levelsFirstChar.some((level) => {
+        if (+level >= 5) {
+          return courseLevelFirstChar >= 5;
+        }
+        return courseLevelFirstChar == level;
+      });
+    });
+  };
+
+  const filterCoursesByTerms = (courses: CourseOutline[]) => {
+    if (terms.selected.length == 0) {
+      return courses;
+    }
+
+    const selectedTermsSet = new Set(terms.selected);
+
+    return courses.filter((course) => {
+      return course.terms.some((courseTerm) =>
+        selectedTermsSet.has(courseTerm)
+      );
+    });
+  };
+
+  useEffect(onFilterChange, [query, levels.selected, terms.selected]);
 
   useEffect(() => {
     if (!courses || !totalCoursesCount || courses.length < totalCoursesCount) {

@@ -22,10 +22,10 @@ export const CourseCard = ({ course, query }: CourseCardProps) => {
       key={course.dept + course.number}
       className="course-card"
     >
-      <div>
-        <div className="course-title dark">
-          {query ? <Highlight text={header} query={query} /> : <p>{header}</p>}
-        </div>
+      <div className="course-title dark">
+        {query ? <Highlight text={header} query={query} /> : <p>{header}</p>}
+      </div>
+      <div className="course-card__content">
         {query ? (
           <Highlight
             text={courseDescriptionShortened}
@@ -35,6 +35,7 @@ export const CourseCard = ({ course, query }: CourseCardProps) => {
         ) : (
           <p className="course-description">{courseDescriptionShortened}</p>
         )}
+        <p>Terms: {course.terms.join(", ")}</p>
       </div>
     </Link>
   );
