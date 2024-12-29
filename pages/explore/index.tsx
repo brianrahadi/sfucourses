@@ -6,6 +6,7 @@ import { CourseOutline } from "types/api-types";
 import { CourseCard } from "components/CourseCard";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { SearchBar } from "components/SearchBar";
+import { useExploreFilters } from "hooks/UseExploreFilters";
 
 interface ExplorePageProps {
   initialOutlines?: CourseOutline[];
@@ -26,9 +27,7 @@ const ExplorePage: React.FC<ExplorePageProps> = ({ initialOutlines }) => {
   const [searchSelected, setSearchSelected] = useState<boolean>(false);
   const CHUNK_SIZE = 20;
 
-  // const filters = {
-  //     query: query ? query : null,
-  // }
+  const { subjects, levels, terms, prereqs } = useExploreFilters();
 
   const loadMore = () => {
     if (!courses) {
@@ -86,14 +85,7 @@ const ExplorePage: React.FC<ExplorePageProps> = ({ initialOutlines }) => {
 
   return (
     <div className="page courses-page">
-      <Hero
-        title={`exploring ${
-          maxVisibleCoursesLength
-            ? numberWithCommas(maxVisibleCoursesLength) + " "
-            : ""
-        } course(s)`}
-        backgroundImage={HeroImage.src}
-      />
+      <Hero title={`explore courses`} backgroundImage={HeroImage.src} />
       <main id="explore-container" className="container">
         <section className="courses-section">
           <SearchBar
@@ -102,6 +94,14 @@ const ExplorePage: React.FC<ExplorePageProps> = ({ initialOutlines }) => {
             setSearchSelected={setSearchSelected}
             placeholder="course code, title, or description"
           />
+          <p>
+            {" "}
+            exploring{" "}
+            {maxVisibleCoursesLength
+              ? numberWithCommas(maxVisibleCoursesLength)
+              : "0"}{" "}
+            {(maxVisibleCoursesLength || 0) > 1 ? "courses" : "course"}{" "}
+          </p>
           {visibleCourses && (
             <InfiniteScroll
               dataLength={visibleCourses.length}
@@ -121,7 +121,12 @@ const ExplorePage: React.FC<ExplorePageProps> = ({ initialOutlines }) => {
           )}
         </section>
         <section className="filter-section">
-          <ExploreFilter />
+          <ExploreFilter
+            subjects={subjects}
+            levels={levels}
+            terms={terms}
+            prereqs={prereqs}
+          />
         </section>
       </main>
     </div>

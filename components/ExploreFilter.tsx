@@ -2,7 +2,8 @@ import Select from "react-select";
 import { capitalize } from "utils";
 import { Button } from "@components";
 import { SearchBar } from "./SearchBar";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
+import { ExploreFilters } from "hooks/UseExploreFilters";
 
 export const SUBJECTS = [
   "ACMA",
@@ -136,57 +137,47 @@ const customStyles = {
   }),
 };
 
-const levels = ["1XX", "2XX", "3XX", "4XX", "5XX+"];
-const terms = ["Spring 2024", "Summer 2024", "Fall 2024", "Spring 2025"];
+const levelOptions = ["1XX", "2XX", "3XX", "4XX", "5XX+"];
+const termOptions = ["Spring 2024", "Summer 2024", "Fall 2024", "Spring 2025"];
 
 interface FilterButtonProps {
   icon?: JSX.Element;
+  value: string;
   isSelected: boolean;
-  label: string;
-  setSelections?: (selected: string[]) => void;
+  setSelected: Dispatch<SetStateAction<string[]>>;
 }
 
 const FilterButton: React.FC<FilterButtonProps> = ({
   icon,
+  value,
   isSelected,
-  label,
-  setSelections,
+  setSelected,
 }) => {
+  const onClick = () => {
+    if (isSelected) {
+      setSelected((selections) =>
+        selections.filter((selection) => selection !== value)
+      );
+    } else {
+      setSelected((selections) => selections.concat(value));
+    }
+  };
   return (
     <Button
       className="filter-button"
-      label={label}
+      label={value}
+      onClick={onClick}
       type={isSelected ? "primary" : "secondary"}
     />
   );
 };
 
-interface ExploreFilterProps {
-  subjects: {
-    selected: string[];
-    setSelected: (selected: string[]) => void;
-  };
-  levels: {
-    selected: string[];
-    setSelected: (selected: string[]) => void;
-  };
-  terms: {
-    selected: string[];
-    setSelected: (selected: string[]) => void;
-  };
-  prereqs: {
-    isSearchSelected: boolean;
-    setSearchSelected: (value: boolean) => void;
-    searchQuery: string;
-    setQueryQuery: (str: string) => void;
-    hasNone: boolean;
-    setHasNone: (value: boolean) => void;
-  };
-}
-
-export const ExploreFilter: React.FC = () => {
-  const [prereqSearchSelected, setPrereqSearchSelected] = useState(false);
-  const [prereqSearchQuery, setPrereqSearchQuery] = useState("");
+export const ExploreFilter: React.FC<ExploreFilters> = ({
+  subjects,
+  levels,
+  terms,
+  prereqs,
+}) => {
   // console.log(subjectOptions)
   return (
     <div className="explore-filter">
@@ -208,9 +199,14 @@ export const ExploreFilter: React.FC = () => {
           <b>Level</b>
         </p>
         <div className="explore-filter__section__row">
-          {levels.map((level) => {
+          {levelOptions.map((level) => {
             return (
-              <FilterButton key={level} label={level} isSelected={false} />
+              <FilterButton
+                key={level}
+                value={level}
+                isSelected={levels.selected.includes(level)}
+                setSelected={levels.setSelected}
+              />
             );
           })}
         </div>
@@ -220,8 +216,15 @@ export const ExploreFilter: React.FC = () => {
           <b>Terms</b>
         </p>
         <div className="explore-filter__section__row">
-          {terms.map((term) => {
-            return <FilterButton key={term} label={term} isSelected={false} />;
+          {termOptions.map((term) => {
+            return (
+              <FilterButton
+                key={term}
+                value={term}
+                isSelected={terms.selected.includes(term)}
+                setSelected={terms.setSelected}
+              />
+            );
           })}
         </div>
       </div>
@@ -232,9 +235,9 @@ export const ExploreFilter: React.FC = () => {
         <SearchBar
           placeholder="prerequisites"
           className="secondary"
-          handleInputChange={setPrereqSearchQuery}
-          searchSelected={prereqSearchSelected}
-          setSearchSelected={setPrereqSearchSelected}
+          handleInputChange={prereqs.setQueryQuery}
+          searchSelected={prereqs.isSearchSelected}
+          setSearchSelected={prereqs.setSearchSelected}
         />
         <div className="explore-filter__section__row">
           <input className="checkbox" type="checkbox" name="no-prereq" id="" />
