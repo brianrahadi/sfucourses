@@ -1,0 +1,73 @@
+@import "../variables.scss";
+
+.explore-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  width: 22.5rem;
+  max-width: 100%;
+  border-radius: 0.5rem;
+  background: var(--colour-neutral-1100) 100%;
+  padding: 2rem;
+
+  &__section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    &__row {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+  }
+
+  &__subject-select {
+    max-width: 100%;
+    width: 15em;
+  }
+
+  .checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.05);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+      border-color: rgba(255, 255, 255, 0.5);
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    &:checked {
+      background-color: rgba(255, 255, 255, 0.9);
+      border-color: rgba(255, 255, 255, 0.9);
+
+      &::after {
+        content: "";
+        width: 9px;
+        height: 9px;
+        background-color: var(--colour-neutral-1000);
+        border-radius: 1px;
+      }
+
+      &:hover {
+        background-color: var(--colour-neutral-800);
+      }
+    }
+  }
+}
+
+@include viewport(mobile) {
+  .explore-filter {
+    margin: 2rem 0;
+    position: relative;
+  }
+}

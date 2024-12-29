@@ -30,7 +30,7 @@ export const HeaderNav: React.FC = () => {
 
         <div className="content">
           <nav className="pages">
-            <Link href={`/explore/${YEAR}/${TERM}`} className="page-link">
+            <Link href="/explore" className="page-link">
               explore
             </Link>
             <Link href={`/schedule/${YEAR}/${TERM}`} className="page-link">

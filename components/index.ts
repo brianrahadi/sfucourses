@@ -1,4 +1,5 @@
 export { Button } from "./Button";
+export { ExploreFilter } from "./ExploreFilter";
 export { Helmet } from "./Helmet";
 export { Hero } from "./Hero";
 export { HeaderNav } from "./HeaderNav";

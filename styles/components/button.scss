@@ -1,13 +1,12 @@
 @import "../variables.scss";
 
 .btn {
-  padding: 1rem 1.5rem;
+  padding: 0.5rem 1rem;
   background-color: var(--colour-sosy-green-500);
   border: none;
   color: var(--colour-neutral-000);
-  border-radius: 1rem;
-  min-width: 8rem;
-  font-size: 0.875rem;
+  border-radius: 0.75rem;
+  font-size: 1rem;
   transition: all $transition-speed-fast $easing-bounce;
   cursor: pointer;
 

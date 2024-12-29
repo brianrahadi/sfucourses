@@ -1,13 +1,15 @@
 import { escapeRegExp } from "lodash";
 
-export const Highlight = ({
-  text,
-  query,
-  className,
-}: {
+interface HighlightProps {
   text: string;
   query?: string;
   className?: string;
+}
+
+export const Highlight: React.FC<HighlightProps> = ({
+  text,
+  query,
+  className,
 }) => {
   return (
     <span className={className}>

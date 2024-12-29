@@ -1,11 +1,7 @@
-import { Button, Hero } from "@components";
+import { ExploreFilter, Hero } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import { TERM, YEAR, getData, loadData, numberWithCommas } from "utils";
-import { GetStaticPaths, GetStaticProps } from "next";
-import Link from "next/link";
-import { Breadcrumb } from "components/Breadcrumb";
+import { loadData, numberWithCommas } from "utils";
 import { CourseOutline } from "types/api-types";
 import { CourseCard } from "components/CourseCard";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -67,7 +63,7 @@ const ExplorePage: React.FC<ExplorePageProps> = ({ initialOutlines }) => {
       return courses!;
     }
     return courses!.filter((outline) => {
-      const headerText = `${outline.dept} ${outline.number} - ${outline.title}`;
+      const headerText = `${outline.dept} ${outline.number} - ${outline.title} (${outline.units})`;
       const stringArr = [headerText, outline.description];
       const isQuerySubstring = stringArr.some((str) =>
         str.toLowerCase().includes(query.toLowerCase())
@@ -91,38 +87,41 @@ const ExplorePage: React.FC<ExplorePageProps> = ({ initialOutlines }) => {
   return (
     <div className="page courses-page">
       <Hero
-        title={`explore ${
-          courses && numberWithCommas(courses.length) + " "
-        }courses @ sfu`}
+        title={`exploring ${
+          maxVisibleCoursesLength
+            ? numberWithCommas(maxVisibleCoursesLength) + " "
+            : ""
+        } course(s)`}
         backgroundImage={HeroImage.src}
       />
-      <main className="container">
-        <section className="requirements-section">
+      <main id="explore-container" className="container">
+        <section className="courses-section">
+          <SearchBar
+            handleInputChange={setQuery}
+            searchSelected={searchSelected}
+            setSearchSelected={setSearchSelected}
+            placeholder="course code, title, or description"
+          />
           {visibleCourses && (
-            <>
-              <InfiniteScroll
-                dataLength={visibleCourses.length}
-                hasMore={visibleCourses.length < (maxVisibleCoursesLength || 0)}
-                loader={<p>Loading...</p>}
-                next={loadMore}
-                className="courses-container"
-              >
-                <SearchBar
-                  handleInputChange={(value) => setQuery(value)}
-                  searchSelected={searchSelected}
-                  setSearchSelected={setSearchSelected}
-                  placeholder="Search by course code, title, description or instructor name"
+            <InfiniteScroll
+              dataLength={visibleCourses.length}
+              hasMore={visibleCourses.length < (maxVisibleCoursesLength || 0)}
+              loader={<p>Loading...</p>}
+              next={loadMore}
+              className="courses-container"
+            >
+              {visibleCourses.map((outline) => (
+                <CourseCard
+                  key={outline.dept + outline.number}
+                  course={outline}
+                  query={query}
                 />
-                {visibleCourses.map((outline) => (
-                  <CourseCard
-                    key={outline.dept + outline.number}
-                    course={outline}
-                    query={query}
-                  />
-                ))}
-              </InfiniteScroll>
-            </>
+              ))}
+            </InfiniteScroll>
           )}
+        </section>
+        <section className="filter-section">
+          <ExploreFilter />
         </section>
       </main>
     </div>

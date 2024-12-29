@@ -1,18 +1,23 @@
 @import "../variables.scss";
 
-.requirements-section {
+#explore-container {
   display: flex;
-  flex-direction: row;
-  gap: 1em;
-  justify-content: space-between;
+  max-width: 100%;
+  width: 75rem;
+  gap: 2rem;
 }
 
-.requirements-container {
+.courses-section {
   display: flex;
   flex-direction: column;
-  gap: 1em;
-  margin: 2em 0;
-  flex: 0 0 100%;
+  width: 50rem;
+  max-width: 100%;
+  gap: 0.5em;
+  flex: 1 1;
+}
+
+.filter-section {
+  max-width: 100%;
 }
 
 .courses-container {
@@ -20,23 +25,19 @@
   flex-wrap: wrap;
   flex-direction: column;
   gap: 0.75em;
-  margin: 2em;
-
-  // .node {
-  //   flex: 1 1 0px;
-  // }
+  margin: 1em 0;
 }
 
-.sections-container {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5em;
-  margin: 2em;
-}
+// .sections-container {
+//   display: flex;
+//   flex-direction: column;
+//   gap: 1.5em;
+//   margin: 2em;
+// }
 
-.course-node {
-  text-align: center;
-}
+// .course-node {
+//   text-align: center;
+// }
 
 .sidebar-course {
   z-index: 1;
@@ -116,18 +117,21 @@
 }
 
 @include viewport(tablet-desktop) {
-  .half-width {
-    flex: 0 0 50%;
-  }
+  // .half-width {
+  //   flex: 0 0 50%;
+  // }
 }
 
 @include viewport(mobile) {
-  .sidebar-course {
-    width: 90%;
-    left: 50%;
-    right: 50%;
-    top: 7%;
-    height: 60vh;
-    transform: translateX(-50%);
+  #explore-container {
+    flex-direction: column-reverse;
   }
+  // .sidebar-course {
+  //   width: 90%;
+  //   left: 50%;
+  //   right: 50%;
+  //   top: 7%;
+  //   height: 60vh;
+  //   transform: translateX(-50%);
+  // }
 }

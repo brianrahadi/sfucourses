@@ -14,7 +14,7 @@ export const CourseCard = ({ course, query }: CourseCardProps) => {
       ? course.description.slice(0, 400) + " ..."
       : course.description;
 
-  const header = `${course.dept} ${course.number} - ${course.title}`;
+  const header = `${course.dept} ${course.number} - ${course.title} (${course.units})`;
 
   return (
     <Link
@@ -28,7 +28,7 @@ export const CourseCard = ({ course, query }: CourseCardProps) => {
         </div>
         {query ? (
           <Highlight
-            text={course.description}
+            text={courseDescriptionShortened}
             query={query}
             className="course-description"
           />

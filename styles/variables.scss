@@ -77,6 +77,11 @@ $desktop-min-width: 1025px;
   text-decoration: underline;
 }
 
+html,
+:root {
+  background-color: var(--colour-neutral-1200);
+}
+
 main {
   // ensures footer sticks on bottom if not enough main content
   flex: 1;
