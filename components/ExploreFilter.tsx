@@ -192,6 +192,13 @@ export const ExploreFilter: React.FC<ExploreFilters> = ({
           closeMenuOnSelect={false}
           styles={customStyles}
           placeholder={""}
+          // onChange={}
+          // onChange={(e) => {
+          //   const values = e.;
+          //   for (const v of values) {
+
+          //   }
+          // }}
         />
       </div>
       <div className="explore-filter__section">

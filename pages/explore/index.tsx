@@ -75,7 +75,7 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
     }
 
     const levelFilteredCourse = filterCoursesByLevels(courses);
-    const termFilteredCourse = filterCoursesByTerms(courses);
+    const termFilteredCourse = filterCoursesByTerms(levelFilteredCourse);
     const filteredCourses = filterCoursesByQuery(termFilteredCourse);
     const slicedCourses = filteredCourses.slice(0, sliceIndex);
 
