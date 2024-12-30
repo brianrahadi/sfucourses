@@ -243,12 +243,33 @@ export const ExploreFilter: React.FC<ExploreFilters> = ({
         <SearchBar
           placeholder="prerequisites"
           className="secondary"
-          handleInputChange={prereqs.setQueryQuery}
+          handleInputChange={prereqs.setSearchQuery}
           searchSelected={prereqs.isSearchSelected}
           setSearchSelected={prereqs.setSearchSelected}
+          value={prereqs.searchQuery}
+          disabled={prereqs.hasNone}
+          disabledPlaceholder="no prerequisite"
         />
         <div className="explore-filter__section__row">
-          <input className="checkbox" type="checkbox" name="no-prereq" id="" />
+          <input
+            className="checkbox"
+            type="checkbox"
+            name="no-prereq"
+            id=""
+            checked={prereqs.isShown}
+            onChange={() => prereqs.setIsShown(!prereqs.isShown)}
+          />
+          <label htmlFor="">Show prerequisites</label>
+        </div>
+        <div className="explore-filter__section__row">
+          <input
+            className="checkbox"
+            type="checkbox"
+            name="no-prereq"
+            id=""
+            checked={prereqs.hasNone}
+            onChange={() => prereqs.setHasNone(!prereqs.hasNone)}
+          />
           <label htmlFor="">No prerequisite</label>
         </div>
       </div>

@@ -17,7 +17,9 @@ export interface ExploreFilters {
     isSearchSelected: boolean;
     setSearchSelected: (value: boolean) => void;
     searchQuery: string;
-    setQueryQuery: (str: string) => void;
+    setSearchQuery: (str: string) => void;
+    isShown: boolean;
+    setIsShown: (value: boolean) => void;
     hasNone: boolean;
     setHasNone: (value: boolean) => void;
   };
@@ -32,6 +34,7 @@ export const useExploreFilters = (): ExploreFilters => {
 
   const [prereqSearchSelected, setPrereqSearchSelected] = useState(false);
   const [prereqSearchQuery, setPrereqSearchQuery] = useState("");
+  const [showPrereqs, setShowPrereqs] = useState(false);
   const [hasNoPrereq, setHasNoPrereq] = useState(false);
 
   return {
@@ -51,7 +54,9 @@ export const useExploreFilters = (): ExploreFilters => {
       isSearchSelected: prereqSearchSelected,
       setSearchSelected: setPrereqSearchSelected,
       searchQuery: prereqSearchQuery,
-      setQueryQuery: setPrereqSearchQuery,
+      setSearchQuery: setPrereqSearchQuery,
+      isShown: showPrereqs,
+      setIsShown: setShowPrereqs,
       hasNone: hasNoPrereq,
       setHasNone: setHasNoPrereq,
     },

@@ -6,19 +6,29 @@ import { Highlight } from "@components";
 type CourseCardProps = {
   course: CourseOutline;
   query?: string;
+  showPrereqs?: boolean;
+  prereqsQuery?: string;
+  hasNoPrereq?: boolean;
 };
 
-export const CourseCard = ({ course, query }: CourseCardProps) => {
+export const CourseCard = ({
+  course,
+  query,
+  prereqsQuery,
+  showPrereqs,
+  hasNoPrereq,
+}: CourseCardProps) => {
   const courseDescriptionShortened =
     course.description.length > 400
       ? course.description.slice(0, 400) + " ..."
       : course.description;
 
   const header = `${course.dept} ${course.number} - ${course.title} (${course.units})`;
+  const isUndergrad = course.number[0] <= "4";
 
   return (
     <Link
-      href={`/course`}
+      href={`/explore/${course.dept.toLowerCase()}-${course.number}`}
       key={course.dept + course.number}
       className="course-card"
     >
@@ -36,6 +46,18 @@ export const CourseCard = ({ course, query }: CourseCardProps) => {
           <p className="course-description">{courseDescriptionShortened}</p>
         )}
         <p>Terms: {course.terms.join(", ")}</p>
+        {showPrereqs && !prereqsQuery ? (
+          <p>Prerequisite: {course.prerequisites || "None"}</p>
+        ) : prereqsQuery ? (
+          <Highlight
+            initialText="Prerequisites: "
+            text={course.prerequisites}
+            query={prereqsQuery}
+            className="course-description"
+          />
+        ) : (
+          <></>
+        )}
       </div>
     </Link>
   );

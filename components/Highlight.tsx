@@ -4,15 +4,18 @@ interface HighlightProps {
   text: string;
   query?: string;
   className?: string;
+  initialText?: string;
 }
 
 export const Highlight: React.FC<HighlightProps> = ({
   text,
   query,
   className,
+  initialText,
 }) => {
   return (
     <span className={className}>
+      {initialText ? initialText : ""}
       {text
         .split(new RegExp(`(${escapeRegExp(query)})`, "gi"))
         .map((part, i) => (

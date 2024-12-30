@@ -12,6 +12,8 @@ interface SearchBarProps {
   setSearchSelected: (value: boolean) => void;
   value?: string;
   className?: string;
+  disabled?: boolean;
+  disabledPlaceholder?: string;
 }
 
 export const SearchBar = ({
@@ -23,9 +25,11 @@ export const SearchBar = ({
   setSearchSelected,
   value,
   className,
+  disabled,
+  disabledPlaceholder: disabledPlacehodler,
 }: SearchBarProps) => {
   return (
-    <div className={`search-bar ${className}`}>
+    <div className={`search-bar ${className} ${disabled}`}>
       <div className={`search-bar__icon-wrapper`}>
         <Search
           size={20}
@@ -41,10 +45,11 @@ export const SearchBar = ({
           onChange={(event) => handleInputChange(event.target.value)}
           onFocus={() => setSearchSelected(true)}
           onKeyDown={onKeyDown}
-          placeholder={placeholder}
+          placeholder={disabled ? disabledPlacehodler : placeholder}
           spellCheck="false"
           type="text"
-          value={value}
+          value={!disabled ? value : ""}
+          disabled={disabled}
         />
       </div>
     </div>

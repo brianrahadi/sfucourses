@@ -83,10 +83,13 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
   };
 
   const filterCourses = (courses: CourseOutline[]) => {
-    const subjectFilteredCourse = filterCourseBySubjects(courses);
-    const levelFilteredCourse = filterCoursesByLevels(subjectFilteredCourse);
-    const termFilteredCourse = filterCoursesByTerms(levelFilteredCourse);
-    const filteredCourses = filterCoursesByQuery(termFilteredCourse);
+    const filteredCourses = [
+      filterCourseBySubjects,
+      filterCoursesByLevels,
+      filterCoursesByTerms,
+      filterCoursesByPrereqs,
+      filterCoursesByQuery,
+    ].reduce((filtered, filterFunc) => filterFunc(filtered), courses);
     return filteredCourses;
   };
 
@@ -146,11 +149,27 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
     });
   };
 
+  const filterCoursesByPrereqs = (courses: CourseOutline[]) => {
+    if (!prereqs.searchQuery && !prereqs.hasNone) {
+      return courses;
+    }
+    if (prereqs.hasNone) {
+      return courses.filter((course) => course.prerequisites === "");
+    }
+    return courses.filter((course) =>
+      course.prerequisites
+        .toLowerCase()
+        .includes(prereqs.searchQuery.toLowerCase())
+    );
+  };
+
   useEffect(onFilterChange, [
     query,
     subjects.selected,
     levels.selected,
     terms.selected,
+    prereqs.searchQuery,
+    prereqs.hasNone,
   ]);
 
   useEffect(() => {
@@ -198,6 +217,9 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
                   key={outline.dept + outline.number}
                   course={outline}
                   query={query}
+                  showPrereqs={prereqs.isShown}
+                  prereqsQuery={prereqs.searchQuery}
+                  hasNoPrereq={prereqs.hasNone}
                 />
               ))}
             </InfiniteScroll>
