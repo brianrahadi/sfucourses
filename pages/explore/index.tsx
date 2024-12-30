@@ -190,20 +190,19 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
       <Hero title={`explore courses`} backgroundImage={HeroImage.src} />
       <main id="explore-container" className="container">
         <section className="courses-section">
+          <div className="search-bar-results">
+            exploring{" "}
+            {maxVisibleCoursesLength
+              ? numberWithCommas(maxVisibleCoursesLength)
+              : "0"}{" "}
+            {(maxVisibleCoursesLength || 0) > 1 ? "courses" : "course"}{" "}
+          </div>
           <SearchBar
             handleInputChange={setQuery}
             searchSelected={searchSelected}
             setSearchSelected={setSearchSelected}
             placeholder="course code, title, or description"
           />
-          <p>
-            {" "}
-            exploring{" "}
-            {maxVisibleCoursesLength
-              ? numberWithCommas(maxVisibleCoursesLength)
-              : "0"}{" "}
-            {(maxVisibleCoursesLength || 0) > 1 ? "courses" : "course"}{" "}
-          </p>
           {visibleCourses && (
             <InfiniteScroll
               dataLength={visibleCourses.length}

@@ -17,6 +17,7 @@
 }
 
 .filter-section {
+  margin-top: 3.5rem;
   max-width: 100%;
 }
 
@@ -28,16 +29,17 @@
   margin: 1em 0;
 }
 
-// .sections-container {
-//   display: flex;
-//   flex-direction: column;
-//   gap: 1.5em;
-//   margin: 2em;
-// }
-
-// .course-node {
-//   text-align: center;
-// }
+.search-bar-results {
+  padding: 0.5rem;
+  // margin-bottom: 0.5rem;
+  background: var(--colour-neutral-1100) 100%;
+  width: fit-content;
+  height: 3rem;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  color: var(--colour-sosy-green-500);
+}
 
 .sidebar-course {
   z-index: 1;
@@ -116,22 +118,12 @@
   }
 }
 
-@include viewport(tablet-desktop) {
-  // .half-width {
-  //   flex: 0 0 50%;
-  // }
-}
-
 @include viewport(mobile) {
   #explore-container {
     flex-direction: column-reverse;
   }
-  // .sidebar-course {
-  //   width: 90%;
-  //   left: 50%;
-  //   right: 50%;
-  //   top: 7%;
-  //   height: 60vh;
-  //   transform: translateX(-50%);
-  // }
+
+  .filter-section {
+    margin-top: 0;
+  }
 }
