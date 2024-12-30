@@ -139,6 +139,7 @@ const customStyles = {
 
 const levelOptions = ["1XX", "2XX", "3XX", "4XX", "5XX+"];
 const termOptions = ["Spring 2024", "Summer 2024", "Fall 2024", "Spring 2025"];
+const designationOptions = ["W", "Q", "B-Sci", "B-Hum", "B-Soc"];
 
 interface FilterButtonProps {
   icon?: JSX.Element;
@@ -177,11 +178,11 @@ export const ExploreFilter: React.FC<ExploreFilters> = ({
   levels,
   terms,
   prereqs,
+  designations,
 }) => {
-  // console.log(subjectOptions)
   return (
     <div className="explore-filter">
-      <div className="explore-filter__section">
+      <section className="explore-filter__section">
         <p>
           <b>Subjects</b>
         </p>
@@ -201,8 +202,8 @@ export const ExploreFilter: React.FC<ExploreFilters> = ({
             subjects.setSelected(selectedSubjects);
           }}
         />
-      </div>
-      <div className="explore-filter__section">
+      </section>
+      <section className="explore-filter__section">
         <p>
           <b>Level</b>
         </p>
@@ -218,8 +219,8 @@ export const ExploreFilter: React.FC<ExploreFilters> = ({
             );
           })}
         </div>
-      </div>
-      <div className="explore-filter__section">
+      </section>
+      <section className="explore-filter__section">
         <p>
           <b>Terms</b>
         </p>
@@ -235,8 +236,8 @@ export const ExploreFilter: React.FC<ExploreFilters> = ({
             );
           })}
         </div>
-      </div>
-      <div className="explore-filter__section">
+      </section>
+      <section className="explore-filter__section">
         <p>
           <b>Requirements</b>
         </p>
@@ -266,13 +267,41 @@ export const ExploreFilter: React.FC<ExploreFilters> = ({
             className="checkbox"
             type="checkbox"
             name="no-prereq"
-            id=""
+            id="no-prereq"
             checked={prereqs.hasNone}
             onChange={() => prereqs.setHasNone(!prereqs.hasNone)}
           />
-          <label htmlFor="">No prerequisite</label>
+          <label htmlFor="no-prereq">No prerequisite</label>
         </div>
-      </div>
+      </section>
+      <section className="explore-filter__section">
+        <p>
+          <b>Designations</b>
+        </p>
+        <div className="explore-filter__section__row">
+          {designationOptions.map((designation) => {
+            return (
+              <FilterButton
+                key={designation}
+                value={designation}
+                isSelected={designations.selected.includes(designation)}
+                setSelected={designations.setSelected}
+              />
+            );
+          })}
+        </div>
+        <div className="explore-filter__section__row">
+          <input
+            className="checkbox"
+            type="checkbox"
+            name="show-designations"
+            id="show-designations"
+            checked={designations.isShown}
+            onChange={() => designations.setIsShown(!designations.isShown)}
+          />
+          <label htmlFor="show-designations">Show designations</label>
+        </div>
+      </section>
     </div>
   );
 };

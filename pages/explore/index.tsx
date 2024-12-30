@@ -53,7 +53,8 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
   const [searchSelected, setSearchSelected] = useState<boolean>(false);
   const CHUNK_SIZE = 20;
 
-  const { subjects, levels, terms, prereqs } = useExploreFilters();
+  const { subjects, levels, terms, prereqs, designations } =
+    useExploreFilters();
 
   const loadMore = () => {
     if (!courses) {
@@ -87,6 +88,7 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
       filterCourseBySubjects,
       filterCoursesByLevels,
       filterCoursesByTerms,
+      filterCoursesByDesignations,
       filterCoursesByPrereqs,
       filterCoursesByQuery,
     ].reduce((filtered, filterFunc) => filterFunc(filtered), courses);
@@ -136,7 +138,7 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
   };
 
   const filterCoursesByTerms = (courses: CourseOutline[]) => {
-    if (terms.selected.length == 0) {
+    if (terms.selected.length === 0) {
       return courses;
     }
 
@@ -163,6 +165,42 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
     );
   };
 
+  const filterCoursesByDesignations = (courses: CourseOutline[]) => {
+    if (designations.selected.length === 0) {
+      return courses;
+    }
+
+    // smallest possible substrings
+    const designationSubstringMap: { [name: string]: string } = {
+      W: "w",
+      Q: "q",
+      "B-Sci": "sci",
+      "B-Soc": "soc",
+      "B-Hum": "hum",
+    };
+
+    const designationsSubstrs = designations.selected.map(
+      (d) => designationSubstringMap[d]
+    );
+
+    return courses.filter((course) => {
+      return designationsSubstrs.some((substr) => {
+        if (substr == "sci") {
+          // because Sci is also substring of Social Sciences
+          const sciCount = (
+            course.designation.toLowerCase().match(/sci/g) || []
+          ).length;
+          const socCount = (
+            course.designation.toLowerCase().match(/soc/g) || []
+          ).length;
+          // alert(sciCount, socCount)
+          return sciCount > socCount;
+        }
+        return course.designation.toLowerCase().includes(substr);
+      });
+    });
+  };
+
   useEffect(onFilterChange, [
     query,
     subjects.selected,
@@ -170,6 +208,7 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
     terms.selected,
     prereqs.searchQuery,
     prereqs.hasNone,
+    designations.selected,
   ]);
 
   useEffect(() => {
@@ -219,6 +258,7 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
                   showPrereqs={prereqs.isShown}
                   prereqsQuery={prereqs.searchQuery}
                   hasNoPrereq={prereqs.hasNone}
+                  showDesignations={designations.isShown}
                 />
               ))}
             </InfiniteScroll>
@@ -230,6 +270,7 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
             levels={levels}
             terms={terms}
             prereqs={prereqs}
+            designations={designations}
           />
         </section>
       </main>

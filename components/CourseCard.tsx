@@ -9,6 +9,7 @@ type CourseCardProps = {
   showPrereqs?: boolean;
   prereqsQuery?: string;
   hasNoPrereq?: boolean;
+  showDesignations?: boolean;
 };
 
 export const CourseCard = ({
@@ -17,6 +18,7 @@ export const CourseCard = ({
   prereqsQuery,
   showPrereqs,
   hasNoPrereq,
+  showDesignations,
 }: CourseCardProps) => {
   const courseDescriptionShortened =
     course.description.length > 400
@@ -55,6 +57,11 @@ export const CourseCard = ({
             query={prereqsQuery}
             className="course-description"
           />
+        ) : (
+          <></>
+        )}
+        {showDesignations ? (
+          <p>Designations: {course.designation || "N/A"}</p>
         ) : (
           <></>
         )}

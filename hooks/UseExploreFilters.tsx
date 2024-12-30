@@ -23,6 +23,12 @@ export interface ExploreFilters {
     hasNone: boolean;
     setHasNone: (value: boolean) => void;
   };
+  designations: {
+    selected: string[];
+    setSelected: Dispatch<SetStateAction<string[]>>;
+    isShown: boolean;
+    setIsShown: (value: boolean) => void;
+  };
 }
 
 export const useExploreFilters = (): ExploreFilters => {
@@ -36,6 +42,11 @@ export const useExploreFilters = (): ExploreFilters => {
   const [prereqSearchQuery, setPrereqSearchQuery] = useState("");
   const [showPrereqs, setShowPrereqs] = useState(false);
   const [hasNoPrereq, setHasNoPrereq] = useState(false);
+
+  const [selectedDesignations, setSelectedDesignations] = useState<string[]>(
+    []
+  );
+  const [showDesignations, setShowDesignations] = useState(false);
 
   return {
     subjects: {
@@ -59,6 +70,12 @@ export const useExploreFilters = (): ExploreFilters => {
       setIsShown: setShowPrereqs,
       hasNone: hasNoPrereq,
       setHasNone: setHasNoPrereq,
+    },
+    designations: {
+      selected: selectedDesignations,
+      setSelected: setSelectedDesignations,
+      isShown: showDesignations,
+      setIsShown: setShowDesignations,
     },
   };
 };
