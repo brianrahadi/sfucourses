@@ -156,7 +156,9 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
       return courses;
     }
     if (prereqs.hasNone) {
-      return courses.filter((course) => course.prerequisites === "");
+      return courses.filter(
+        (course) => course.prerequisites === "" && +course.number[0] <= 4
+      );
     }
     return courses.filter((course) =>
       course.prerequisites
@@ -193,7 +195,6 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
           const socCount = (
             course.designation.toLowerCase().match(/soc/g) || []
           ).length;
-          // alert(sciCount, socCount)
           return sciCount > socCount;
         }
         return course.designation.toLowerCase().includes(substr);
