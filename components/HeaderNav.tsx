@@ -5,7 +5,6 @@ import LinkedInIcon from "@icons/linkedin.svg";
 import DiscordIcon from "@icons/discord.svg";
 import GithubIcon from "@icons/github.svg";
 import Link from "next/link";
-import { YEAR, TERM } from "utils";
 
 export const HeaderNav: React.FC = () => {
   return (
