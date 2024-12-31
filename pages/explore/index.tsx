@@ -145,8 +145,8 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
     const selectedTermsSet = new Set(terms.selected);
 
     return courses.filter((course) => {
-      return course.terms.some((courseTerm) =>
-        selectedTermsSet.has(courseTerm)
+      return course.offerings.some((offering) =>
+        selectedTermsSet.has(offering.term)
       );
     });
   };

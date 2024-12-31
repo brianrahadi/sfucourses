@@ -11,10 +11,21 @@ export interface CourseOutline {
   prerequisites: string;
   corequisites: string;
   degreeLevel: string;
-  terms: string[];
+  offerings: CourseOffering[];
 }
 
-// SectionInfo represents detailed section information
+export interface CourseOffering {
+  instructors: string[];
+  term: string;
+}
+
+export interface CourseWithSectionDetails {
+  dept: string; // CMPT
+  number: string; // 225
+  term: string; // Fall 2024
+  sectionDetails: SectionDetail[];
+}
+
 export interface SectionInfo {
   dept: string; // CMPT
   number: string; // 225
@@ -25,13 +36,11 @@ export interface SectionInfo {
   classNumber: string; // 6327
 }
 
-// SectionInstructor represents an instructor's details
 export interface SectionInstructor {
   name: string; // John Doe
   email: string;
 }
 
-// SectionSchedule represents a course schedule
 export interface SectionSchedule {
   startDate: string;
   endDate: string;
@@ -57,12 +66,4 @@ export interface SectionDetail {
   classNumber: string; // 6327
   instructors: SectionInstructor[];
   schedules: SectionSchedule[];
-}
-
-// Course with section details for JSON write
-export interface CourseWithSectionDetails {
-  dept: string; // CMPT
-  number: string; // 225
-  term: string; // Fall 2024
-  sectionDetails: SectionDetail[];
 }

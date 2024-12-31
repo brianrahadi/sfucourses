@@ -1,8 +1,6 @@
 import React, { FC } from "react";
 import { Hero } from "@components";
-import LandingPageHeroImg from "@images/landing-page-hero.jpg";
 import Link from "next/link";
-import { TERM, YEAR } from "utils";
 import LandingPageHeroSrc from "../public/images/landing-page/hero.jpg";
 
 interface LandingPageProps {}

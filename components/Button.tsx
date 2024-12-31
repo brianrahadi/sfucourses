@@ -3,6 +3,7 @@ interface ButtonProps {
   type?: string;
   className?: string;
   onClick?: () => void;
+  icon?: JSX.Element;
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -10,9 +11,11 @@ export const Button: React.FC<ButtonProps> = ({
   type = "primary",
   className,
   onClick,
+  icon,
 }) => {
   return (
     <button onClick={onClick} className={`btn ${type} ${className}`}>
+      {icon}
       {label}
     </button>
   );

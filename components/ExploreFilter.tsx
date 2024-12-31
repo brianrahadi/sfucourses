@@ -4,94 +4,9 @@ import { Button } from "@components";
 import { SearchBar } from "./SearchBar";
 import { Dispatch, SetStateAction, useState } from "react";
 import { ExploreFilters } from "hooks/UseExploreFilters";
-
-export const SUBJECTS = [
-  "ACMA",
-  "ALS",
-  "APMA",
-  "ARAB",
-  "ARCH",
-  "BISC",
-  "BPK",
-  "BUS",
-  "CA",
-  "CENV",
-  "CHEM",
-  "CHIN",
-  "CMNS",
-  "CMPT",
-  "COGS",
-  "CRIM",
-  "DATA",
-  "DIAL",
-  "DMED",
-  "EASC",
-  "ECO",
-  "ECON",
-  "EDPR",
-  "EDUC",
-  "ENGL",
-  "ENSC",
-  "ENV",
-  "EVSC",
-  "FAL",
-  "FAN",
-  "FASS",
-  "FEP",
-  "FREN",
-  "GA",
-  "GEOG",
-  "GERM",
-  "GERO",
-  "GRAD",
-  "GRK",
-  "GSWS",
-  "HIST",
-  "HSCI",
-  "HUM",
-  "IAT",
-  "INDG",
-  "INLG",
-  "INS",
-  "IS",
-  "ITAL",
-  "JAPN",
-  "LANG",
-  "LBRL",
-  "LBST",
-  "LING",
-  "LS",
-  "MACM",
-  "MASC",
-  "MATH",
-  "MBB",
-  "MSE",
-  "NEUR",
-  "NUSC",
-  "ONC",
-  "PERS",
-  "PHIL",
-  "PHYS",
-  "PLAN",
-  "PLCY",
-  "POL",
-  "PORT",
-  "PSYC",
-  "PUB",
-  "PUNJ",
-  "REM",
-  "SA",
-  "SCI",
-  "SD",
-  "SDA",
-  "SEE",
-  "SPAN",
-  "STAT",
-  "TEKX",
-  "UGRAD",
-  "URB",
-  "WL",
-];
+import { BsSun } from "react-icons/bs";
+import { FaLeaf, FaRegSnowflake } from "react-icons/fa";
+import { SUBJECTS } from "utils/constants";
 
 const subjectOptions = SUBJECTS.map((subj) => {
   return { value: subj, label: subj };
@@ -140,7 +55,16 @@ const customStyles = {
 const levelOptions = ["1XX", "2XX", "3XX", "4XX", "5XX+"];
 const termOptions = ["Spring 2024", "Summer 2024", "Fall 2024", "Spring 2025"];
 const designationOptions = ["W", "Q", "B-Sci", "B-Hum", "B-Soc"];
-
+const termToIcon = (term: string) => {
+  switch (term) {
+    case "Fall":
+      return <FaLeaf color="brown" />;
+    case "Winter":
+      return <FaRegSnowflake color="skyblue" />;
+    case "Summer":
+      return <BsSun color="orange" />;
+  }
+};
 interface FilterButtonProps {
   icon?: JSX.Element;
   value: string;
@@ -169,6 +93,7 @@ const FilterButton: React.FC<FilterButtonProps> = ({
       label={value}
       onClick={onClick}
       type={isSelected ? "primary" : "secondary"}
+      icon={icon}
     />
   );
 };
@@ -232,6 +157,7 @@ export const ExploreFilter: React.FC<ExploreFilters> = ({
                 value={term}
                 isSelected={terms.selected.includes(term)}
                 setSelected={terms.setSelected}
+                icon={termToIcon("Spring")}
               />
             );
           })}

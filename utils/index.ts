@@ -1,11 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 import { Course, Department } from "types/course";
-
-export const YEAR = "2025";
-export const TERM = "spring";
-
-export const BASE_URL = "https://api.sfucourses.com/v1/rest";
-// export const BASE_URL = "http://localhost:8080/v1/rest";
+import { BASE_URL } from "./constants";
 
 export function formatDate(date: string) {
   return new Date(date).toLocaleDateString("en-US", {
