@@ -48,7 +48,9 @@ export const CourseCard = ({
           <p className="course-description">{courseDescriptionShortened}</p>
         )}
         <p>
-          Terms: {course.offerings.map((offering) => offering.term).join(", ")}
+          Terms:{" "}
+          {course.offerings &&
+            course.offerings.map((offering) => offering.term).join(", ")}
         </p>
         {showPrereqs && !prereqsQuery ? (
           <p>Prerequisite: {course.prerequisites || "None"}</p>
