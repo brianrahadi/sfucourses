@@ -38,6 +38,7 @@
 
   &__row {
     display: flex;
+    flex: wrap;
     gap: 0.5rem;
   }
 }

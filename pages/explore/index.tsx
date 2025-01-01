@@ -99,9 +99,12 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
     if (!query) {
       return courses;
     }
-    return courses.filter((outline) => {
-      const headerText = `${outline.dept} ${outline.number} - ${outline.title} (${outline.units})`;
-      const stringArr = [headerText, outline.description];
+    return courses.filter((course) => {
+      const headerText = `${course.dept} ${course.number} - ${course.title} (${course.units})`;
+      const instructorsRaw = course.offerings
+        .map((offering) => offering.instructors.join(""))
+        .join("");
+      const stringArr = [headerText, course.description, instructorsRaw];
       const isQuerySubstring = stringArr.some((str) =>
         str.toLowerCase().includes(query.toLowerCase())
       );

@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 interface TextBadgeProps {
-  content: string;
+  content: JSX.Element | string;
   className?: string;
   icon?: JSX.Element;
 }

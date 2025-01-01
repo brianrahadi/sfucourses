@@ -73,6 +73,7 @@ export const CourseCard = ({
             .map((offering) => {
               return (
                 <TextBadge
+                  key={offering.instructors + offering.term}
                   icon={termToIcon(offering.term.split(" ")[0])}
                   content={offering.instructors[0]}
                 />

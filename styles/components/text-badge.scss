@@ -9,8 +9,9 @@
   padding: 0.5rem;
   height: 1.75rem;
   color: var(--colour-neutral-000);
-  width: fit-content;
+  min-width: fit-content;
   border-radius: 0.75rem;
+  overflow: hidden;
 
   // background: var(--colour-neutral-1100) 100%;
   // color: var(--colour-sosy-green-500);
