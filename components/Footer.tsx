@@ -6,10 +6,14 @@ export const Footer: React.FC = () => {
       <div className="container">
         <p>
           with (ɔ◔‿◔)ɔ ♥ by{" "}
-          <Link href="https://brianrahadi.com" target="_blank" rel="noreferrer">
+          <Link
+            className="no-underline"
+            href="https://brianrahadi.com"
+            target="_blank"
+            rel="noreferrer"
+          >
             brianrahadi
-          </Link>{" "}
-          - hire me pls
+          </Link>
         </p>
       </div>
     </div>

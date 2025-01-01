@@ -38,7 +38,8 @@
 
   &__row {
     display: flex;
-    flex: wrap;
+    flex-wrap: wrap;
+    max-width: 100%;
     gap: 0.5rem;
   }
 }

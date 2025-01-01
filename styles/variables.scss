@@ -77,6 +77,10 @@ $desktop-min-width: 1025px;
   text-decoration: underline;
 }
 
+.no-underline {
+  text-decoration: none;
+}
+
 html,
 :root {
   background-color: var(--colour-neutral-1200);
