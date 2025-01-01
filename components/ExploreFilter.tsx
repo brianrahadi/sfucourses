@@ -5,7 +5,8 @@ import { SearchBar } from "./SearchBar";
 import { Dispatch, SetStateAction, useState } from "react";
 import { ExploreFilters } from "hooks/UseExploreFilters";
 import { BsSun } from "react-icons/bs";
-import { FaLeaf, FaRegSnowflake } from "react-icons/fa";
+import { FaLeaf } from "react-icons/fa";
+import { LuFlower } from "react-icons/lu";
 import { SUBJECTS } from "utils/constants";
 
 const subjectOptions = SUBJECTS.map((subj) => {
@@ -55,12 +56,12 @@ const customStyles = {
 const levelOptions = ["1XX", "2XX", "3XX", "4XX", "5XX+"];
 const termOptions = ["Spring 2024", "Summer 2024", "Fall 2024", "Spring 2025"];
 const designationOptions = ["W", "Q", "B-Sci", "B-Hum", "B-Soc"];
-const termToIcon = (term: string) => {
+export const termToIcon = (term: string) => {
   switch (term) {
     case "Fall":
       return <FaLeaf color="brown" />;
-    case "Winter":
-      return <FaRegSnowflake color="skyblue" />;
+    case "Spring":
+      return <LuFlower color="skyblue" />;
     case "Summer":
       return <BsSun color="orange" />;
   }
@@ -89,7 +90,6 @@ const FilterButton: React.FC<FilterButtonProps> = ({
   };
   return (
     <Button
-      className="filter-button"
       label={value}
       onClick={onClick}
       type={isSelected ? "primary" : "secondary"}
@@ -157,7 +157,7 @@ export const ExploreFilter: React.FC<ExploreFilters> = ({
                 value={term}
                 isSelected={terms.selected.includes(term)}
                 setSelected={terms.setSelected}
-                icon={termToIcon("Spring")}
+                icon={termToIcon(term.split(" ")[0])}
               />
             );
           })}
@@ -215,17 +215,6 @@ export const ExploreFilter: React.FC<ExploreFilters> = ({
               />
             );
           })}
-        </div>
-        <div className="explore-filter__section__row">
-          <input
-            className="checkbox"
-            type="checkbox"
-            name="show-designations"
-            id="show-designations"
-            checked={designations.isShown}
-            onChange={() => designations.setIsShown(!designations.isShown)}
-          />
-          <label htmlFor="show-designations">Show designations</label>
         </div>
       </section>
     </div>

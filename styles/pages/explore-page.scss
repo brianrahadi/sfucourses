@@ -29,15 +29,8 @@
   margin: 0.5em 0;
 }
 
-.search-bar-results {
-  padding: 0.5rem;
-  // margin-bottom: 0.5rem;
+.text-badge.explore {
   background: var(--colour-neutral-1100) 100%;
-  width: fit-content;
-  height: 3rem;
-  border-radius: 0.75rem;
-  display: flex;
-  align-items: center;
   color: var(--colour-sosy-green-500);
 }
 

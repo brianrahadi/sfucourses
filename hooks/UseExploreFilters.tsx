@@ -26,8 +26,6 @@ export interface ExploreFilters {
   designations: {
     selected: string[];
     setSelected: Dispatch<SetStateAction<string[]>>;
-    isShown: boolean;
-    setIsShown: (value: boolean) => void;
   };
 }
 
@@ -74,8 +72,6 @@ export const useExploreFilters = (): ExploreFilters => {
     designations: {
       selected: selectedDesignations,
       setSelected: setSelectedDesignations,
-      isShown: showDesignations,
-      setIsShown: setShowDesignations,
     },
   };
 };

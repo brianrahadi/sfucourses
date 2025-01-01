@@ -1,4 +1,4 @@
-import { ExploreFilter, Hero } from "@components";
+import { ExploreFilter, Hero, TextBadge } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useEffect, useState } from "react";
 import { getData, loadData, numberWithCommas } from "utils";
@@ -95,7 +95,6 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
     return filteredCourses;
   };
 
-  // precondition: defined courses
   const filterCoursesByQuery = (courses: CourseOutline[]) => {
     if (!query) {
       return courses;
@@ -230,13 +229,16 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
       <Hero title={`explore courses`} backgroundImage={HeroImage.src} />
       <main id="explore-container" className="container">
         <section className="courses-section">
-          <div className="search-bar-results">
-            exploring{" "}
-            {maxVisibleCoursesLength
-              ? numberWithCommas(maxVisibleCoursesLength)
-              : "0"}{" "}
-            {(maxVisibleCoursesLength || 0) > 1 ? "courses" : "course"}{" "}
-          </div>
+          <TextBadge
+            className="big explore"
+            content={`exploring 
+            ${
+              maxVisibleCoursesLength
+                ? numberWithCommas(maxVisibleCoursesLength)
+                : "0"
+            }
+            ${(maxVisibleCoursesLength || 0) > 1 ? "courses" : "course"}`}
+          />
           <SearchBar
             handleInputChange={setQuery}
             searchSelected={searchSelected}
@@ -259,7 +261,6 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
                   showPrereqs={prereqs.isShown}
                   prereqsQuery={prereqs.searchQuery}
                   hasNoPrereq={prereqs.hasNone}
-                  showDesignations={designations.isShown}
                 />
               ))}
             </InfiniteScroll>

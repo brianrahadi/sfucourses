@@ -27,11 +27,17 @@
 
   .course-description {
     margin-top: 0.5rem;
+    color: var(--colour-neutral-500);
   }
 
   &__content {
     display: flex;
     flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__row {
+    display: flex;
     gap: 0.5rem;
   }
 }

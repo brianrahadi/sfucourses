@@ -10,3 +10,4 @@ export { Dropdown } from "./Dropdown";
 export { SocialIcon } from "./SocialIcon";
 export { SidebarCourse } from "./SidebarCourse";
 export { Highlight } from "./Highlight";
+export { TextBadge } from "./TextBadge";

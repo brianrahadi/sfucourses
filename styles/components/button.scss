@@ -1,6 +1,10 @@
 @import "../variables.scss";
 
 .btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
   padding: 0.3rem 0.6rem;
   background-color: var(--colour-sosy-green-800);
   border: none;

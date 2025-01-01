@@ -1,0 +1,22 @@
+.text-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--colour-neutral-1100) 100%;
+  background-color: var(--colour-neutral-1000);
+  color: var(--colour-sosy-green-500);
+  border: none;
+  padding: 0.5rem;
+  height: 1.75rem;
+  color: var(--colour-neutral-000);
+  width: fit-content;
+  border-radius: 0.75rem;
+
+  // background: var(--colour-neutral-1100) 100%;
+  // color: var(--colour-sosy-green-500);
+
+  &.big {
+    padding: 0.5rem;
+    height: 3rem;
+  }
+}

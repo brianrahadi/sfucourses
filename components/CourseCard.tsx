@@ -1,7 +1,8 @@
 // import { CourseTerms } from './CourseTerms';
 import Link from "next/link";
 import { CourseOutline } from "types/api-types";
-import { Highlight } from "@components";
+import { Button, Highlight, TextBadge } from "@components";
+import { termToIcon } from "./ExploreFilter";
 
 type CourseCardProps = {
   course: CourseOutline;
@@ -45,13 +46,17 @@ export const CourseCard = ({
             className="course-description"
           />
         ) : (
-          <p className="course-description">{courseDescriptionShortened}</p>
+          <p className="course-description">
+            {courseDescriptionShortened}
+            {course.designation && course.designation != "N/A"
+              ? " " + course.designation
+              : ""}
+          </p>
         )}
-        <p>
-          Terms: {course.offerings.map((offering) => offering.term).join(", ")}
-        </p>
         {showPrereqs && !prereqsQuery ? (
-          <p>Prerequisite: {course.prerequisites || "None"}</p>
+          <p className="course-description">
+            Prerequisite: {course.prerequisites || "None"}
+          </p>
         ) : prereqsQuery ? (
           <Highlight
             initialText="Prerequisites: "
@@ -62,11 +67,18 @@ export const CourseCard = ({
         ) : (
           <></>
         )}
-        {showDesignations ? (
-          <p>Designations: {course.designation || "N/A"}</p>
-        ) : (
-          <></>
-        )}
+        <div className="course-card__row">
+          {course.offerings
+            .filter((offering) => offering.instructors.length !== 0)
+            .map((offering) => {
+              return (
+                <TextBadge
+                  icon={termToIcon(offering.term.split(" ")[0])}
+                  content={offering.instructors[0]}
+                />
+              );
+            })}
+        </div>
       </div>
     </Link>
   );
