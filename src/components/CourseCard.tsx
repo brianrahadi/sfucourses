@@ -72,7 +72,10 @@ export const CourseCard: React.FC<CourseCardProps> = ({
                   : ""
               }`;
               return (
-                <div className="text-badge">
+                <div
+                  className="text-badge"
+                  key={offering.instructors + offering.term}
+                >
                   {termToIcon(offering.term.split(" ")[0])}
                   {offering.term.split(" ")[1].slice(2)}
                   &thinsp;
