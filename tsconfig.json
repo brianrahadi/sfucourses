@@ -5,10 +5,13 @@
     "module": "commonjs" /* Specify what module code is generated. */,
     "baseUrl": "." /* Specify the base directory to resolve non-relative module names. */,
     "paths": {
-      "@components": ["./components"],
-      "@images/*": ["./public/images/*"],
+      "@components": ["./src/components"],
+      "@hooks": ["./src/hooks"],
+      "@utils": ["./src/utils"],
+      "@types": ["./src/types"],
+      "@images/*": ["./src/assets/images/*"],
       "@icons/*": ["./public/icons/*"],
-      "@jsons/*": ["./public/jsons/*"]
+      "@jsons/*": ["./src/assets/jsons/*"]
     } /* Specify a set of entries that re-map imports to additional lookup locations. */,
     "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */,
     "forceConsistentCasingInFileNames": true /* Ensure that casing is correct in imports. */ /* Type Checking */,

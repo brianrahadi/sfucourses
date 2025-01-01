@@ -1,0 +1,14 @@
+[
+  {
+    "title": "on course data whereabouts",
+    "content": "sfu course outline api - https://www.sfu.ca/outlines/help/api.html. sfu course is not affiliated with simon fraser university"
+  },
+  {
+    "title": "on contributing",
+    "content": "contribute by submitting issue or pull request on <a href=\"https://github.com/brianrahadi/sfucourses\" target=\"_blank\" rel=\"noreferrer\">github</a> or just shoot me an email at <a href=\"mailto:brian.rahadi@gmail.com\">brian.rahadi@gmail.com</a>"
+  },
+  {
+    "title": "on page not loading",
+    "content": "refresh the page or try again later. data is 100% pulled from sfu course outline api"
+  }
+]
