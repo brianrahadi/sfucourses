@@ -66,14 +66,22 @@ export const CourseCard: React.FC<CourseCardProps> = ({
           {course.offerings
             .filter((offering) => offering.instructors.length !== 0)
             .map((offering) => {
+              const text = `${offering.instructors[0]}${
+                offering.instructors.length > 1
+                  ? ` +${offering.instructors.length - 1}`
+                  : ""
+              }`;
               return (
-                <TextBadge
-                  key={offering.instructors + offering.term}
-                  icon={termToIcon(offering.term.split(" ")[0])}
-                  content={`'${offering.term.split(" ")[1].slice(2)} ${
-                    offering.instructors[0]
-                  }`}
-                />
+                <div className="text-badge">
+                  {termToIcon(offering.term.split(" ")[0])}
+                  {offering.term.split(" ")[1].slice(2)}
+                  &thinsp;
+                  {query ? (
+                    <Highlight text={text} query={query} />
+                  ) : (
+                    <p>{text}</p>
+                  )}
+                </div>
               );
             })}
         </div>
