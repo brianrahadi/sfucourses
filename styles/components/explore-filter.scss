@@ -4,11 +4,23 @@
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
-  width: 24rem;
+  width: 22.5rem;
+  justify-self: center;
   max-width: 100%;
   border-radius: 0.5rem;
   background: var(--colour-neutral-1100) 100%;
   padding: 2rem;
+
+  &__top {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  &__reset {
+    margin-top: -1rem;
+    margin-right: -1rem;
+  }
 
   &__section {
     display: flex;

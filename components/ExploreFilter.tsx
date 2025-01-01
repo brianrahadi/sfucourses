@@ -1,8 +1,8 @@
-import Select from "react-select";
-import { capitalize } from "utils";
+import Select, { SelectInstance } from "react-select";
+import { RefreshCw } from "react-feather";
 import { Button } from "@components";
 import { SearchBar } from "./SearchBar";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { ExploreFilters } from "hooks/UseExploreFilters";
 import { BsSun } from "react-icons/bs";
 import { FaLeaf } from "react-icons/fa";
@@ -105,20 +105,37 @@ export const ExploreFilter: React.FC<ExploreFilters> = ({
   prereqs,
   designations,
 }) => {
+  const selectInputRef = useRef<SelectInstance<any>>(null);
+
   return (
     <div className="explore-filter">
       <section className="explore-filter__section">
-        <p>
-          <b>Subjects</b>
-        </p>
+        <div className="explore-filter__top">
+          <p>
+            <b>Subjects</b>
+          </p>
+          <Button
+            className="explore-filter__reset secondary"
+            label={<RefreshCw />}
+            onClick={() => {
+              selectInputRef?.current?.clearValue();
+              subjects.setSelected([]);
+              levels.setSelected([]);
+              terms.setSelected([]);
+              prereqs.setSearchQuery("");
+              prereqs.setIsShown(false);
+              prereqs.setHasNone(false);
+              designations.setSelected([]);
+            }}
+          />
+        </div>
         <Select
+          ref={selectInputRef}
           className="explore-filter__subject-select"
           options={subjectOptions}
           isMulti={true}
           closeMenuOnSelect={false}
           styles={customStyles}
-          placeholder={""}
-          // onChange={}
           onChange={(e) => {
             const selectedSubjects = [];
             for (const subject of e.values()) {

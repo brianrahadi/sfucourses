@@ -75,7 +75,9 @@ export const CourseCard = ({
                 <TextBadge
                   key={offering.instructors + offering.term}
                   icon={termToIcon(offering.term.split(" ")[0])}
-                  content={offering.instructors[0]}
+                  content={`'${offering.term.split(" ")[1].slice(2)} ${
+                    offering.instructors[0]
+                  }`}
                 />
               );
             })}

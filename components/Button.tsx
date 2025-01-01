@@ -1,5 +1,5 @@
 interface ButtonProps {
-  label: string;
+  label: string | JSX.Element;
   type?: string;
   className?: string;
   onClick?: () => void;
