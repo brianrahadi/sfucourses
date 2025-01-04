@@ -32,6 +32,14 @@ export const HeaderNav: React.FC = () => {
             <Link href="/faq" className="page-link">
               faq
             </Link>
+            <Link
+              href="https://api.sfucourses.com"
+              className="page-link"
+              target="_blank"
+              rel="noreferrer"
+            >
+              api
+            </Link>
           </nav>
         </div>
       </div>
