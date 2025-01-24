@@ -17,6 +17,7 @@
     "@sanity/image-url": "^1.0.2",
     "@sanity/ui": "^1.8.3",
     "@sanity/vision": "^3.18.1",
+    "@tanstack/react-query": "^5.62.16",
     "@types/react-big-calendar": "^1.8.4",
     "@vercel/analytics": "^1.4.1",
     "@vercel/speed-insights": "^1.1.0",
