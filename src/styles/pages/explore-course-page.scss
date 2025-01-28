@@ -35,3 +35,11 @@
     gap: 0.5rem;
   }
 }
+
+.offering {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 3rem;
+  margin-bottom: 3rem;
+}
