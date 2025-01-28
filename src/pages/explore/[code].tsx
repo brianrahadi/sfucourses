@@ -97,7 +97,6 @@ const CoursePage: React.FC<CoursePageProps> = () => {
     }
   }, [courseCode.dept, courseCode.number]);
 
-  // This hook will now be called consistently every render
   const { offerings, isLoading, error, isIdle } = useCourseOfferings(course);
 
   if (!courseCode.dept || !courseCode.number) {
@@ -120,7 +119,10 @@ const CoursePage: React.FC<CoursePageProps> = () => {
 
   return (
     <div className="page courses-page">
-      <Hero title="explore courses" backgroundImage={HeroImage.src} />
+      <Hero
+        title="explore courses - page in progress tee hee"
+        backgroundImage={HeroImage.src}
+      />
       <main className="container">
         <div className="course-card-page">
           <div className="course-title dark">
@@ -167,12 +169,50 @@ const CoursePage: React.FC<CoursePageProps> = () => {
             ? `Error loading offerings: ${error.message}`
             : offerings.length === 0
             ? "No offerings available"
-            : offerings.map((offering) => {
+            : offerings.reverse().map((offering) => {
                 return (
-                  <div key={offering.dept + offering.number + offering.term}>
-                    {offering?.sectionDetails?.map((section) => {
-                      return JSON.stringify(section);
-                    })}
+                  <div key={offering.term} className="offering">
+                    <h3>{offering.term || "No term available"}</h3>
+                    {offering.sections?.length > 0 ? (
+                      offering.sections.map((section, index) => (
+                        <div key={index} className="section-details">
+                          <p>
+                            {section.section} - {section.classNumber}
+                          </p>
+                          <p>{section.deliveryMethod || "N/A"}</p>
+                          <p>
+                            Instructors:{" "}
+                            {section.instructors?.length > 0
+                              ? section.instructors
+                                  .map((instructor) => instructor.name)
+                                  .join(", ")
+                              : "N/A"}
+                          </p>
+                          <p>
+                            <h4>Schedules:</h4>
+                            {section.schedules?.length > 0 ? (
+                              section.schedules.map(
+                                (schedule, scheduleIndex) => (
+                                  <div
+                                    key={scheduleIndex}
+                                    className="schedule-details"
+                                  >
+                                    <p>
+                                      {schedule.days} {schedule.startTime} -{" "}
+                                      {schedule.endTime} @{schedule.campus}
+                                    </p>
+                                  </div>
+                                )
+                              )
+                            ) : (
+                              <p>No schedules available</p>
+                            )}
+                          </p>
+                        </div>
+                      ))
+                    ) : (
+                      <p>No section details available</p>
+                    )}
                   </div>
                 );
               })}
