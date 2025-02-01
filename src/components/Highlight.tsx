@@ -14,7 +14,7 @@ export const Highlight: React.FC<HighlightProps> = ({
   initialText,
 }) => {
   return (
-    <span className={className}>
+    <span>
       {initialText ? initialText : ""}
       {text
         .split(new RegExp(`(${escapeRegExp(query)})`, "gi"))
@@ -23,8 +23,8 @@ export const Highlight: React.FC<HighlightProps> = ({
             key={i}
             className={
               part.toLowerCase().trim() === query?.toLowerCase().trim()
-                ? "text-underline"
-                : ""
+                ? `text-underline ${className}`
+                : className
             }
           >
             {part}
