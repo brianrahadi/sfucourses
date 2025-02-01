@@ -12,11 +12,11 @@
     border-bottom: 2px solid var(--colour-neutral-900);
 
     .tab {
-      padding: 12px 24px;
+      padding: 0.75em 1.5em;
       cursor: pointer;
       border: none;
       background: none;
-      font-size: 16px;
+      font-size: 1em;
       color: var(--colour-neutral-400);
       transition: all 0.3s ease;
       position: relative;
@@ -34,16 +34,11 @@
         color: var(--colour-neutral-000);
         background-color: var(--colour-neutral-900);
       }
-
-      &:not(:last-child) {
-        margin-right: 10px;
-      }
     }
   }
 
   .tab-content {
     background-color: var(--colour-neutral-1100);
-    border: 1px solid var(--colour-neutral-900);
     border-top: none;
     border-radius: 0 0 8px 8px;
     color: var(--colour-neutral-400);
@@ -58,7 +53,7 @@
 
         th,
         td {
-          padding: 10px;
+          padding: 0.7em;
           text-align: left;
           border-bottom: 1px solid var(--colour-neutral-900);
         }
@@ -68,21 +63,24 @@
           color: var(--colour-neutral-000);
         }
 
-        tr.section-group {
-          background: var(--colour-neutral-800) 100%;
-          &:hover {
-            background-color: var(--colour-neutral-500);
-          }
+        tr.section-details {
+          background: var(--colour-neutral-1100) 10%;
+          //   &:hover {
+          //     background-color: var(--colour-neutral-500);
+          //   }
 
-          td {
-            border-bottom: 1px solid var(--colour-neutral-800);
-          }
+          //   td {
+          //     border-bottom: 1px solid var(--colour-neutral-800);
+          //   }
 
           &:last-child {
             td {
               border-bottom: none;
             }
           }
+        }
+        tr:last-child {
+          border-bottom: none;
         }
       }
     }

@@ -67,48 +67,13 @@ const useCourseOfferings = (
   };
 };
 
-// import React from 'react';
-// import './CourseTabContainer.scss';
-
-// interface Schedule {
-//   days: string;
-//   startTime: string;
-//   endTime: string;
-//   campus: string;
-// }
-
-// interface Section {
-//   section: string;
-//   classNumber: string;
-//   enrolled?: string;
-//   schedules?: Schedule[];
-//   instructors?: { name: string }[];
-//   deliveryMethod?: string;
-// }
-
-// interface CourseWithSectionDetails {
-//   sections: Section[];
-// }
-
 const CourseOfferingSection: React.FC<{
   offering: CourseWithSectionDetails;
 }> = ({ offering }) => {
-  const sections = offering.sections.filter((section) =>
-    section.schedules.every((schedule) => schedule.sectionCode === "LEC")
-  );
+  const sections = offering.sections;
   return (
     <div className="offering">
       <table>
-        <thead>
-          <tr>
-            <th>Section</th>
-            <th>Class</th>
-            <th>Time</th>
-            <th>Day</th>
-            <th>Date</th>
-            <th>Instructor</th>
-          </tr>
-        </thead>
         <tbody>
           {sections.map((section, index) => {
             const schedules = section.schedules || [];
@@ -117,7 +82,6 @@ const CourseOfferingSection: React.FC<{
                 ?.map((instructor) => instructor.name)
                 .join(", ") || "N/A";
 
-            // If there are no schedules, render a single row
             if (schedules.length === 0) {
               return (
                 <tr key={index} className="section-details">
@@ -130,13 +94,13 @@ const CourseOfferingSection: React.FC<{
               );
             }
 
-            // If there are schedules, render a row for each schedule
             return schedules.map((schedule, scheduleIndex) => (
               <tr key={`${index}-${scheduleIndex}`} className="section-details">
                 {scheduleIndex === 0 && (
                   <>
-                    <td rowSpan={schedules.length}>{section.section}</td>
-                    <td rowSpan={schedules.length}>{section.classNumber}</td>
+                    <td rowSpan={schedules.length}>
+                      {section.schedules[0].sectionCode} {section.section}
+                    </td>
                   </>
                 )}
                 <td>{`${schedule.startTime} - ${schedule.endTime}`}</td>
@@ -148,6 +112,7 @@ const CourseOfferingSection: React.FC<{
                 {scheduleIndex === 0 && (
                   <>
                     <td rowSpan={schedules.length}>{instructors}</td>
+                    <td rowSpan={schedules.length}>{section.classNumber}</td>
                   </>
                 )}
               </tr>
@@ -211,7 +176,7 @@ const CoursePage: React.FC<CoursePageProps> = () => {
         title="explore courses - page in progress tee hee"
         backgroundImage={HeroImage.src}
       />
-      <main className="container">
+      <main className="container course-container">
         <div className="course-card-page">
           <div className="course-title dark">
             {`${course.dept} ${course.number} - ${course.title} (${course.units})`}
