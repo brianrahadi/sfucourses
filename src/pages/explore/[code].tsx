@@ -1,4 +1,4 @@
-import { CourseTabContainer, Hero, TabContainer } from "@components";
+import { CourseTabContainer, Hero } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useEffect, useState } from "react";
 import { formatDate, formatShortDate, getData, loadData } from "@utils";
@@ -93,6 +93,9 @@ const useCourseOfferings = (
 const CourseOfferingSection: React.FC<{
   offering: CourseWithSectionDetails;
 }> = ({ offering }) => {
+  const sections = offering.sections.filter((section) =>
+    section.schedules.every((schedule) => schedule.sectionCode === "LEC")
+  );
   return (
     <div className="offering">
       <table>
@@ -107,58 +110,49 @@ const CourseOfferingSection: React.FC<{
           </tr>
         </thead>
         <tbody>
-          {offering.sections?.length > 0 ? (
-            offering.sections.map((section, index) => {
-              const schedules = section.schedules || [];
-              const instructors =
-                section.instructors
-                  ?.map((instructor) => instructor.name)
-                  .join(", ") || "N/A";
+          {sections.map((section, index) => {
+            const schedules = section.schedules || [];
+            const instructors =
+              section.instructors
+                ?.map((instructor) => instructor.name)
+                .join(", ") || "N/A";
 
-              // If there are no schedules, render a single row
-              if (schedules.length === 0) {
-                return (
-                  <tr key={index} className="section-details">
-                    <td>{section.section}</td>
-                    <td>{section.classNumber}</td>
-                    <td>N/A</td>
-                    <td>N/A</td>
-                    <td>{instructors}</td>
-                  </tr>
-                );
-              }
-
-              // If there are schedules, render a row for each schedule
-              return schedules.map((schedule, scheduleIndex) => (
-                <tr
-                  key={`${index}-${scheduleIndex}`}
-                  className="section-details"
-                >
-                  {scheduleIndex === 0 && (
-                    <>
-                      <td rowSpan={schedules.length}>{section.section}</td>
-                      <td rowSpan={schedules.length}>{section.classNumber}</td>
-                    </>
-                  )}
-                  <td>{`${schedule.startTime} - ${schedule.endTime}`}</td>
-                  <td>{schedule.days}</td>
-                  <td>{`${formatShortDate(
-                    schedule.startDate
-                  )} - ${formatShortDate(schedule.endDate)}`}</td>
-
-                  {scheduleIndex === 0 && (
-                    <>
-                      <td rowSpan={schedules.length}>{instructors}</td>
-                    </>
-                  )}
+            // If there are no schedules, render a single row
+            if (schedules.length === 0) {
+              return (
+                <tr key={index} className="section-details">
+                  <td>{section.section}</td>
+                  <td>{section.classNumber}</td>
+                  <td>N/A</td>
+                  <td>N/A</td>
+                  <td>{instructors}</td>
                 </tr>
-              ));
-            })
-          ) : (
-            <tr>
-              <td colSpan={5}>No section details available</td>
-            </tr>
-          )}
+              );
+            }
+
+            // If there are schedules, render a row for each schedule
+            return schedules.map((schedule, scheduleIndex) => (
+              <tr key={`${index}-${scheduleIndex}`} className="section-details">
+                {scheduleIndex === 0 && (
+                  <>
+                    <td rowSpan={schedules.length}>{section.section}</td>
+                    <td rowSpan={schedules.length}>{section.classNumber}</td>
+                  </>
+                )}
+                <td>{`${schedule.startTime} - ${schedule.endTime}`}</td>
+                <td>{schedule.days}</td>
+                <td>{`${formatShortDate(
+                  schedule.startDate
+                )} - ${formatShortDate(schedule.endDate)}`}</td>
+
+                {scheduleIndex === 0 && (
+                  <>
+                    <td rowSpan={schedules.length}>{instructors}</td>
+                  </>
+                )}
+              </tr>
+            ));
+          })}
         </tbody>
       </table>
     </div>
