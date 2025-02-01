@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 import { Course, Department } from "../types/course";
+import { CourseWithSectionDetails, SectionDetail, SectionInfo } from "@types";
 
 export function formatDate(date: string) {
   return new Date(date).toLocaleDateString("en-US", {
@@ -111,6 +112,17 @@ export function getDepartmentName(
     departments.find((dept) => dept.value === deptValue)?.name.toLowerCase() ||
     null
   );
+}
+
+// Advanced Utils
+export function generateBaseOutlinePath(
+  courseWithSectionDetails: CourseWithSectionDetails
+): string {
+  const { term, dept, number } = courseWithSectionDetails;
+
+  const termPath = term.toLowerCase().split(/ /g).reverse().join("/");
+
+  return `https://www.sfu.ca/outlines.html?${termPath}/${dept.toLowerCase()}/${number}`;
 }
 
 // Constants

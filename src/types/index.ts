@@ -31,7 +31,6 @@ export interface SectionInfo {
   number: string; // 225
   section: string; // D100
   term: string; // Fall 2024
-  outlinePath: string; // 2024/fall/cmpt/225/d100
   deliveryMethod: string; // In Person
   classNumber: string; // 6327
 }
@@ -61,7 +60,6 @@ export interface SectionDetailRaw {
 // Processed SectionDetail for JSON response
 export interface SectionDetail {
   section: string; // D100
-  outlinePath: string; // 2024/fall/cmpt/225/d100
   deliveryMethod: string; // In Person
   classNumber: string; // 6327
   instructors: SectionInstructor[];

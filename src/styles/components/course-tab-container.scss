@@ -54,7 +54,6 @@
         th,
         td {
           padding: 0.7em;
-          text-align: left;
           border-bottom: 1px solid var(--colour-neutral-900);
         }
 
@@ -65,13 +64,6 @@
 
         tr.section-details {
           background: var(--colour-neutral-1100) 10%;
-          //   &:hover {
-          //     background-color: var(--colour-neutral-500);
-          //   }
-
-          //   td {
-          //     border-bottom: 1px solid var(--colour-neutral-800);
-          //   }
 
           &:last-child {
             td {
@@ -81,6 +73,30 @@
         }
         tr:last-child {
           border-bottom: none;
+        }
+
+        tr.toggle-row {
+          background-color: var(--colour-neutral-1100); // Dark background
+          cursor: pointer;
+          transition: background-color 0.3s ease; // Smooth transition for background color
+
+          &:hover {
+            background-color: var(
+              --colour-neutral-700
+            ); // Slightly lighter on hover
+          }
+
+          td {
+            text-align: center;
+            font-weight: bold;
+            color: var(--colour-neutral-400); // Light text for contrast
+            transition: color 0.3s ease; // Smooth transition for text color
+            border-bottom: 0;
+          }
+
+          &:hover td {
+            color: var(--colour-neutral-000); // White text on hover
+          }
         }
       }
     }

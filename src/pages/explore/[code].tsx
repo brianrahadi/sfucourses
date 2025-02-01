@@ -1,7 +1,13 @@
 import { CourseTabContainer, Hero } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useEffect, useState } from "react";
-import { formatDate, formatShortDate, getData, loadData } from "@utils";
+import {
+  formatDate,
+  formatShortDate,
+  generateBaseOutlinePath,
+  getData,
+  loadData,
+} from "@utils";
 import { CourseOutline, CourseWithSectionDetails } from "@types";
 import { useQueries } from "@tanstack/react-query";
 import { useRouter } from "next/router";
@@ -71,17 +77,25 @@ const useCourseOfferings = (
 const CourseOfferingSection: React.FC<{
   offering: CourseWithSectionDetails;
 }> = ({ offering }) => {
-  const sections = offering.sections;
+  const [showLabTut, setShowLabTut] = useState(false);
+  const notLabOrTut = (sectionCode: string) =>
+    sectionCode !== "LAB" && sectionCode !== "TUT";
+  const nonLabTutSections = offering.sections.filter((section) =>
+    section.schedules.every((sched) => notLabOrTut(sched.sectionCode))
+  );
+  const hasLabTut = offering.sections.length !== nonLabTutSections.length;
+  const shownSections = showLabTut ? offering.sections : nonLabTutSections;
   return (
     <div className="offering">
       <table>
         <tbody>
-          {sections.map((section, index) => {
+          {shownSections.map((section, index) => {
             const schedules = section.schedules || [];
             const instructors =
               section.instructors
                 ?.map((instructor) => instructor.name)
                 .join(", ") || "N/A";
+            const baseOutlinePath = generateBaseOutlinePath(offering);
 
             if (schedules.length === 0) {
               return (
@@ -100,7 +114,20 @@ const CourseOfferingSection: React.FC<{
                 {scheduleIndex === 0 && (
                   <>
                     <td rowSpan={schedules.length}>
-                      {section.schedules[0].sectionCode} {section.section}
+                      {notLabOrTut(schedule.sectionCode) ? (
+                        <Link
+                          href={`${baseOutlinePath}/${section.section.toLowerCase()}`}
+                          className="no-underline"
+                          target="_blank"
+                          rel="noopener"
+                        >
+                          {section.schedules[0].sectionCode} {section.section}
+                        </Link>
+                      ) : (
+                        <>
+                          {section.schedules[0].sectionCode} {section.section}
+                        </>
+                      )}
                     </td>
                   </>
                 )}
@@ -119,6 +146,18 @@ const CourseOfferingSection: React.FC<{
               </tr>
             ));
           })}
+          {hasLabTut && (
+            <tr
+              className="toggle-row"
+              onClick={() => setShowLabTut(!showLabTut)}
+            >
+              <td colSpan={6}>
+                {showLabTut
+                  ? "Hide Lab/Tutorial Sections"
+                  : "Show Lab/Tutorial Sections"}
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>
