@@ -12,3 +12,5 @@ export { Highlight } from "./Highlight";
 export { TextBadge } from "./TextBadge";
 export { CourseCard } from "./CourseCard";
 export { SearchBar } from "./SearchBar";
+export { TabContainer } from "./TabContainer";
+export { CourseTabContainer } from "./CourseTabContainer";

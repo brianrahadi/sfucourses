@@ -9,6 +9,13 @@ export function formatDate(date: string) {
   });
 }
 
+export function formatShortDate(date: string) {
+  return new Date(date).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+}
+
 export function capitalize(str: string) {
   return String(str).charAt(0).toUpperCase() + String(str).slice(1);
 }

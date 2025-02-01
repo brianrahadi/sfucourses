@@ -19,6 +19,8 @@
 @use "./components/dropdown.scss";
 @use "./components/search-bar.scss";
 @use "./components/text-badge.scss";
+@use "./components/tab-container.scss";
+@use "./components/course-tab-container.scss";
 
 :root {
   --colour-sosy-green-900: #07221c;
