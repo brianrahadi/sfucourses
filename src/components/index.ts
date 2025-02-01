@@ -13,3 +13,4 @@ export { TextBadge } from "./TextBadge";
 export { CourseCard } from "./CourseCard";
 export { SearchBar } from "./SearchBar";
 export { CourseTabContainer } from "./CourseTabContainer";
+export { RedditPosts } from "./RedditPosts";

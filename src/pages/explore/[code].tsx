@@ -1,4 +1,4 @@
-import { CourseTabContainer, Hero } from "@components";
+import { CourseTabContainer, Hero, RedditPosts } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useEffect, useState } from "react";
 import {
@@ -256,6 +256,8 @@ const CoursePage: React.FC<CoursePageProps> = () => {
               </p>
             </>
           )}
+          <RedditPosts dept={course.dept} number={course.number} />{" "}
+          {/* Add RedditPosts here */}
         </div>
       </main>
     </div>
