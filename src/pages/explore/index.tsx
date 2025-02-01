@@ -12,6 +12,7 @@ import { CourseOutline } from "@types";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useExploreFilters } from "src/hooks/UseExploreFilters";
 import { GetStaticProps } from "next";
+import Link from "next/link";
 
 interface ExplorePageProps {
   initialCourses?: CourseOutline[];
@@ -273,6 +274,12 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
           )}
         </section>
         <section className="filter-section">
+          <p className="gray-text right-align">
+            Last updated X hours ago -{" "}
+            <Link href="https://api.sfucourses.com" className="no-underline">
+              api.sfucourses.com
+            </Link>
+          </p>
           <ExploreFilter
             subjects={subjects}
             levels={levels}

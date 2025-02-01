@@ -5,6 +5,7 @@ import { formatDate, formatShortDate, getData, loadData } from "@utils";
 import { CourseOutline, CourseWithSectionDetails } from "@types";
 import { useQueries } from "@tanstack/react-query";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 interface CoursePageProps {}
 
@@ -203,7 +204,18 @@ const CoursePage: React.FC<CoursePageProps> = () => {
           ) : offerings.length === 0 ? (
             "No offerings available"
           ) : (
-            <CourseTabContainer tabs={tabs} />
+            <>
+              <CourseTabContainer tabs={tabs} />
+              <p className="gray-text">
+                Last updated X hours ago -{" "}
+                <Link
+                  href="https://api.sfucourses.com"
+                  className="no-underline"
+                >
+                  api.sfucourses.com
+                </Link>
+              </p>
+            </>
           )}
         </div>
       </main>
