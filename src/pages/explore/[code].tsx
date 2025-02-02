@@ -90,7 +90,10 @@ const CourseOfferingSection: React.FC<{
   const hasLabTut = offering.sections.length !== nonLabTutSections.length;
   const shownSections = showLabTut ? offering.sections : nonLabTutSections;
   return (
-    <div className="offering">
+    <div
+      key={offering.term + offering.dept + offering.number}
+      className="offering"
+    >
       {shownSections.map((section, index) => {
         const schedules = section.schedules || [];
         const instructors =
