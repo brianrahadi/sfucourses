@@ -217,11 +217,11 @@ const CoursePage: React.FC<CoursePageProps> = () => {
         backgroundImage={HeroImage.src}
       />
       <main className="container course-container">
-        <div className="course-card-page">
-          <div className="course-title dark">
+        <div className="course-page-card">
+          <div className="course-title">
             {`${course.dept} ${course.number} - ${course.title} (${course.units})`}
           </div>
-          <div className="course-card__content">
+          <div className="course-page-card__connt">
             <p className="course-description">
               {course.description}
               {course.designation && course.designation != "N/A"

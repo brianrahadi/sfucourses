@@ -5,12 +5,11 @@
   gap: 2rem;
 }
 
-.course-card-page {
-  width: 100%;
+.course-page-card {
+  max-width: 100%;
+  width: 60rem;
   height: fit-content;
   border-radius: 0.5rem;
-  background: var(--colour-neutral-1100) 100%;
-  padding: 1.25rem;
   transition: transform 0.15s, opacity 0.15s;
   text-decoration: none;
   font-size: 1.1rem;
@@ -19,26 +18,9 @@
     font-weight: bold;
   }
 
-  .course-terms {
-    margin-top: 0.5rem;
-  }
-
   .course-description {
     margin-top: 0.5rem;
     color: var(--colour-neutral-500);
-  }
-
-  &__content {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  &__row {
-    display: flex;
-    flex-wrap: wrap;
-    max-width: 100%;
-    gap: 0.5rem;
   }
 }
 
