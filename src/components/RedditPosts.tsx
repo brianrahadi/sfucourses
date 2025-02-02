@@ -1,6 +1,8 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
+import { formatShortDate } from "@utils";
+import { BiSolidUpvote } from "react-icons/bi";
 
 interface RedditPostData {
   title: string;
@@ -47,26 +49,33 @@ export const RedditPosts: React.FC<RedditPostsProps> = ({ dept, number }) => {
 
   return (
     <div className="reddit-posts-container">
-      <h3>Related Reddit Posts</h3>
-      {redditResults && redditResults.length > 0 ? (
-        redditResults.map((post, index) => (
-          <Link
-            key={index}
-            href={post.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="reddit-post-link"
-          >
-            <div className="reddit-post">
-              <h4>{post.title}</h4>
-              <p>Upvotes: {post.upvotes}</p>
-              <p>Posted on: {post.date_created.toDateString()}</p>
-            </div>
-          </Link>
-        ))
-      ) : (
-        <p>No Reddit posts found for this course.</p>
-      )}
+      <h2>r/simonfraser posts</h2>
+      <div className="reddit-posts">
+        {redditResults && redditResults.length > 0 ? (
+          redditResults.map((post, index) => (
+            <Link
+              key={index}
+              href={post.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="reddit-post-link"
+            >
+              <div className="reddit-post">
+                <div className="upvote-container">
+                  <BiSolidUpvote style={{ fill: "#ff4500" }} />
+                  <p>{post.upvotes}</p>
+                </div>
+                <div>
+                  <h4>{post.title}</h4>
+                  <p>{formatShortDate(post.date_created, true)}</p>
+                </div>
+              </div>
+            </Link>
+          ))
+        ) : (
+          <p>No Reddit posts found for this course</p>
+        )}
+      </div>
     </div>
   );
 };

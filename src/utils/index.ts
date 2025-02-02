@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction } from "react";
 import { Course, Department } from "../types/course";
 import { CourseWithSectionDetails, SectionDetail, SectionInfo } from "@types";
 
-export function formatDate(date: string) {
+export function formatDate(date: string | Date) {
   return new Date(date).toLocaleDateString("en-US", {
     month: "long",
     day: "numeric",
@@ -10,10 +10,14 @@ export function formatDate(date: string) {
   });
 }
 
-export function formatShortDate(date: string) {
+export function formatShortDate(
+  date: string | Date,
+  withYear: boolean = false
+) {
   return new Date(date).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
+    year: "numeric",
   });
 }
 
