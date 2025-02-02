@@ -50,7 +50,7 @@ export const RedditPosts: React.FC<RedditPostsProps> = ({ dept, number }) => {
       <h3>Related Reddit Posts</h3>
       {redditResults && redditResults.length > 0 ? (
         redditResults.map((post, index) => (
-          <a
+          <Link
             key={index}
             href={post.url}
             target="_blank"
@@ -62,7 +62,7 @@ export const RedditPosts: React.FC<RedditPostsProps> = ({ dept, number }) => {
               <p>Upvotes: {post.upvotes}</p>
               <p>Posted on: {post.date_created.toDateString()}</p>
             </div>
-          </a>
+          </Link>
         ))
       ) : (
         <p>No Reddit posts found for this course.</p>

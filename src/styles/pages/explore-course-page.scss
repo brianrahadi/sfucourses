@@ -1,5 +1,8 @@
 .container.course-container {
   max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
 .course-card-page {

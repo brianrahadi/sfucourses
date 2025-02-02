@@ -9,10 +9,6 @@ import { FaLeaf } from "react-icons/fa";
 import { LuFlower } from "react-icons/lu";
 import { SUBJECTS } from "@utils";
 
-const subjectOptions = SUBJECTS.map((subj) => {
-  return { value: subj, label: subj };
-});
-
 const colourNeutral1000 = "#323434";
 const colourNeutral900 = "#4b4e4d";
 const colourNeutral800 = "#646867";
@@ -53,8 +49,12 @@ const customStyles = {
   }),
 };
 
+const subjectOptions = SUBJECTS.map((subj) => {
+  return { value: subj, label: subj };
+});
 const levelOptions = ["1XX", "2XX", "3XX", "4XX", "5XX+"];
 const termOptions = ["Spring 2024", "Summer 2024", "Fall 2024", "Spring 2025"];
+const deliveryOptions = ["In Person", "Online"];
 const designationOptions = ["W", "Q", "B-Sci", "B-Hum", "B-Soc"];
 export const termToIcon = (term: string) => {
   switch (term) {
@@ -104,6 +104,7 @@ export const ExploreFilter: React.FC<ExploreFilters> = ({
   terms,
   prereqs,
   designations,
+  deliveries,
 }) => {
   const selectInputRef = useRef<SelectInstance<any>>(null);
 
@@ -175,6 +176,23 @@ export const ExploreFilter: React.FC<ExploreFilters> = ({
                 isSelected={terms.selected.includes(term)}
                 setSelected={terms.setSelected}
                 icon={termToIcon(term.split(" ")[0])}
+              />
+            );
+          })}
+        </div>
+      </section>
+      <section className="explore-filter__section">
+        <p>
+          <b>Delivery Method</b>
+        </p>
+        <div className="explore-filter__section__row">
+          {deliveryOptions.map((delivery) => {
+            return (
+              <FilterButton
+                key={delivery}
+                value={delivery}
+                isSelected={deliveries.selected.includes(delivery)}
+                setSelected={deliveries.setSelected}
               />
             );
           })}

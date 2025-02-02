@@ -13,6 +13,10 @@ export interface ExploreFilters {
     selected: string[];
     setSelected: Dispatch<SetStateAction<string[]>>;
   };
+  deliveries: {
+    selected: string[];
+    setSelected: Dispatch<SetStateAction<string[]>>;
+  };
   prereqs: {
     isSearchSelected: boolean;
     setSearchSelected: (value: boolean) => void;
@@ -36,6 +40,8 @@ export const useExploreFilters = (): ExploreFilters => {
 
   const [selectedTerms, setSelectedTerms] = useState<string[]>([]);
 
+  const [selectedDeliveries, setSelectedDeliveries] = useState<string[]>([]);
+
   const [prereqSearchSelected, setPrereqSearchSelected] = useState(false);
   const [prereqSearchQuery, setPrereqSearchQuery] = useState("");
   const [showPrereqs, setShowPrereqs] = useState(false);
@@ -44,7 +50,6 @@ export const useExploreFilters = (): ExploreFilters => {
   const [selectedDesignations, setSelectedDesignations] = useState<string[]>(
     []
   );
-  const [showDesignations, setShowDesignations] = useState(false);
 
   return {
     subjects: {
@@ -58,6 +63,10 @@ export const useExploreFilters = (): ExploreFilters => {
     terms: {
       selected: selectedTerms,
       setSelected: setSelectedTerms,
+    },
+    deliveries: {
+      selected: selectedDeliveries,
+      setSelected: setSelectedDeliveries,
     },
     prereqs: {
       isSearchSelected: prereqSearchSelected,

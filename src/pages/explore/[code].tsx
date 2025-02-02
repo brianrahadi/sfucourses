@@ -233,8 +233,6 @@ const CoursePage: React.FC<CoursePageProps> = () => {
             </p>
           </div>
         </div>
-
-        {/* Use TabContainer for course offerings */}
         <div className="course-offerings">
           {isIdle ? (
             "Waiting for course data..."
@@ -256,9 +254,8 @@ const CoursePage: React.FC<CoursePageProps> = () => {
               </p>
             </>
           )}
-          <RedditPosts dept={course.dept} number={course.number} />{" "}
-          {/* Add RedditPosts here */}
         </div>
+        <RedditPosts dept={course.dept} number={course.number} />{" "}
       </main>
     </div>
   );

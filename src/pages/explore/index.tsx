@@ -13,6 +13,15 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { useExploreFilters } from "src/hooks/UseExploreFilters";
 import { GetStaticProps } from "next";
 import Link from "next/link";
+import {
+  filterCoursesByQuery,
+  filterCourseBySubjects,
+  filterCoursesByLevels,
+  filterCoursesByTerms,
+  filterCoursesByDeliveries,
+  filterCoursesByPrereqs,
+  filterCoursesByDesignations,
+} from "@utils/filters";
 
 interface ExplorePageProps {
   initialCourses?: CourseOutline[];
@@ -58,7 +67,7 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
   const [searchSelected, setSearchSelected] = useState<boolean>(false);
   const CHUNK_SIZE = 20;
 
-  const { subjects, levels, terms, prereqs, designations } =
+  const { subjects, levels, terms, prereqs, designations, deliveries } =
     useExploreFilters();
 
   const loadMore = () => {
@@ -90,123 +99,21 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
 
   const filterCourses = (courses: CourseOutline[]) => {
     const filteredCourses = [
-      filterCourseBySubjects,
-      filterCoursesByLevels,
-      filterCoursesByTerms,
-      filterCoursesByDesignations,
-      filterCoursesByPrereqs,
-      filterCoursesByQuery,
+      (courses: CourseOutline[]) =>
+        filterCourseBySubjects(courses, subjects.selected),
+      (courses: CourseOutline[]) =>
+        filterCoursesByLevels(courses, levels.selected),
+      (courses: CourseOutline[]) =>
+        filterCoursesByTerms(courses, terms.selected),
+      (courses: CourseOutline[]) =>
+        filterCoursesByDeliveries(courses, deliveries.selected),
+      (courses: CourseOutline[]) =>
+        filterCoursesByDesignations(courses, designations.selected),
+      (courses: CourseOutline[]) =>
+        filterCoursesByPrereqs(courses, prereqs.searchQuery, prereqs.hasNone),
+      (courses: CourseOutline[]) => filterCoursesByQuery(courses, query),
     ].reduce((filtered, filterFunc) => filterFunc(filtered), courses);
     return filteredCourses;
-  };
-
-  const filterCoursesByQuery = (courses: CourseOutline[]) => {
-    if (!query) {
-      return courses;
-    }
-    return courses.filter((course) => {
-      const headerText = `${course.dept} ${course.number} - ${course.title} (${course.units})`;
-      const instructorsRaw = course.offerings
-        .map((offering) => offering.instructors.join(""))
-        .join("");
-      const stringArr = [headerText, course.description, instructorsRaw];
-      const isQuerySubstring = stringArr.some((str) =>
-        str.toLowerCase().includes(query.toLowerCase())
-      );
-      return isQuerySubstring;
-    });
-  };
-
-  const filterCourseBySubjects = (courses: CourseOutline[]) => {
-    if (subjects.selected.length == 0) {
-      return courses;
-    }
-
-    const selectedSubjectsSet = new Set(subjects.selected);
-
-    return courses.filter((course) => selectedSubjectsSet.has(course.dept));
-  };
-
-  const filterCoursesByLevels = (courses: CourseOutline[]) => {
-    if (levels.selected.length == 0) {
-      return courses;
-    }
-
-    const levelsFirstChar = levels.selected.map((level) => +level[0]);
-    return courses.filter((course) => {
-      const courseLevelFirstChar = +course.number[0];
-      return levelsFirstChar.some((level) => {
-        if (+level >= 5) {
-          return courseLevelFirstChar >= 5;
-        }
-        return courseLevelFirstChar == level;
-      });
-    });
-  };
-
-  const filterCoursesByTerms = (courses: CourseOutline[]) => {
-    if (terms.selected.length === 0) {
-      return courses;
-    }
-
-    const selectedTermsSet = new Set(terms.selected);
-
-    return courses.filter((course) => {
-      return course.offerings.some((offering) =>
-        selectedTermsSet.has(offering.term)
-      );
-    });
-  };
-
-  const filterCoursesByPrereqs = (courses: CourseOutline[]) => {
-    if (!prereqs.searchQuery && !prereqs.hasNone) {
-      return courses;
-    }
-    if (prereqs.hasNone) {
-      return courses.filter(
-        (course) => course.prerequisites === "" && +course.number[0] <= 4
-      );
-    }
-    return courses.filter((course) =>
-      course.prerequisites
-        .toLowerCase()
-        .includes(prereqs.searchQuery.toLowerCase())
-    );
-  };
-
-  const filterCoursesByDesignations = (courses: CourseOutline[]) => {
-    if (designations.selected.length === 0) {
-      return courses;
-    }
-
-    // smallest possible substrings
-    const designationSubstringMap: { [name: string]: string } = {
-      W: "w",
-      Q: "q",
-      "B-Sci": "sci",
-      "B-Soc": "soc",
-      "B-Hum": "hum",
-    };
-
-    const designationsSubstrs = designations.selected.map(
-      (d) => designationSubstringMap[d]
-    );
-
-    return courses.filter((course) => {
-      return designationsSubstrs.some((substr) => {
-        if (substr == "sci") {
-          // because Sci is also substring of Social Sciences
-          const sciCount = (
-            course.designation.toLowerCase().match(/sci/g) || []
-          ).length;
-          const socCount = (
-            course.designation.toLowerCase().match(/soc/g) || []
-          ).length;
-          return sciCount > socCount;
-        }
-        return course.designation.toLowerCase().includes(substr);
-      });
-    });
   };
 
   useEffect(onFilterChange, [
@@ -214,6 +121,7 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
     subjects.selected,
     levels.selected,
     terms.selected,
+    deliveries.selected,
     prereqs.searchQuery,
     prereqs.hasNone,
     designations.selected,
@@ -286,6 +194,7 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
             terms={terms}
             prereqs={prereqs}
             designations={designations}
+            deliveries={deliveries}
           />
         </section>
       </main>
