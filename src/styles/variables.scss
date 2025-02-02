@@ -89,6 +89,18 @@ $desktop-min-width: 1025px;
   text-align: right;
 }
 
+.icon-text-container {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+@include viewport(mobile) {
+  .mobile-hide {
+    display: none;
+  }
+}
+
 html,
 :root {
   background-color: var(--colour-neutral-1200);

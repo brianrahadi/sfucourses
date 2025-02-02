@@ -7,11 +7,15 @@ import {
   generateBaseOutlinePath,
   getData,
   loadData,
+  onlyUnique,
 } from "@utils";
 import { CourseOutline, CourseWithSectionDetails } from "@types";
 import { useQueries } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { CiCalendar, CiClock1 } from "react-icons/ci";
+import { BsFillPersonFill } from "react-icons/bs";
+import { FaTimeline } from "react-icons/fa6";
 
 interface CoursePageProps {}
 
@@ -87,79 +91,91 @@ const CourseOfferingSection: React.FC<{
   const shownSections = showLabTut ? offering.sections : nonLabTutSections;
   return (
     <div className="offering">
-      <table>
-        <tbody>
-          {shownSections.map((section, index) => {
-            const schedules = section.schedules || [];
-            const instructors =
-              section.instructors
-                ?.map((instructor) => instructor.name)
-                .join(", ") || "N/A";
-            const baseOutlinePath = generateBaseOutlinePath(offering);
+      {shownSections.map((section, index) => {
+        const schedules = section.schedules || [];
+        const instructors =
+          section.instructors
+            ?.map((instructor) => instructor.name)
+            .join(", ") || "N/A";
+        const baseOutlinePath = generateBaseOutlinePath(offering);
 
-            if (schedules.length === 0) {
-              return (
-                <tr key={index} className="section-details">
-                  <td>{section.section}</td>
-                  <td>{section.classNumber}</td>
-                  <td>N/A</td>
-                  <td>N/A</td>
-                  <td>{instructors}</td>
-                </tr>
-              );
-            }
-
-            return schedules.map((schedule, scheduleIndex) => (
-              <tr key={`${index}-${scheduleIndex}`} className="section-details">
-                {scheduleIndex === 0 && (
-                  <>
-                    <td rowSpan={schedules.length}>
-                      {notLabOrTut(schedule.sectionCode) ? (
-                        <Link
-                          href={`${baseOutlinePath}/${section.section.toLowerCase()}`}
-                          className="no-underline"
-                          target="_blank"
-                          rel="noopener"
-                        >
-                          {section.schedules[0].sectionCode} {section.section}
-                        </Link>
-                      ) : (
-                        <>
-                          {section.schedules[0].sectionCode} {section.section}
-                        </>
-                      )}
-                    </td>
-                  </>
-                )}
-                <td>{`${schedule.startTime} - ${schedule.endTime}`}</td>
-                <td>{schedule.days}</td>
-                <td>{`${formatShortDate(
-                  schedule.startDate
-                )} - ${formatShortDate(schedule.endDate)}`}</td>
-
-                {scheduleIndex === 0 && (
-                  <>
-                    <td rowSpan={schedules.length}>{instructors}</td>
-                    <td rowSpan={schedules.length}>{section.classNumber}</td>
-                  </>
-                )}
-              </tr>
-            ));
-          })}
-          {hasLabTut && (
-            <tr
-              className="toggle-row"
-              onClick={() => setShowLabTut(!showLabTut)}
-            >
-              <td colSpan={6}>
-                {showLabTut
-                  ? "Hide Lab/Tutorial Sections"
-                  : "Show Lab/Tutorial Sections"}
-              </td>
+        if (schedules.length === 0) {
+          return (
+            <tr key={index} className="section-details">
+              <td>{section.section}</td>
+              <td>{section.classNumber}</td>
+              <td>N/A</td>
+              <td>N/A</td>
+              <td>{instructors}</td>
             </tr>
-          )}
-        </tbody>
-      </table>
+          );
+        }
+
+        return (
+          <div className="section-container">
+            <div className="section-header">
+              <div className="section-header__left">
+                <span className="icon-text-container">
+                  {section.schedules[0].sectionCode} {section.section}
+                </span>
+                <span className="icon-text-container">
+                  <BsFillPersonFill />
+                  {section.instructors.length > 0
+                    ? section.instructors
+                        .map((i) => i.name)
+                        .filter(onlyUnique)
+                        .join(", ")
+                    : "Unknown"}
+                </span>
+                <span className="icon-text-container">
+                  {section.deliveryMethod}
+                </span>
+              </div>
+              <span>#{section.classNumber}</span>
+            </div>
+
+            <div className="section-schedule-container">
+              {section.schedules.map((sched) => (
+                <div className="section-schedule-row">
+                  <span
+                    className="icon-text-container"
+                    style={{ minWidth: "6.75rem" }}
+                  >
+                    <CiCalendar />
+                    {sched.days || "-"}
+                  </span>
+                  <span
+                    className="icon-text-container"
+                    style={{ minWidth: "8rem" }}
+                  >
+                    <CiClock1 />
+                    {`${sched.startTime} - ${sched.endTime}`}
+                  </span>
+                  <span
+                    className="icon-text-container mobile-hide"
+                    style={{ minWidth: "2rem" }}
+                  >
+                    <FaTimeline />
+                    {`${formatShortDate(sched.startDate)} - ${formatShortDate(
+                      sched.endDate
+                    )}`}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      })}
+      {hasLabTut && (
+        <div className="toggle-row" onClick={() => setShowLabTut(!showLabTut)}>
+          <p>
+            {" "}
+            {showLabTut
+              ? "Hide Lab/Tutorial Sections"
+              : "Show Lab/Tutorial Sections"}
+          </p>
+        </div>
+      )}
     </div>
   );
 };
@@ -217,43 +233,36 @@ const CoursePage: React.FC<CoursePageProps> = () => {
         backgroundImage={HeroImage.src}
       />
       <main className="container course-container">
-        <div className="course-page-card">
-          <div className="course-title">
-            {`${course.dept} ${course.number} - ${course.title} (${course.units})`}
-          </div>
-          <div className="course-page-card__connt">
-            <p className="course-description">
-              {course.description}
-              {course.designation && course.designation != "N/A"
-                ? " " + course.designation
-                : ""}
-            </p>
-            <p className="course-description">
-              Prerequisite: {course.prerequisites || "None"}
-            </p>
-          </div>
-        </div>
-        <div className="course-offerings">
-          {isIdle ? (
-            "Waiting for course data..."
-          ) : error ? (
-            `Error loading offerings: ${error.message}`
-          ) : offerings.length === 0 ? (
-            "No offerings available"
-          ) : (
-            <>
-              <CourseTabContainer tabs={tabs} />
-              <p className="gray-text">
-                Last updated X hours ago -{" "}
-                <Link
-                  href="https://api.sfucourses.com"
-                  className="no-underline"
-                >
-                  api.sfucourses.com
-                </Link>
+        <div className="course-top-container">
+          <div className="course-page-card">
+            <div className="course-title">
+              {`${course.dept} ${course.number} - ${course.title} (${course.units})`}
+            </div>
+            <div className="course-page-card__connt">
+              <p className="course-description">
+                {course.description}
+                {course.designation && course.designation != "N/A"
+                  ? " " + course.designation
+                  : ""}
               </p>
-            </>
-          )}
+              <p className="course-description">
+                Prerequisite: {course.prerequisites || "None"}
+              </p>
+            </div>
+          </div>
+          <div className="course-offerings">
+            {isIdle ? (
+              "Waiting for course data..."
+            ) : error ? (
+              `Error loading offerings: ${error.message}`
+            ) : offerings.length === 0 ? (
+              "No offerings available"
+            ) : (
+              <>
+                <CourseTabContainer tabs={tabs} />
+              </>
+            )}
+          </div>
         </div>
         <RedditPosts dept={course.dept} number={course.number} />{" "}
       </main>

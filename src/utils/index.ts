@@ -129,11 +129,11 @@ export function generateBaseOutlinePath(
   return `https://www.sfu.ca/outlines.html?${termPath}/${dept.toLowerCase()}/${number}`;
 }
 
+export function onlyUnique(value: string, index: number, array: string[]) {
+  return array.indexOf(value) === index;
+}
+
 // Constants
-
-export const YEAR = "2025";
-export const TERM = "spring";
-
 // export const BASE_URL = "http://localhost:8080/v1/rest";
 export const BASE_URL = "https://api.sfucourses.com/v1/rest";
 
