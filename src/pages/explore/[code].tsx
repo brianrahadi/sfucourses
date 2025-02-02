@@ -136,7 +136,10 @@ const CourseOfferingSection: React.FC<{
 
             <div className="section-schedule-container">
               {section.schedules.map((sched) => (
-                <div className="section-schedule-row">
+                <div
+                  key={sched.days + sched.startDate}
+                  className="section-schedule-row"
+                >
                   <span
                     className="icon-text-container"
                     style={{ minWidth: "6.75rem" }}
