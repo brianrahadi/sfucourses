@@ -112,7 +112,10 @@ const CourseOfferingSection: React.FC<{
         }
 
         return (
-          <div className="section-container">
+          <div
+            key={offering.term + offering.dept + offering.number}
+            className="section-container"
+          >
             <div className="section-header">
               <div className="section-header__left">
                 <span className="icon-text-container">
