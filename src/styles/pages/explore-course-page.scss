@@ -57,7 +57,6 @@
   margin: 0;
   width: 100%;
   height: 100%;
-  // border-collapse: collapse;
   background-color: var(--colour-neutral-1100);
   display: flex;
   flex-direction: column;
@@ -74,6 +73,7 @@
       display: flex;
       justify-content: space-between;
       border-bottom: 1px solid var(--colour-neutral-1100);
+      align-items: center;
 
       &__left {
         display: flex;
@@ -99,24 +99,6 @@
   }
 
   .toggle-row {
-    background-color: var(--colour-neutral-1100); // Dark background
-    cursor: pointer;
-    transition: background-color 0.3s ease; // Smooth transition for background color
-
-    &:hover {
-      background-color: var(--colour-neutral-700); // Slightly lighter on hover
-    }
-
-    p {
-      text-align: center;
-      font-weight: bold;
-      color: var(--colour-neutral-400); // Light text for contrast
-      transition: color 0.3s ease; // Smooth transition for text color
-      border-bottom: 0;
-    }
-
-    &:hover p {
-      color: var(--colour-neutral-000); // White text on hover
-    }
+    margin: 0.5rem;
   }
 }

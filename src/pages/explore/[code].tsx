@@ -119,7 +119,20 @@ const CourseOfferingSection: React.FC<{
             <div className="section-header">
               <div className="section-header__left">
                 <span className="icon-text-container">
-                  {section.schedules[0].sectionCode} {section.section}
+                  {notLabOrTut(section.schedules[0].sectionCode) ? (
+                    <Link
+                      className="no-underline"
+                      href={`${baseOutlinePath}/${section.section.toLowerCase()}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {section.schedules[0].sectionCode} {section.section}
+                    </Link>
+                  ) : (
+                    <>
+                      {section.schedules[0].sectionCode} {section.section}
+                    </>
+                  )}
                 </span>
                 <span className="icon-text-container">
                   <BsFillPersonFill />
@@ -173,13 +186,13 @@ const CourseOfferingSection: React.FC<{
         );
       })}
       {hasLabTut && (
-        <div className="toggle-row" onClick={() => setShowLabTut(!showLabTut)}>
-          <p>
-            {" "}
-            {showLabTut
-              ? "Hide Lab/Tutorial Sections"
-              : "Show Lab/Tutorial Sections"}
-          </p>
+        <div
+          className="toggle-row btn"
+          onClick={() => setShowLabTut(!showLabTut)}
+        >
+          {showLabTut
+            ? "Hide Lab/Tutorial Sections"
+            : "Show Lab/Tutorial Sections"}
         </div>
       )}
     </div>
