@@ -251,7 +251,7 @@ const CoursePage: React.FC<CoursePageProps> = () => {
   return (
     <div className="page courses-page">
       <Hero
-        title="explore courses - page in progress tee hee"
+        title={`explore ${course.dept.toLowerCase()} ${course.number} @ sfu`}
         backgroundImage={HeroImage.src}
       />
       <main className="container course-container">
@@ -282,6 +282,15 @@ const CoursePage: React.FC<CoursePageProps> = () => {
             ) : (
               <>
                 <CourseTabContainer tabs={tabs} />
+                <p className="gray-text right-align">
+                  Last updated X hours ago -{" "}
+                  <Link
+                    href="https://api.sfucourses.com"
+                    className="no-underline"
+                  >
+                    api.sfucourses.com
+                  </Link>
+                </p>
               </>
             )}
           </div>
