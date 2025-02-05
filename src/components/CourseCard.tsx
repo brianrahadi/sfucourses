@@ -1,6 +1,6 @@
 // import { CourseTerms } from './CourseTerms';
 import Link from "next/link";
-import { CourseOutline } from "../types";
+import { CourseOutline, SectionDetail } from "../types";
 import { Button, Highlight, TextBadge } from "@components";
 import { termToIcon } from "./ExploreFilter";
 
@@ -9,6 +9,8 @@ type CourseCardProps = {
   query?: string;
   showPrereqs?: boolean;
   prereqsQuery?: string;
+  showInstructors?: boolean;
+  sectionDetails?: SectionDetail[];
 };
 
 export const CourseCard: React.FC<CourseCardProps> = ({
@@ -16,6 +18,8 @@ export const CourseCard: React.FC<CourseCardProps> = ({
   query,
   prereqsQuery,
   showPrereqs,
+  showInstructors,
+  sectionDetails,
 }) => {
   const courseDescriptionShortened =
     course.description.length > 400
@@ -63,30 +67,40 @@ export const CourseCard: React.FC<CourseCardProps> = ({
           <></>
         )}
         <div className="course-card__row">
-          {course.offerings
-            .filter((offering) => offering.instructors.length !== 0)
-            .map((offering) => {
-              const text = `${offering.instructors[0]}${
-                offering.instructors.length > 1
-                  ? ` +${offering.instructors.length - 1}`
-                  : ""
-              }`;
-              return (
-                <div
-                  className="text-badge"
-                  key={offering.instructors + offering.term}
-                >
-                  {termToIcon(offering.term.split(" ")[0])}
-                  {offering.term.split(" ")[1].slice(2)}
-                  &thinsp;
-                  {query ? (
-                    <Highlight text={text} query={query} />
-                  ) : (
-                    <p>{text}</p>
-                  )}
-                </div>
-              );
-            })}
+          {showInstructors &&
+            course.offerings
+              .filter((offering) => offering.instructors.length !== 0)
+              .map((offering) => {
+                const text = `${offering.instructors[0]}${
+                  offering.instructors.length > 1
+                    ? ` +${offering.instructors.length - 1}`
+                    : ""
+                }`;
+                return (
+                  <div
+                    className="text-badge"
+                    key={offering.instructors + offering.term}
+                  >
+                    {termToIcon(offering.term.split(" ")[0])}
+                    {offering.term.split(" ")[1].slice(2)}
+                    &thinsp;
+                    {query ? (
+                      <Highlight text={text} query={query} />
+                    ) : (
+                      <p>{text}</p>
+                    )}
+                  </div>
+                );
+              })}
+        </div>
+        <div className="course-card__row">
+          {sectionDetails && (
+            <p>
+              {sectionDetails.map((sectionDetail) => {
+                return <p>{sectionDetail.classNumber}</p>;
+              })}
+            </p>
+          )}
         </div>
       </div>
     </Link>

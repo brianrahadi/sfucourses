@@ -2,10 +2,8 @@ import { CourseTabContainer, Hero, RedditPosts } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useEffect, useState } from "react";
 import {
-  formatDate,
   formatShortDate,
   generateBaseOutlinePath,
-  getData,
   loadData,
   onlyUnique,
 } from "@utils";
@@ -16,6 +14,7 @@ import Link from "next/link";
 import { CiCalendar, CiClock1 } from "react-icons/ci";
 import { BsFillPersonFill } from "react-icons/bs";
 import { FaTimeline } from "react-icons/fa6";
+import { useCourseOfferings } from "@hooks";
 
 interface CoursePageProps {}
 
@@ -23,60 +22,6 @@ interface CourseCode {
   dept: string | undefined;
   number: string | undefined;
 }
-
-interface CourseOfferingsResult {
-  offerings: CourseWithSectionDetails[];
-  isLoading: boolean;
-  error: Error | null;
-  isIdle: boolean;
-}
-
-const useCourseOfferings = (
-  course: CourseOutline | undefined
-): CourseOfferingsResult => {
-  const courseCodeURL = course ? `${course.dept}/${course.number}` : "";
-  const queries = useQueries({
-    queries: course?.offerings
-      ? course.offerings.map((offering) => {
-          const termURL = offering.term
-            .toLowerCase()
-            .split(" ")
-            .reverse()
-            .join("/");
-          const queryUrl = `/courses/${termURL}/${courseCodeURL}`;
-          return {
-            queryKey: ["courseOffering", queryUrl],
-            queryFn: () => getData(queryUrl),
-            staleTime: 5 * 60 * 1000,
-            cacheTime: 30 * 60 * 1000,
-          };
-        })
-      : [],
-  });
-
-  if (!course?.offerings) {
-    return {
-      offerings: [],
-      isLoading: false,
-      error: null,
-      isIdle: true,
-    };
-  }
-
-  const isLoading = queries.some((query) => query.isLoading);
-  const error = queries.find((query) => query.error)?.error || null;
-  const offerings = queries
-    .filter((query) => query.data)
-    .map((query) => query.data)
-    .reverse();
-
-  return {
-    offerings,
-    isLoading,
-    error,
-    isIdle: false,
-  };
-};
 
 const CourseOfferingSection: React.FC<{
   offering: CourseWithSectionDetails;

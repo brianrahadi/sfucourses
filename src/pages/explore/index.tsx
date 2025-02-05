@@ -176,6 +176,7 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
                   query={query}
                   showPrereqs={prereqs.isShown}
                   prereqsQuery={prereqs.searchQuery}
+                  showInstructors={true}
                 />
               ))}
             </InfiniteScroll>

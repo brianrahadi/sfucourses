@@ -26,6 +26,10 @@ export interface CourseWithSectionDetails {
   sections: SectionDetail[];
 }
 
+export interface CourseOutlineWithSectionDetails
+  extends CourseOutline,
+    CourseWithSectionDetails {}
+
 export interface SectionInfo {
   dept: string; // CMPT
   number: string; // 225

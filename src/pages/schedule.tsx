@@ -8,19 +8,20 @@ import {
   WeeklySchedule,
 } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   getCurrentAndNextTerm,
   getData,
   loadData,
   numberWithCommas,
 } from "@utils";
-import { CourseOutline } from "@types";
+import { CourseOutline, CourseWithSectionDetails } from "@types";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useExploreFilters } from "src/hooks/UseExploreFilters";
 import { GetStaticProps } from "next";
 import Link from "next/link";
 import { filterCoursesByQuery, filterCoursesByTerms } from "@utils/filters";
+import { useTermOfferings } from "src/hooks/UseTermOfferings";
 
 interface ExplorePageProps {
   initialCourses?: CourseOutline[];
@@ -61,12 +62,33 @@ const SchedulePage: React.FC<ExplorePageProps> = ({
   const [maxVisibleCoursesLength, setMaxVisibleCoursesLength] = useState<
     number | undefined
   >();
+
   const [sliceIndex, setSliceIndex] = useState(20);
   const [query, setQuery] = useState<string>("");
   const termOptions = getCurrentAndNextTerm();
   const [isCurrentTerm, setIsCurrentTerm] = useState<boolean>(true);
   const [searchSelected, setSearchSelected] = useState<boolean>(false);
   const CHUNK_SIZE = 20;
+
+  const { offerings, isLoading, error } = useTermOfferings(
+    termOptions[isCurrentTerm ? 0 : 1]
+  );
+
+  const outlineWithSections =
+    useMemo(() => {
+      return courses?.map((course) => {
+        const sectionDetails = offerings
+          .filter(
+            (offering) =>
+              offering.dept === course.dept && offering.number === course.number
+          )
+          .flatMap((offering) => offering.sections);
+        return {
+          ...course,
+          sectionDetails,
+        };
+      });
+    }, [courses, offerings]) || [];
 
   const loadMore = () => {
     if (!courses) {
@@ -153,11 +175,12 @@ const SchedulePage: React.FC<ExplorePageProps> = ({
               next={loadMore}
               className="courses-container"
             >
-              {visibleCourses.map((outline) => (
+              {outlineWithSections.map((outline) => (
                 <CourseCard
                   key={outline.dept + outline.number}
                   course={outline}
                   query={query}
+                  sectionDetails={outline.sectionDetails}
                 />
               ))}
             </InfiniteScroll>
