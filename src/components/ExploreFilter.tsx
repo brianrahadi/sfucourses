@@ -123,6 +123,7 @@ export const ExploreFilter: React.FC<ExploreFilters> = ({
               subjects.setSelected([]);
               levels.setSelected([]);
               terms.setSelected([]);
+              deliveries.setSelected([]);
               prereqs.setSearchQuery("");
               prereqs.setIsShown(false);
               prereqs.setHasNone(false);
