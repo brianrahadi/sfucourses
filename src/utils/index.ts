@@ -133,6 +133,25 @@ export function onlyUnique(value: string, index: number, array: string[]) {
   return array.indexOf(value) === index;
 }
 
+// export function getCurrentAndNextTerm() {
+//   const month = new Date().getMonth() + 1;
+//   const terms = ["Spring", "Summer", "Fall"];
+//   const currentTerm = terms[Math.floor((month - 1) / 4) % 3] + " " + new Date().getFullYear();
+//   const nextTerm = terms[(terms.indexOf(currentTerm.split(" ")[0]) + 1) % 3] + " " + (new Date().getFullYear() + (currentTerm === "Fall" ? 1 : 0));
+//   return [currentTerm, nextTerm];
+// };
+
+export function getCurrentAndNextTerm() {
+  const month = 12;
+  const terms = ["Spring", "Summer", "Fall"];
+  const currentTerm = terms[Math.floor((month - 1) / 4) % 3] + " " + 2024;
+  const nextTerm =
+    terms[(terms.indexOf(currentTerm.split(" ")[0]) + 1) % 3] +
+    " " +
+    (2025 + (currentTerm === "Fall" ? 1 : 0));
+  return [currentTerm, nextTerm];
+}
+
 // Constants
 // export const BASE_URL = "http://localhost:8080/v1/rest";
 export const BASE_URL = "https://api.sfucourses.com/v1/rest";

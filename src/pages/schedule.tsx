@@ -4,10 +4,16 @@ import {
   TextBadge,
   CourseCard,
   SearchBar,
+  Button,
 } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useEffect, useState } from "react";
-import { getData, loadData, numberWithCommas } from "@utils";
+import {
+  getCurrentAndNextTerm,
+  getData,
+  loadData,
+  numberWithCommas,
+} from "@utils";
 import { CourseOutline } from "@types";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useExploreFilters } from "src/hooks/UseExploreFilters";
@@ -56,6 +62,8 @@ const SchedulePage: React.FC<ExplorePageProps> = ({
   >();
   const [sliceIndex, setSliceIndex] = useState(20);
   const [query, setQuery] = useState<string>("");
+  const termOptions = getCurrentAndNextTerm();
+  const [isCurrentTerm, setIsCurrentTerm] = useState<boolean>(true);
   const [searchSelected, setSearchSelected] = useState<boolean>(false);
   const CHUNK_SIZE = 20;
 
@@ -89,13 +97,13 @@ const SchedulePage: React.FC<ExplorePageProps> = ({
   const filterCourses = (courses: CourseOutline[]) => {
     const filteredCourses = [
       (courses: CourseOutline[]) =>
-        filterCoursesByTerms(courses, ["Spring 2025"]),
+        filterCoursesByTerms(courses, [termOptions[isCurrentTerm ? 0 : 1]]),
       (courses: CourseOutline[]) => filterCoursesByQuery(courses, query),
     ].reduce((filtered, filterFunc) => filterFunc(filtered), courses);
     return filteredCourses;
   };
 
-  useEffect(onFilterChange, [query]);
+  useEffect(onFilterChange, [query, isCurrentTerm]);
 
   useEffect(() => {
     if (!courses || !totalCoursesCount || courses.length < totalCoursesCount) {
@@ -114,16 +122,22 @@ const SchedulePage: React.FC<ExplorePageProps> = ({
       <Hero title={`schedule courses`} backgroundImage={HeroImage.src} />
       <main id="explore-container" className="container">
         <section className="courses-section">
-          <TextBadge
-            className="big explore"
-            content={`exploring 
+          <div className="courses-section__header">
+            <TextBadge
+              className="big explore"
+              content={`exploring 
             ${
               maxVisibleCoursesLength
                 ? numberWithCommas(maxVisibleCoursesLength)
                 : "0"
             }
             ${(maxVisibleCoursesLength || 0) > 1 ? "courses" : "course"}`}
-          />
+            />
+            <Button
+              onClick={() => setIsCurrentTerm(!isCurrentTerm)}
+              label={`Switch to ${termOptions[isCurrentTerm ? 1 : 0]}`}
+            />
+          </div>
           <SearchBar
             handleInputChange={setQuery}
             searchSelected={searchSelected}
