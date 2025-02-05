@@ -5,6 +5,7 @@ import {
   CourseCard,
   SearchBar,
   Button,
+  WeeklySchedule,
 } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useEffect, useState } from "react";
@@ -162,13 +163,14 @@ const SchedulePage: React.FC<ExplorePageProps> = ({
             </InfiniteScroll>
           )}
         </section>
-        <section className="filter-section">
+        <section className="schedule-section">
           <p className="gray-text right-align">
             Last updated X hours ago -{" "}
             <Link href="https://api.sfucourses.com" className="no-underline">
               api.sfucourses.com
             </Link>
           </p>
+          <WeeklySchedule />
         </section>
       </main>
     </div>
