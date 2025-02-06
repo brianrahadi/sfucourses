@@ -10,44 +10,50 @@ import {
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useEffect, useMemo, useState } from "react";
 import {
+  fetchOutlinesWithSections,
   getCurrentAndNextTerm,
   getData,
   loadData,
   numberWithCommas,
 } from "@utils";
-import { CourseOutline, CourseWithSectionDetails } from "@types";
+import {
+  CourseOutline,
+  CourseOutlineWithSectionDetails,
+  CourseWithSectionDetails,
+} from "@types";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useExploreFilters } from "src/hooks/UseExploreFilters";
 import { GetStaticProps } from "next";
 import Link from "next/link";
 import { filterCoursesByQuery, filterCoursesByTerms } from "@utils/filters";
 import { useTermOfferings } from "src/hooks/UseTermOfferings";
+import { useOutlinesWithSections } from "@hooks";
 
 interface ExplorePageProps {
   initialCourses?: CourseOutline[];
   totalCoursesCount?: number;
 }
 
-export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
-  try {
-    const res = await getData("/outlines/all?limit=100");
-    const courses: CourseOutline[] = res.data;
-    const totalCoursesCount = res.total_count;
+// export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
+//   try {
+//     const res = await getData("/outlines/all?limit=100");
+//     const courses: CourseOutline[] = res.data;
+//     const totalCoursesCount = res.total_count;
 
-    return {
-      props: {
-        initialCourses: courses,
-        totalCoursesCount: totalCoursesCount,
-      },
-      revalidate: 86400, // 24 hours
-    };
-  } catch (error) {
-    console.error("Error getting all courses", error);
-    return {
-      notFound: true,
-    };
-  }
-};
+//     return {
+//       props: {
+//         initialCourses: courses,
+//         totalCoursesCount: totalCoursesCount,
+//       },
+//       revalidate: 86400, // 24 hours
+//     };
+//   } catch (error) {
+//     console.error("Error getting all courses", error);
+//     return {
+//       notFound: true,
+//     };
+//   }
+// };
 
 const SchedulePage: React.FC<ExplorePageProps> = ({
   initialCourses,
@@ -70,36 +76,17 @@ const SchedulePage: React.FC<ExplorePageProps> = ({
   const [searchSelected, setSearchSelected] = useState<boolean>(false);
   const CHUNK_SIZE = 20;
 
-  const { offerings, isLoading, error } = useTermOfferings(
-    useMemo(
-      () => termOptions[isCurrentTerm ? 0 : 1],
-      [termOptions, isCurrentTerm]
-    )
-  );
-
-  const outlineWithSections = useMemo(() => {
-    return (
-      courses?.map((course) => {
-        const sectionDetails = offerings
-          .filter(
-            (offering) =>
-              offering.dept === course.dept && offering.number === course.number
-          )
-          .flatMap((offering) => offering.sections);
-        return {
-          ...course,
-          sectionDetails,
-        };
-      }) || []
-    );
-  }, [courses, offerings]);
+  const [outlinesWithSections, setOutlinesWithSections] = useState<
+    CourseOutlineWithSectionDetails[]
+  >([]);
+  // const { outlinesWithSections, isLoading, error } = useOutlinesWithSections(termOptions[isCurrentTerm ? 0 : 1]);
 
   const loadMore = () => {
-    if (!courses) {
+    if (!outlinesWithSections) {
       return;
     }
 
-    const filteredCourses = filterCourses(outlineWithSections);
+    const filteredCourses = filterCourses(outlinesWithSections);
     const nextCourses = filteredCourses.slice(
       sliceIndex,
       sliceIndex + CHUNK_SIZE
@@ -109,11 +96,11 @@ const SchedulePage: React.FC<ExplorePageProps> = ({
   };
 
   const onFilterChange = () => {
-    if (!courses) {
+    if (!outlinesWithSections) {
       return;
     }
 
-    const filteredCourses = filterCourses(outlineWithSections);
+    const filteredCourses = filterCourses(outlinesWithSections);
     const slicedCourses = filteredCourses.slice(0, sliceIndex);
 
     setMaxVisibleOutlinesWithSectionsLength(filteredCourses.length);
@@ -133,16 +120,25 @@ const SchedulePage: React.FC<ExplorePageProps> = ({
   useEffect(onFilterChange, [query, isCurrentTerm]);
 
   useEffect(() => {
-    if (!courses || !totalCoursesCount || courses.length < totalCoursesCount) {
-      loadData("/outlines/all", (res: any) => {
-        totalCoursesCount = res.total_count;
-        setCourses(res.data);
-      });
+    const loadOutlines = async () => {
+      const fetchedOutlinesWithSections = await fetchOutlinesWithSections(
+        termOptions[isCurrentTerm ? 0 : 1]
+      );
+      totalCoursesCount = fetchOutlinesWithSections.length;
+      setOutlinesWithSections(fetchedOutlinesWithSections);
+    };
+
+    if (
+      !outlinesWithSections ||
+      !totalCoursesCount ||
+      outlinesWithSections.length < totalCoursesCount
+    ) {
+      loadOutlines();
     }
-    if (outlineWithSections) {
+    if (outlinesWithSections) {
       onFilterChange();
     }
-  }, [outlineWithSections]);
+  }, [outlinesWithSections]);
 
   return (
     <div className="page courses-page">
@@ -186,12 +182,12 @@ const SchedulePage: React.FC<ExplorePageProps> = ({
               next={loadMore}
               className="courses-container"
             >
-              {outlineWithSections.map((outline) => (
+              {outlinesWithSections.map((outline) => (
                 <CourseCard
                   key={outline.dept + outline.number}
                   course={outline}
                   query={query}
-                  sectionDetails={outline.sectionDetails}
+                  sectionDetails={outline.sections}
                 />
               ))}
             </InfiniteScroll>

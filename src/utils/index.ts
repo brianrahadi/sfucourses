@@ -1,6 +1,12 @@
 import { Dispatch, SetStateAction } from "react";
 import { Course, Department } from "../types/course";
-import { CourseWithSectionDetails, SectionDetail, SectionInfo } from "@types";
+import {
+  CourseOutline,
+  CourseOutlineWithSectionDetails,
+  CourseWithSectionDetails,
+  SectionDetail,
+  SectionInfo,
+} from "@types";
 
 export function formatDate(date: string | Date) {
   return new Date(date).toLocaleDateString("en-US", {
@@ -131,6 +137,41 @@ export function generateBaseOutlinePath(
 
 export function onlyUnique(value: string, index: number, array: string[]) {
   return array.indexOf(value) === index;
+}
+
+export async function fetchOutlinesWithSections(
+  term: string
+): Promise<CourseOutlineWithSectionDetails[]> {
+  const outlinesResponse = await getData("/outlines/all");
+  // if (!outlinesResponse.ok) {
+  //   throw new Error('Failed to fetch course outlines');
+  // }
+  // const outlinesData = await outlinesResponse.json();
+  const outlines = outlinesResponse.data as CourseOutline[];
+
+  // Fetch term offerings
+  const termPath = term.toLowerCase().split(" ").reverse().join("/");
+  const offeringsResponse = await getData(`/courses/${termPath}`);
+  // if (!offeringsResponse.ok) {
+  //   throw new Error('Failed to fetch term offerings');
+  // }
+  const offerings = offeringsResponse as CourseOutlineWithSectionDetails[];
+  // Combine outlines with section details
+  const outlinesWithSections = outlines.map((outline) => {
+    const sectionDetails = offerings
+      .filter(
+        (offering) =>
+          offering.dept === outline.dept && offering.number === outline.number
+      )
+      .flatMap((offering) => offering.sections);
+
+    return {
+      ...outline,
+      sectionDetails,
+    } as unknown as CourseOutlineWithSectionDetails;
+  });
+
+  return outlinesWithSections;
 }
 
 // export function getCurrentAndNextTerm() {
