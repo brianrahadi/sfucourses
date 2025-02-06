@@ -1,0 +1,70 @@
+.weekly-schedule {
+  font-family: Arial, sans-serif;
+  max-width: 100%;
+  margin: 0 auto;
+  // padding: 20px;f
+
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: var(--colour-neutral-000);
+  }
+
+  .schedule-grid {
+    display: grid;
+    grid-template-columns: 5rem repeat(5, 1fr);
+    grid-template-rows: auto repeat(15, 2rem); // Fixed height for time slots
+    gap: 2px;
+    background-color: var(--colour-neutral-900);
+
+    border: 1px solid var(--colour-neutral-800);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .grid-header {
+    display: contents;
+
+    .time-label,
+    .day-header {
+      background-color: var(--colour-neutral-1000);
+      color: var(--colour-neutral-000);
+      padding: 10px;
+      text-align: center;
+      font-weight: bold;
+    }
+  }
+
+  .time-row {
+    display: contents;
+
+    .time-label {
+      background-color: var(--colour-neutral-1000);
+      color: var(--colour-neutral-000);
+      padding: 10px;
+      text-align: center;
+      border-right: 1px solid var(--colour-neutral-800);
+    }
+
+    .time-slot {
+      background-color: var(--colour-neutral-1100);
+      padding: 10px;
+      border: 1px solid var(--colour-neutral-900);
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: var(--colour-neutral-900);
+      }
+
+      .course-entry {
+        background-color: var(--colour-sosy-green-500);
+        color: var(--colour-neutral-000);
+        padding: 5px;
+        border-radius: 4px;
+        text-align: center;
+        font-size: 14px;
+      }
+    }
+  }
+}

@@ -1,0 +1,56 @@
+import { useQuery } from "@tanstack/react-query";
+import { CourseOutline, CourseWithSectionDetails } from "../types";
+import { getData } from "../utils";
+
+export interface OutlinesWithSectionsResult {
+  outlines: CourseWithSectionDetails[];
+  isLoading: boolean;
+  error: Error | null;
+}
+
+export const useOutlinesWithSectionDetails = (
+  term: string
+): OutlinesWithSectionsResult => {
+  // Query for all course outlines
+  const { 
+    data: outlines = [], 
+    isLoading: isLoadingOutlines, 
+    error: outlinesError 
+  } = useQuery({
+    queryKey: ["allOutlines"],
+    queryFn: () => getData("/outlines/all"),
+    select: (response) => response.data,
+    staleTime: Infinity,
+  });
+
+  // Query for term offerings
+  const {
+    data: offerings = [],
+    isLoading: isLoadingOfferings,
+    error: offeringsError
+  } = useQuery({
+    queryKey: ["termOfferings", term],
+    queryFn: () => getData(`/courses/${term.toLowerCase().split(" ").reverse().join("/")}`),
+    staleTime: Infinity,
+  });
+
+  // Combine outlines with section details
+  const outlinesWithSections = outlines.map((outline) => {
+    const sectionDetails = offerings
+      .filter(
+        (offering) =>
+          offering.dept === outline.dept && offering.number === outline.number
+      )
+      .flatMap((offering) => offering.sections);
+    return {
+      ...outline,
+      sectionDetails,
+    };
+  });
+
+  return {
+    outlines: outlinesWithSections,
+    isLoading: isLoadingOutlines || isLoadingOfferings,
+    error: outlinesError || offeringsError,
+  };
+};

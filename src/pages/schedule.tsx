@@ -56,27 +56,30 @@ const SchedulePage: React.FC<ExplorePageProps> = ({
   const [courses, setCourses] = useState<CourseOutline[] | undefined>(
     initialCourses || undefined
   );
-  const [visibleCourses, setVisibleCourses] = useState<
-    CourseOutline[] | undefined
-  >([]);
-  const [maxVisibleCoursesLength, setMaxVisibleCoursesLength] = useState<
-    number | undefined
-  >();
+  const [visibleOutlinesWithSections, setVisibleOutlinesWithSections] =
+    useState<CourseOutline[] | undefined>([]);
+  const [
+    maxVisibleOutlinesWithSectionsLength,
+    setMaxVisibleOutlinesWithSectionsLength,
+  ] = useState<number | undefined>();
 
   const [sliceIndex, setSliceIndex] = useState(20);
   const [query, setQuery] = useState<string>("");
-  const termOptions = getCurrentAndNextTerm();
+  const termOptions = useMemo(() => getCurrentAndNextTerm(), []); // Memoize termOptions
   const [isCurrentTerm, setIsCurrentTerm] = useState<boolean>(true);
   const [searchSelected, setSearchSelected] = useState<boolean>(false);
   const CHUNK_SIZE = 20;
 
   const { offerings, isLoading, error } = useTermOfferings(
-    termOptions[isCurrentTerm ? 0 : 1]
+    useMemo(
+      () => termOptions[isCurrentTerm ? 0 : 1],
+      [termOptions, isCurrentTerm]
+    )
   );
 
-  const outlineWithSections =
-    useMemo(() => {
-      return courses?.map((course) => {
+  const outlineWithSections = useMemo(() => {
+    return (
+      courses?.map((course) => {
         const sectionDetails = offerings
           .filter(
             (offering) =>
@@ -87,20 +90,21 @@ const SchedulePage: React.FC<ExplorePageProps> = ({
           ...course,
           sectionDetails,
         };
-      });
-    }, [courses, offerings]) || [];
+      }) || []
+    );
+  }, [courses, offerings]);
 
   const loadMore = () => {
     if (!courses) {
       return;
     }
 
-    const filteredCourses = filterCourses(courses);
+    const filteredCourses = filterCourses(outlineWithSections);
     const nextCourses = filteredCourses.slice(
       sliceIndex,
       sliceIndex + CHUNK_SIZE
     );
-    setVisibleCourses((prev) => [...(prev || []), ...nextCourses]);
+    setVisibleOutlinesWithSections((prev) => [...(prev || []), ...nextCourses]);
     setSliceIndex((prev) => prev + CHUNK_SIZE);
   };
 
@@ -109,11 +113,11 @@ const SchedulePage: React.FC<ExplorePageProps> = ({
       return;
     }
 
-    const filteredCourses = filterCourses(courses);
+    const filteredCourses = filterCourses(outlineWithSections);
     const slicedCourses = filteredCourses.slice(0, sliceIndex);
 
-    setMaxVisibleCoursesLength(filteredCourses.length);
-    setVisibleCourses(slicedCourses);
+    setMaxVisibleOutlinesWithSectionsLength(filteredCourses.length);
+    setVisibleOutlinesWithSections(slicedCourses);
     setSliceIndex(CHUNK_SIZE);
   };
 
@@ -135,10 +139,10 @@ const SchedulePage: React.FC<ExplorePageProps> = ({
         setCourses(res.data);
       });
     }
-    if (courses) {
+    if (outlineWithSections) {
       onFilterChange();
     }
-  }, [courses]);
+  }, [outlineWithSections]);
 
   return (
     <div className="page courses-page">
@@ -150,11 +154,15 @@ const SchedulePage: React.FC<ExplorePageProps> = ({
               className="big explore"
               content={`exploring 
             ${
-              maxVisibleCoursesLength
-                ? numberWithCommas(maxVisibleCoursesLength)
+              maxVisibleOutlinesWithSectionsLength
+                ? numberWithCommas(maxVisibleOutlinesWithSectionsLength)
                 : "0"
             }
-            ${(maxVisibleCoursesLength || 0) > 1 ? "courses" : "course"}`}
+            ${
+              (maxVisibleOutlinesWithSectionsLength || 0) > 1
+                ? "courses"
+                : "course"
+            }`}
             />
             <Button
               onClick={() => setIsCurrentTerm(!isCurrentTerm)}
@@ -167,10 +175,13 @@ const SchedulePage: React.FC<ExplorePageProps> = ({
             setSearchSelected={setSearchSelected}
             placeholder="course code, title, description, or instructor name"
           />
-          {visibleCourses && (
+          {visibleOutlinesWithSections && (
             <InfiniteScroll
-              dataLength={visibleCourses.length}
-              hasMore={visibleCourses.length < (maxVisibleCoursesLength || 0)}
+              dataLength={visibleOutlinesWithSections.length}
+              hasMore={
+                visibleOutlinesWithSections.length <
+                (maxVisibleOutlinesWithSectionsLength || 0)
+              }
               loader={<p>Loading...</p>}
               next={loadMore}
               className="courses-container"
