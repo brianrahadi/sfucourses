@@ -15,22 +15,10 @@ import {
   numberWithCommas,
   toTermCode,
 } from "@utils";
-import {
-  CourseOutline,
-  CourseOutlineWithSectionDetails,
-  CourseWithSectionDetails,
-} from "@types";
+import { CourseOutline, CourseOutlineWithSectionDetails } from "@types";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { useExploreFilters } from "src/hooks/UseExploreFilters";
-import { GetStaticProps } from "next";
 import Link from "next/link";
-import {
-  filterCoursesByQuery,
-  filterCoursesByOfferedTerms,
-  filterCoursesByTerm,
-} from "@utils/filters";
-import { useTermOfferings } from "src/hooks/UseTermOfferings";
-import { useOutlinesWithSections } from "@hooks";
+import { filterCoursesByQuery, filterCoursesByTerm } from "@utils/filters";
 
 interface ExplorePageProps {
   initialCourses?: CourseOutline[];
