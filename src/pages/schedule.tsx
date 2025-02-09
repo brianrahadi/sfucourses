@@ -107,11 +107,7 @@ const SchedulePage: React.FC<ExplorePageProps> = ({
   useEffect(onFilterChange, [query, isCurrentTerm]);
 
   useEffect(() => {
-    if (
-      !outlinesWithSections ||
-      !totalCoursesCount ||
-      outlinesWithSections.length < totalCoursesCount
-    ) {
+    if (!outlinesWithSections) {
       loadData(
         `/sections/${toTermCode(
           termOptions[isCurrentTerm ? 0 : 1]
