@@ -163,8 +163,8 @@ export function toTermCode(term: string) {
   return term.toLowerCase().split(" ").reverse().join("-");
 }
 // Constants
-export const BASE_URL = "http://localhost:8080/v1/rest";
-// export const BASE_URL = "https://api.sfucourses.com/v1/rest";
+// export const BASE_URL = "http://localhost:8080/v1/rest";
+export const BASE_URL = "https://api.sfucourses.com/v1/rest";
 
 export const SUBJECTS = [
   "ACMA",
