@@ -17,7 +17,7 @@ import {
   filterCoursesByQuery,
   filterCourseBySubjects,
   filterCoursesByLevels,
-  filterCoursesByTerms,
+  filterCoursesByOfferedTerms,
   filterCoursesByDeliveries,
   filterCoursesByPrereqs,
   filterCoursesByDesignations,
@@ -104,7 +104,7 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
       (courses: CourseOutline[]) =>
         filterCoursesByLevels(courses, levels.selected),
       (courses: CourseOutline[]) =>
-        filterCoursesByTerms(courses, terms.selected),
+        filterCoursesByOfferedTerms(courses, terms.selected),
       (courses: CourseOutline[]) =>
         filterCoursesByDeliveries(courses, deliveries.selected),
       (courses: CourseOutline[]) =>

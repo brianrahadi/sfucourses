@@ -1,19 +1,26 @@
-import { CourseOutline } from "@types";
+import { CourseOutline, CourseOutlineWithSectionDetails } from "@types";
 
 // Filter by search query
-export const filterCoursesByQuery = (
-  courses: CourseOutline[],
+export const filterCoursesByQuery = <T extends CourseOutline>(
+  courses: T[],
   query: string
-): CourseOutline[] => {
+): T[] => {
   if (!query) {
     return courses;
   }
   return courses.filter((course) => {
     const headerText = `${course.dept} ${course.number} - ${course.title} (${course.units})`;
-    const instructorsRaw = course.offerings
-      .map((offering) => offering.instructors.join(""))
-      .join("");
-    const stringArr = [headerText, course.description, instructorsRaw];
+
+    const instructorsRaw =
+      course.offerings &&
+      course.offerings
+        .map((offering) => offering.instructors.join(""))
+        .join("");
+    const stringArr = [headerText, course.description];
+
+    if (instructorsRaw) {
+      stringArr.push(instructorsRaw);
+    }
     const isQuerySubstring = stringArr.some((str) =>
       str.toLowerCase().includes(query.toLowerCase())
     );
@@ -53,16 +60,27 @@ export const filterCoursesByLevels = (
   });
 };
 
+export const filterCoursesByTerm = (
+  courses: CourseOutlineWithSectionDetails[],
+  term: string
+): CourseOutlineWithSectionDetails[] => {
+  return courses.filter((course) => course.term === term);
+};
+
 // Filter by terms
-export const filterCoursesByTerms = (
+export const filterCoursesByOfferedTerms = (
   courses: CourseOutline[],
   selectedTerms: string[]
 ): CourseOutline[] => {
   if (selectedTerms.length === 0) {
     return courses;
   }
+
   const selectedTermsSet = new Set(selectedTerms);
   return courses.filter((course) => {
+    if (!course.offerings) {
+      return course;
+    }
     return course.offerings.some((offering) =>
       selectedTermsSet.has(offering.term)
     );

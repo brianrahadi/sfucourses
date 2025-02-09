@@ -68,6 +68,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({
         )}
         <div className="course-card__row">
           {showInstructors &&
+            course.offerings &&
             course.offerings
               .filter((offering) => offering.instructors.length !== 0)
               .map((offering) => {

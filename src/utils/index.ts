@@ -139,41 +139,6 @@ export function onlyUnique(value: string, index: number, array: string[]) {
   return array.indexOf(value) === index;
 }
 
-export async function fetchOutlinesWithSections(
-  term: string
-): Promise<CourseOutlineWithSectionDetails[]> {
-  const outlinesResponse = await getData("/outlines/all");
-  // if (!outlinesResponse.ok) {
-  //   throw new Error('Failed to fetch course outlines');
-  // }
-  // const outlinesData = await outlinesResponse.json();
-  const outlines = outlinesResponse.data as CourseOutline[];
-
-  // Fetch term offerings
-  const termPath = term.toLowerCase().split(" ").reverse().join("/");
-  const offeringsResponse = await getData(`/courses/${termPath}`);
-  // if (!offeringsResponse.ok) {
-  //   throw new Error('Failed to fetch term offerings');
-  // }
-  const offerings = offeringsResponse as CourseOutlineWithSectionDetails[];
-  // Combine outlines with section details
-  const outlinesWithSections = outlines.map((outline) => {
-    const sectionDetails = offerings
-      .filter(
-        (offering) =>
-          offering.dept === outline.dept && offering.number === outline.number
-      )
-      .flatMap((offering) => offering.sections);
-
-    return {
-      ...outline,
-      sectionDetails,
-    } as unknown as CourseOutlineWithSectionDetails;
-  });
-
-  return outlinesWithSections;
-}
-
 // export function getCurrentAndNextTerm() {
 //   const month = new Date().getMonth() + 1;
 //   const terms = ["Spring", "Summer", "Fall"];
@@ -193,9 +158,13 @@ export function getCurrentAndNextTerm() {
   return [currentTerm, nextTerm];
 }
 
+// Spring 2025 to 2025-spring
+export function toTermCode(term: string) {
+  return term.toLowerCase().split(" ").reverse().join("-");
+}
 // Constants
-// export const BASE_URL = "http://localhost:8080/v1/rest";
-export const BASE_URL = "https://api.sfucourses.com/v1/rest";
+export const BASE_URL = "http://localhost:8080/v1/rest";
+// export const BASE_URL = "https://api.sfucourses.com/v1/rest";
 
 export const SUBJECTS = [
   "ACMA",

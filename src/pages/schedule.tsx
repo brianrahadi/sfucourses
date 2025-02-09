@@ -10,11 +10,10 @@ import {
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useEffect, useMemo, useState } from "react";
 import {
-  fetchOutlinesWithSections,
   getCurrentAndNextTerm,
-  getData,
   loadData,
   numberWithCommas,
+  toTermCode,
 } from "@utils";
 import {
   CourseOutline,
@@ -25,7 +24,11 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { useExploreFilters } from "src/hooks/UseExploreFilters";
 import { GetStaticProps } from "next";
 import Link from "next/link";
-import { filterCoursesByQuery, filterCoursesByTerms } from "@utils/filters";
+import {
+  filterCoursesByQuery,
+  filterCoursesByOfferedTerms,
+  filterCoursesByTerm,
+} from "@utils/filters";
 import { useTermOfferings } from "src/hooks/UseTermOfferings";
 import { useOutlinesWithSections } from "@hooks";
 
@@ -59,11 +62,11 @@ const SchedulePage: React.FC<ExplorePageProps> = ({
   initialCourses,
   totalCoursesCount,
 }) => {
-  const [courses, setCourses] = useState<CourseOutline[] | undefined>(
-    initialCourses || undefined
-  );
+  const [outlinesWithSections, setOutlinesWithSections] = useState<
+    CourseOutlineWithSectionDetails[] | undefined
+  >(undefined);
   const [visibleOutlinesWithSections, setVisibleOutlinesWithSections] =
-    useState<CourseOutline[] | undefined>([]);
+    useState<CourseOutlineWithSectionDetails[] | undefined>([]);
   const [
     maxVisibleOutlinesWithSectionsLength,
     setMaxVisibleOutlinesWithSectionsLength,
@@ -75,11 +78,6 @@ const SchedulePage: React.FC<ExplorePageProps> = ({
   const [isCurrentTerm, setIsCurrentTerm] = useState<boolean>(true);
   const [searchSelected, setSearchSelected] = useState<boolean>(false);
   const CHUNK_SIZE = 20;
-
-  const [outlinesWithSections, setOutlinesWithSections] = useState<
-    CourseOutlineWithSectionDetails[]
-  >([]);
-  // const { outlinesWithSections, isLoading, error } = useOutlinesWithSections(termOptions[isCurrentTerm ? 0 : 1]);
 
   const loadMore = () => {
     if (!outlinesWithSections) {
@@ -108,11 +106,12 @@ const SchedulePage: React.FC<ExplorePageProps> = ({
     setSliceIndex(CHUNK_SIZE);
   };
 
-  const filterCourses = (courses: CourseOutline[]) => {
+  const filterCourses = (courses: CourseOutlineWithSectionDetails[]) => {
     const filteredCourses = [
-      (courses: CourseOutline[]) =>
-        filterCoursesByTerms(courses, [termOptions[isCurrentTerm ? 0 : 1]]),
-      (courses: CourseOutline[]) => filterCoursesByQuery(courses, query),
+      (courses: CourseOutlineWithSectionDetails[]) =>
+        filterCoursesByTerm(courses, termOptions[isCurrentTerm ? 0 : 1]),
+      (courses: CourseOutlineWithSectionDetails[]) =>
+        filterCoursesByQuery(courses, query),
     ].reduce((filtered, filterFunc) => filterFunc(filtered), courses);
     return filteredCourses;
   };
@@ -120,23 +119,24 @@ const SchedulePage: React.FC<ExplorePageProps> = ({
   useEffect(onFilterChange, [query, isCurrentTerm]);
 
   useEffect(() => {
-    const loadOutlines = async () => {
-      const fetchedOutlinesWithSections = await fetchOutlinesWithSections(
-        termOptions[isCurrentTerm ? 0 : 1]
-      );
-      totalCoursesCount = fetchOutlinesWithSections.length;
-      setOutlinesWithSections(fetchedOutlinesWithSections);
-    };
-
     if (
       !outlinesWithSections ||
       !totalCoursesCount ||
       outlinesWithSections.length < totalCoursesCount
     ) {
-      loadOutlines();
+      loadData(
+        `/sections/${toTermCode(
+          termOptions[isCurrentTerm ? 0 : 1]
+        )}?withOutlines=true`,
+        (res: any) => {
+          totalCoursesCount = res.length;
+          setOutlinesWithSections(res);
+        }
+      );
     }
     if (outlinesWithSections) {
-      onFilterChange();
+      setVisibleOutlinesWithSections(outlinesWithSections.slice(0, CHUNK_SIZE));
+      setMaxVisibleOutlinesWithSectionsLength(outlinesWithSections.length);
     }
   }, [outlinesWithSections]);
 
@@ -182,7 +182,7 @@ const SchedulePage: React.FC<ExplorePageProps> = ({
               next={loadMore}
               className="courses-container"
             >
-              {outlinesWithSections.map((outline) => (
+              {visibleOutlinesWithSections.map((outline) => (
                 <CourseCard
                   key={outline.dept + outline.number}
                   course={outline}

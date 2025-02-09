@@ -1,4 +1,3 @@
-// CourseOutline represents the general information about a course
 export interface CourseOutline {
   dept: string;
   number: string;
@@ -10,8 +9,7 @@ export interface CourseOutline {
   deliveryMethod: string;
   prerequisites: string;
   corequisites: string;
-  degreeLevel: string;
-  offerings: CourseOffering[];
+  offerings?: CourseOffering[];
 }
 
 export interface CourseOffering {
