@@ -98,7 +98,11 @@ export const CourseCard: React.FC<CourseCardProps> = ({
           {sectionDetails && (
             <p>
               {sectionDetails.map((sectionDetail) => {
-                return <p>{sectionDetail.classNumber}</p>;
+                return (
+                  <p key={sectionDetail.classNumber}>
+                    {sectionDetail.classNumber}
+                  </p>
+                );
               })}
             </p>
           )}
