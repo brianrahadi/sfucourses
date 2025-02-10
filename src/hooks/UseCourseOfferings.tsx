@@ -1,6 +1,6 @@
 import { useQueries } from "@tanstack/react-query";
 import { CourseOutline, CourseWithSectionDetails } from "@types";
-import { getData, toTermCode } from "@utils";
+import { getCourseAPIData, toTermCode } from "@utils";
 
 export interface CourseOfferingsResult {
   offerings: CourseWithSectionDetails[];
@@ -20,7 +20,7 @@ export const useCourseOfferings = (
           const queryUrl = `/sections/${termURL}/${courseCodeURL}`;
           return {
             queryKey: ["courseOffering", queryUrl],
-            queryFn: () => getData(queryUrl),
+            queryFn: () => getCourseAPIData(queryUrl),
             staleTime: 5 * 60 * 1000,
             cacheTime: 30 * 60 * 1000,
           };

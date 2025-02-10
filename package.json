@@ -26,6 +26,7 @@
     "gray-matter": "^4.0.3",
     "next": "^14.0.3",
     "next-sanity": "^5.5.10",
+    "pako": "^2.1.0",
     "react": "18.2.0",
     "react-big-calendar": "^1.6.9",
     "react-calendar": "^4.2.1",
@@ -38,6 +39,7 @@
   },
   "devDependencies": {
     "@types/node": "20.9.0",
+    "@types/pako": "^2.0.3",
     "eslint": "8.22.0",
     "eslint-config-next": "12.2.5",
     "husky": "^8.0.3",

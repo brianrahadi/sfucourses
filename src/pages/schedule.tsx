@@ -10,8 +10,9 @@ import {
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useEffect, useMemo, useState } from "react";
 import {
+  getCourseAPIData,
   getCurrentAndNextTerm,
-  loadData,
+  loadCourseAPIData,
   numberWithCommas,
   toTermCode,
 } from "@utils";
@@ -19,6 +20,7 @@ import { CourseOutline, CourseOutlineWithSectionDetails } from "@types";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Link from "next/link";
 import { filterCoursesByQuery, filterCoursesByTerm } from "@utils/filters";
+import { GetStaticProps } from "next";
 
 interface ExplorePageProps {
   initialCourses?: CourseOutline[];
@@ -27,7 +29,7 @@ interface ExplorePageProps {
 
 // export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
 //   try {
-//     const res = await getData("/outlines/all?limit=100");
+//     const res = await getCourseAPIData("/outlines/all?limit=100");
 //     const courses: CourseOutline[] = res.data;
 //     const totalCoursesCount = res.total_count;
 
@@ -108,7 +110,7 @@ const SchedulePage: React.FC<ExplorePageProps> = ({
 
   useEffect(() => {
     if (!outlinesWithSections) {
-      loadData(
+      loadCourseAPIData(
         `/sections/${toTermCode(
           termOptions[isCurrentTerm ? 0 : 1]
         )}?withOutlines=true`,

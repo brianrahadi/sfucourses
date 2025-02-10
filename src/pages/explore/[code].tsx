@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import {
   formatShortDate,
   generateBaseOutlinePath,
-  loadData,
+  loadCourseAPIData,
   onlyUnique,
 } from "@utils";
 import { CourseOutline, CourseWithSectionDetails } from "@types";
@@ -162,7 +162,10 @@ const CoursePage: React.FC<CoursePageProps> = () => {
 
   useEffect(() => {
     if (courseCode.dept && courseCode.number) {
-      loadData(`/outlines/${courseCode.dept}/${courseCode.number}`, setCourse);
+      loadCourseAPIData(
+        `/outlines/${courseCode.dept}/${courseCode.number}`,
+        setCourse
+      );
     }
   }, [courseCode.dept, courseCode.number]);
 

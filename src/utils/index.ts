@@ -7,6 +7,7 @@ import {
   SectionDetail,
   SectionInfo,
 } from "@types";
+import pako from "pako"; // For gzip decompression
 
 export function formatDate(date: string | Date) {
   return new Date(date).toLocaleDateString("en-US", {
@@ -35,14 +36,33 @@ export function numberWithCommas(str: number) {
   return str.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-export async function loadData(
+// by default always gzip
+async function decompressGzip(response: Response): Promise<any> {
+  const arrayBuffer = await response.arrayBuffer();
+  const uint8Array = new Uint8Array(arrayBuffer);
+
+  try {
+    const decompressed = pako.inflate(uint8Array, { to: "string" });
+    return JSON.parse(decompressed);
+  } catch (error) {
+    console.error("Error decompressing/parsing response:", error);
+    throw error;
+  }
+}
+
+export async function loadCourseAPIData(
   queryString: string,
   setData: Dispatch<SetStateAction<any>>
 ): Promise<void> {
   const url = `${BASE_URL}${queryString}`;
 
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: {
+        "Accept-Encoding": "gzip, deflate, br",
+      },
+    });
+
     if (!response.ok) {
       if (response.status === 404) {
         throw new Error("404");
@@ -50,18 +70,24 @@ export async function loadData(
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    const json = await response.json();
-    setData(json);
+    const data = await decompressGzip(response);
+    setData(data);
   } catch (error) {
     console.error(`Error fetching ${url}:`, error);
+    throw error; // Re-throw to allow caller to handle errors
   }
 }
 
-export async function getData(queryString: string): Promise<any> {
+export async function getCourseAPIData(queryString: string): Promise<any> {
   const url = `${BASE_URL}${queryString}`;
 
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: {
+        "Accept-Encoding": "gzip, deflate, br",
+      },
+    });
+
     if (!response.ok) {
       if (response.status === 404) {
         throw new Error("404");
@@ -69,10 +95,10 @@ export async function getData(queryString: string): Promise<any> {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    const json = await response.json();
-    return json;
+    return await decompressGzip(response);
   } catch (error) {
     console.error(`Error fetching ${url}:`, error);
+    throw error; // Re-throw to allow caller to handle errors
   }
 }
 
@@ -109,7 +135,7 @@ export async function loadDepartmentName(
   deptValue: string,
   setDeptName: Dispatch<SetStateAction<string | null>>
 ): Promise<void> {
-  const json: Department[] = await getData(`${year}/${term}`);
+  const json: Department[] = await getCourseAPIData(`${year}/${term}`);
   const deptName = json.find((dept) => dept.value === deptValue)?.name;
   setDeptName(deptName?.toLowerCase() || null);
 }
@@ -163,8 +189,8 @@ export function toTermCode(term: string) {
   return term.toLowerCase().split(" ").reverse().join("-");
 }
 // Constants
-// export const BASE_URL = "http://localhost:8080/v1/rest";
-export const BASE_URL = "https://api.sfucourses.com/v1/rest";
+export const BASE_URL = "http://localhost:8080/v1/rest";
+// export const BASE_URL = "https://api.sfucourses.com/v1/rest";
 
 export const SUBJECTS = [
   "ACMA",

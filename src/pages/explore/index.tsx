@@ -7,7 +7,7 @@ import {
 } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useEffect, useState } from "react";
-import { getData, loadData, numberWithCommas } from "@utils";
+import { getCourseAPIData, loadCourseAPIData, numberWithCommas } from "@utils";
 import { CourseOutline } from "@types";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useExploreFilters } from "src/hooks/UseExploreFilters";
@@ -30,7 +30,7 @@ interface ExplorePageProps {
 
 export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
   try {
-    const res = await getData("/outlines/all?limit=100");
+    const res = await getCourseAPIData("/outlines/all");
     const courses: CourseOutline[] = res.data;
     const totalCoursesCount = res.total_count;
 
@@ -129,7 +129,7 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
 
   useEffect(() => {
     if (!courses || !totalCoursesCount || courses.length < totalCoursesCount) {
-      loadData("/outlines/all", (res: any) => {
+      loadCourseAPIData("/outlines/all", (res: any) => {
         totalCoursesCount = res.total_count;
         setCourses(res.data);
       });
