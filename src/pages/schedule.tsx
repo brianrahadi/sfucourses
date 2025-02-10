@@ -16,45 +16,45 @@ import {
   numberWithCommas,
   toTermCode,
 } from "@utils";
-import { CourseOutline, CourseOutlineWithSectionDetails } from "@types";
+import { CourseOutlineWithSectionDetails } from "@types";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Link from "next/link";
 import { filterCoursesByQuery, filterCoursesByTerm } from "@utils/filters";
 import { GetStaticProps } from "next";
 
-interface ExplorePageProps {
-  initialCourses?: CourseOutline[];
-  totalCoursesCount?: number;
+interface SchedulePageProps {
+  initialSections?: CourseOutlineWithSectionDetails[];
 }
 
-// export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
-//   try {
-//     const res = await getCourseAPIData("/outlines/all?limit=100");
-//     const courses: CourseOutline[] = res.data;
-//     const totalCoursesCount = res.total_count;
+export const getStaticProps: GetStaticProps<SchedulePageProps> = async () => {
+  try {
+    const terms = getCurrentAndNextTerm();
+    const termCodes = terms.map(toTermCode);
+    const currentTermSections = await getCourseAPIData(
+      `/sections/${termCodes[0]}?withOutlines=true`
+    );
+    const nextTermSections = await getCourseAPIData(
+      `/sections/${termCodes[1]}?withOutlines=true`
+    );
 
-//     return {
-//       props: {
-//         initialCourses: courses,
-//         totalCoursesCount: totalCoursesCount,
-//       },
-//       revalidate: 86400, // 24 hours
-//     };
-//   } catch (error) {
-//     console.error("Error getting all courses", error);
-//     return {
-//       notFound: true,
-//     };
-//   }
-// };
+    return {
+      props: {
+        initialSections: [...currentTermSections, ...nextTermSections],
+      },
+      revalidate: 86400, // 24 hours
+    };
+  } catch (error) {
+    console.error("Error getting all courses", error);
+    return {
+      notFound: true,
+    };
+  }
+};
 
-const SchedulePage: React.FC<ExplorePageProps> = ({
-  initialCourses,
-  totalCoursesCount,
-}) => {
+const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   const [outlinesWithSections, setOutlinesWithSections] = useState<
     CourseOutlineWithSectionDetails[] | undefined
-  >(undefined);
+  >(initialSections || undefined);
   const [visibleOutlinesWithSections, setVisibleOutlinesWithSections] =
     useState<CourseOutlineWithSectionDetails[] | undefined>([]);
   const [
@@ -115,14 +115,33 @@ const SchedulePage: React.FC<ExplorePageProps> = ({
           termOptions[isCurrentTerm ? 0 : 1]
         )}?withOutlines=true`,
         (res: any) => {
-          totalCoursesCount = res.length;
-          setOutlinesWithSections(res);
+          setOutlinesWithSections((prev) => {
+            if (prev) {
+              return [...prev, ...res];
+            }
+            return res;
+          });
+        }
+      );
+
+      loadCourseAPIData(
+        `/sections/${toTermCode(
+          termOptions[isCurrentTerm ? 1 : 0]
+        )}?withOutlines=true`,
+        (res: any) => {
+          setOutlinesWithSections((prev) => {
+            if (prev) {
+              return [...prev, ...res];
+            }
+            return res;
+          });
         }
       );
     }
     if (outlinesWithSections) {
       setVisibleOutlinesWithSections(outlinesWithSections.slice(0, CHUNK_SIZE));
       setMaxVisibleOutlinesWithSectionsLength(outlinesWithSections.length);
+      onFilterChange();
     }
   }, [outlinesWithSections]);
 
