@@ -1,6 +1,7 @@
 .weekly-schedule {
   font-family: Arial, sans-serif;
   max-width: 100%;
+  width: 40rem;
   margin: 0 auto;
 
   h2 {
@@ -12,7 +13,7 @@
   .schedule-grid {
     display: grid;
     grid-template-columns: 3rem repeat(5, 1fr);
-    grid-template-rows: auto repeat(15, 2.5rem);
+    grid-template-rows: auto repeat(12, 2rem);
     gap: 1px;
     background-color: var(--colour-neutral-900);
     border: 0.5px solid var(--colour-neutral-800);
