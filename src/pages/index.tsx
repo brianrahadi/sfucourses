@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { Hero } from "@components";
 import Link from "next/link";
-import LandingPageHeroSrc from "../assets/images/landing-page/hero.jpg";
+import LandingPageHeroSrc from "../assets/images/landing-page/hero.webp";
 
 interface LandingPageProps {}
 
