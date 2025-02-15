@@ -99,6 +99,14 @@ $desktop-min-width: 1025px;
   gap: 0.25rem;
 }
 
+.center {
+  display: flex;
+  width: 100%;
+  height: 15vw;
+  justify-content: center;
+  align-items: center;
+}
+
 @include viewport(mobile) {
   .mobile-hide {
     display: none;

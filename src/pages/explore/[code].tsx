@@ -16,10 +16,8 @@ import { CourseOutline, CourseWithSectionDetails } from "@types";
 import { useQueries } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { CiCalendar, CiClock1 } from "react-icons/ci";
-import { BsFillPersonFill } from "react-icons/bs";
-import { FaTimeline } from "react-icons/fa6";
 import { useCourseOfferings } from "@hooks";
+import { RotatingLines } from "react-loader-spinner";
 
 interface CoursePageProps {}
 
@@ -56,7 +54,11 @@ const CoursePage: React.FC<CoursePageProps> = () => {
     return (
       <div className="page courses-page">
         <Hero title="explore courses" backgroundImage={HeroImage.src} />
-        <main className="container">Invalid course code provided</main>
+        <main className="container">
+          <div className="center">
+            <h2>Whoopsie! Invalid course code provided</h2>
+          </div>
+        </main>
       </div>
     );
   }
@@ -65,7 +67,11 @@ const CoursePage: React.FC<CoursePageProps> = () => {
     return (
       <div className="page courses-page">
         <Hero title="explore courses" backgroundImage={HeroImage.src} />
-        <main className="container">Loading...</main>
+        <main className="container">
+          <div className="center">
+            <RotatingLines visible={true} strokeColor="#24a98b" />
+          </div>
+        </main>
       </div>
     );
   }
