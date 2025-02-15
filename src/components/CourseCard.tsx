@@ -1,7 +1,7 @@
-// import { CourseTerms } from './CourseTerms';
+import React from "react";
 import Link from "next/link";
-import { CourseOutline, SectionDetail } from "../types";
-import { Button, Highlight, TextBadge } from "@components";
+import { CourseOutline, CourseWithSectionDetails } from "../types";
+import { Button, Highlight, SectionDetails, TextBadge } from "@components";
 import { termToIcon } from "./ExploreFilter";
 
 type CourseCardProps = {
@@ -10,7 +10,9 @@ type CourseCardProps = {
   showPrereqs?: boolean;
   prereqsQuery?: string;
   showInstructors?: boolean;
-  sectionDetails?: SectionDetail[];
+  sectionDetails?: CourseWithSectionDetails;
+  showDescription?: boolean;
+  isLink?: boolean;
 };
 
 export const CourseCard: React.FC<CourseCardProps> = ({
@@ -20,6 +22,8 @@ export const CourseCard: React.FC<CourseCardProps> = ({
   showPrereqs,
   showInstructors,
   sectionDetails,
+  showDescription = true,
+  isLink = true,
 }) => {
   const courseDescriptionShortened =
     course.description.length > 400
@@ -28,30 +32,27 @@ export const CourseCard: React.FC<CourseCardProps> = ({
 
   const header = `${course.dept} ${course.number} - ${course.title} (${course.units})`;
 
-  return (
-    <Link
-      href={`/explore/${course.dept.toLowerCase()}-${course.number}`}
-      key={course.dept + course.number}
-      className="course-card"
-    >
+  const CardContent = () => (
+    <>
       <div className="course-title dark">
         {query ? <Highlight text={header} query={query} /> : <p>{header}</p>}
       </div>
       <div className="course-card__content">
-        {query ? (
-          <Highlight
-            text={courseDescriptionShortened}
-            query={query}
-            className="course-description"
-          />
-        ) : (
-          <p className="course-description">
-            {courseDescriptionShortened}
-            {course.designation && course.designation != "N/A"
-              ? " " + course.designation
-              : ""}
-          </p>
-        )}
+        {showDescription &&
+          (query ? (
+            <Highlight
+              text={courseDescriptionShortened}
+              query={query}
+              className="course-description"
+            />
+          ) : (
+            <p className="course-description">
+              {courseDescriptionShortened}
+              {course.designation && course.designation != "N/A"
+                ? " " + course.designation
+                : ""}
+            </p>
+          ))}
         {showPrereqs && !prereqsQuery ? (
           <p className="course-description">
             Prerequisite: {course.prerequisites || "None"}
@@ -95,19 +96,27 @@ export const CourseCard: React.FC<CourseCardProps> = ({
               })}
         </div>
         <div className="course-card__row">
-          {sectionDetails && (
-            <p>
-              {sectionDetails.map((sectionDetail) => {
-                return (
-                  <p key={sectionDetail.classNumber}>
-                    {sectionDetail.classNumber}
-                  </p>
-                );
-              })}
-            </p>
-          )}
+          {sectionDetails && <SectionDetails offering={sectionDetails} />}
         </div>
       </div>
-    </Link>
+    </>
+  );
+
+  if (isLink) {
+    return (
+      <Link
+        href={`/explore/${course.dept.toLowerCase()}-${course.number}`}
+        key={course.dept + course.number}
+        className="course-card"
+      >
+        <CardContent />
+      </Link>
+    );
+  }
+
+  return (
+    <div className="course-card">
+      <CardContent />
+    </div>
   );
 };

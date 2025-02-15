@@ -15,3 +15,4 @@ export { SearchBar } from "./SearchBar";
 export { CourseTabContainer } from "./CourseTabContainer";
 export { RedditPosts } from "./RedditPosts";
 export { WeeklySchedule } from "./WeeklySchedule";
+export { SectionDetails } from "./SectionDetails";

@@ -37,6 +37,15 @@ export interface SectionInfo {
   classNumber: string; // 6327
 }
 
+// Processed SectionDetail for JSON response
+export interface SectionDetail {
+  section: string; // D100
+  deliveryMethod: string; // In Person
+  classNumber: string; // 6327
+  instructors: SectionInstructor[];
+  schedules: SectionSchedule[];
+}
+
 export interface SectionInstructor {
   name: string; // John Doe
   email: string;
@@ -57,13 +66,4 @@ export interface SectionDetailRaw {
   info: SectionInfo;
   instructor: SectionInstructor[]; // Singular for parsing
   courseSchedule: SectionSchedule[]; //
-}
-
-// Processed SectionDetail for JSON response
-export interface SectionDetail {
-  section: string; // D100
-  deliveryMethod: string; // In Person
-  classNumber: string; // 6327
-  instructors: SectionInstructor[];
-  schedules: SectionSchedule[];
 }

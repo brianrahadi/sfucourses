@@ -148,7 +148,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   return (
     <div className="page courses-page">
       <Hero title={`schedule courses`} backgroundImage={HeroImage.src} />
-      <main id="explore-container" className="container">
+      <main id="schedule-container" className="container">
         <section className="courses-section">
           <div className="courses-section__header">
             <TextBadge
@@ -192,7 +192,9 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
                   key={outline.dept + outline.number}
                   course={outline}
                   query={query}
-                  sectionDetails={outline.sections}
+                  sectionDetails={outline}
+                  showDescription={false}
+                  isLink={false}
                 />
               ))}
             </InfiniteScroll>
@@ -206,6 +208,25 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
             </Link>
           </p>
           <WeeklySchedule />
+          <section className="selected-courses">
+            <h2 className="section-title">Selected Courses</h2>
+            <div className="selected-courses-container">
+              {/* {selectedCourses.map((course) => (
+              <CourseCard
+                key={course.dept + course.number}
+                course={course}
+                query=""
+                sectionDetails={course.sections}
+                onSelect={() => handleCourseSelect(course)}
+                isSelected={true}
+                compact={true}
+              />
+            ))}
+            {selectedCourses.length === 0 && (
+              <p className="empty-state">No courses selected</p>
+            )} */}
+            </div>
+          </section>
         </section>
       </main>
     </div>
