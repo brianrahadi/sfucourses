@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { CourseOutline, CourseWithSectionDetails } from "../types";
 import { Button, Highlight, SectionDetails, TextBadge } from "@components";
@@ -25,6 +25,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({
   showDescription = true,
   isLink = true,
 }) => {
+  const [descriptionShown, isDescriptionShown] = useState(showDescription);
   const courseDescriptionShortened =
     course.description.length > 400
       ? course.description.slice(0, 400) + " ..."
@@ -35,7 +36,26 @@ export const CourseCard: React.FC<CourseCardProps> = ({
   const CardContent = () => (
     <>
       <div className="course-title dark">
-        {query ? <Highlight text={header} query={query} /> : <p>{header}</p>}
+        {isLink ? (
+          query ? (
+            <Highlight text={header} query={query} />
+          ) : (
+            <p>{header}</p>
+          )
+        ) : (
+          <Link
+            href={`/explore/${course.dept.toLowerCase()}-${course.number}`}
+            target="_blank"
+            rel="noreferrer"
+            className="no-underline"
+          >
+            {query ? (
+              <Highlight text={header} query={query} className="green-text" />
+            ) : (
+              <p className="green-text">{header}</p>
+            )}
+          </Link>
+        )}
       </div>
       <div className="course-card__content">
         {showDescription &&
@@ -107,7 +127,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({
       <Link
         href={`/explore/${course.dept.toLowerCase()}-${course.number}`}
         key={course.dept + course.number}
-        className="course-card"
+        className="course-card is-link"
       >
         <CardContent />
       </Link>

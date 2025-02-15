@@ -4,16 +4,19 @@
   border-radius: 0.5rem;
   background: var(--colour-neutral-1100) 100%;
   padding: 1.25rem;
-  transition: transform 0.15s, opacity 0.15s;
   text-decoration: none;
 
-  &:hover {
-    opacity: 0.8;
-    transform: translateY(-0.1rem);
-  }
+  &.is-link {
+    transition: transform 0.15s, opacity 0.15s;
 
-  &:active {
-    transform: scale(0.99);
+    &:hover {
+      opacity: 0.8;
+      transform: translateY(-0.1rem);
+    }
+
+    &:active {
+      transform: scale(0.99);
+    }
   }
 
   .course-title {
