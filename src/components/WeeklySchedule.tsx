@@ -8,7 +8,12 @@ interface Course {
 }
 
 const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri"];
-const timeSlots = Array.from({ length: 15 }, (_, i) => `${8 + i}:00`); // 8 AM to 10 PM
+const timeSlots = Array.from({ length: 15 }, (_, i) => {
+  const hour = 8 + i;
+  const period = hour >= 12 ? "pm" : "am";
+  const displayHour = hour > 12 ? hour - 12 : hour;
+  return `${displayHour}${period}`;
+}); // 8:00 AM to 10:00 PM
 
 export const WeeklySchedule: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);

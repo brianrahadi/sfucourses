@@ -2,7 +2,6 @@
   font-family: Arial, sans-serif;
   max-width: 100%;
   margin: 0 auto;
-  // padding: 20px;f
 
   h2 {
     text-align: center;
@@ -12,12 +11,11 @@
 
   .schedule-grid {
     display: grid;
-    grid-template-columns: 5rem repeat(5, 1fr);
-    grid-template-rows: auto repeat(15, 2rem); // Fixed height for time slots
-    gap: 2px;
+    grid-template-columns: 3rem repeat(5, 1fr);
+    grid-template-rows: auto repeat(15, 2.5rem);
+    gap: 1px;
     background-color: var(--colour-neutral-900);
-
-    border: 1px solid var(--colour-neutral-800);
+    border: 0.5px solid var(--colour-neutral-800);
     border-radius: 8px;
     overflow: hidden;
   }
@@ -33,25 +31,39 @@
       text-align: center;
       font-weight: bold;
     }
+
+    .time-label {
+      grid-column: 1;
+    }
   }
 
   .time-row {
     display: contents;
+    margin: 0;
+    width: fit-content;
 
     .time-label {
       background-color: var(--colour-neutral-1000);
       color: var(--colour-neutral-000);
-      padding: 10px;
-      text-align: center;
+      padding: 5px;
+      text-align: right;
       border-right: 1px solid var(--colour-neutral-800);
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      position: relative;
+      top: -1.25rem;
+      margin-right: -1px;
     }
 
     .time-slot {
       background-color: var(--colour-neutral-1100);
-      padding: 10px;
-      border: 1px solid var(--colour-neutral-900);
       cursor: pointer;
       transition: background-color 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
       &:hover {
         background-color: var(--colour-neutral-900);
@@ -60,10 +72,14 @@
       .course-entry {
         background-color: var(--colour-sosy-green-500);
         color: var(--colour-neutral-000);
-        padding: 5px;
+        padding: 5px 10px; // Slightly more padding for better appearance
         border-radius: 4px;
         text-align: center;
-        font-size: 14px;
+        font-size: 0.9rem; // Smaller font for course entries
+        width: 90%; // Limit width to avoid overflow
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis; // Add ellipsis for long course names
       }
     }
   }
