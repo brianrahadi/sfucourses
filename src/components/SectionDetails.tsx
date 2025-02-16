@@ -79,6 +79,7 @@ export const SectionDetails: React.FC<{
                 </span>
               </div>
               <span>#{section.classNumber}</span>
+              <span>Add section</span>
             </div>
 
             <div className="section-schedule-container">
