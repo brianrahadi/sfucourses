@@ -16,3 +16,4 @@ export { CourseTabContainer } from "./CourseTabContainer";
 export { RedditPosts } from "./RedditPosts";
 export { WeeklySchedule } from "./WeeklySchedule";
 export { SectionDetails } from "./SectionDetails";
+export { ButtonGroup } from "./ButtonGroup";

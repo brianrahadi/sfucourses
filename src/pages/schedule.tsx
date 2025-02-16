@@ -6,6 +6,7 @@ import {
   SearchBar,
   Button,
   WeeklySchedule,
+  ButtonGroup,
 } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useEffect, useMemo, useState } from "react";
@@ -65,7 +66,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   const [sliceIndex, setSliceIndex] = useState(20);
   const [query, setQuery] = useState<string>("");
   const termOptions = useMemo(() => getCurrentAndNextTerm(), []); // Memoize termOptions
-  const [isCurrentTerm, setIsCurrentTerm] = useState<boolean>(true);
+  const [selectedTerm, setSelectedTerm] = useState<string>(termOptions[0]);
   const [searchSelected, setSearchSelected] = useState<boolean>(false);
   const CHUNK_SIZE = 20;
 
@@ -99,21 +100,19 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   const filterCourses = (courses: CourseOutlineWithSectionDetails[]) => {
     const filteredCourses = [
       (courses: CourseOutlineWithSectionDetails[]) =>
-        filterCoursesByTerm(courses, termOptions[isCurrentTerm ? 0 : 1]),
+        filterCoursesByTerm(courses, selectedTerm),
       (courses: CourseOutlineWithSectionDetails[]) =>
         filterCoursesByQuery(courses, query),
     ].reduce((filtered, filterFunc) => filterFunc(filtered), courses);
     return filteredCourses;
   };
 
-  useEffect(onFilterChange, [query, isCurrentTerm]);
+  useEffect(onFilterChange, [query, selectedTerm]);
 
   useEffect(() => {
     if (!outlinesWithSections) {
       loadCourseAPIData(
-        `/sections/${toTermCode(
-          termOptions[isCurrentTerm ? 0 : 1]
-        )}?withOutlines=true`,
+        `/sections/${toTermCode(selectedTerm)}?withOutlines=true`,
         (res: any) => {
           setOutlinesWithSections((prev) => {
             if (prev) {
@@ -125,9 +124,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
       );
 
       loadCourseAPIData(
-        `/sections/${toTermCode(
-          termOptions[isCurrentTerm ? 1 : 0]
-        )}?withOutlines=true`,
+        `/sections/${toTermCode(selectedTerm)}?withOutlines=true`,
         (res: any) => {
           setOutlinesWithSections((prev) => {
             if (prev) {
@@ -165,9 +162,10 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
                 : "course"
             }`}
             />
-            <Button
-              onClick={() => setIsCurrentTerm(!isCurrentTerm)}
-              label={`Switch to ${termOptions[isCurrentTerm ? 1 : 0]}`}
+            <ButtonGroup
+              options={termOptions}
+              onSelect={setSelectedTerm}
+              selectedOption={selectedTerm}
             />
           </div>
           <SearchBar
@@ -201,32 +199,30 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
           )}
         </section>
         <section className="schedule-section">
-          <p className="gray-text right-align">
-            Last updated X hours ago -{" "}
-            <Link href="https://api.sfucourses.com" className="no-underline">
-              api.sfucourses.com
-            </Link>
-          </p>
-          <WeeklySchedule />
-          <section className="selected-courses">
+          <div className="selected-courses">
             <h2 className="section-title">Selected Courses</h2>
             <div className="selected-courses-container">
-              {/* {selectedCourses.map((course) => (
-              <CourseCard
-                key={course.dept + course.number}
-                course={course}
-                query=""
-                sectionDetails={course.sections}
-                onSelect={() => handleCourseSelect(course)}
-                isSelected={true}
-                compact={true}
-              />
-            ))}
-            {selectedCourses.length === 0 && (
-              <p className="empty-state">No courses selected</p>
-            )} */}
+              {/* {visibleOutlinesWithSections && visibleOutlinesWithSections.map((outline) => (
+                <CourseCard
+                  key={outline.dept + outline.number}
+                  course={outline}
+                  query={query}
+                  sectionDetails={outline}
+                  showDescription={false}
+                  isLink={false}
+                />
+              ))} */}
             </div>
-          </section>
+          </div>
+          <div className="weekly-schedule">
+            <p className="gray-text right-align">
+              Last updated X hours ago -{" "}
+              <Link href="https://api.sfucourses.com" className="no-underline">
+                api.sfucourses.com
+              </Link>
+            </p>
+            <WeeklySchedule />
+          </div>
         </section>
       </main>
     </div>
