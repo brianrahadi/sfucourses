@@ -187,7 +187,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
             handleInputChange={setQuery}
             searchSelected={searchSelected}
             setSearchSelected={setSearchSelected}
-            placeholder="course code, title, description, or instructor"
+            placeholder="course code, title, or instructor"
           />
           {visibleOutlinesWithSections && (
             <InfiniteScroll
@@ -253,7 +253,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
               <div className="selected-courses-badges">
                 {selectedOutlinesWithSections.map((outline) => (
                   <TextBadge
-                    key={`${outline.dept} ${outline.number}`}
+                    key={`badge ${outline.dept} ${outline.number}`}
                     content={`${outline.dept} ${outline.number}`}
                   />
                 ))}

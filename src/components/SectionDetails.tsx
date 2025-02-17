@@ -40,7 +40,7 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
 
   return (
     <div
-      key={offering.term + offering.dept + offering.number}
+      key={"s" + offering.term + offering.dept + offering.number}
       className="offering"
     >
       {shownSections.map((section, index) => {
@@ -140,10 +140,7 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
         }
 
         return (
-          <div
-            key={offering.term + offering.dept + offering.number}
-            className="section-container"
-          >
+          <div key={section.classNumber} className="section-container">
             <div className="section-header">
               <div className="section-header__left">
                 <span className="icon-text-container">
@@ -196,7 +193,7 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
             <div className="section-schedule-container">
               {section.schedules.map((sched) => (
                 <div
-                  key={sched.days + sched.startDate}
+                  key={"w" + sched.days + sched.startDate}
                   className="section-schedule-row"
                 >
                   <span
