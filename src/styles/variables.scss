@@ -97,6 +97,11 @@ $desktop-min-width: 1025px;
   display: flex;
   align-items: center;
   gap: 0.25rem;
+
+  &.instructor {
+    overflow: hidden;
+    // font-size: 0.9rem;
+  }
 }
 
 .center {

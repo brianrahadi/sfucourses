@@ -6,6 +6,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { BsFillPersonFill } from "react-icons/bs";
 import { CiCalendar, CiClock1 } from "react-icons/ci";
 import { FaTimeline } from "react-icons/fa6";
+import { MdPlace } from "react-icons/md";
 import { IoAddCircle, IoRemoveCircle } from "react-icons/io5";
 import { PlusCircle } from "react-feather";
 
@@ -153,15 +154,13 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                       target="_blank"
                       rel="noreferrer"
                     >
-                      {section.schedules[0].sectionCode} {section.section}
+                      {section.section}
                     </Link>
                   ) : (
-                    <>
-                      {section.schedules[0].sectionCode} {section.section}
-                    </>
+                    <>{section.section}</>
                   )}
                 </span>
-                <span className="icon-text-container">
+                <span className="icon-text-container instructor">
                   <BsFillPersonFill />
                   {query ? (
                     <Highlight text={instructorsText} query={query} />
@@ -170,7 +169,10 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                   )}
                 </span>
                 <span className="icon-text-container">
-                  {section.deliveryMethod}
+                  <MdPlace />
+                  {section.deliveryMethod !== "Online"
+                    ? section.schedules[0].campus || "-"
+                    : "Online"}
                 </span>
               </div>
               {setOfferings ? (
@@ -199,7 +201,7 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                 >
                   <span
                     className="icon-text-container"
-                    style={{ minWidth: "6.75rem" }} // hard-coded min width for same width
+                    style={{ minWidth: "6.5rem" }} // hard-coded min width for same width
                   >
                     <CiCalendar />
                     {sched.days || "-"}
@@ -209,14 +211,14 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                     style={{ minWidth: "8rem" }}
                   >
                     <CiClock1 />
-                    {`${sched.startTime} - ${sched.endTime}`}
+                    {`${sched.startTime}-${sched.endTime}`}
                   </span>
                   <span
                     className="icon-text-container mobile-hide"
                     style={{ minWidth: "2rem" }}
                   >
                     <FaTimeline />
-                    {`${formatShortDate(sched.startDate)} - ${formatShortDate(
+                    {`${formatShortDate(sched.startDate)}-${formatShortDate(
                       sched.endDate
                     )}`}
                   </span>
