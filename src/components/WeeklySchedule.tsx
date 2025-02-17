@@ -95,7 +95,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
 
           const newTimeslot = {
             id,
-            name: `${course.dept} ${course.number}\n${section.section}`,
+            name: `${course.dept} ${course.number}\n${section.section}\n${section.schedules[0].campus}`,
             startTime,
             duration,
             day,
