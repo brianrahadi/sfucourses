@@ -177,6 +177,7 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
               </div>
               {setOfferings ? (
                 <Button
+                  className="section-btn"
                   icon={
                     setOfferings.type === "ADD" ? (
                       <IoAddCircle />

@@ -26,4 +26,9 @@
   &.secondary {
     background-color: var(--colour-neutral-1000);
   }
+
+  &.section-btn {
+    background-color: var(--colour-neutral-900);
+    border: 0.5px solid white;
+  }
 }
