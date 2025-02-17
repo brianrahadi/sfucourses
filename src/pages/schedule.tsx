@@ -17,7 +17,10 @@ import {
   numberWithCommas,
   toTermCode,
 } from "@utils";
-import { CourseOutlineWithSectionDetails } from "@types";
+import {
+  CourseOutlineWithSectionDetails,
+  CourseWithSectionDetails,
+} from "@types";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Link from "next/link";
 import { filterCoursesByQuery, filterCoursesByTerm } from "@utils/filters";
@@ -62,10 +65,11 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
     maxVisibleOutlinesWithSectionsLength,
     setMaxVisibleOutlinesWithSectionsLength,
   ] = useState<number | undefined>();
-
+  const [selectedOutlinesWithSections, setSelectedOutlinesWithSections] =
+    useState<CourseWithSectionDetails[]>([]);
   const [sliceIndex, setSliceIndex] = useState(20);
   const [query, setQuery] = useState<string>("");
-  const termOptions = useMemo(() => getCurrentAndNextTerm(), []); // Memoize termOptions
+  const termOptions = getCurrentAndNextTerm(); // Memoize termOptions
   const [selectedTerm, setSelectedTerm] = useState<string>(termOptions[0]);
   const [searchSelected, setSearchSelected] = useState<boolean>(false);
   const CHUNK_SIZE = 20;
@@ -193,27 +197,13 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
                   sectionDetails={outline}
                   showDescription={false}
                   isLink={false}
+                  setSelectedOfferings={setSelectedOutlinesWithSections}
                 />
               ))}
             </InfiniteScroll>
           )}
         </section>
         <section className="schedule-section">
-          <div className="selected-courses">
-            <h2 className="section-title">Selected Courses</h2>
-            <div className="selected-courses-container">
-              {/* {visibleOutlinesWithSections && visibleOutlinesWithSections.map((outline) => (
-                <CourseCard
-                  key={outline.dept + outline.number}
-                  course={outline}
-                  query={query}
-                  sectionDetails={outline}
-                  showDescription={false}
-                  isLink={false}
-                />
-              ))} */}
-            </div>
-          </div>
           <div className="weekly-schedule">
             <p className="gray-text right-align">
               Last updated X hours ago -{" "}
@@ -222,6 +212,21 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
               </Link>
             </p>
             <WeeklySchedule />
+          </div>
+          <div className="selected-courses">
+            <h2 className="section-title">Selected Courses</h2>
+            <div className="selected-courses-items">
+              {selectedOutlinesWithSections.map((outline) => (
+                <CourseCard
+                  key={"selected" + outline.dept + outline.number}
+                  course={outline as any}
+                  query={query}
+                  sectionDetails={outline}
+                  showDescription={false}
+                  isLink={false}
+                />
+              ))}
+            </div>
           </div>
         </section>
       </main>

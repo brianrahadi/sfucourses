@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import Link from "next/link";
 import { CourseOutline, CourseWithSectionDetails } from "../types";
 import { Button, Highlight, SectionDetails, TextBadge } from "@components";
@@ -13,6 +13,7 @@ type CourseCardProps = {
   sectionDetails?: CourseWithSectionDetails;
   showDescription?: boolean;
   isLink?: boolean;
+  setSelectedOfferings?: Dispatch<SetStateAction<CourseWithSectionDetails[]>>;
 };
 
 export const CourseCard: React.FC<CourseCardProps> = ({
@@ -24,8 +25,8 @@ export const CourseCard: React.FC<CourseCardProps> = ({
   sectionDetails,
   showDescription = true,
   isLink = true,
+  setSelectedOfferings,
 }) => {
-  const [descriptionShown, isDescriptionShown] = useState(showDescription);
   const courseDescriptionShortened =
     course.description.length > 400
       ? course.description.slice(0, 400) + " ..."
@@ -116,7 +117,12 @@ export const CourseCard: React.FC<CourseCardProps> = ({
               })}
         </div>
         <div className="course-card__row">
-          {sectionDetails && <SectionDetails offering={sectionDetails} />}
+          {sectionDetails && (
+            <SectionDetails
+              offering={sectionDetails}
+              setSelectedOfferings={setSelectedOfferings}
+            />
+          )}
         </div>
       </div>
     </>

@@ -1,14 +1,23 @@
+import { Button } from "@components";
 import { CourseWithSectionDetails } from "@types";
 import { formatShortDate, generateBaseOutlinePath, onlyUnique } from "@utils";
 import Link from "next/link";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { BsFillPersonFill } from "react-icons/bs";
 import { CiCalendar, CiClock1 } from "react-icons/ci";
 import { FaTimeline } from "react-icons/fa6";
+import { IoAddCircle } from "react-icons/io5";
+import { PlusCircle } from "react-feather";
 
-export const SectionDetails: React.FC<{
+interface SectionDetailsProps {
   offering: CourseWithSectionDetails;
-}> = ({ offering }) => {
+  setSelectedOfferings?: Dispatch<SetStateAction<CourseWithSectionDetails[]>>;
+}
+
+export const SectionDetails: React.FC<SectionDetailsProps> = ({
+  offering,
+  setSelectedOfferings,
+}) => {
   const [showLabTut, setShowLabTut] = useState(false);
   const notLabOrTut = (sectionCode: string) =>
     sectionCode !== "LAB" && sectionCode !== "TUT";
@@ -78,8 +87,16 @@ export const SectionDetails: React.FC<{
                   {section.deliveryMethod}
                 </span>
               </div>
-              <span>#{section.classNumber}</span>
-              <span>Add section</span>
+              {setSelectedOfferings ? (
+                <Button
+                  label={`Add #${section.classNumber}`}
+                  onClick={() =>
+                    setSelectedOfferings((prev) => [...prev, offering])
+                  }
+                />
+              ) : (
+                <span>#{section.classNumber}</span>
+              )}
             </div>
 
             <div className="section-schedule-container">
