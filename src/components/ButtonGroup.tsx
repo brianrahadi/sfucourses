@@ -3,7 +3,7 @@ import Button from "./Button"; // Adjust the import path as necessary
 
 interface ButtonGroupProps<T> {
   options: T[];
-  onSelect: Dispatch<SetStateAction<T>>;
+  onSelect: (value: T) => void;
   selectedOption: T;
   className?: string;
 }

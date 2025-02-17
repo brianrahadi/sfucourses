@@ -25,6 +25,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import Link from "next/link";
 import { filterCoursesByQuery, filterCoursesByTerm } from "@utils/filters";
 import { GetStaticProps } from "next";
+import { useLocalStorage } from "@hooks";
 
 interface SchedulePageProps {
   initialSections?: CourseOutlineWithSectionDetails[];
@@ -70,13 +71,26 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   const [sliceIndex, setSliceIndex] = useState(20);
   const [query, setQuery] = useState<string>("");
   const termOptions = getCurrentAndNextTerm(); // Memoize termOptions
-  const [selectedTerm, setSelectedTerm] = useState<string>(termOptions[0]);
   const [searchSelected, setSearchSelected] = useState<boolean>(false);
-  const [viewColumns, setViewColumns] = useState<"Two-column" | "Three-column">(
-    "Three-column"
+  const [selectedTerm, setSelectedTerm] = useLocalStorage(
+    "selectedTerm",
+    termOptions[0]
   );
+  const [viewColumns, setViewColumns] = useLocalStorage<
+    "Two-column" | "Three-column"
+  >("viewColumns", "Three-column");
 
   const CHUNK_SIZE = 20;
+
+  // Update localStorage when selectedTerm changes
+  useEffect(() => {
+    localStorage.setItem("selectedTerm", selectedTerm);
+  }, [selectedTerm]);
+
+  // Update localStorage when viewColumns changes
+  useEffect(() => {
+    localStorage.setItem("viewColumns", viewColumns);
+  }, [viewColumns]);
 
   const loadMore = () => {
     if (!outlinesWithSections) {
