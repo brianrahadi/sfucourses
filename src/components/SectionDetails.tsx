@@ -6,26 +6,38 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { BsFillPersonFill } from "react-icons/bs";
 import { CiCalendar, CiClock1 } from "react-icons/ci";
 import { FaTimeline } from "react-icons/fa6";
-import { IoAddCircle } from "react-icons/io5";
+import { IoAddCircle, IoRemoveCircle } from "react-icons/io5";
 import { PlusCircle } from "react-feather";
 
 interface SectionDetailsProps {
   offering: CourseWithSectionDetails;
-  setSelectedOfferings?: Dispatch<SetStateAction<CourseWithSectionDetails[]>>;
+  setOfferings?: {
+    fn: Dispatch<SetStateAction<CourseWithSectionDetails[]>>;
+    type: "ADD" | "REMOVE";
+  };
+  type?: "SELECTED_COURSES";
 }
 
 export const SectionDetails: React.FC<SectionDetailsProps> = ({
   offering,
-  setSelectedOfferings,
+  setOfferings,
+  type,
 }) => {
   const [showLabTut, setShowLabTut] = useState(false);
   const notLabOrTut = (sectionCode: string) =>
     sectionCode !== "LAB" && sectionCode !== "TUT";
-  const nonLabTutSections = offering.sections.filter((section) =>
-    section.schedules.every((sched) => notLabOrTut(sched.sectionCode))
-  );
-  const hasLabTut = offering.sections.length !== nonLabTutSections.length;
-  const shownSections = showLabTut ? offering.sections : nonLabTutSections;
+  const initialShownSections =
+    type === "SELECTED_COURSES"
+      ? offering.sections
+      : offering.sections.filter((section) =>
+          section.schedules.every((sched) => notLabOrTut(sched.sectionCode))
+        );
+
+  const hasLabTut =
+    offering.sections.length > 1 &&
+    offering.sections.length !== initialShownSections.length;
+  const shownSections = showLabTut ? offering.sections : initialShownSections;
+
   return (
     <div
       key={offering.term + offering.dept + offering.number}
@@ -39,6 +51,82 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
             .join(", ") || "N/A";
         const baseOutlinePath = generateBaseOutlinePath(offering);
 
+        const courseWithSection = { ...offering };
+        courseWithSection.sections = courseWithSection.sections.filter(
+          (item) => item.classNumber === section.classNumber
+        );
+
+        const handleAddSection = () => {
+          if (!setOfferings) return;
+          if (setOfferings.type === "ADD") {
+            setOfferings.fn((prev) => {
+              // Check if any section of the course already exists in the previous state
+              const hasExistingSection = prev
+                .flatMap((course) => course.sections)
+                .includes(courseWithSection.sections[0]);
+
+              if (hasExistingSection) {
+                return prev; // If the section already exists, return the previous state
+              }
+
+              // Check if the course (by dept + number) already exists in the previous state
+              const existingCourseIndex = prev.findIndex(
+                (course) =>
+                  course.dept + course.number ===
+                  courseWithSection.dept + courseWithSection.number
+              );
+
+              if (existingCourseIndex !== -1) {
+                // If the course exists, merge the sections
+                const updatedCourses = [...prev];
+                updatedCourses[existingCourseIndex] = {
+                  ...updatedCourses[existingCourseIndex],
+                  sections: [
+                    ...updatedCourses[existingCourseIndex].sections,
+                    ...courseWithSection.sections,
+                  ],
+                };
+                return updatedCourses;
+              }
+
+              // If the course doesn't exist, add it to the previous state
+              return [...prev, courseWithSection];
+            });
+          } else {
+            // Handle "REMOVE" case
+            setOfferings.fn((prev) => {
+              return prev
+                .flatMap((course) => {
+                  // If this isn't the course we're looking for, return it unchanged
+                  if (
+                    course.dept + course.number !==
+                    offering.dept + offering.number
+                  ) {
+                    return course;
+                  }
+
+                  // Filter out the section to remove
+                  const updatedSections = course.sections.filter(
+                    (section) =>
+                      section.classNumber !==
+                      courseWithSection.sections[0].classNumber
+                  );
+
+                  // If there are no sections left, don't include this course
+                  if (updatedSections.length === 0) {
+                    return [];
+                  }
+
+                  // Return the course with updated sections
+                  return {
+                    ...course,
+                    sections: updatedSections,
+                  };
+                })
+                .filter(Boolean); // Remove any null entries (courses with no sections)
+            });
+          }
+        };
         if (schedules.length === 0) {
           return (
             <tr key={index} className="section-details">
@@ -87,12 +175,17 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                   {section.deliveryMethod}
                 </span>
               </div>
-              {setSelectedOfferings ? (
+              {setOfferings ? (
                 <Button
-                  label={`Add #${section.classNumber}`}
-                  onClick={() =>
-                    setSelectedOfferings((prev) => [...prev, offering])
+                  icon={
+                    setOfferings.type === "ADD" ? (
+                      <IoAddCircle />
+                    ) : (
+                      <IoRemoveCircle />
+                    )
                   }
+                  label={`#${section.classNumber}`}
+                  onClick={handleAddSection}
                 />
               ) : (
                 <span>#{section.classNumber}</span>

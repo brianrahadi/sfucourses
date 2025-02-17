@@ -197,25 +197,19 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
                   sectionDetails={outline}
                   showDescription={false}
                   isLink={false}
-                  setSelectedOfferings={setSelectedOutlinesWithSections}
+                  setOfferings={{
+                    fn: setSelectedOutlinesWithSections,
+                    type: "ADD",
+                  }}
                 />
               ))}
             </InfiniteScroll>
           )}
         </section>
         <section className="schedule-section">
-          <div className="weekly-schedule">
-            <p className="gray-text right-align">
-              Last updated X hours ago -{" "}
-              <Link href="https://api.sfucourses.com" className="no-underline">
-                api.sfucourses.com
-              </Link>
-            </p>
-            <WeeklySchedule />
-          </div>
           <div className="selected-courses">
             <h2 className="section-title">Selected Courses</h2>
-            <div className="selected-courses-items">
+            <div className="selected-courses__items">
               {selectedOutlinesWithSections.map((outline) => (
                 <CourseCard
                   key={"selected" + outline.dept + outline.number}
@@ -224,9 +218,23 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
                   sectionDetails={outline}
                   showDescription={false}
                   isLink={false}
+                  setOfferings={{
+                    fn: setSelectedOutlinesWithSections,
+                    type: "REMOVE",
+                  }}
+                  type="SELECTED_COURSES"
                 />
               ))}
             </div>
+          </div>
+          <div className="weekly-schedule">
+            <p className="gray-text right-align">
+              Last updated X hours ago -{" "}
+              <Link href="https://api.sfucourses.com" className="no-underline">
+                api.sfucourses.com
+              </Link>
+            </p>
+            <WeeklySchedule />
           </div>
         </section>
       </main>

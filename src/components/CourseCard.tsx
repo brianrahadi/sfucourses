@@ -13,7 +13,11 @@ type CourseCardProps = {
   sectionDetails?: CourseWithSectionDetails;
   showDescription?: boolean;
   isLink?: boolean;
-  setSelectedOfferings?: Dispatch<SetStateAction<CourseWithSectionDetails[]>>;
+  setOfferings?: {
+    fn: Dispatch<SetStateAction<CourseWithSectionDetails[]>>;
+    type: "ADD" | "REMOVE";
+  };
+  type?: "SELECTED_COURSES";
 };
 
 export const CourseCard: React.FC<CourseCardProps> = ({
@@ -25,7 +29,8 @@ export const CourseCard: React.FC<CourseCardProps> = ({
   sectionDetails,
   showDescription = true,
   isLink = true,
-  setSelectedOfferings,
+  setOfferings,
+  type,
 }) => {
   const courseDescriptionShortened =
     course.description.length > 400
@@ -120,7 +125,8 @@ export const CourseCard: React.FC<CourseCardProps> = ({
           {sectionDetails && (
             <SectionDetails
               offering={sectionDetails}
-              setSelectedOfferings={setSelectedOfferings}
+              setOfferings={setOfferings}
+              type={type}
             />
           )}
         </div>

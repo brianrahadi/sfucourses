@@ -161,7 +161,7 @@ export function generateBaseOutlinePath(
   return `https://www.sfu.ca/outlines.html?${termPath}/${dept.toLowerCase()}/${number}`;
 }
 
-export function onlyUnique(value: string, index: number, array: string[]) {
+export function onlyUnique<T>(value: T, index: number, array: T[]) {
   return array.indexOf(value) === index;
 }
 
