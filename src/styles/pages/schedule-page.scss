@@ -99,9 +99,14 @@
     }
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
+    flex-direction: column-reverse;
     .schedule-section {
       flex-direction: column;
+
+      .view-column-button-group {
+        display: none;
+      }
 
       &__content {
         flex-direction: column-reverse;
@@ -128,10 +133,4 @@
   background: var(--colour-neutral-1100) 100%;
   color: var(--colour-sosy-green-500);
   width: fit-content;
-}
-
-@include viewport(mobile) {
-  #schedule-container {
-    flex-direction: column-reverse;
-  }
 }

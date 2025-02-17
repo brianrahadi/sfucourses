@@ -220,6 +220,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
         <section className="schedule-section">
           <div className="schedule-section__header">
             <ButtonGroup
+              className="view-column-button-group"
               options={["Two-column", "Three-column"]}
               onSelect={setViewColumns}
               selectedOption={viewColumns}
