@@ -9,6 +9,12 @@ import {
 } from "@types";
 import pako from "pako"; // For gzip decompression
 
+export function formatTime(hour: number, minute: number = 0): string {
+  return `${hour.toString().padStart(2, "0")}:${minute
+    .toString()
+    .padStart(2, "0")}`;
+}
+
 export function formatDate(date: string | Date) {
   return new Date(date).toLocaleDateString("en-US", {
     month: "long",

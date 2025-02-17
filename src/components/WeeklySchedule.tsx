@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import { CourseWithSectionDetails } from "@types";
+import { formatTime } from "@utils";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 interface Course {
   id: string;
@@ -13,72 +15,122 @@ const startHour = 8; // Start at 8:00 AM
 const endHour = 20; // End at 8:00 PM
 const totalMinutes = (endHour - startHour) * 60;
 
-const formatTime = (hour: number, minute: number = 0): string => {
-  return `${hour.toString().padStart(2, "0")}:${minute
-    .toString()
-    .padStart(2, "0")}`;
+interface WeeklyScheduleProps {
+  coursesWithSections: CourseWithSectionDetails[];
+  setCoursesWithSections: Dispatch<SetStateAction<CourseWithSectionDetails[]>>;
+}
+
+const convertTimeToMinutes = (time: string): number => {
+  const [hours, minutes] = time.split(":").map(Number);
+  return hours * 60 + minutes;
 };
 
-export const WeeklySchedule: React.FC = () => {
-  const [courses, setCourses] = useState<Course[]>([
-    {
-      id: "mon-math",
-      name: "Math",
-      startTime: 480,
-      duration: 90,
-      day: "Mon",
-    },
-    {
-      id: "tue-science",
-      name: "Science",
-      startTime: 660,
-      duration: 60,
-      day: "Tue",
-    },
-    {
-      id: "wed-history",
-      name: "History",
-      startTime: 810,
-      duration: 45,
-      day: "Wed",
-    },
-    {
-      id: "thu-art",
-      name: "Art",
-      startTime: 900,
-      duration: 120,
-      day: "Thu",
-    },
-    {
-      id: "fri-physics",
-      name: "Physics",
-      startTime: 1020,
-      duration: 90,
-      day: "Fri",
-    },
-  ]);
+const calculateDuration = (startTime: string, endTime: string): number => {
+  const start = convertTimeToMinutes(startTime);
+  const end = convertTimeToMinutes(endTime);
+  return end - start;
+};
 
-  const addCourse = (
-    day: string,
-    startTime: number,
-    duration: number,
-    name: string
-  ) => {
-    const newCourse: Course = {
-      id: `${day}-${startTime}-${duration}`,
-      name,
-      startTime,
-      duration,
-      day,
+const getDayFromCode = (dayCode: string): string => {
+  const dayMap: { [key: string]: string } = {
+    Mo: "Mon",
+    Tu: "Tue",
+    We: "Wed",
+    Th: "Thu",
+    Fr: "Fri",
+  };
+  return dayMap[dayCode] || dayCode;
+};
+
+interface ConflictResponse {
+  hasConflict: boolean;
+  conflictMessage?: string;
+}
+
+const doTimeslotsConflict = (ts1: Course, ts2: Course): ConflictResponse => {
+  if (ts1.day !== ts2.day) return { hasConflict: false }; // Different days, no conflict
+  const ts1End = ts1.startTime + ts1.duration;
+  const ts2End = ts2.startTime + ts2.duration;
+
+  const hasConflict =
+    (ts1.startTime >= ts2.startTime && ts1.startTime < ts2End) ||
+    (ts2.startTime >= ts1.startTime && ts2.startTime < ts1End);
+
+  if (hasConflict) {
+    return {
+      hasConflict: true,
+      conflictMessage: `Conflicted with ${ts2.id}`,
     };
-    setCourses((prevCourses) => [...prevCourses, newCourse]);
-  };
+  }
+  return { hasConflict: false };
+};
 
-  const removeCourse = (id: string) => {
-    setCourses((prevCourses) =>
-      prevCourses.filter((course) => course.id !== id)
-    );
-  };
+export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
+  coursesWithSections,
+  setCoursesWithSections,
+}) => {
+  const [timeslots, setTimeslots] = useState<Course[]>([]);
+
+  useEffect(() => {
+    const newTimeslots: Course[] = [];
+
+    const allConflictMessages: string[] = [];
+
+    coursesWithSections.forEach((course) => {
+      course.sections.forEach((section) => {
+        section.schedules.forEach((schedule) => {
+          if (!schedule.startTime || !schedule.endTime || !schedule.days) {
+            return;
+          }
+
+          const day = getDayFromCode(schedule.days);
+          const startTime = convertTimeToMinutes(schedule.startTime);
+          const duration = calculateDuration(
+            schedule.startTime,
+            schedule.endTime
+          );
+
+          // Create a unique ID for each timeslot
+          const id = `${course.dept}${course.number}-${section.section}-${day}-${schedule.sectionCode}`;
+
+          const newTimeslot = {
+            id,
+            name: `${course.dept} ${course.number}\n${section.section}`,
+            startTime,
+            duration,
+            day,
+          };
+
+          // Check for conflicts with existing timeslots
+          const conflicts = newTimeslots
+            .map((existingTimeslot) =>
+              doTimeslotsConflict(newTimeslot, existingTimeslot)
+            )
+            .filter((result) => result.hasConflict);
+
+          if (conflicts.length > 0) {
+            conflicts.forEach((conflict) => {
+              allConflictMessages.push(conflict.conflictMessage || "");
+            });
+          } else {
+            newTimeslots.push(newTimeslot);
+          }
+        });
+      });
+    });
+    if (allConflictMessages.length > 0) {
+      // Combine all conflict messages into a single string
+      const combinedConflictMessage = allConflictMessages.join("\n");
+      setCoursesWithSections((prev) => {
+        const newArray = prev.slice(0, -1);
+        return newArray;
+      });
+      alert(
+        `The following conflicts were detected:\n${combinedConflictMessage}`
+      );
+    }
+    setTimeslots(newTimeslots);
+  }, [coursesWithSections]);
 
   let timeSlots = [];
   for (let hour = startHour; hour <= endHour; hour++) {
@@ -122,7 +174,7 @@ export const WeeklySchedule: React.FC = () => {
                 }`}
               />
             ))}
-            {courses
+            {timeslots
               .filter((course) => course.day === day)
               .map((course) => {
                 const topOffset =
@@ -136,9 +188,8 @@ export const WeeklySchedule: React.FC = () => {
                       top: `${topOffset}px`,
                       height: `${height}px`,
                     }}
-                    onClick={() => removeCourse(course.id)}
                   >
-                    {course.name} ({course.duration} mins)
+                    {course.name}
                   </div>
                 );
               })}

@@ -67,17 +67,18 @@
   right: 2px;
   background-color: var(--colour-sosy-green-500);
   color: var(--colour-neutral-000);
-  padding: 4px; /* Increased from 3px */
-  border-radius: 3px; /* Increased from 2px */
+  padding: 4px;
+  border-radius: 3px;
   font-size: 0.8rem;
-  cursor: pointer;
   overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  transition: background-color 0.3s ease;
-  z-index: 1;
+  white-space: normal;
+}
+
+.course-block:hover {
+  overflow: visible;
 }
 
 .course-block:hover {
   background-color: var(--colour-sosy-green-600);
+  z-index: 2;
 }
