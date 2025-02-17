@@ -239,6 +239,11 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
               </Link>
             </p>
             <WeeklySchedule />
+            <div className="selected-courses-badges">
+              {selectedOutlinesWithSections.map((outline) => (
+                <TextBadge content={`${outline.dept} ${outline.number}`} />
+              ))}
+            </div>
           </div>
         </section>
       </main>
