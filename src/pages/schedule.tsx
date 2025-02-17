@@ -180,7 +180,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
             handleInputChange={setQuery}
             searchSelected={searchSelected}
             setSearchSelected={setSearchSelected}
-            placeholder="course code, title, description, or instructor name"
+            placeholder="course code, title, description, or instructor"
           />
           {visibleOutlinesWithSections && (
             <InfiniteScroll
@@ -231,7 +231,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
               ))}
             </div>
           </div>
-          <div className="weekly-schedule">
+          <div className="schedule-container">
             <p className="gray-text right-align">
               Last updated X hours ago -{" "}
               <Link href="https://api.sfucourses.com" className="no-underline">

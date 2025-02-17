@@ -1,13 +1,6 @@
-.weekly-schedule {
-  font-family: Arial, sans-serif;
-  max-width: 50rem;
-  margin: 0 auto;
-  width: 100%;
-}
-
 .schedule-grid {
   display: grid;
-  grid-template-columns: 4rem repeat(5, 1fr);
+  grid-template-columns: 3rem repeat(5, 1fr);
   gap: 1px;
   background-color: var(--colour-neutral-1000);
   border: 1px solid var(--colour-neutral-800);
@@ -43,7 +36,7 @@
 
 .time-text {
   position: absolute;
-  right: 5px;
+  right: 1px;
   top: -10px; /* Adjusted for new height */
   font-size: 0.8rem;
   background-color: var(--colour-neutral-1000);

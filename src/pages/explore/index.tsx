@@ -159,7 +159,7 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
             handleInputChange={setQuery}
             searchSelected={searchSelected}
             setSearchSelected={setSearchSelected}
-            placeholder="course code, title, description, or instructor name"
+            placeholder="course code, title, description, or instructor"
           />
           {visibleCourses && (
             <InfiniteScroll
