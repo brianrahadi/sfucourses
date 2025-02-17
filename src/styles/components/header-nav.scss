@@ -1,7 +1,13 @@
 @import "../variables.scss";
 
 .header-nav {
-  background: linear-gradient(180deg, #141515 0%, rgba(20, 21, 21, 0) 100%);
+  background: linear-gradient(180deg, #141515 10%, rgba(20, 21, 21, 0) 100%);
+  transition: transform 0.2s;
+
+  &.header-hidden {
+    transform: translateY(-100%);
+  }
+
   .container {
     h2 {
       font-size: 2rem;

@@ -1,8 +1,31 @@
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export const HeaderNav: React.FC = () => {
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // Show header when scrolling up or at top of page
+      // Hide header when scrolling down and not at top
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        setIsVisible(false);
+      } else {
+        setIsVisible(true);
+      }
+
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
+
   return (
-    <div className="header-nav">
+    <div className={`header-nav ${!isVisible ? "header-hidden" : ""}`}>
       <div className="container">
         <Link href="/" className="page-link">
           <h2>sfucourses</h2>
