@@ -1,4 +1,4 @@
-import { Button } from "@components";
+import { Button, Highlight } from "@components";
 import { CourseWithSectionDetails } from "@types";
 import { formatShortDate, generateBaseOutlinePath, onlyUnique } from "@utils";
 import Link from "next/link";
@@ -16,12 +16,14 @@ interface SectionDetailsProps {
     type: "ADD" | "REMOVE";
   };
   type?: "SELECTED_COURSES";
+  query?: string;
 }
 
 export const SectionDetails: React.FC<SectionDetailsProps> = ({
   offering,
   setOfferings,
   type,
+  query,
 }) => {
   const [showLabTut, setShowLabTut] = useState(false);
   const notLabOrTut = (sectionCode: string) =>
@@ -56,20 +58,26 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
           (item) => item.classNumber === section.classNumber
         );
 
+        const instructorsText =
+          section.instructors.length > 0
+            ? section.instructors
+                .map((i) => i.name)
+                .filter(onlyUnique)
+                .join(", ")
+            : "Unknown";
+
         const handleAddSection = () => {
           if (!setOfferings) return;
           if (setOfferings.type === "ADD") {
             setOfferings.fn((prev) => {
-              // Check if any section of the course already exists in the previous state
               const hasExistingSection = prev
                 .flatMap((course) => course.sections)
                 .includes(courseWithSection.sections[0]);
 
               if (hasExistingSection) {
-                return prev; // If the section already exists, return the previous state
+                return prev;
               }
 
-              // Check if the course (by dept + number) already exists in the previous state
               const existingCourseIndex = prev.findIndex(
                 (course) =>
                   course.dept + course.number ===
@@ -89,15 +97,12 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                 return updatedCourses;
               }
 
-              // If the course doesn't exist, add it to the previous state
               return [...prev, courseWithSection];
             });
           } else {
-            // Handle "REMOVE" case
             setOfferings.fn((prev) => {
               return prev
                 .flatMap((course) => {
-                  // If this isn't the course we're looking for, return it unchanged
                   if (
                     course.dept + course.number !==
                     offering.dept + offering.number
@@ -105,19 +110,16 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                     return course;
                   }
 
-                  // Filter out the section to remove
                   const updatedSections = course.sections.filter(
                     (section) =>
                       section.classNumber !==
                       courseWithSection.sections[0].classNumber
                   );
 
-                  // If there are no sections left, don't include this course
                   if (updatedSections.length === 0) {
                     return [];
                   }
 
-                  // Return the course with updated sections
                   return {
                     ...course,
                     sections: updatedSections,
@@ -161,12 +163,11 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                 </span>
                 <span className="icon-text-container">
                   <BsFillPersonFill />
-                  {section.instructors.length > 0
-                    ? section.instructors
-                        .map((i) => i.name)
-                        .filter(onlyUnique)
-                        .join(", ")
-                    : "Unknown"}
+                  {query ? (
+                    <Highlight text={instructorsText} query={query} />
+                  ) : (
+                    <p>{instructorsText}</p>
+                  )}
                 </span>
                 <span className="icon-text-container">
                   {section.deliveryMethod}
@@ -198,7 +199,7 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                 >
                   <span
                     className="icon-text-container"
-                    style={{ minWidth: "6.75rem" }}
+                    style={{ minWidth: "6.75rem" }} // hard-coded min width for same width
                   >
                     <CiCalendar />
                     {sched.days || "-"}

@@ -127,6 +127,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({
               offering={sectionDetails}
               setOfferings={setOfferings}
               type={type}
+              query={query}
             />
           )}
         </div>

@@ -1,6 +1,15 @@
-import { CourseOutline, CourseOutlineWithSectionDetails } from "@types";
+import {
+  CourseOutline,
+  CourseOutlineWithSectionDetails,
+  SectionDetail,
+} from "@types";
 
-// Filter by search query
+const isCourseOutlineWithSectionDetails = (
+  course: CourseOutline | CourseOutlineWithSectionDetails
+): course is CourseOutlineWithSectionDetails => {
+  return (course as CourseOutlineWithSectionDetails).sections !== undefined;
+};
+
 export const filterCoursesByQuery = <T extends CourseOutline>(
   courses: T[],
   query: string
@@ -8,6 +17,7 @@ export const filterCoursesByQuery = <T extends CourseOutline>(
   if (!query) {
     return courses;
   }
+
   return courses.filter((course) => {
     const headerText = `${course.dept} ${course.number} - ${course.title} (${course.units})`;
 
@@ -21,6 +31,14 @@ export const filterCoursesByQuery = <T extends CourseOutline>(
     if (instructorsRaw) {
       stringArr.push(instructorsRaw);
     }
+
+    if (isCourseOutlineWithSectionDetails(course)) {
+      const instructors = course.sections
+        .flatMap((sec) => sec.instructors.map((a) => a.name))
+        .join("");
+      stringArr.push(instructors);
+    }
+
     const isQuerySubstring = stringArr.some((str) =>
       str.toLowerCase().includes(query.toLowerCase())
     );
