@@ -1,23 +1,23 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
 import Button from "./Button"; // Adjust the import path as necessary
 
-interface ButtonGroupProps {
-  options: string[];
-  onSelect: Dispatch<SetStateAction<string>>;
-  selectedOption: string;
+interface ButtonGroupProps<T> {
+  options: T[];
+  onSelect: Dispatch<SetStateAction<T>>;
+  selectedOption: T;
 }
 
-export const ButtonGroup: React.FC<ButtonGroupProps> = ({
+export const ButtonGroup = <T,>({
   options,
   onSelect,
   selectedOption,
-}) => {
+}: ButtonGroupProps<T>): JSX.Element => {
   return (
     <div className="button-group">
-      {options.map((option) => (
+      {options.map((option, index) => (
         <Button
-          key={option}
-          label={option}
+          key={index}
+          label={String(option)}
           type={selectedOption === option ? "primary" : "secondary"}
           onClick={() => onSelect(option)}
           className={selectedOption === option ? "selected" : ""}

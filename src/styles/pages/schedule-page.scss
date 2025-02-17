@@ -34,17 +34,30 @@
   }
 
   .schedule-section {
-    margin-top: 3.5rem;
+    margin-top: 1rem;
     flex: 1 1;
+    width: 100%;
     display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
     height: fit-content;
-    flex-direction: row;
-    align-items: flex-start;
+    align-items: flex-end;
     justify-content: flex-start;
-    gap: 1rem;
-    padding: 1rem;
-    border: 1px solid gray;
-    border-radius: 0.5rem;
+
+    &__header {
+      display: flex;
+      align-items: flex-end;
+      gap: 1rem;
+    }
+
+    &__content {
+      width: 100%;
+      display: flex;
+      gap: 1rem;
+      padding: 1rem;
+      border: 1px dashed gray;
+      border-radius: 0.5rem;
+    }
 
     .selected-courses {
       flex: 1 1;
@@ -78,17 +91,29 @@
     }
   }
 
-  @include viewport(tablet) {
-    .schedule-section {
+  &.two-column {
+    width: 75rem;
+
+    .schedule-section__content {
       flex-direction: column-reverse;
     }
   }
 
-  @include viewport(mobile) {
+  @media (max-width: 768px) {
     .schedule-section {
-      flex-direction: column-reverse;
+      flex-direction: column;
+
+      &__content {
+        flex-direction: column-reverse;
+      }
     }
   }
+
+  // @include viewport(mobile) {
+  //   .schedule-section {
+  //     flex-direction: column-reverse;
+  //   }
+  // }
 }
 
 .courses-container {

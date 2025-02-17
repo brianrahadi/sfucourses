@@ -9,8 +9,6 @@ export const HeaderNav: React.FC = () => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
-      // Show header when scrolling up or at top of page
-      // Hide header when scrolling down and not at top
       if (currentScrollY > lastScrollY && currentScrollY > 100) {
         setIsVisible(false);
       } else {
@@ -49,7 +47,7 @@ export const HeaderNav: React.FC = () => {
             <Link href="/explore" className="page-link">
               explore
             </Link>
-            <Link href={`/schedule`} className="page-link">
+            <Link href="/schedule" className="page-link">
               schedule
             </Link>
             <Link href="/faq" className="page-link">

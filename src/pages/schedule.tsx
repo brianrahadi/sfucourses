@@ -72,6 +72,10 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   const termOptions = getCurrentAndNextTerm(); // Memoize termOptions
   const [selectedTerm, setSelectedTerm] = useState<string>(termOptions[0]);
   const [searchSelected, setSearchSelected] = useState<boolean>(false);
+  const [viewColumns, setViewColumns] = useState<"Two-column" | "Three-column">(
+    "Three-column"
+  );
+
   const CHUNK_SIZE = 20;
 
   const loadMore = () => {
@@ -152,8 +156,11 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
 
   return (
     <div className="page courses-page">
-      <Hero title={`schedule courses`} backgroundImage={HeroImage.src} />
-      <main id="schedule-container" className="container">
+      <Hero title="schedule courses" backgroundImage={HeroImage.src} />
+      <main
+        id="schedule-container"
+        className={`container ${viewColumns === "Two-column" && "two-column"}`}
+      >
         <section className="courses-section">
           <div className="courses-section__header">
             <TextBadge
@@ -211,41 +218,45 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
           )}
         </section>
         <section className="schedule-section">
-          <div className="selected-courses">
-            <h3 className="section-title">Selected Courses</h3>
-            <div className="selected-courses__items">
-              {selectedOutlinesWithSections.map((outline) => (
-                <CourseCard
-                  key={"selected" + outline.dept + outline.number}
-                  course={outline as any}
-                  query={query}
-                  sectionDetails={outline}
-                  showDescription={false}
-                  isLink={false}
-                  setOfferings={{
-                    fn: setSelectedOutlinesWithSections,
-                    type: "REMOVE",
-                  }}
-                  type="SELECTED_COURSES"
-                />
-              ))}
-            </div>
+          <div className="schedule-section__header">
+            <ButtonGroup
+              options={["Two-column", "Three-column"]}
+              onSelect={setViewColumns}
+              selectedOption={viewColumns}
+            />
           </div>
-          <div className="schedule-container">
-            <p className="gray-text right-align">
-              Last updated X hours ago -{" "}
-              <Link href="https://api.sfucourses.com" className="no-underline">
-                api.sfucourses.com
-              </Link>
-            </p>
-            <WeeklySchedule />
-            <div className="selected-courses-badges">
-              {selectedOutlinesWithSections.map((outline) => (
-                <TextBadge
-                  key={`${outline.dept} ${outline.number}`}
-                  content={`${outline.dept} ${outline.number}`}
-                />
-              ))}
+          <div className="schedule-section__content">
+            <div className="selected-courses">
+              <h3 className="section-title">Selected Courses</h3>
+
+              <div className="selected-courses__items">
+                {selectedOutlinesWithSections.map((outline) => (
+                  <CourseCard
+                    key={"selected" + outline.dept + outline.number}
+                    course={outline as any}
+                    query={query}
+                    sectionDetails={outline}
+                    showDescription={false}
+                    isLink={false}
+                    setOfferings={{
+                      fn: setSelectedOutlinesWithSections,
+                      type: "REMOVE",
+                    }}
+                    type="SELECTED_COURSES"
+                  />
+                ))}
+              </div>
+            </div>
+            <div className="schedule-container">
+              <WeeklySchedule />
+              <div className="selected-courses-badges">
+                {selectedOutlinesWithSections.map((outline) => (
+                  <TextBadge
+                    key={`${outline.dept} ${outline.number}`}
+                    content={`${outline.dept} ${outline.number}`}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </section>
