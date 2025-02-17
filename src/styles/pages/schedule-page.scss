@@ -34,13 +34,17 @@
   }
 
   .schedule-section {
-    margin-top: 1rem;
+    margin-top: 3.5rem;
     flex: 1 1;
     display: flex;
+    height: fit-content;
     flex-direction: row;
     align-items: flex-start;
     justify-content: flex-start;
     gap: 1rem;
+    padding: 1rem;
+    border: 1px solid gray;
+    border-radius: 0.5rem;
 
     .weekly-schedule {
       flex: 1 1;
@@ -52,10 +56,10 @@
 
     .selected-courses {
       flex: 1 1;
-      margin-top: 1rem;
+      // margin-top: 1rem;
       display: flex;
       flex-direction: column;
-      gap: 2rem;
+      gap: 1rem;
 
       &__items {
         display: flex;
@@ -67,7 +71,13 @@
 
   @include viewport(tablet) {
     .schedule-section {
-      flex-direction: column;
+      flex-direction: column-reverse;
+    }
+  }
+
+  @include viewport(mobile) {
+    .schedule-section {
+      flex-direction: column-reverse;
     }
   }
 }

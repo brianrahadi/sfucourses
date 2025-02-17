@@ -114,6 +114,10 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   useEffect(onFilterChange, [query, selectedTerm]);
 
   useEffect(() => {
+    setSelectedOutlinesWithSections([]);
+  }, [selectedTerm]);
+
+  useEffect(() => {
     if (!outlinesWithSections) {
       loadCourseAPIData(
         `/sections/${toTermCode(selectedTerm)}?withOutlines=true`,
@@ -208,7 +212,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
         </section>
         <section className="schedule-section">
           <div className="selected-courses">
-            <h2 className="section-title">Selected Courses</h2>
+            <h3 className="section-title">Selected Courses</h3>
             <div className="selected-courses__items">
               {selectedOutlinesWithSections.map((outline) => (
                 <CourseCard
