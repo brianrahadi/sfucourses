@@ -1,5 +1,6 @@
 import {
   CourseTabContainer,
+  Helmet,
   Hero,
   RedditPosts,
   SectionDetails,
@@ -85,6 +86,7 @@ const CoursePage: React.FC<CoursePageProps> = () => {
 
   return (
     <div className="page courses-page">
+      <Helmet pageTitle={`${course.dept.toLowerCase()} ${course.number}`} />
       <Hero
         title={`explore ${course.dept.toLowerCase()} ${course.number} @ sfu`}
         backgroundImage={HeroImage.src}

@@ -7,20 +7,10 @@ interface HelmetProps {
 export const Helmet: React.FC<HelmetProps> = ({ pageTitle = "" }) => {
   pageTitle = pageTitle.replace("/", "");
   pageTitle = pageTitle.replace("-", " ");
-  pageTitle = capitalizeWords(pageTitle);
 
   const defaultTitle: string = "sfucourses";
-  const title: string = "sfucourses";
+  const title: string = `${pageTitle} - sfucourses`;
   const hasPageTitle: boolean = pageTitle.trim() !== "";
-
-  function capitalizeWords(item: string): string {
-    return item
-      .split(" ")
-      .map(function (word) {
-        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-      })
-      .join(" ");
-  }
 
   return (
     <Head>
