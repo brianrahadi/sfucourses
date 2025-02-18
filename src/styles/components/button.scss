@@ -30,5 +30,7 @@
   &.section-btn {
     background-color: var(--colour-neutral-900);
     border: 0.5px solid white;
+    width: fit-content;
+    overflow: hidden;
   }
 }

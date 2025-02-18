@@ -66,10 +66,12 @@
     border-radius: 0.5rem;
     margin: 0.5rem 0;
     background-color: var(--colour-neutral-1000);
+    width: 100%;
 
     .section-header {
       padding: 0.5rem 1rem;
       display: flex;
+      width: 100%;
       justify-content: space-between;
       border-bottom: 1px solid var(--colour-neutral-1100);
       align-items: center;
