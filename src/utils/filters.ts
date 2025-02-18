@@ -26,7 +26,7 @@ export const filterCoursesByQuery = <T extends CourseOutline>(
       course.offerings
         .map((offering) => offering.instructors.join(""))
         .join("");
-    const stringArr = [headerText, course.description];
+    const stringArr = [headerText];
 
     if (instructorsRaw) {
       stringArr.push(instructorsRaw);
@@ -37,6 +37,8 @@ export const filterCoursesByQuery = <T extends CourseOutline>(
         .flatMap((sec) => sec.instructors.map((a) => a.name))
         .join("");
       stringArr.push(instructors);
+    } else {
+      stringArr.push(course.description);
     }
 
     const isQuerySubstring = stringArr.some((str) =>
