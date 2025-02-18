@@ -272,6 +272,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
                   <TextBadge
                     key={`badge ${outline.dept} ${outline.number}`}
                     content={`${outline.dept} ${outline.number}`}
+                    enableBgColor
                   />
                 ))}
               </div>

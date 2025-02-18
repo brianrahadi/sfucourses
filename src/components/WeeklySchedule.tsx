@@ -95,7 +95,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
 
             const newTimeslot = {
               id,
-              name: `${course.dept} ${course.number}\n${section.section}\n${section.schedules[0].campus}`,
+              name: `${course.dept} ${course.number} \n${section.section}\n${section.schedules[0].campus}`,
               startTime,
               duration,
               day,
@@ -120,7 +120,6 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
       });
     });
     if (allConflictMessages.length > 0) {
-      // Combine all conflict messages into a single string
       const combinedConflictMessage = allConflictMessages.join("\n");
       setCoursesWithSections((prev) => {
         const newArray = prev.slice(0, -1);
@@ -188,7 +187,9 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
                     style={{
                       top: `${topOffset}px`,
                       height: `${height}px`,
-                      backgroundColor: getDarkColorFromHash(course.name),
+                      backgroundColor: getDarkColorFromHash(
+                        course.name.split(" ").slice(0, 2).join(" ")
+                      ), // CMPT 225
                     }}
                   >
                     {course.name}
