@@ -8,6 +8,23 @@ import {
   SectionInfo,
 } from "@types";
 import pako from "pako"; // For gzip decompression
+import { createHash } from "crypto";
+
+export function getDarkColorFromHash(input: string): string {
+  const hash = createHash("sha256").update(input).digest("hex");
+
+  const hex = hash.substring(0, 6);
+
+  const r = parseInt(hex.substring(0, 2), 16) % 128; // Limit to 0-127
+  const g = parseInt(hex.substring(2, 4), 16) % 128;
+  const b = parseInt(hex.substring(4, 6), 16) % 128;
+
+  const darkHexColor = `#${r.toString(16).padStart(2, "0")}${g
+    .toString(16)
+    .padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
+
+  return darkHexColor;
+}
 
 export function formatTime(hour: number, minute: number = 0): string {
   return `${hour.toString().padStart(2, "0")}:${minute

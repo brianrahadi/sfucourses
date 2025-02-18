@@ -1,5 +1,5 @@
 import { CourseWithSectionDetails } from "@types";
-import { formatTime } from "@utils";
+import { formatTime, getColorFromHash, getDarkColorFromHash } from "@utils";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 interface Course {
@@ -188,6 +188,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
                     style={{
                       top: `${topOffset}px`,
                       height: `${height}px`,
+                      backgroundColor: getDarkColorFromHash(course.name),
                     }}
                   >
                     {course.name}
