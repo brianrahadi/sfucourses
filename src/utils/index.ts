@@ -171,24 +171,28 @@ export function onlyUnique<T>(value: T, index: number, array: T[]) {
   return array.indexOf(value) === index;
 }
 
-// export function getCurrentAndNextTerm() {
-//   const month = new Date().getMonth() + 1;
-//   const terms = ["Spring", "Summer", "Fall"];
-//   const currentTerm = terms[Math.floor((month - 1) / 4) % 3] + " " + new Date().getFullYear();
-//   const nextTerm = terms[(terms.indexOf(currentTerm.split(" ")[0]) + 1) % 3] + " " + (new Date().getFullYear() + (currentTerm === "Fall" ? 1 : 0));
-//   return [currentTerm, nextTerm];
-// };
-
 export function getCurrentAndNextTerm() {
-  const month = 12;
+  const month = new Date().getMonth() + 1;
   const terms = ["Spring", "Summer", "Fall"];
-  const currentTerm = terms[Math.floor((month - 1) / 4) % 3] + " " + 2024;
+  const currentTerm =
+    terms[Math.floor((month - 1) / 4) % 3] + " " + new Date().getFullYear();
   const nextTerm =
     terms[(terms.indexOf(currentTerm.split(" ")[0]) + 1) % 3] +
     " " +
-    (2025 + (currentTerm === "Fall" ? 1 : 0));
+    (new Date().getFullYear() + (currentTerm === "Fall" ? 1 : 0));
   return [currentTerm, nextTerm];
 }
+
+// export function getCurrentAndNextTerm() {
+//   const month = 12;
+//   const terms = ["Spring", "Summer", "Fall"];
+//   const currentTerm = terms[Math.floor((month - 1) / 4) % 3] + " " + 2024;
+//   const nextTerm =
+//     terms[(terms.indexOf(currentTerm.split(" ")[0]) + 1) % 3] +
+//     " " +
+//     (2025 + (currentTerm === "Fall" ? 1 : 0));
+//   return [currentTerm, nextTerm];
+// }
 
 // Spring 2025 to 2025-spring
 export function toTermCode(term: string) {

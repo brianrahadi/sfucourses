@@ -31,7 +31,7 @@ const calculateDuration = (startTime: string, endTime: string): number => {
   return end - start;
 };
 
-const getDayFromCode = (dayCode: string): string => {
+const getDayFromCode = (dayCode: string): string[] => {
   const dayMap: { [key: string]: string } = {
     Mo: "Mon",
     Tu: "Tue",
@@ -39,7 +39,8 @@ const getDayFromCode = (dayCode: string): string => {
     Th: "Thu",
     Fr: "Fri",
   };
-  return dayMap[dayCode] || dayCode;
+  const days = dayCode.split(", ").map((code) => dayMap[code]);
+  return days || dayCode;
 };
 
 interface ConflictResponse {
@@ -73,7 +74,6 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
 
   useEffect(() => {
     const newTimeslots: Course[] = [];
-
     const allConflictMessages: string[] = [];
 
     coursesWithSections.forEach((course) => {
@@ -83,38 +83,39 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
             return;
           }
 
-          const day = getDayFromCode(schedule.days);
+          const days = getDayFromCode(schedule.days);
           const startTime = convertTimeToMinutes(schedule.startTime);
           const duration = calculateDuration(
             schedule.startTime,
             schedule.endTime
           );
 
-          // Create a unique ID for each timeslot
-          const id = `${course.dept}${course.number}-${section.section}-${day}-${schedule.sectionCode}`;
+          days.forEach((day) => {
+            const id = `${course.dept}${course.number}-${section.section}-${day}-${schedule.sectionCode}`;
 
-          const newTimeslot = {
-            id,
-            name: `${course.dept} ${course.number}\n${section.section}\n${section.schedules[0].campus}`,
-            startTime,
-            duration,
-            day,
-          };
+            const newTimeslot = {
+              id,
+              name: `${course.dept} ${course.number}\n${section.section}\n${section.schedules[0].campus}`,
+              startTime,
+              duration,
+              day,
+            };
 
-          // Check for conflicts with existing timeslots
-          const conflicts = newTimeslots
-            .map((existingTimeslot) =>
-              doTimeslotsConflict(newTimeslot, existingTimeslot)
-            )
-            .filter((result) => result.hasConflict);
+            // Check for conflicts with existing timeslots
+            const conflicts = newTimeslots
+              .map((existingTimeslot) =>
+                doTimeslotsConflict(newTimeslot, existingTimeslot)
+              )
+              .filter((result) => result.hasConflict);
 
-          if (conflicts.length > 0) {
-            conflicts.forEach((conflict) => {
-              allConflictMessages.push(conflict.conflictMessage || "");
-            });
-          } else {
-            newTimeslots.push(newTimeslot);
-          }
+            if (conflicts.length > 0) {
+              conflicts.forEach((conflict) => {
+                allConflictMessages.push(conflict.conflictMessage || "");
+              });
+            } else {
+              newTimeslots.push(newTimeslot);
+            }
+          });
         });
       });
     });

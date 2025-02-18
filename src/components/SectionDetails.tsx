@@ -131,15 +131,7 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
           }
         };
         if (schedules.length === 0) {
-          return (
-            <tr key={index} className="section-details">
-              <td>{section.section}</td>
-              <td>{section.classNumber}</td>
-              <td>N/A</td>
-              <td>N/A</td>
-              <td>{instructors}</td>
-            </tr>
-          );
+          return <></>;
         }
 
         return (
@@ -147,7 +139,7 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
             <div className="section-header">
               <div className="section-header__left">
                 <span className="icon-text-container">
-                  {notLabOrTut(section.schedules[0].sectionCode) ? (
+                  {notLabOrTut(section.schedules[0]?.sectionCode) ? (
                     <Link
                       className="no-underline"
                       href={`${baseOutlinePath}/${section.section.toLowerCase()}`}
@@ -171,7 +163,7 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                 <span className="icon-text-container">
                   <MdPlace />
                   {section.deliveryMethod !== "Online"
-                    ? section.schedules[0].campus || "-"
+                    ? section.schedules?.[0]?.campus || "-"
                     : "Online"}
                 </span>
               </div>
