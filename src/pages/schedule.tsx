@@ -7,7 +7,7 @@ import {
   ButtonGroup,
 } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   getCourseAPIData,
   getCurrentAndNextTerm,
@@ -117,44 +117,60 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   >("view", "Three-column");
   const [isTermSet, setIsTermSet] = useState(false);
 
-  const initialQueryParams = useSearchParams();
+  const searchParams = useSearchParams();
 
   const CHUNK_SIZE = 20;
 
+  const initialTermChangeRef = useRef<boolean>(true);
+
   useEffect(() => {
+    if (isTermSet && initialTermChangeRef.current) {
+      initialTermChangeRef.current = false;
+      return;
+    }
+
+    if (isTermSet) {
+      setSelectedOutlinesWithSections([]);
+    }
+  }, [selectedTerm, isTermSet]);
+
+  useEffect(() => {
+    if (!searchParams) return;
+
     const termMap = new Map<string, string>();
     termMap.set("sp25", "Spring 2025");
     termMap.set("su25", "Summer 2025");
 
     if (
-      initialQueryParams.has("term") &&
-      termMap.has(initialQueryParams.get("term") as string)
+      searchParams.has("term") &&
+      termMap.has(searchParams.get("term") as string)
     ) {
-      const key = initialQueryParams.get("term") as string;
+      const key = searchParams.get("term") as string;
       setSelectedTerm(termMap.get(key) as string);
       setIsTermSet(true);
     }
-  }, [initialQueryParams]);
+  }, [searchParams]);
 
   useEffect(() => {
-    if (!initialQueryParams || !outlinesWithSections || !isTermSet) return;
+    if (!searchParams || !outlinesWithSections || !isTermSet) return;
 
-    if (initialQueryParams.has("courses")) {
-      const sectionCodes = (initialQueryParams.get("courses") as string).split(
-        "-"
+    if (searchParams.has("courses")) {
+      const sectionCodes = (searchParams.get("courses") as string).split("-");
+
+      const filteredOutlines = outlinesWithSections.filter(
+        (outline) => outline.term === selectedTerm
       );
 
       setSelectedOutlinesWithSections(
-        filterCoursesByClassNumbers(outlinesWithSections, sectionCodes)
+        filterCoursesByClassNumbers(filteredOutlines, sectionCodes)
       );
     }
-  }, [initialQueryParams, outlinesWithSections, isTermSet]);
+  }, [searchParams, outlinesWithSections, isTermSet, selectedTerm]);
 
   useEffect(() => {
     const reverseTermMap = new Map<string, string>();
     reverseTermMap.set("Spring 2025", "sp25");
     reverseTermMap.set("Summer 2025", "su25");
-
     insertUrlParam("term", reverseTermMap.get(selectedTerm) as string);
   }, [selectedTerm]);
 
@@ -211,10 +227,6 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   };
 
   useEffect(onFilterChange, [query, selectedTerm]);
-
-  useEffect(() => {
-    setSelectedOutlinesWithSections([]);
-  }, [selectedTerm]);
 
   useEffect(() => {
     if (!outlinesWithSections) {
