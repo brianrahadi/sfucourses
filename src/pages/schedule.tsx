@@ -125,6 +125,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   const [viewColumns, setViewColumns] = useLocalStorage<
     "Two-column" | "Three-column"
   >("view", "Three-column");
+  const [isTermSet, setIsTermSet] = useState(false);
 
   const initialQueryParams = useSearchParams();
 
@@ -141,11 +142,12 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
     ) {
       const key = initialQueryParams.get("term") as string;
       setSelectedTerm(termMap.get(key) as string);
+      setIsTermSet(true);
     }
   }, [initialQueryParams]);
 
   useEffect(() => {
-    if (!initialQueryParams || !outlinesWithSections) return;
+    if (!initialQueryParams || !outlinesWithSections || !isTermSet) return;
 
     if (initialQueryParams.has("courses")) {
       const sectionCodes = JSON.parse(
@@ -156,7 +158,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
         filterCoursesByClassNumbers(outlinesWithSections, sectionCodes)
       );
     }
-  }, [initialQueryParams, outlinesWithSections]);
+  }, [initialQueryParams, outlinesWithSections, isTermSet]);
 
   useEffect(() => {
     const reverseTermMap = new Map<string, string>();
