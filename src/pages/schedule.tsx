@@ -94,6 +94,14 @@ function insertUrlParam(key: string, value: string): void {
   }
 }
 
+function removeUrlParameter(paramKey: string) {
+  const url = window.location.href;
+  const urlObject = new URL(url);
+  urlObject.searchParams.delete(paramKey);
+  const newUrl = urlObject.href;
+  window.history.pushState({ path: newUrl }, "", newUrl);
+}
+
 const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   const [outlinesWithSections, setOutlinesWithSections] = useState<
     CourseOutlineWithSectionDetails[] | undefined
@@ -164,7 +172,10 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   }, [viewColumns]);
 
   useEffect(() => {
-    if (selectedOutlinesWithSections.length === 0) return;
+    if (selectedOutlinesWithSections.length === 0) {
+      removeUrlParameter("courses");
+      return;
+    }
     const sectionCodes = selectedOutlinesWithSections.flatMap((course) =>
       course.sections.map((sec) => sec.classNumber)
     );
