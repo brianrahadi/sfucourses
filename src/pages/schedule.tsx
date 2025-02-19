@@ -157,7 +157,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
     if (searchParams.has("courses")) {
       const sectionCodes = (searchParams.get("courses") as string).split("-");
 
-      const filteredOutlines = outlinesWithSections.filter(
+      const filteredOutlines = selectedOutlinesWithSections.filter(
         (outline) => outline.term === selectedTerm
       );
 
