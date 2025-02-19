@@ -61,6 +61,24 @@ export const getStaticProps: GetStaticProps<SchedulePageProps> = async () => {
   }
 };
 
+function filterCoursesByClassNumbers(
+  courses: CourseWithSectionDetails[],
+  classNumbers: string[]
+): CourseWithSectionDetails[] {
+  return courses
+    .map((course) => {
+      const filteredSections = course.sections.filter((section) =>
+        classNumbers.includes(section.classNumber)
+      );
+
+      return {
+        ...course,
+        sections: filteredSections,
+      };
+    })
+    .filter((course) => course.sections.length > 0);
+}
+
 function insertUrlParam(key: string, value: string): void {
   if (window.history.pushState) {
     const searchParams = new URLSearchParams(window.location.search);
@@ -116,16 +134,21 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
       const key = initialQueryParams.get("term") as string;
       setSelectedTerm(termMap.get(key) as string);
     }
+  }, [initialQueryParams]);
+
+  useEffect(() => {
+    if (!initialQueryParams || !outlinesWithSections) return;
 
     if (initialQueryParams.has("courses")) {
-      const decodedCourses = JSON.parse(
-        decompressFromEncodedURIComponent(
-          initialQueryParams.get("courses") as string
-        )
-      ) as CourseWithSectionDetails[];
-      setSelectedOutlinesWithSections(decodedCourses);
+      const sectionCodes = JSON.parse(
+        initialQueryParams.get("courses") as string
+      ) as string[];
+
+      setSelectedOutlinesWithSections(
+        filterCoursesByClassNumbers(outlinesWithSections, sectionCodes)
+      );
     }
-  }, [initialQueryParams]);
+  }, [initialQueryParams, outlinesWithSections]);
 
   useEffect(() => {
     const reverseTermMap = new Map<string, string>();
@@ -141,11 +164,12 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   }, [viewColumns]);
 
   useEffect(() => {
-    const encodedCourses = compressToEncodedURIComponent(
-      JSON.stringify(selectedOutlinesWithSections)
+    const sectionCodes = selectedOutlinesWithSections.flatMap((course) =>
+      course.sections.map((sec) => sec.classNumber)
     );
-    localStorage.setItem("courses", encodedCourses);
-    insertUrlParam("courses", encodedCourses);
+    const sectionCodesJson = JSON.stringify(sectionCodes);
+    localStorage.setItem("courses", sectionCodesJson);
+    insertUrlParam("courses", sectionCodesJson);
   }, [selectedOutlinesWithSections]);
 
   const loadMore = () => {
