@@ -140,9 +140,9 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
     if (!initialQueryParams || !outlinesWithSections || !isTermSet) return;
 
     if (initialQueryParams.has("courses")) {
-      const sectionCodes = JSON.parse(
-        initialQueryParams.get("courses") as string
-      ) as string[];
+      const sectionCodes = (initialQueryParams.get("courses") as string).split(
+        "-"
+      );
 
       setSelectedOutlinesWithSections(
         filterCoursesByClassNumbers(outlinesWithSections, sectionCodes)
@@ -167,11 +167,10 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
       removeUrlParameter("courses");
       return;
     }
-    const sectionCodes = selectedOutlinesWithSections.flatMap((course) =>
-      course.sections.map((sec) => sec.classNumber)
-    );
-    const sectionCodesJson = JSON.stringify(sectionCodes);
-    insertUrlParam("courses", sectionCodesJson);
+    const sectionCodes = selectedOutlinesWithSections
+      .flatMap((course) => course.sections.map((sec) => sec.classNumber))
+      .join("-");
+    insertUrlParam("courses", sectionCodes);
   }, [selectedOutlinesWithSections]);
 
   const loadMore = () => {
