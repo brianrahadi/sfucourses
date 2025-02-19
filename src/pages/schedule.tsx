@@ -164,6 +164,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   }, [viewColumns]);
 
   useEffect(() => {
+    if (selectedOutlinesWithSections.length === 0) return;
     const sectionCodes = selectedOutlinesWithSections.flatMap((course) =>
       course.sections.map((sec) => sec.classNumber)
     );
