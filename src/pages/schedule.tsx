@@ -26,6 +26,7 @@ import Link from "next/link";
 import { filterCoursesByQuery, filterCoursesByTerm } from "@utils/filters";
 import { GetStaticProps } from "next";
 import { useLocalStorage } from "@hooks";
+import { useSearchParams } from "next/navigation";
 
 interface SchedulePageProps {
   initialSections?: CourseOutlineWithSectionDetails[];
@@ -56,6 +57,48 @@ export const getStaticProps: GetStaticProps<SchedulePageProps> = async () => {
   }
 };
 
+// function updateJsonUrlParam(key: text: string): void {
+//   if (!text) {
+//     // removeUrlParameter(JSON_QUERY_PARAM); // remove query param if text is empty
+//   } else {
+//     insertUrlParam()
+//     // const encodedText: string = compressToEncodedURIComponent(text);
+//     // if (encodedText.length <= MAX_QUERY_PARAM_LENGTH) {
+//     //   //TODO: validate raw test instead of parsed text?
+//     //   insertUrlParam(JSON_QUERY_PARAM, encodedText);
+//     // } else {
+//     //   removeUrlParameter(JSON_QUERY_PARAM);
+//     // }
+//   }
+// }
+
+function insertUrlParam(key: string, value: string): void {
+  if (window.history.pushState) {
+    const searchParams = new URLSearchParams(window.location.search);
+    searchParams.set(key, value);
+    const newUrl =
+      window.location.protocol +
+      "//" +
+      window.location.host +
+      window.location.pathname +
+      "?" +
+      searchParams.toString();
+    window.history.pushState({ path: newUrl }, "", newUrl);
+  }
+}
+
+// function decodeUrlParam(param: string | null): string | undefined {
+//   return param ? param : undefined;
+// }
+
+// function removeUrlParameter(paramKey: string) {
+//   const url = window.location.href;
+//   const urlObject = new URL(url);
+//   urlObject.searchParams.delete(paramKey);
+//   const newUrl = urlObject.href;
+//   window.history.pushState({ path: newUrl }, "", newUrl);
+// }
+
 const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   const [outlinesWithSections, setOutlinesWithSections] = useState<
     CourseOutlineWithSectionDetails[] | undefined
@@ -80,11 +123,32 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
     "Two-column" | "Three-column"
   >("viewColumns", "Three-column");
 
+  const initialQueryParams = useSearchParams();
+
   const CHUNK_SIZE = 20;
+
+  useEffect(() => {
+    const termMap = new Map<string, string>();
+    termMap.set("sp25", "Spring 2025");
+    termMap.set("su25", "Summer 2025");
+
+    if (
+      initialQueryParams.has("term") &&
+      termMap.has(initialQueryParams.get("term") as string)
+    ) {
+      const key = initialQueryParams.get("term") as string;
+      setSelectedTerm(termMap.get(key) as string);
+    }
+  }, [initialQueryParams]);
 
   // Update localStorage when selectedTerm changes
   useEffect(() => {
+    const reverseTermMap = new Map<string, string>();
+    reverseTermMap.set("Spring 2025", "sp25");
+    reverseTermMap.set("Summer 2025", "su25");
+
     localStorage.setItem("selectedTerm", selectedTerm);
+    insertUrlParam("term", reverseTermMap.get(selectedTerm) as string);
   }, [selectedTerm]);
 
   // Update localStorage when viewColumns changes
