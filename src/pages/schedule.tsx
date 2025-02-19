@@ -1,15 +1,13 @@
 import {
-  ExploreFilter,
   Hero,
   TextBadge,
   CourseCard,
   SearchBar,
-  Button,
   WeeklySchedule,
   ButtonGroup,
 } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   getCourseAPIData,
   getCurrentAndNextTerm,
@@ -22,15 +20,10 @@ import {
   CourseWithSectionDetails,
 } from "@types";
 import InfiniteScroll from "react-infinite-scroll-component";
-import Link from "next/link";
 import { filterCoursesByQuery, filterCoursesByTerm } from "@utils/filters";
 import { GetStaticProps } from "next";
 import { useLocalStorage } from "@hooks";
 import { useSearchParams } from "next/navigation";
-import {
-  compressToEncodedURIComponent,
-  decompressFromEncodedURIComponent,
-} from "lz-string";
 
 interface SchedulePageProps {
   initialSections?: CourseOutlineWithSectionDetails[];
@@ -118,10 +111,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   const [query, setQuery] = useState<string>("");
   const termOptions = getCurrentAndNextTerm(); // Memoize termOptions
   const [searchSelected, setSearchSelected] = useState<boolean>(false);
-  const [selectedTerm, setSelectedTerm] = useLocalStorage(
-    "term",
-    termOptions[0]
-  );
+  const [selectedTerm, setSelectedTerm] = useState(termOptions[0]);
   const [viewColumns, setViewColumns] = useLocalStorage<
     "Two-column" | "Three-column"
   >("view", "Three-column");
@@ -165,7 +155,6 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
     reverseTermMap.set("Spring 2025", "sp25");
     reverseTermMap.set("Summer 2025", "su25");
 
-    localStorage.setItem("term", selectedTerm);
     insertUrlParam("term", reverseTermMap.get(selectedTerm) as string);
   }, [selectedTerm]);
 
@@ -182,7 +171,6 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
       course.sections.map((sec) => sec.classNumber)
     );
     const sectionCodesJson = JSON.stringify(sectionCodes);
-    localStorage.setItem("courses", sectionCodesJson);
     insertUrlParam("courses", sectionCodesJson);
   }, [selectedOutlinesWithSections]);
 
