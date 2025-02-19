@@ -1,5 +1,9 @@
 import { Button, Highlight } from "@components";
-import { CourseWithSectionDetails } from "@types";
+import {
+  CourseWithSectionDetails,
+  SectionDetail,
+  SectionSchedule,
+} from "@types";
 import { formatShortDate, generateBaseOutlinePath, onlyUnique } from "@utils";
 import Link from "next/link";
 import { Dispatch, SetStateAction, useState } from "react";
@@ -20,26 +24,43 @@ interface SectionDetailsProps {
   query?: string;
 }
 
+const processSchedules = (schedules: SectionSchedule[]): SectionSchedule[] =>
+  schedules.flatMap((schedule) =>
+    schedule.days.split(", ").map((day) => ({
+      ...schedule,
+      days: day,
+    }))
+  );
+
+const processSectionDetails = (
+  sectionDetails: SectionDetail[]
+): SectionDetail[] =>
+  sectionDetails.map((sectionDetail) => ({
+    ...sectionDetail,
+    schedules: processSchedules(sectionDetail.schedules),
+  }));
+
 export const SectionDetails: React.FC<SectionDetailsProps> = ({
   offering,
   setOfferings,
   type,
   query,
 }) => {
+  const processedSections = processSectionDetails(offering.sections);
   const [showLabTut, setShowLabTut] = useState(false);
   const notLabOrTut = (sectionCode: string) =>
     sectionCode !== "LAB" && sectionCode !== "TUT";
   const initialShownSections =
     type === "SELECTED_COURSES"
-      ? offering.sections
-      : offering.sections.filter((section) =>
+      ? processedSections
+      : processedSections.filter((section) =>
           section.schedules.every((sched) => notLabOrTut(sched.sectionCode))
         );
 
   const hasLabTut =
-    offering.sections.length > 1 &&
-    offering.sections.length !== initialShownSections.length;
-  const shownSections = showLabTut ? offering.sections : initialShownSections;
+    processedSections.length > 1 &&
+    processedSections.length !== initialShownSections.length;
+  const shownSections = showLabTut ? processedSections : initialShownSections;
 
   return (
     <div
@@ -137,7 +158,7 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
         return (
           <div key={section.classNumber} className="section-container">
             <div className="section-header">
-              <div className="section-header__left">
+              <div className="section-header__first">
                 <span className="icon-text-container">
                   {notLabOrTut(section.schedules[0]?.sectionCode) ? (
                     <Link
@@ -146,12 +167,30 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                       target="_blank"
                       rel="noreferrer"
                     >
-                      {section.section}
+                      {section.schedules[0]?.sectionCode} {section.section}
                     </Link>
                   ) : (
                     <>{section.section}</>
                   )}
                 </span>
+                {setOfferings ? (
+                  <Button
+                    className="section-btn"
+                    icon={
+                      setOfferings.type === "ADD" ? (
+                        <IoAddCircle />
+                      ) : (
+                        <IoRemoveCircle />
+                      )
+                    }
+                    label={`#${section.classNumber}`}
+                    onClick={handleAddSection}
+                  />
+                ) : (
+                  <span>#{section.classNumber}</span>
+                )}
+              </div>
+              <div className="section-header__second">
                 <span className="icon-text-container instructor">
                   <BsFillPersonFill />
                   {query ? (
@@ -163,26 +202,11 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                 <span className="icon-text-container">
                   <MdPlace />
                   {section.deliveryMethod !== "Online"
-                    ? section.schedules?.[0]?.campus || "-"
+                    ? section.schedules[0].campus
                     : "Online"}
+                  {/* {`${section.deliveryMethod} - ${section.schedules[0].campus}`} */}
                 </span>
               </div>
-              {setOfferings ? (
-                <Button
-                  className="section-btn"
-                  icon={
-                    setOfferings.type === "ADD" ? (
-                      <IoAddCircle />
-                    ) : (
-                      <IoRemoveCircle />
-                    )
-                  }
-                  label={`#${section.classNumber}`}
-                  onClick={handleAddSection}
-                />
-              ) : (
-                <span>#{section.classNumber}</span>
-              )}
             </div>
 
             <div className="section-schedule-container">
@@ -193,21 +217,21 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                 >
                   <span
                     className="icon-text-container"
-                    style={{ minWidth: "6.5rem" }} // hard-coded min width for same width
+                    style={{ minWidth: "3rem" }} // hard-coded min width for same width
                   >
                     <CiCalendar />
                     {sched.days || "-"}
                   </span>
                   <span
                     className="icon-text-container"
-                    style={{ minWidth: "8rem" }}
+                    style={{ minWidth: "6.5rem" }}
                   >
                     <CiClock1 />
                     {`${sched.startTime}-${sched.endTime}`}
                   </span>
                   <span
-                    className="icon-text-container mobile-hide"
-                    style={{ minWidth: "2rem" }}
+                    className="icon-text-container"
+                    // style={{ minWidth: "2rem" }}
                   >
                     <FaTimeline />
                     {`${formatShortDate(sched.startDate)}-${formatShortDate(

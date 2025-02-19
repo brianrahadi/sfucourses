@@ -38,6 +38,10 @@
   }
 
   .tab-content {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     background-color: var(--colour-neutral-1100);
     border-top: none;
     border-radius: 0 0 8px 8px;

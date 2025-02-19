@@ -3,7 +3,10 @@
   width: 100%;
   border-radius: 0.5rem;
   background: var(--colour-neutral-1100) 100%;
-  padding: 1rem;
+  padding: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  align-content: center;
   text-decoration: none;
 
   &.is-link {
