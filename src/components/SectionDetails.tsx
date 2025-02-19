@@ -202,7 +202,7 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                 <span className="icon-text-container">
                   <MdPlace />
                   {section.deliveryMethod !== "Online"
-                    ? section.schedules[0].campus
+                    ? section.schedules[0].campus || "-"
                     : "Online"}
                   {/* {`${section.deliveryMethod} - ${section.schedules[0].campus}`} */}
                 </span>
@@ -227,14 +227,14 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                     style={{ minWidth: "6.5rem" }}
                   >
                     <CiClock1 />
-                    {`${sched.startTime}-${sched.endTime}`}
+                    {`${sched.startTime} - ${sched.endTime}`}
                   </span>
                   <span
                     className="icon-text-container"
                     // style={{ minWidth: "2rem" }}
                   >
                     <FaTimeline />
-                    {`${formatShortDate(sched.startDate)}-${formatShortDate(
+                    {`${formatShortDate(sched.startDate)} - ${formatShortDate(
                       sched.endDate
                     )}`}
                   </span>
