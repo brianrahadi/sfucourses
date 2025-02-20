@@ -130,6 +130,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
     }
 
     if (isTermSet) {
+      // removeUrlParameter("courses")
       setSelectedOutlinesWithSections([]);
     }
   }, [selectedTerm, isTermSet]);
@@ -165,7 +166,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
         filterCoursesByClassNumbers(filteredOutlines, sectionCodes)
       );
     }
-  }, [searchParams, outlinesWithSections, isTermSet, selectedTerm]);
+  }, [searchParams, outlinesWithSections, isTermSet]);
 
   useEffect(() => {
     const reverseTermMap = new Map<string, string>();
