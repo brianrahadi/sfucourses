@@ -20,10 +20,15 @@ import {
   CourseWithSectionDetails,
 } from "@types";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { filterCoursesByQuery, filterCoursesByTerm } from "@utils/filters";
+import {
+  filterCoursesByQuery,
+  filterCoursesByTerm,
+} from "@utils/courseFilters";
 import { GetStaticProps } from "next";
 import { useLocalStorage } from "@hooks";
 import { useSearchParams } from "next/navigation";
+import { insertUrlParam, removeUrlParameter } from "@utils/url";
+import { filterCoursesByClassNumbers } from "@utils/courseFilters";
 
 interface SchedulePageProps {
   initialSections?: CourseOutlineWithSectionDetails[];
@@ -54,47 +59,6 @@ export const getStaticProps: GetStaticProps<SchedulePageProps> = async () => {
   }
 };
 
-function filterCoursesByClassNumbers(
-  courses: CourseWithSectionDetails[],
-  classNumbers: string[]
-): CourseWithSectionDetails[] {
-  return courses
-    .map((course) => {
-      const filteredSections = course.sections.filter((section) =>
-        classNumbers.includes(section.classNumber)
-      );
-
-      return {
-        ...course,
-        sections: filteredSections,
-      };
-    })
-    .filter((course) => course.sections.length > 0);
-}
-
-function insertUrlParam(key: string, value: string): void {
-  if (window.history.pushState) {
-    const searchParams = new URLSearchParams(window.location.search);
-    searchParams.set(key, value);
-    const newUrl =
-      window.location.protocol +
-      "//" +
-      window.location.host +
-      window.location.pathname +
-      "?" +
-      searchParams.toString();
-    window.history.pushState({ path: newUrl }, "", newUrl);
-  }
-}
-
-function removeUrlParameter(paramKey: string) {
-  const url = window.location.href;
-  const urlObject = new URL(url);
-  urlObject.searchParams.delete(paramKey);
-  const newUrl = urlObject.href;
-  window.history.pushState({ path: newUrl }, "", newUrl);
-}
-
 const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   const [outlinesWithSections, setOutlinesWithSections] = useState<
     CourseOutlineWithSectionDetails[] | undefined
@@ -112,34 +76,21 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   const termOptions = getCurrentAndNextTerm(); // Memoize termOptions
   const [searchSelected, setSearchSelected] = useState<boolean>(false);
   const [selectedTerm, setSelectedTerm] = useState(termOptions[0]);
+  const termChangeSource = useRef("initial"); // button or url
+
   const [viewColumns, setViewColumns] = useLocalStorage<
     "Two-column" | "Three-column"
   >("view", "Three-column");
-  const [isTermSet, setIsTermSet] = useState(false);
 
   const searchParams = useSearchParams();
 
   const CHUNK_SIZE = 20;
 
-  const initialTermChangeRef = useRef<boolean>(true);
-
   useEffect(() => {
-    if (isTermSet && initialTermChangeRef.current) {
-      initialTermChangeRef.current = false;
-      return;
-    }
-
-    if (isTermSet) {
-      setSelectedOutlinesWithSections([]);
-    }
-  }, [selectedTerm, isTermSet]);
-
-  useEffect(() => {
-    if (!searchParams) return;
-
     const termMap = new Map<string, string>();
     termMap.set("sp25", "Spring 2025");
     termMap.set("su25", "Summer 2025");
+    termChangeSource.current = "url";
 
     if (
       searchParams.has("term") &&
@@ -147,13 +98,21 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
     ) {
       const key = searchParams.get("term") as string;
       setSelectedTerm(termMap.get(key) as string);
-      setIsTermSet(true);
     }
   }, [searchParams]);
 
   useEffect(() => {
-    if (!searchParams || !outlinesWithSections || !isTermSet) return;
+    if (!outlinesWithSections) return;
 
+    const reverseTermMap = new Map<string, string>();
+    reverseTermMap.set("Spring 2025", "sp25");
+    reverseTermMap.set("Summer 2025", "su25");
+    insertUrlParam("term", reverseTermMap.get(selectedTerm) as string);
+
+    if (termChangeSource.current === "button") {
+      setSelectedOutlinesWithSections([]);
+      return;
+    }
     if (searchParams.has("courses")) {
       const sectionCodes = (searchParams.get("courses") as string).split("-");
 
@@ -165,14 +124,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
         filterCoursesByClassNumbers(filteredOutlines, sectionCodes)
       );
     }
-  }, [searchParams, outlinesWithSections, isTermSet]);
-
-  useEffect(() => {
-    const reverseTermMap = new Map<string, string>();
-    reverseTermMap.set("Spring 2025", "sp25");
-    reverseTermMap.set("Summer 2025", "su25");
-    insertUrlParam("term", reverseTermMap.get(selectedTerm) as string);
-  }, [selectedTerm]);
+  }, [searchParams, outlinesWithSections, selectedTerm]);
 
   useEffect(() => {
     localStorage.setItem("view", viewColumns);
@@ -286,7 +238,10 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
             />
             <ButtonGroup
               options={termOptions}
-              onSelect={setSelectedTerm}
+              onSelect={(value) => {
+                termChangeSource.current = "button";
+                setSelectedTerm(value);
+              }}
               selectedOption={selectedTerm}
             />
           </div>

@@ -1,7 +1,7 @@
 import {
   CourseOutline,
   CourseOutlineWithSectionDetails,
-  SectionDetail,
+  CourseWithSectionDetails,
 } from "@types";
 
 const isCourseOutlineWithSectionDetails = (
@@ -9,6 +9,24 @@ const isCourseOutlineWithSectionDetails = (
 ): course is CourseOutlineWithSectionDetails => {
   return (course as CourseOutlineWithSectionDetails).sections !== undefined;
 };
+
+export function filterCoursesByClassNumbers(
+  courses: CourseWithSectionDetails[],
+  classNumbers: string[]
+): CourseWithSectionDetails[] {
+  return courses
+    .map((course) => {
+      const filteredSections = course.sections.filter((section) =>
+        classNumbers.includes(section.classNumber)
+      );
+
+      return {
+        ...course,
+        sections: filteredSections,
+      };
+    })
+    .filter((course) => course.sections.length > 0);
+}
 
 export const filterCoursesByQuery = <T extends CourseOutline>(
   courses: T[],
@@ -48,7 +66,6 @@ export const filterCoursesByQuery = <T extends CourseOutline>(
   });
 };
 
-// Filter by subjects
 export const filterCourseBySubjects = (
   courses: CourseOutline[],
   selectedSubjects: string[]
@@ -60,7 +77,6 @@ export const filterCourseBySubjects = (
   return courses.filter((course) => selectedSubjectsSet.has(course.dept));
 };
 
-// Filter by levels
 export const filterCoursesByLevels = (
   courses: CourseOutline[],
   selectedLevels: string[]
@@ -107,7 +123,6 @@ export const filterCoursesByOfferedTerms = (
   });
 };
 
-// Filter by delivery methods
 export const filterCoursesByDeliveries = (
   courses: CourseOutline[],
   selectedDeliveries: string[]
@@ -121,7 +136,6 @@ export const filterCoursesByDeliveries = (
   );
 };
 
-// Filter by prerequisites
 export const filterCoursesByPrereqs = (
   courses: CourseOutline[],
   searchQuery: string,

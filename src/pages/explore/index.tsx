@@ -21,7 +21,7 @@ import {
   filterCoursesByDeliveries,
   filterCoursesByPrereqs,
   filterCoursesByDesignations,
-} from "@utils/filters";
+} from "@utils/courseFilters";
 
 interface ExplorePageProps {
   initialCourses?: CourseOutline[];
