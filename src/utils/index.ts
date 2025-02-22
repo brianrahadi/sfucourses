@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction } from "react";
 import { CourseWithSectionDetails } from "@types";
 import pako from "pako";
 import { BASE_URL } from "@const";
+import { addParameterToUrl } from "./url";
 
 // by default always gzip
 async function decompressGzip(response: Response): Promise<any> {
@@ -24,7 +25,7 @@ export async function loadCourseAPIData(
   const url = `${BASE_URL}${queryString}`;
 
   try {
-    const response = await fetch(url, {
+    const response = await fetch(`${url}?gzip=true`, {
       headers: {
         "Accept-Encoding": "gzip, deflate, br",
       },
@@ -49,7 +50,7 @@ export async function getCourseAPIData(queryString: string): Promise<any> {
   const url = `${BASE_URL}${queryString}`;
 
   try {
-    const response = await fetch(url, {
+    const response = await fetch(addParameterToUrl(url, "gzip", "true"), {
       headers: {
         "Accept-Encoding": "gzip, deflate, br",
       },
@@ -66,33 +67,6 @@ export async function getCourseAPIData(queryString: string): Promise<any> {
   } catch (error) {
     console.error(`Error fetching ${url}:`, error);
     throw error; // Re-throw to allow caller to handle errors
-  }
-}
-
-export async function loadMultipleData(
-  queryStrings: string[],
-  setData: Dispatch<SetStateAction<any[]>>
-): Promise<void> {
-  const urls = queryStrings.map((queryString) => `${BASE_URL}?${queryString}`);
-
-  try {
-    const responses = await Promise.all(urls.map((url) => fetch(url)));
-
-    const isValidResponse = responses.every((response) => response.ok);
-    if (!isValidResponse) {
-      const failedIndex = responses.findIndex((response) => !response.ok);
-      throw new Error(
-        `Request failed for URL: ${urls[failedIndex]} with status ${responses[failedIndex].status}`
-      );
-    }
-
-    const jsonData = await Promise.all(
-      responses.map((response) => response.json())
-    );
-
-    setData(jsonData);
-  } catch (error) {
-    console.error("Error fetching multiple URLs:", error);
   }
 }
 

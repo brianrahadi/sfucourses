@@ -18,7 +18,7 @@ export const useCourseOfferings = (
     queries: course?.offerings
       ? course.offerings.map((offering) => {
           const termURL = toTermCode(offering.term);
-          const queryUrl = `/sections/${termURL}/${courseCodeURL}`;
+          const queryUrl = `/sections/${termURL}/${courseCodeURL}?gzip=true`;
           return {
             queryKey: ["courseOffering", queryUrl],
             queryFn: () => getCourseAPIData(queryUrl),

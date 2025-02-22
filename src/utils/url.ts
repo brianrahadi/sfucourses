@@ -20,3 +20,13 @@ export function removeUrlParameter(paramKey: string) {
   const newUrl = urlObject.href;
   window.history.pushState({ path: newUrl }, "", newUrl);
 }
+
+export function addParameterToUrl(
+  url: string,
+  paramName: string,
+  paramValue: string
+): string {
+  const urlObj = new URL(url);
+  urlObj.searchParams.set(paramName, paramValue);
+  return urlObj.toString();
+}
