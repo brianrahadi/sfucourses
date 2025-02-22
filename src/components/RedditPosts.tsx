@@ -1,8 +1,8 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { formatShortDate } from "@utils";
 import { BiSolidUpvote } from "react-icons/bi";
+import { formatShortDate } from "@utils/format";
 
 interface RedditPostData {
   title: string;

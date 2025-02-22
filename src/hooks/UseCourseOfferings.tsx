@@ -1,6 +1,7 @@
 import { useQueries } from "@tanstack/react-query";
 import { CourseOutline, CourseWithSectionDetails } from "@types";
-import { getCourseAPIData, toTermCode } from "@utils";
+import { getCourseAPIData } from "@utils";
+import { toTermCode } from "@utils/format";
 
 export interface CourseOfferingsResult {
   offerings: CourseWithSectionDetails[];

@@ -1,5 +1,5 @@
 import { CourseWithSectionDetails } from "@types";
-import { formatTime, getDarkColorFromHash } from "@utils";
+import { formatTime, getDarkColorFromHash } from "@utils/format";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 interface Course {

@@ -12,8 +12,6 @@ import {
   getCourseAPIData,
   getCurrentAndNextTerm,
   loadCourseAPIData,
-  numberWithCommas,
-  toTermCode,
 } from "@utils";
 import {
   CourseOutlineWithSectionDetails,
@@ -29,6 +27,7 @@ import { useLocalStorage } from "@hooks";
 import { useSearchParams } from "next/navigation";
 import { insertUrlParam, removeUrlParameter } from "@utils/url";
 import { filterCoursesByClassNumbers } from "@utils/courseFilters";
+import { numberWithCommas, toTermCode } from "@utils/format";
 
 interface SchedulePageProps {
   initialSections?: CourseOutlineWithSectionDetails[];

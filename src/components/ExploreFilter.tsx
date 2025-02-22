@@ -7,7 +7,7 @@ import { ExploreFilters } from "src/hooks/UseExploreFilters";
 import { BsSun } from "react-icons/bs";
 import { FaLeaf } from "react-icons/fa";
 import { LuFlower } from "react-icons/lu";
-import { SUBJECTS } from "@utils";
+import { SUBJECTS } from "@const";
 
 const colourNeutral1000 = "#323434";
 const colourNeutral900 = "#4b4e4d";

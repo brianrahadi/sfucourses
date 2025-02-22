@@ -7,14 +7,8 @@ import {
 } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useEffect, useState } from "react";
-import {
-  formatShortDate,
-  generateBaseOutlinePath,
-  loadCourseAPIData,
-  onlyUnique,
-} from "@utils";
-import { CourseOutline, CourseWithSectionDetails } from "@types";
-import { useQueries } from "@tanstack/react-query";
+import { loadCourseAPIData } from "@utils";
+import { CourseOutline } from "@types";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { useCourseOfferings } from "@hooks";

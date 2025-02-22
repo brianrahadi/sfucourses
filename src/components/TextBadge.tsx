@@ -1,4 +1,4 @@
-import { getDarkColorFromHash } from "@utils";
+import { getDarkColorFromHash } from "@utils/format";
 import Image from "next/image";
 
 interface TextBadgeProps {

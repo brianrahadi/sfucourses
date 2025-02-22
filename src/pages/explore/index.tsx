@@ -7,7 +7,7 @@ import {
 } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useEffect, useState } from "react";
-import { getCourseAPIData, loadCourseAPIData, numberWithCommas } from "@utils";
+import { getCourseAPIData, loadCourseAPIData } from "@utils";
 import { CourseOutline } from "@types";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useExploreFilters } from "src/hooks/UseExploreFilters";
@@ -22,6 +22,7 @@ import {
   filterCoursesByPrereqs,
   filterCoursesByDesignations,
 } from "@utils/courseFilters";
+import { numberWithCommas } from "@utils/format";
 
 interface ExplorePageProps {
   initialCourses?: CourseOutline[];

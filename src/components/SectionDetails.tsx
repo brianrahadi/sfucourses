@@ -4,7 +4,7 @@ import {
   SectionDetail,
   SectionSchedule,
 } from "@types";
-import { formatShortDate, generateBaseOutlinePath, onlyUnique } from "@utils";
+import { generateBaseOutlinePath, onlyUnique } from "@utils";
 import Link from "next/link";
 import { Dispatch, SetStateAction, useState } from "react";
 import { BsFillPersonFill } from "react-icons/bs";
@@ -13,6 +13,7 @@ import { FaTimeline } from "react-icons/fa6";
 import { MdPlace } from "react-icons/md";
 import { IoAddCircle, IoRemoveCircle } from "react-icons/io5";
 import { PlusCircle } from "react-feather";
+import { formatShortDate } from "@utils/format";
 
 interface SectionDetailsProps {
   offering: CourseWithSectionDetails;

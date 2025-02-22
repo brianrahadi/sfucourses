@@ -1,7 +1,7 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import Link from "next/link";
 import { CourseOutline, CourseWithSectionDetails } from "../types";
-import { Button, Highlight, SectionDetails, TextBadge } from "@components";
+import { Highlight, SectionDetails } from "@components";
 import { termToIcon } from "./ExploreFilter";
 
 type CourseCardProps = {
