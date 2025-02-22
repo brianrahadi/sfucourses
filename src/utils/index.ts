@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 import { CourseWithSectionDetails } from "@types";
-import pako from "pako"; // For gzip decompression
+import pako from "pako";
 import { BASE_URL } from "@const";
 
 // by default always gzip
