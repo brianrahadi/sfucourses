@@ -6,10 +6,10 @@
   background-repeat: no-repeat;
   background-position: bottom right;
 
-  .container {
+  > .container {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 1rem;
     position: relative;
     overflow: hidden;
 
@@ -44,8 +44,7 @@
     }
 
     @include viewport(desktop) {
-      flex-direction: row;
-      justify-content: space-between;
+      // justify-content: space-between;
       padding-top: 2.5rem;
       padding-bottom: 4rem;
 

@@ -8,6 +8,12 @@
     transform: translateY(-100%);
   }
 
+  &__primary {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
   .container {
     h2 {
       font-size: 2rem;

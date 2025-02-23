@@ -41,6 +41,19 @@ export function formatShortDate(
   });
 }
 
+export function formatShortDescriptiveDate(date: Date) {
+  return (
+    Intl.DateTimeFormat("en-US", {
+      timeZone: "America/Los_Angeles",
+      month: "short",
+      day: "2-digit",
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    }).format(date) + " PST"
+  );
+}
+
 export function capitalize(str: string) {
   return String(str).charAt(0).toUpperCase() + String(str).slice(1);
 }

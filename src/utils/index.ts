@@ -95,3 +95,17 @@ export function getCurrentAndNextTerm() {
     (new Date().getFullYear() + (currentTerm === "Fall" ? 1 : 0));
   return [currentTerm, nextTerm];
 }
+
+export const fetchLastUpdated = async () => {
+  const response = await fetch(
+    "https://api.github.com/repos/brianrahadi/sfucourses-api/commits?per_page=1"
+  );
+  if (!response.ok) {
+    throw new Error("Network response was not ok");
+  }
+  const commits = await response.json();
+  if (commits.length === 0) {
+    throw new Error("No commits found");
+  }
+  return commits[0].commit.author.date;
+};

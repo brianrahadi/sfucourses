@@ -1,9 +1,23 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { TextBadge } from "./TextBadge";
+import { useQuery } from "@tanstack/react-query";
+import { fetchLastUpdated } from "@utils";
+import { formatShortDescriptiveDate } from "@utils/format";
 
 export const HeaderNav: React.FC = () => {
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+
+  const {
+    data: lastUpdatedData,
+    error,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["lastUpdated"],
+    queryFn: fetchLastUpdated,
+  });
 
   useEffect(() => {
     const handleScroll = () => {
@@ -25,9 +39,18 @@ export const HeaderNav: React.FC = () => {
   return (
     <div className={`header-nav ${!isVisible ? "header-hidden" : ""}`}>
       <div className="container">
-        <Link href="/" className="page-link">
-          <h2>sfucourses</h2>
-        </Link>
+        <div className="header-nav__primary">
+          <Link href="/" className="page-link">
+            <h2>sfucourses</h2>
+          </Link>
+          <TextBadge
+            content={
+              !isLoading
+                ? formatShortDescriptiveDate(new Date(lastUpdatedData))
+                : ""
+            }
+          />
+        </div>
 
         <input
           type="checkbox"
