@@ -111,18 +111,7 @@ const CoursePage: React.FC<CoursePageProps> = () => {
             ) : offerings.length === 0 ? (
               "No offerings available"
             ) : (
-              <>
-                <CourseTabContainer tabs={tabs} />
-                <p className="gray-text right-align">
-                  Last updated X hours ago -{" "}
-                  <Link
-                    href="https://api.sfucourses.com"
-                    className="no-underline"
-                  >
-                    api.sfucourses.com
-                  </Link>
-                </p>
-              </>
+              <CourseTabContainer tabs={tabs} />
             )}
           </div>
         </div>

@@ -108,6 +108,10 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
     reverseTermMap.set("Summer 2025", "su25");
     insertUrlParam("term", reverseTermMap.get(selectedTerm) as string);
 
+    if (termChangeSource.current === "initial") {
+      return;
+    }
+
     if (termChangeSource.current === "button") {
       setSelectedOutlinesWithSections([]);
       return;
