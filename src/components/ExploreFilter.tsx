@@ -53,7 +53,13 @@ const subjectOptions = SUBJECTS.map((subj) => {
   return { value: subj, label: subj };
 });
 const levelOptions = ["1XX", "2XX", "3XX", "4XX", "5XX+"];
-const termOptions = ["Spring 2024", "Summer 2024", "Fall 2024", "Spring 2025"];
+const termOptions = [
+  "Spring 2024",
+  "Summer 2024",
+  "Fall 2024",
+  "Spring 2025",
+  "Summer 2025",
+];
 const deliveryOptions = ["In Person", "Online"];
 const designationOptions = ["W", "Q", "B-Sci", "B-Hum", "B-Soc"];
 export const termToIcon = (term: string) => {
