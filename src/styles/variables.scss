@@ -82,7 +82,7 @@ $desktop-min-width: 1025px;
 }
 
 .gray-text {
-  color: var(--colour-neutral-500);
+  color: var(--colour-neutral-500) !important;
 }
 
 .green-text {

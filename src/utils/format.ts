@@ -50,7 +50,9 @@ export function formatShortDescriptiveDate(date: Date) {
       hour: "numeric",
       minute: "2-digit",
       hour12: true,
-    }).format(date) + " PST"
+    })
+      .format(date)
+      .toLowerCase() + " pst"
   );
 }
 

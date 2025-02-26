@@ -2,8 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchLastUpdated } from "@utils";
 import Link from "next/link";
 import { formatShortDescriptiveDate } from "@utils/format";
-import { SocialIcon } from "./SocialIcon";
-import GithubIcon from "@icons/github.svg";
 
 export const Footer: React.FC = () => {
   const {
@@ -31,11 +29,7 @@ export const Footer: React.FC = () => {
           </Link>
         </p>
         <p>
-          data last updated:{" "}
-          {!isLoading
-            ? formatShortDescriptiveDate(new Date(lastUpdatedData))
-            : "Loading"}{" "}
-          by{" "}
+          data from&nbsp;
           <Link href="https://api.sfucourses.com" className="no-underline">
             api.sfucourses.com
           </Link>

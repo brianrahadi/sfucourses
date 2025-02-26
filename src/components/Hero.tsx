@@ -1,3 +1,7 @@
+import { useQuery } from "@tanstack/react-query";
+import { fetchLastUpdated } from "@utils";
+import { formatShortDescriptiveDate } from "@utils/format";
+
 interface HeroProps {
   subtitle?: string;
   title: string;
@@ -9,6 +13,16 @@ export const Hero: React.FC<HeroProps> = ({
   title,
   backgroundImage,
 }) => {
+  const {
+    data: lastUpdatedData,
+    error,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["lastUpdated"],
+    queryFn: fetchLastUpdated,
+  });
+
   return (
     <header
       className="container hero"
@@ -23,6 +37,12 @@ export const Hero: React.FC<HeroProps> = ({
     >
       <p>{subtitle}</p>
       <h1>{title}</h1>
+      <p className="gray-text">
+        data last updated:{" "}
+        {!isLoading
+          ? formatShortDescriptiveDate(new Date(lastUpdatedData))
+          : ""}
+      </p>
     </header>
   );
 };
