@@ -1,14 +1,16 @@
 import React from "react";
 import { CourseWithSectionDetails, SectionSchedule } from "@types";
-import { formatISODate, getDayOfWeek } from "@utils/format";
+import { formatISODate, getDayOfWeek, toTermCode } from "@utils/format";
 import { CiCalendar } from "react-icons/ci";
 
 interface ICalendarExportProps {
   coursesWithSections: CourseWithSectionDetails[];
+  term: string;
 }
 
 export const DownloadCalButton: React.FC<ICalendarExportProps> = ({
   coursesWithSections,
+  term,
 }) => {
   const generateICalendarFile = () => {
     let icalContent = [
@@ -128,7 +130,15 @@ export const DownloadCalButton: React.FC<ICalendarExportProps> = ({
 
     const link = document.createElement("a");
     link.href = url;
-    link.setAttribute("download", "sfu-courses.ics");
+    const reverseTermMap = new Map<string, string>();
+    reverseTermMap.set("Spring 2025", "sp25");
+    reverseTermMap.set("Summer 2025", "su25");
+    const termCode = reverseTermMap.get(term) || toTermCode(term);
+    const courseCodes = coursesWithSections
+      .map((c) => c.dept.toLowerCase() + c.number)
+      .join("-");
+    const filename = `sfucourses.com_${termCode}_${courseCodes}.ics`;
+    link.setAttribute("download", filename);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

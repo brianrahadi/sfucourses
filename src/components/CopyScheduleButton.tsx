@@ -20,10 +20,27 @@ export const CopyScheduleButton: React.FC<ScheduleScreenshotProps> = ({
         return;
       }
 
-      const button = document.querySelector(".screenshot-button");
-      if (button) {
-        button.textContent = "Capturing...";
-        button.classList.add("loading");
+      const buttonGroup = document.querySelector(".utility-button-group");
+      let parentElement = null;
+      let watermarkElement = null;
+
+      // Save reference to the parent and the button's position
+      if (buttonGroup && scheduleElement.contains(buttonGroup)) {
+        parentElement = buttonGroup.parentElement;
+
+        // Create a replacement element with "sfucourses.com" text that mimics the utility-button-group
+        watermarkElement = document.createElement("div");
+        watermarkElement.className = "utility-button-group-placeholder";
+        watermarkElement.textContent = "sfucourses.com";
+        watermarkElement.style.fontSize = "2rem";
+        watermarkElement.style.fontWeight = "bold";
+        watermarkElement.style.color = "#24a98b";
+        watermarkElement.style.display = "flex";
+        watermarkElement.style.alignItems = "center";
+        watermarkElement.style.justifyContent = "center";
+
+        parentElement?.removeChild(buttonGroup);
+        parentElement?.appendChild(watermarkElement);
       }
 
       const canvas = await html2canvas(scheduleElement as HTMLElement, {
@@ -34,6 +51,19 @@ export const CopyScheduleButton: React.FC<ScheduleScreenshotProps> = ({
         useCORS: true,
       });
 
+      // Remove the placeholder and add the button group back after capture
+      if (
+        watermarkElement &&
+        parentElement &&
+        parentElement.contains(watermarkElement)
+      ) {
+        parentElement.removeChild(watermarkElement);
+      }
+
+      if (buttonGroup && parentElement) {
+        parentElement.appendChild(buttonGroup);
+      }
+
       canvas.toBlob(async (blob) => {
         if (!blob) {
           console.error("Failed to create image blob");
@@ -43,19 +73,6 @@ export const CopyScheduleButton: React.FC<ScheduleScreenshotProps> = ({
         try {
           const item = new ClipboardItem({ "image/png": blob });
           await navigator.clipboard.write([item]);
-
-          // Update button state to success
-          if (button) {
-            button.textContent = "Copied!";
-            button.classList.remove("loading");
-            button.classList.add("success");
-
-            // Reset button after 2 seconds
-            setTimeout(() => {
-              button.textContent = "Copy as Image";
-              button.classList.remove("success");
-            }, 2000);
-          }
         } catch (error) {
           console.error("Failed to copy to clipboard:", error);
 
@@ -67,15 +84,6 @@ export const CopyScheduleButton: React.FC<ScheduleScreenshotProps> = ({
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
-
-          if (button) {
-            button.textContent = "Downloaded";
-            button.classList.remove("loading");
-
-            setTimeout(() => {
-              button.textContent = "Copy as Image";
-            }, 2000);
-          }
         }
       }, "image/png");
     } catch (error) {
@@ -97,7 +105,7 @@ export const CopyScheduleButton: React.FC<ScheduleScreenshotProps> = ({
 
   return (
     <button
-      className="utility-button"
+      className="utility-button screenshot-button"
       onClick={captureSchedule}
       disabled={!hasSelectedCourses}
       title="Copy schedule as image to clipboard"

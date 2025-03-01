@@ -296,7 +296,9 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
           </div>
           <div className="schedule-section__content">
             <div className="selected-courses">
-              <h3 className="section-title">Selected Courses</h3>
+              <h3 className="section-title">
+                Selected Courses - {selectedTerm}
+              </h3>
 
               <div className="selected-courses__items">
                 {selectedOutlinesWithSections.map((outline) => (
@@ -340,6 +342,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
                   />
                   <DownloadCalButton
                     coursesWithSections={selectedOutlinesWithSections}
+                    term={selectedTerm}
                   />
                 </div>
               </div>
