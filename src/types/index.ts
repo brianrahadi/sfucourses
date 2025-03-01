@@ -52,13 +52,13 @@ export interface SectionInstructor {
 }
 
 export interface SectionSchedule {
-  startDate: string;
-  endDate: string;
-  campus: string;
-  days: string;
-  startTime: string;
-  endTime: string;
-  sectionCode: string;
+  startDate: string; // Ex: 2024-09-04
+  endDate: string; // Ex: 2024-12-04
+  campus: string; // Ex: Burnaby
+  days: string; // Ex: Mo, We
+  startTime: string; // Ex: 10:30
+  endTime: string; // Ex: 11:20
+  sectionCode: string; // Ex: LEC
 }
 
 // For raw JSON read from SFU courses API

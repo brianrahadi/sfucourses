@@ -28,6 +28,7 @@ import { useSearchParams } from "next/navigation";
 import { insertUrlParam, removeUrlParameter } from "@utils/url";
 import { filterCoursesByClassNumbers } from "@utils/courseFilters";
 import { numberWithCommas, toTermCode } from "@utils/format";
+import ICalendarExport from "src/components/ICalendarExport";
 
 interface SchedulePageProps {
   initialSections?: CourseOutlineWithSectionDetails[];
@@ -318,14 +319,19 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
                 coursesWithSections={selectedOutlinesWithSections}
                 setCoursesWithSections={setSelectedOutlinesWithSections}
               />
-              <div className="selected-courses-badges">
-                {selectedOutlinesWithSections.map((outline) => (
-                  <TextBadge
-                    key={`badge ${outline.dept} ${outline.number}`}
-                    content={`${outline.dept} ${outline.number}`}
-                    enableBgColor
-                  />
-                ))}
+              <div className="schedule-container__bottom">
+                <div className="selected-courses-badges">
+                  {selectedOutlinesWithSections.map((outline) => (
+                    <TextBadge
+                      key={`badge ${outline.dept} ${outline.number}`}
+                      content={`${outline.dept} ${outline.number}`}
+                      enableBgColor
+                    />
+                  ))}
+                </div>
+                <ICalendarExport
+                  coursesWithSections={selectedOutlinesWithSections}
+                />
               </div>
             </div>
           </div>

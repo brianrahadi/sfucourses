@@ -25,6 +25,7 @@
 @use "./components/weekly-schedule.scss";
 @use "./components/button-group.scss";
 @use "./components/section-detail.scss";
+@use "./components/icalendar-export.scss";
 
 :root {
   --colour-sosy-green-900: #07221c;

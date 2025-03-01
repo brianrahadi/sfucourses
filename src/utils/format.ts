@@ -67,3 +67,44 @@ export function numberWithCommas(str: number) {
 export function toTermCode(term: string) {
   return term.toLowerCase().split(" ").reverse().join("-");
 }
+
+/**
+ * Formats a date to ISO format for iCalendar
+ * @param date The date to format
+ * @param includeTime Whether to include time in the formatted string
+ * @returns Formatted date string for iCalendar
+ */
+export function formatISODate(date: Date, includeTime: boolean): string {
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const day = date.getDate().toString().padStart(2, "0");
+
+  if (!includeTime) {
+    return `${year}${month}${day}`;
+  }
+
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+  const seconds = date.getSeconds().toString().padStart(2, "0");
+
+  return `${year}${month}${day}T${hours}${minutes}${seconds}`;
+}
+
+/**
+ * Converts day abbreviation to day of week number (0-6, Sunday is 0)
+ * @param day Day abbreviation (Mo, Tu, We, Th, Fr, Sa, Su)
+ * @returns Day number 0-6 or null if invalid
+ */
+export function getDayOfWeek(day: string): number | null {
+  const dayMap: Record<string, number> = {
+    Su: 0,
+    Mo: 1,
+    Tu: 2,
+    We: 3,
+    Th: 4,
+    Fr: 5,
+    Sa: 6,
+  };
+
+  return dayMap[day] !== undefined ? dayMap[day] : null;
+}
