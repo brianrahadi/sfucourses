@@ -5,6 +5,8 @@ import {
   SearchBar,
   WeeklySchedule,
   ButtonGroup,
+  ScheduleScreenshot,
+  ICalendarExport,
 } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useEffect, useRef, useState } from "react";
@@ -28,7 +30,6 @@ import { useSearchParams } from "next/navigation";
 import { insertUrlParam, removeUrlParameter } from "@utils/url";
 import { filterCoursesByClassNumbers } from "@utils/courseFilters";
 import { numberWithCommas, toTermCode } from "@utils/format";
-import ICalendarExport from "src/components/ICalendarExport";
 
 interface SchedulePageProps {
   initialSections?: CourseOutlineWithSectionDetails[];
@@ -329,9 +330,14 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
                     />
                   ))}
                 </div>
-                <ICalendarExport
-                  coursesWithSections={selectedOutlinesWithSections}
-                />
+                <div className="utility-button-group">
+                  <ScheduleScreenshot
+                    hasSelectedCourses={selectedOutlinesWithSections.length > 0}
+                  />
+                  <ICalendarExport
+                    coursesWithSections={selectedOutlinesWithSections}
+                  />
+                </div>
               </div>
             </div>
           </div>

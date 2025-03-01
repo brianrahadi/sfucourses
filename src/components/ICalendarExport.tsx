@@ -1,12 +1,13 @@
 import React from "react";
 import { CourseWithSectionDetails, SectionSchedule } from "@types";
 import { formatISODate, getDayOfWeek } from "@utils/format";
+import { CiCalendar } from "react-icons/ci";
 
 interface ICalendarExportProps {
   coursesWithSections: CourseWithSectionDetails[];
 }
 
-const ICalendarExport: React.FC<ICalendarExportProps> = ({
+export const ICalendarExport: React.FC<ICalendarExportProps> = ({
   coursesWithSections,
 }) => {
   const generateICalendarFile = () => {
@@ -139,9 +140,8 @@ const ICalendarExport: React.FC<ICalendarExportProps> = ({
       onClick={downloadCalendar}
       disabled={coursesWithSections.length === 0}
     >
-      Download Calendar (.ics)
+      <CiCalendar />
+      &nbsp; Download Cal (.ics)
     </button>
   );
 };
-
-export default ICalendarExport;

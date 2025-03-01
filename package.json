@@ -24,6 +24,7 @@
     "date-fns": "^2.29.3",
     "fs": "^0.0.1-security",
     "gray-matter": "^4.0.3",
+    "html2canvas": "^1.4.1",
     "lz-string": "^1.5.0",
     "next": "^14.0.3",
     "next-sanity": "^5.5.10",

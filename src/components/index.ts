@@ -17,3 +17,5 @@ export { RedditPosts } from "./RedditPosts";
 export { WeeklySchedule } from "./WeeklySchedule";
 export { SectionDetails } from "./SectionDetails";
 export { ButtonGroup } from "./ButtonGroup";
+export { ICalendarExport } from "./ICalendarExport";
+export { ScheduleScreenshot } from "./ScheduleScreenshot";

@@ -11,13 +11,15 @@
   border: none;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
 
   &:hover {
     background-color: var(--colour-sosy-green-500);
   }
 
   &:disabled {
-    background-color: #ccc;
+    background-color: var(--colour-neutral-600);
     cursor: not-allowed;
   }
 

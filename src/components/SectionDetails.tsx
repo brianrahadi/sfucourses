@@ -12,7 +12,6 @@ import { CiCalendar, CiClock1 } from "react-icons/ci";
 import { FaTimeline } from "react-icons/fa6";
 import { MdPlace } from "react-icons/md";
 import { IoAddCircle, IoRemoveCircle } from "react-icons/io5";
-import { PlusCircle } from "react-feather";
 import { formatShortDate } from "@utils/format";
 
 interface SectionDetailsProps {
