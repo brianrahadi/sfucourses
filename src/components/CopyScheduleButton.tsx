@@ -6,7 +6,7 @@ interface ScheduleScreenshotProps {
   hasSelectedCourses: boolean;
 }
 
-export const ScheduleScreenshot: React.FC<ScheduleScreenshotProps> = ({
+export const CopyScheduleButton: React.FC<ScheduleScreenshotProps> = ({
   hasSelectedCourses,
 }) => {
   const captureSchedule = async () => {
@@ -97,13 +97,13 @@ export const ScheduleScreenshot: React.FC<ScheduleScreenshotProps> = ({
 
   return (
     <button
-      className="ical-export-button"
+      className="utility-button"
       onClick={captureSchedule}
       disabled={!hasSelectedCourses}
       title="Copy schedule as image to clipboard"
     >
       <FaImage />
-      &nbsp; Copy as Image
+      &nbsp; Copy Image
     </button>
   );
 };

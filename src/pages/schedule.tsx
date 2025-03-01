@@ -5,8 +5,9 @@ import {
   SearchBar,
   WeeklySchedule,
   ButtonGroup,
-  ScheduleScreenshot,
-  ICalendarExport,
+  CopyLinkButton,
+  CopyScheduleButton,
+  DownloadCalButton,
 } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useEffect, useRef, useState } from "react";
@@ -331,10 +332,13 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
                   ))}
                 </div>
                 <div className="utility-button-group">
-                  <ScheduleScreenshot
+                  <CopyLinkButton
                     hasSelectedCourses={selectedOutlinesWithSections.length > 0}
                   />
-                  <ICalendarExport
+                  <CopyScheduleButton
+                    hasSelectedCourses={selectedOutlinesWithSections.length > 0}
+                  />
+                  <DownloadCalButton
                     coursesWithSections={selectedOutlinesWithSections}
                   />
                 </div>

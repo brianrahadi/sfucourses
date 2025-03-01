@@ -7,7 +7,7 @@ interface ICalendarExportProps {
   coursesWithSections: CourseWithSectionDetails[];
 }
 
-export const ICalendarExport: React.FC<ICalendarExportProps> = ({
+export const DownloadCalButton: React.FC<ICalendarExportProps> = ({
   coursesWithSections,
 }) => {
   const generateICalendarFile = () => {
@@ -136,7 +136,7 @@ export const ICalendarExport: React.FC<ICalendarExportProps> = ({
 
   return (
     <button
-      className="ical-export-button"
+      className="utility-button"
       onClick={downloadCalendar}
       disabled={coursesWithSections.length === 0}
     >
