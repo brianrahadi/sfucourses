@@ -2,6 +2,7 @@ import { CourseWithSectionDetails } from "@types";
 import { formatTime, getDarkColorFromHash } from "@utils/format";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { format, addDays, startOfWeek } from "date-fns";
+import toast from "react-hot-toast";
 import Button from "./Button";
 
 interface Course {
@@ -61,7 +62,7 @@ const doTimeslotsConflict = (ts1: Course, ts2: Course): ConflictResponse => {
   if (hasConflict) {
     return {
       hasConflict: true,
-      conflictMessage: `Conflicted with ${ts2.id}`,
+      conflictMessage: `${ts2.id}`,
     };
   }
   return { hasConflict: false };
@@ -185,9 +186,31 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
         const newArray = prev.slice(0, -1);
         return newArray;
       });
-      alert(
-        `The following conflicts were detected:\n${combinedConflictMessage}`
-      );
+      toast.error(`Conflicts detected:\n${combinedConflictMessage}`, {
+        duration: 4000,
+        position: "top-center",
+
+        // Styling
+        style: {},
+        className: "",
+
+        icon: "🚨",
+
+        // Change colors of success/error/loading icon
+        iconTheme: {
+          primary: "#000",
+          secondary: "#fff",
+        },
+
+        // Aria
+        ariaProps: {
+          role: "status",
+          "aria-live": "polite",
+        },
+
+        // Additional Configuration
+        removeDelay: 1000,
+      });
     }
 
     setTimeslots(newTimeslots);

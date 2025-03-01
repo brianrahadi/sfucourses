@@ -6,6 +6,7 @@ import type { AppProps } from "next/app";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "react-hot-toast";
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
@@ -17,6 +18,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }: AppProps) => {
       <HeaderNav />
       <Component {...pageProps} key={router.asPath} />
       <Footer />
+      <Toaster />
       <Analytics />
       <SpeedInsights />
     </QueryClientProvider>
