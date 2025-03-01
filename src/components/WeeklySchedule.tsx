@@ -195,13 +195,6 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
         className: "",
 
         icon: "🚨",
-
-        // Change colors of success/error/loading icon
-        iconTheme: {
-          primary: "#000",
-          secondary: "#fff",
-        },
-
         // Aria
         ariaProps: {
           role: "status",

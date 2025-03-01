@@ -2,6 +2,7 @@ import React from "react";
 import { CourseWithSectionDetails, SectionSchedule } from "@types";
 import { formatISODate, getDayOfWeek, toTermCode } from "@utils/format";
 import { CiCalendar } from "react-icons/ci";
+import toast from "react-hot-toast";
 
 interface ICalendarExportProps {
   coursesWithSections: CourseWithSectionDetails[];
@@ -144,6 +145,7 @@ export const DownloadCalButton: React.FC<ICalendarExportProps> = ({
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    toast.success("Calendar downloaded!");
   };
 
   return (

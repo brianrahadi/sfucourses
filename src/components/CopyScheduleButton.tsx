@@ -1,6 +1,7 @@
 import React from "react";
 import html2canvas from "html2canvas";
 import { FaImage } from "react-icons/fa";
+import toast from "react-hot-toast";
 
 interface ScheduleScreenshotProps {
   hasSelectedCourses: boolean;
@@ -73,6 +74,7 @@ export const CopyScheduleButton: React.FC<ScheduleScreenshotProps> = ({
         try {
           const item = new ClipboardItem({ "image/png": blob });
           await navigator.clipboard.write([item]);
+          toast.success("Schedule copied as image!");
         } catch (error) {
           console.error("Failed to copy to clipboard:", error);
 
