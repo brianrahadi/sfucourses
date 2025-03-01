@@ -89,7 +89,6 @@ export const DownloadCalButton: React.FC<ICalendarExportProps> = ({
       "END:VEVENT",
     ].join("\r\n");
   };
-
   const formatRecurringDates = (
     startDate: string,
     endDate: string,
@@ -112,8 +111,11 @@ export const DownloadCalButton: React.FC<ICalendarExportProps> = ({
     const firstOccurrenceEnd = new Date(firstOccurrence);
     firstOccurrenceEnd.setHours(endHour, endMinute, 0);
 
-    const startDateStr = formatISODate(firstOccurrence, true);
-    const endDateStr = formatISODate(firstOccurrenceEnd, true);
+    // Add timezone information for PST (Pacific Standard Time)
+    const startDateStr =
+      formatISODate(firstOccurrence, true) + ";TZID=America/Los_Angeles";
+    const endDateStr =
+      formatISODate(firstOccurrenceEnd, true) + ";TZID=America/Los_Angeles";
 
     const endDateFormatted = formatISODate(endDateObj, false);
     const recurrenceRule = `FREQ=WEEKLY;UNTIL=${endDateFormatted}T235959Z`;

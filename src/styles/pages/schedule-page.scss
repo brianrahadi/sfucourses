@@ -114,6 +114,8 @@
 
     .schedule-section {
       flex-direction: column;
+      position: relative;
+      top: auto;
 
       .view-column-button-group {
         display: none;
