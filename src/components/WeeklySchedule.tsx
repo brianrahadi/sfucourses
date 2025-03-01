@@ -1,6 +1,8 @@
 import { CourseWithSectionDetails } from "@types";
 import { formatTime, getDarkColorFromHash } from "@utils/format";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { format, addDays, startOfWeek } from "date-fns";
+import Button from "./Button";
 
 interface Course {
   id: string;
@@ -13,7 +15,6 @@ interface Course {
 const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri"];
 const startHour = 8; // Start at 8:00 AM
 const endHour = 20; // End at 8:00 PM
-const totalMinutes = (endHour - startHour) * 60;
 
 interface WeeklyScheduleProps {
   coursesWithSections: CourseWithSectionDetails[];
@@ -71,8 +72,12 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
   setCoursesWithSections,
 }) => {
   const [timeslots, setTimeslots] = useState<Course[]>([]);
+  const [weekStartDate, setWeekStartDate] = useState<Date | null>(null);
+  const [currentWeekOffset, setCurrentWeekOffset] = useState(1);
+  const [initialWeekDate, setInitialWeekDate] = useState<Date | null>(null);
 
-  useEffect(() => {
+  // Function to calculate visible timeslots for a specific week
+  const calculateTimeslotsForWeek = (weekDate: Date) => {
     const newTimeslots: Course[] = [];
     const allConflictMessages: string[] = [];
 
@@ -81,6 +86,18 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
         section.schedules.forEach((schedule) => {
           if (!schedule.startTime || !schedule.endTime || !schedule.days) {
             return;
+          }
+
+          // Skip if the course doesn't fall within this week
+          if (schedule.startDate && schedule.endDate) {
+            const scheduleStart = new Date(schedule.startDate);
+            const scheduleEnd = new Date(schedule.endDate);
+            const weekEnd = addDays(weekDate, 6); // Sunday of selected week
+
+            // If the schedule doesn't overlap with the current week, skip it
+            if (scheduleEnd < weekDate || scheduleStart > weekEnd) {
+              return;
+            }
           }
 
           const days = getDayFromCode(schedule.days);
@@ -119,6 +136,49 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
         });
       });
     });
+    return { newTimeslots, allConflictMessages };
+  };
+
+  // Initialize the schedule with the earliest week
+  useEffect(() => {
+    let earliestStartDate: Date | null = null;
+
+    // Find the earliest start date among all courses
+    coursesWithSections.forEach((course) => {
+      course.sections.forEach((section) => {
+        section.schedules.forEach((schedule) => {
+          if (schedule.startDate) {
+            const currentDate = new Date(schedule.startDate);
+            if (!earliestStartDate || currentDate < earliestStartDate) {
+              earliestStartDate = currentDate;
+            }
+          }
+        });
+      });
+    });
+
+    // Set the initial week start date
+    if (earliestStartDate) {
+      // Find the Monday of the week containing the earliest start date
+      const weekStart = startOfWeek(earliestStartDate, { weekStartsOn: 1 }); // 1 = Monday
+      setInitialWeekDate(weekStart);
+    } else {
+      // If no start dates are available, use the current week
+      setInitialWeekDate(startOfWeek(new Date(), { weekStartsOn: 1 }));
+    }
+
+    // Reset week offset when courses change
+    setCurrentWeekOffset(1);
+  }, [coursesWithSections]);
+
+  useEffect(() => {
+    if (!initialWeekDate) return;
+
+    const currentWeekDate = addDays(initialWeekDate, currentWeekOffset * 7);
+    setWeekStartDate(currentWeekDate);
+    const { newTimeslots, allConflictMessages } =
+      calculateTimeslotsForWeek(currentWeekDate);
+
     if (allConflictMessages.length > 0) {
       const combinedConflictMessage = allConflictMessages.join("\n");
       setCoursesWithSections((prev) => {
@@ -129,8 +189,29 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
         `The following conflicts were detected:\n${combinedConflictMessage}`
       );
     }
+
     setTimeslots(newTimeslots);
-  }, [coursesWithSections]);
+  }, [
+    initialWeekDate,
+    currentWeekOffset,
+    coursesWithSections,
+    setCoursesWithSections,
+  ]);
+
+  // Navigate to previous week
+  const goToPreviousWeek = () => {
+    setCurrentWeekOffset((prev) => prev - 1);
+  };
+
+  // Navigate to next week
+  const goToNextWeek = () => {
+    setCurrentWeekOffset((prev) => prev + 1);
+  };
+
+  // Reset to initial week
+  const resetToInitialWeek = () => {
+    setCurrentWeekOffset(1);
+  };
 
   let timeSlots = [];
   for (let hour = startHour; hour <= endHour; hour++) {
@@ -139,12 +220,43 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
 
   return (
     <div className="weekly-schedule">
+      {weekStartDate && (
+        <div className="schedule-header">
+          <div className="schedule-navigation">
+            <Button
+              onClick={goToPreviousWeek}
+              aria-label="Previous week"
+              label={`< Previous`}
+            />
+            <div className="date-range-header">
+              {format(weekStartDate, "MMM d")} -{" "}
+              {format(addDays(weekStartDate, 4), "MMM d")}
+              <Button
+                className="mobile-hide"
+                onClick={resetToInitialWeek}
+                aria-label="Reset to initial week"
+                label={"Reset"}
+              />
+            </div>
+            <Button
+              onClick={goToNextWeek}
+              aria-label="Next week"
+              label={`Next >`}
+            />
+          </div>
+        </div>
+      )}
       <div className="schedule-grid">
         <div className="grid-header">
           <div className="time-label"></div>
-          {daysOfWeek.map((day) => (
+          {daysOfWeek.map((day, index) => (
             <div key={day} className="day-header">
               {day}
+              {weekStartDate && (
+                <div className="day-date">
+                  {format(addDays(weekStartDate, index), "MMM d")}
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -164,7 +276,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
           ))}
         </div>
 
-        {daysOfWeek.map((day) => (
+        {daysOfWeek.map((day, dayIndex) => (
           <div key={day} className="day-column">
             {timeSlots.map(({ hour, minute }, index) => (
               <div
