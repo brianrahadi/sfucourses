@@ -1,7 +1,7 @@
 [
   {
     "title": "on course data whereabouts",
-    "content": "sfu course outline api - https://www.sfu.ca/outlines/help/api.html. sfu course is not affiliated with simon fraser university"
+    "content": "sfu course api - https://api.sfucourses.com/ - data is updated from SFU Course Outlines REST API whenever possible (under process of automation). sfucourses.com is not affiliated with simon fraser university"
   },
   {
     "title": "on contributing",
@@ -10,5 +10,13 @@
   {
     "title": "on page not loading",
     "content": "refresh the page or try again later. data is 100% pulled from sfu course outline api"
+  },
+  {
+    "title": "on exporting schedule timetable to google calendar",
+    "content": "google calendar API does not support importing events from a public URL. you can still export to .ics file and import it to your google calendar"
+  },
+  {
+    "title": "on questions, feedback, or comments about the website",
+    "content": "<a href=\"https://forms.gle/knMdY3ZnQKLo6fPV8\" target=\"_blank\" rel=\"noreferrer\">CLICK THIS GOOGLE FORM</a> "
   }
 ]
