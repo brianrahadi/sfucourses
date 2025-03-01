@@ -50,7 +50,7 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
   const processedSections = processSectionDetails(offering.sections);
   const [showLabTut, setShowLabTut] = useState(false);
   const notLabOrTut = (sectionCode: string) =>
-    sectionCode !== "LAB" && sectionCode !== "TUT";
+    sectionCode !== "LAB" && sectionCode !== "TUT" && sectionCode !== "OPL";
   const initialShownSections =
     type === "SELECTED_COURSES"
       ? processedSections

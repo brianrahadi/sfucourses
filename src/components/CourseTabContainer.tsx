@@ -11,7 +11,7 @@ interface CourseTabContainerProps {
 export const CourseTabContainer: React.FC<CourseTabContainerProps> = ({
   tabs,
 }) => {
-  const [activeTab, setActiveTab] = useState(tabs[0].id);
+  const [activeTab, setActiveTab] = useState(tabs[tabs.length - 1].id);
 
   return (
     <div className="course-tab-container">
