@@ -74,7 +74,7 @@ export const CopyScheduleButton: React.FC<ScheduleScreenshotProps> = ({
         try {
           const item = new ClipboardItem({ "image/png": blob });
           await navigator.clipboard.write([item]);
-          toast.success("Schedule copied as image!");
+          toast.success("Schedule image copied to clipboard!");
         } catch (error) {
           console.error("Failed to copy to clipboard:", error);
 
