@@ -161,16 +161,27 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
               <div className="section-header__first">
                 <span className="icon-text-container">
                   {notLabOrTut(section.schedules[0]?.sectionCode) ? (
-                    <Link
-                      className="no-underline"
-                      href={`${baseOutlinePath}/${section.section.toLowerCase()}`}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      {section.schedules[0]?.sectionCode} {section.section}
-                    </Link>
+                    <>
+                      <Link
+                        className="no-underline"
+                        href={`${baseOutlinePath}/${section.section.toLowerCase()}`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {section.schedules[0]?.sectionCode} {section.section}
+                      </Link>{" "}
+                      -{" "}
+                      {section.deliveryMethod !== "Online"
+                        ? section.schedules[0].campus || "-"
+                        : "Online"}
+                    </>
                   ) : (
-                    <>{section.section}</>
+                    <>
+                      {section.schedules[0]?.sectionCode} {section.section} -{" "}
+                      {section.deliveryMethod !== "Online"
+                        ? section.schedules[0].campus || "-"
+                        : "Online"}
+                    </>
                   )}
                 </span>
                 {setOfferings ? (
@@ -183,7 +194,7 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                         <IoRemoveCircle />
                       )
                     }
-                    label={`#${section.classNumber}`}
+                    label={""}
                     onClick={handleAddSection}
                   />
                 ) : (
@@ -199,12 +210,14 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                     <p>{instructorsText}</p>
                   )}
                 </span>
-                <span className="icon-text-container">
-                  <MdPlace />
-                  {section.deliveryMethod !== "Online"
-                    ? section.schedules[0].campus || "-"
-                    : "Online"}
-                  {/* {`${section.deliveryMethod} - ${section.schedules[0].campus}`} */}
+                <span
+                  className="icon-text-container"
+                  // style={{ minWidth: "2rem" }}
+                >
+                  <FaTimeline />
+                  {`${formatShortDate(
+                    section.schedules[0].startDate
+                  )} - ${formatShortDate(section.schedules[0].endDate)}`}
                 </span>
               </div>
             </div>
@@ -229,7 +242,7 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                     <CiClock1 />
                     {`${sched.startTime} - ${sched.endTime}`}
                   </span>
-                  <span
+                  {/* <span
                     className="icon-text-container"
                     // style={{ minWidth: "2rem" }}
                   >
@@ -237,7 +250,7 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                     {`${formatShortDate(sched.startDate)} - ${formatShortDate(
                       sched.endDate
                     )}`}
-                  </span>
+                  </span> */}
                 </div>
               ))}
             </div>
