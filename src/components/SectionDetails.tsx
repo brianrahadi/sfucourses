@@ -194,7 +194,7 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                         <IoRemoveCircle />
                       )
                     }
-                    label={""}
+                    label={`#${section.classNumber}`}
                     onClick={handleAddSection}
                   />
                 ) : (
