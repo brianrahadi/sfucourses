@@ -54,7 +54,8 @@
         display: flex;
         flex: 1 1 0;
         flex-shrink: 0;
-        justify-content: space-between;
+        justify-content: flex-start;
+        gap: 4rem;
         align-items: baseline;
       }
     }
