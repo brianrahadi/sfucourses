@@ -170,17 +170,18 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                       >
                         {section.schedules[0]?.sectionCode} {section.section}
                       </Link>{" "}
-                      -{" "}
                       {section.deliveryMethod !== "Online"
-                        ? section.schedules[0].campus || "-"
-                        : "Online"}
+                        ? section.schedules[0].campus
+                          ? `- ${section.schedules[0].campus}`
+                          : ""
+                        : "- Online"}
                     </>
                   ) : (
                     <>
-                      {section.schedules[0]?.sectionCode} {section.section} -{" "}
+                      {section.schedules[0]?.sectionCode} {section.section}
                       {section.deliveryMethod !== "Online"
-                        ? section.schedules[0].campus || "-"
-                        : "Online"}
+                        ? `- ${section.schedules[0].campus}` || ""
+                        : "- Online"}
                     </>
                   )}
                 </span>
