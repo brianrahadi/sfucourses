@@ -46,7 +46,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ placeholder }) => {
   const defaultPlaceholder =
     typeof navigator !== "undefined"
       ? `${
-          navigator.platform.indexOf("Mac") === -1 ? "Ctrl" : "⌘"
+          navigator.platform.startsWith("Mac") ? "⌘" : "Ctrl"
         } + K and ↑↓ Enter to search courses`
       : "Search courses (e.g., CMPT 225)";
 

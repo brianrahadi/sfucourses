@@ -4,16 +4,25 @@ import { GlobalSearch } from "./GlobalSearch";
 
 export const HeaderNav: React.FC = () => {
   const [isVisible, setIsVisible] = useState(true);
+  const [hasScrolled, setHasScrolled] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
+      // Handle hiding/showing based on scroll direction
       if (currentScrollY > lastScrollY && currentScrollY > 100) {
         setIsVisible(false);
       } else {
         setIsVisible(true);
+      }
+
+      // Check if page has been scrolled to add background
+      if (currentScrollY > 20) {
+        setHasScrolled(true);
+      } else {
+        setHasScrolled(false);
       }
 
       setLastScrollY(currentScrollY);
@@ -24,7 +33,11 @@ export const HeaderNav: React.FC = () => {
   }, [lastScrollY]);
 
   return (
-    <div className={`header-nav ${!isVisible ? "header-hidden" : ""}`}>
+    <div
+      className={`header-nav ${!isVisible ? "header-hidden" : ""} ${
+        hasScrolled ? "header-scrolled" : ""
+      }`}
+    >
       <div className="container">
         <div className="header-nav__primary">
           <Link href="/" className="page-link">
