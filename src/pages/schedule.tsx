@@ -301,21 +301,25 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
               </h3>
 
               <div className="selected-courses__items">
-                {selectedOutlinesWithSections.map((outline) => (
-                  <CourseCard
-                    key={"selected" + outline.dept + outline.number}
-                    course={outline as any}
-                    query={query}
-                    sectionDetails={outline}
-                    showDescription={false}
-                    isLink={false}
-                    setOfferings={{
-                      fn: setSelectedOutlinesWithSections,
-                      type: "REMOVE",
-                    }}
-                    type="SELECTED_COURSES"
-                  />
-                ))}
+                {selectedOutlinesWithSections.length > 0 ? (
+                  selectedOutlinesWithSections.map((outline) => (
+                    <CourseCard
+                      key={"selected" + outline.dept + outline.number}
+                      course={outline as any}
+                      query={query}
+                      sectionDetails={outline}
+                      showDescription={false}
+                      isLink={false}
+                      setOfferings={{
+                        fn: setSelectedOutlinesWithSections,
+                        type: "REMOVE",
+                      }}
+                      type="SELECTED_COURSES"
+                    />
+                  ))
+                ) : (
+                  <p className="gray-text">No selected courses yet</p>
+                )}
               </div>
             </div>
             <div className="schedule-container">
