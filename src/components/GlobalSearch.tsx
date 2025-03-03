@@ -3,10 +3,33 @@ import { SearchBar } from "./SearchBar";
 import { useOnClickOutside } from "@hooks";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { CourseOutline } from "@types";
+import { useQuery } from "@tanstack/react-query";
+import { getCourseAPIData } from "@utils";
 
 interface GlobalSearchProps {
   placeholder?: string;
+}
+
+// Minimal course data needed for search
+interface MinimalCourseData {
+  dept: string;
+  number: string;
+  title: string;
+}
+
+// Access the global window object safely
+const getInitialSearchData = (): MinimalCourseData[] => {
+  if (typeof window !== "undefined" && window.__COURSE_SEARCH_DATA__) {
+    return window.__COURSE_SEARCH_DATA__;
+  }
+  return [];
+};
+
+// Add type definition for window object
+declare global {
+  interface Window {
+    __COURSE_SEARCH_DATA__?: MinimalCourseData[];
+  }
 }
 
 export const GlobalSearch: React.FC<GlobalSearchProps> = ({
@@ -14,72 +37,57 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({
 }) => {
   const [query, setQuery] = useState("");
   const [searchSelected, setSearchSelected] = useState(false);
-  const [results, setResults] = useState<CourseOutline[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [filteredResults, setFilteredResults] = useState<MinimalCourseData[]>(
+    []
+  );
   const [showResults, setShowResults] = useState(false);
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
+  // Use React Query with the server-side injected data as initialData
+  const { data: searchData, isLoading } = useQuery({
+    queryKey: ["courseSearchIndex"],
+    queryFn: async () => {
+      // This will only run if the initial data is not available
+      const response = await getCourseAPIData("/outlines/all");
+      return response.data.map((course: any) => ({
+        dept: course.dept,
+        number: course.number,
+        title: course.title,
+      }));
+    },
+    initialData: getInitialSearchData(),
+    staleTime: 60 * 60 * 1000, // 1 hour
+  });
+
   // Close results when clicking outside
   useOnClickOutside(searchContainerRef, () => setShowResults(false));
 
+  // Filter results when query changes
   useEffect(() => {
-    const searchCourses = async () => {
-      if (query.length < 2) {
-        setResults([]);
-        setShowResults(false);
-        return;
-      }
+    if (query.length < 2 || !searchData) {
+      setFilteredResults([]);
+      setShowResults(false);
+      return;
+    }
 
-      setLoading(true);
-      setShowResults(true);
+    const lowerQuery = query.toLowerCase();
+    const results = searchData
+      .filter((course: { dept: any; number: any; title: any }) => {
+        const searchString =
+          `${course.dept} ${course.number} ${course.title}`.toLowerCase();
+        return searchString.includes(lowerQuery);
+      })
+      .slice(0, 10); // Limit to 10 results
 
-      try {
-        // Search from cache if available, otherwise fetch from API
-        const cachedData = localStorage.getItem("courseSearchCache");
-        let courses: CourseOutline[] = [];
-
-        if (cachedData) {
-          courses = JSON.parse(cachedData);
-        } else {
-          // If no cache, get a minimal dataset for search
-          const response = await fetch(`/api/courses/search-index`);
-          if (response.ok) {
-            courses = await response.json();
-            // Cache results for 24 hours
-            localStorage.setItem("courseSearchCache", JSON.stringify(courses));
-            localStorage.setItem("cacheTimestamp", Date.now().toString());
-          }
-        }
-
-        // Filter courses based on query
-        const filtered = courses
-          .filter((course) => {
-            const searchString =
-              `${course.dept} ${course.number} ${course.title}`.toLowerCase();
-            return searchString.includes(query.toLowerCase());
-          })
-          .slice(0, 10); // Limit to 10 results
-
-        setResults(filtered);
-      } catch (error) {
-        console.error("Error searching courses:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    const debounceTimeout = setTimeout(() => {
-      searchCourses();
-    }, 300);
-
-    return () => clearTimeout(debounceTimeout);
-  }, [query]);
+    setFilteredResults(results);
+    setShowResults(true);
+  }, [query, searchData]);
 
   // Handle keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && results.length > 0) {
-      const course = results[0];
+    if (e.key === "Enter" && filteredResults.length > 0) {
+      const course = filteredResults[0];
       router.push(`/explore/${course.dept.toLowerCase()}-${course.number}`);
       setShowResults(false);
     }
@@ -99,11 +107,11 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({
 
       {showResults && (
         <div className="search-results">
-          {loading ? (
+          {isLoading ? (
             <div className="search-loading">Loading...</div>
-          ) : results.length > 0 ? (
+          ) : filteredResults.length > 0 ? (
             <ul>
-              {results.map((course) => (
+              {filteredResults.map((course) => (
                 <li key={`${course.dept}${course.number}`}>
                   <Link
                     href={`/explore/${course.dept.toLowerCase()}-${

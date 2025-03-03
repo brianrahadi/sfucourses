@@ -1,3 +1,4 @@
+// pages/explore/index.tsx
 import {
   ExploreFilter,
   Hero,
@@ -7,13 +8,13 @@ import {
 } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useState, useEffect } from "react";
-import { getCourseAPIData } from "@utils";
 import { CourseOutline } from "@types";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useExploreFilters } from "src/hooks/UseExploreFilters";
 import { GetStaticProps } from "next";
-import Link from "next/link";
-import { useCoursesData } from "@hooks";
+import { useQuery } from "@tanstack/react-query";
+import { dehydrate, QueryClient } from "@tanstack/react-query";
+import { getCourseAPIData } from "@utils";
 import {
   filterCoursesByQuery,
   filterCourseBySubjects,
@@ -25,42 +26,48 @@ import {
 } from "@utils/courseFilters";
 import { numberWithCommas } from "@utils/format";
 
-interface ExplorePageProps {
-  initialCourses: CourseOutline[];
-  totalCoursesCount: number;
-}
+// Use getStaticProps to fetch and cache data at build time
+export const getStaticProps: GetStaticProps = async () => {
+  const queryClient = new QueryClient();
 
-// Keep getStaticProps for server-side rendering
-export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
-  try {
-    const res = await getCourseAPIData("/outlines/all");
-    const courses: CourseOutline[] = res.data;
-    const totalCoursesCount = res.total_count;
+  // Prefetch the full course data
+  await queryClient.prefetchQuery({
+    queryKey: ["allCourses"],
+    queryFn: async () => {
+      const res = await getCourseAPIData("/outlines/all");
+      return {
+        courses: res.data,
+        totalCount: res.total_count,
+      };
+    },
+  });
 
-    return {
-      props: {
-        initialCourses: courses,
-        totalCoursesCount: totalCoursesCount,
-      },
-      revalidate: 86400, // 24 hours
-    };
-  } catch (error) {
-    console.error("Error getting all courses", error);
-    return {
-      notFound: true,
-    };
-  }
+  return {
+    props: {
+      dehydratedState: dehydrate(queryClient),
+    },
+    // Revalidate every 24 hours
+    revalidate: 86400,
+  };
 };
 
-const ExplorePage: React.FC<ExplorePageProps> = ({
-  initialCourses,
-  totalCoursesCount,
-}) => {
-  // Use the shared data hook with initial data from SSR
-  const { courses, isLoading } = useCoursesData({
-    courses: initialCourses,
-    totalCount: totalCoursesCount,
+const ExplorePage: React.FC = () => {
+  // Use React Query to access the prefetched data
+  const { data: courseData, isLoading } = useQuery({
+    queryKey: ["allCourses"],
+    // Add queryFn as a fallback in case the data isn't hydrated
+    queryFn: async () => {
+      const res = await getCourseAPIData("/outlines/all");
+      return {
+        courses: res.data,
+        totalCount: res.total_count,
+      };
+    },
+    // Keep the data fresh for a long time
+    staleTime: 60 * 60 * 1000, // 1 hour
   });
+
+  const courses = courseData?.courses || [];
 
   const [visibleCourses, setVisibleCourses] = useState<CourseOutline[]>([]);
   const [maxVisibleCoursesLength, setMaxVisibleCoursesLength] =
@@ -93,7 +100,7 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
     }
 
     const filteredCourses = filterCourses(courses);
-    const slicedCourses = filteredCourses.slice(0, sliceIndex);
+    const slicedCourses = filteredCourses.slice(0, CHUNK_SIZE);
 
     setMaxVisibleCoursesLength(filteredCourses.length);
     setVisibleCourses(slicedCourses);
