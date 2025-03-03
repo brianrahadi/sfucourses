@@ -20,3 +20,4 @@ export { ButtonGroup } from "./ButtonGroup";
 export { DownloadCalButton } from "./DownloadCalButton";
 export { CopyScheduleButton } from "./CopyScheduleButton";
 export { CopyLinkButton } from "./CopyLinkButton";
+export { GlobalSearch } from "./GlobalSearch";

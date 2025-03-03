@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { GlobalSearch } from "./GlobalSearch";
 
 export const HeaderNav: React.FC = () => {
   const [isVisible, setIsVisible] = useState(true);
@@ -29,6 +30,11 @@ export const HeaderNav: React.FC = () => {
           <Link href="/" className="page-link">
             <h2>sfucourses</h2>
           </Link>
+
+          {/* Global Search */}
+          <div className="header-search-wrapper">
+            <GlobalSearch />
+          </div>
         </div>
 
         <input

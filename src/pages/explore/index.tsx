@@ -6,13 +6,14 @@ import {
   SearchBar,
 } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
-import { useEffect, useState } from "react";
-import { getCourseAPIData, loadCourseAPIData } from "@utils";
+import { useState, useEffect } from "react";
+import { getCourseAPIData } from "@utils";
 import { CourseOutline } from "@types";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useExploreFilters } from "src/hooks/UseExploreFilters";
 import { GetStaticProps } from "next";
 import Link from "next/link";
+import { useCoursesData } from "@hooks";
 import {
   filterCoursesByQuery,
   filterCourseBySubjects,
@@ -25,10 +26,11 @@ import {
 import { numberWithCommas } from "@utils/format";
 
 interface ExplorePageProps {
-  initialCourses?: CourseOutline[];
-  totalCoursesCount?: number;
+  initialCourses: CourseOutline[];
+  totalCoursesCount: number;
 }
 
+// Keep getStaticProps for server-side rendering
 export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
   try {
     const res = await getCourseAPIData("/outlines/all");
@@ -54,15 +56,15 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
   initialCourses,
   totalCoursesCount,
 }) => {
-  const [courses, setCourses] = useState<CourseOutline[] | undefined>(
-    initialCourses || undefined
-  );
-  const [visibleCourses, setVisibleCourses] = useState<
-    CourseOutline[] | undefined
-  >([]);
-  const [maxVisibleCoursesLength, setMaxVisibleCoursesLength] = useState<
-    number | undefined
-  >();
+  // Use the shared data hook with initial data from SSR
+  const { courses, isLoading } = useCoursesData({
+    courses: initialCourses,
+    totalCount: totalCoursesCount,
+  });
+
+  const [visibleCourses, setVisibleCourses] = useState<CourseOutline[]>([]);
+  const [maxVisibleCoursesLength, setMaxVisibleCoursesLength] =
+    useState<number>(0);
   const [sliceIndex, setSliceIndex] = useState(20);
   const [query, setQuery] = useState<string>("");
   const [searchSelected, setSearchSelected] = useState<boolean>(false);
@@ -72,7 +74,7 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
     useExploreFilters();
 
   const loadMore = () => {
-    if (!courses) {
+    if (courses.length === 0) {
       return;
     }
 
@@ -81,12 +83,12 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
       sliceIndex,
       sliceIndex + CHUNK_SIZE
     );
-    setVisibleCourses((prev) => [...(prev || []), ...nextCourses]);
+    setVisibleCourses((prev) => [...prev, ...nextCourses]);
     setSliceIndex((prev) => prev + CHUNK_SIZE);
   };
 
   const onFilterChange = () => {
-    if (!courses) {
+    if (courses.length === 0) {
       return;
     }
 
@@ -117,6 +119,7 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
     return filteredCourses;
   };
 
+  // Update visible courses when filter changes
   useEffect(onFilterChange, [
     query,
     subjects.selected,
@@ -126,20 +129,29 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
     prereqs.searchQuery,
     prereqs.hasNone,
     designations.selected,
+    courses, // Re-run when courses data changes
   ]);
 
+  // Initialize visible courses when data is loaded
   useEffect(() => {
-    if (!courses || !totalCoursesCount || courses.length < totalCoursesCount) {
-      loadCourseAPIData("/outlines/all", (res: any) => {
-        totalCoursesCount = res.total_count;
-        setCourses(res.data);
-      });
-    }
-    if (courses) {
+    if (courses.length > 0) {
       setVisibleCourses(courses.slice(0, CHUNK_SIZE));
       setMaxVisibleCoursesLength(courses.length);
     }
   }, [courses]);
+
+  if (isLoading && courses.length === 0) {
+    return (
+      <div className="page courses-page">
+        <Hero title={`explore courses`} backgroundImage={HeroImage.src} />
+        <main id="explore-container" className="container">
+          <div className="center">
+            <p>Loading courses...</p>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="page courses-page">
@@ -154,7 +166,7 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
                 ? numberWithCommas(maxVisibleCoursesLength)
                 : "0"
             }
-            ${(maxVisibleCoursesLength || 0) > 1 ? "courses" : "course"}`}
+            ${maxVisibleCoursesLength > 1 ? "courses" : "course"}`}
           />
           <SearchBar
             handleInputChange={setQuery}
@@ -162,34 +174,26 @@ const ExplorePage: React.FC<ExplorePageProps> = ({
             setSearchSelected={setSearchSelected}
             placeholder="course code, title, description, or instructor"
           />
-          {visibleCourses && (
-            <InfiniteScroll
-              dataLength={visibleCourses.length}
-              hasMore={visibleCourses.length < (maxVisibleCoursesLength || 0)}
-              loader={<p>Loading...</p>}
-              next={loadMore}
-              className="courses-container"
-            >
-              {visibleCourses.map((outline) => (
-                <CourseCard
-                  key={outline.dept + outline.number}
-                  course={outline}
-                  query={query}
-                  showPrereqs={prereqs.isShown}
-                  prereqsQuery={prereqs.searchQuery}
-                  showInstructors={true}
-                />
-              ))}
-            </InfiniteScroll>
-          )}
+          <InfiniteScroll
+            dataLength={visibleCourses.length}
+            hasMore={visibleCourses.length < maxVisibleCoursesLength}
+            loader={<p>Loading...</p>}
+            next={loadMore}
+            className="courses-container"
+          >
+            {visibleCourses.map((outline) => (
+              <CourseCard
+                key={outline.dept + outline.number}
+                course={outline}
+                query={query}
+                showPrereqs={prereqs.isShown}
+                prereqsQuery={prereqs.searchQuery}
+                showInstructors={true}
+              />
+            ))}
+          </InfiniteScroll>
         </section>
         <section className="filter-section">
-          {/* <p className="gray-text right-align">
-            Last updated X hours ago -{" "}
-            <Link href="https://api.sfucourses.com" className="no-underline">
-              api.sfucourses.com
-            </Link>
-          </p> */}
           <ExploreFilter
             subjects={subjects}
             levels={levels}
