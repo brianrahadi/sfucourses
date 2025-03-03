@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import { SearchBar } from "./SearchBar";
-import { useOnClickOutside } from "@hooks";
 import { useRouter } from "next/router";
 import { useQuery } from "@tanstack/react-query";
 import { getCourseAPIData } from "@utils";
+import { Search } from "react-feather";
+import { Button } from "./Button";
 
 interface GlobalSearchProps {
   placeholder?: string;
@@ -27,18 +28,19 @@ const isMacPlatform = (): boolean => {
   );
 };
 
-export const GlobalSearch: React.FC<GlobalSearchProps> = ({ placeholder }) => {
+export const GlobalSearch: React.FC<GlobalSearchProps> = () => {
   const [query, setQuery] = useState("");
-  const [searchSelected, setSearchSelected] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [filteredResults, setFilteredResults] = useState<MinimalCourseData[]>(
     []
   );
-  const [showResults, setShowResults] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [isMac, setIsMac] = useState(false);
-  const searchContainerRef = useRef<HTMLDivElement>(null);
+  const [isScrolling, setIsScrolling] = useState(false); // Track scrolling state
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const resultsRef = useRef<HTMLDivElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+  const resultsContainerRef = useRef<HTMLDivElement>(null);
+  const selectedItemRef = useRef<HTMLLIElement>(null);
   const router = useRouter();
 
   // Detect platform after component mounts
@@ -46,10 +48,108 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ placeholder }) => {
     setIsMac(isMacPlatform());
   }, []);
 
-  // Default placeholder text with keyboard shortcuts
-  const defaultPlaceholder = isMac
-    ? "⌘ + K and ↑↓ Enter to search courses"
-    : "Ctrl + K and ↑↓ Enter to search courses";
+  // Handle clicking outside the modal to close it
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(event.target as Node)
+      ) {
+        setShowModal(false);
+      }
+    };
+
+    if (showModal) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showModal]);
+
+  // Focus the input when the modal opens
+  useEffect(() => {
+    if (showModal) {
+      setTimeout(() => {
+        searchInputRef.current?.focus();
+      }, 50);
+    } else {
+      // Reset state when modal closes
+      setQuery("");
+      setSelectedIndex(-1);
+    }
+  }, [showModal]);
+
+  // Scroll selected item into view when navigating with keyboard
+  useEffect(() => {
+    if (
+      selectedIndex >= 0 &&
+      resultsContainerRef.current &&
+      filteredResults.length > 0
+    ) {
+      // Don't scroll if currently scrolling from mouse
+      if (isScrolling) return;
+
+      // Use a timeout to ensure we don't interrupt any ongoing scrolling
+      const scrollTimeout = setTimeout(() => {
+        if (!resultsContainerRef.current) return;
+
+        const selectedElement = resultsContainerRef.current.querySelector(
+          `li:nth-child(${selectedIndex + 1})`
+        ) as HTMLElement;
+
+        if (selectedElement) {
+          // Use a more controlled scrolling approach
+          const container = resultsContainerRef.current;
+          const containerRect = container.getBoundingClientRect();
+          const elementRect = selectedElement.getBoundingClientRect();
+
+          // Only scroll if the element is out of view
+          if (elementRect.bottom > containerRect.bottom) {
+            // Element is below view, scroll down just enough
+            const scrollAmount = elementRect.bottom - containerRect.bottom + 10; // Add small padding
+            container.scrollTop += scrollAmount;
+          } else if (elementRect.top < containerRect.top) {
+            // Element is above view, scroll up just enough
+            const scrollAmount = containerRect.top - elementRect.top + 10; // Add small padding
+            container.scrollTop -= scrollAmount;
+          }
+        }
+      }, 50); // Small delay to avoid race conditions
+
+      return () => clearTimeout(scrollTimeout);
+    }
+  }, [selectedIndex, filteredResults, isScrolling]);
+
+  // Add a scroll event listener to prevent keyboard nav conflicts
+  useEffect(() => {
+    const resultsContainer = resultsContainerRef.current;
+    if (!resultsContainer) return;
+
+    const handleScroll = () => {
+      setIsScrolling(true);
+      // Reset the scrolling flag after scrolling stops
+      if (scrollTimeoutRef.current !== null) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+      scrollTimeoutRef.current = setTimeout(() => {
+        setIsScrolling(false);
+      }, 150);
+    };
+
+    resultsContainer.addEventListener("scroll", handleScroll);
+
+    return () => {
+      resultsContainer.removeEventListener("scroll", handleScroll);
+      if (scrollTimeoutRef.current !== null) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+    };
+  }, [showModal]); // Re-run when modal visibility changes
+
+  // Store the timeout ID for scroll tracking
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // IMPORTANT: Use a separate query key for global search to ensure independent data loading
   const { data: searchData, isLoading } = useQuery({
@@ -79,53 +179,18 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ placeholder }) => {
     refetchOnWindowFocus: false,
   });
 
-  // Close results when clicking outside
-  useOnClickOutside(searchContainerRef, () => {
-    setShowResults(false);
-    setSelectedIndex(-1);
-  });
-
-  // Scroll selected item into view when navigating with keys
-  useEffect(() => {
-    if (selectedIndex >= 0 && resultsRef.current) {
-      const resultsContainer = resultsRef.current;
-      const selectedItem = resultsContainer.querySelector(
-        `li:nth-child(${selectedIndex + 1})`
-      );
-
-      if (selectedItem) {
-        // Check if the item is not fully visible in the container
-        const containerRect = resultsContainer.getBoundingClientRect();
-        const itemRect = selectedItem.getBoundingClientRect();
-
-        if (itemRect.bottom > containerRect.bottom) {
-          // If item is below the visible area, scroll down
-          selectedItem.scrollIntoView({ block: "end", behavior: "smooth" });
-        } else if (itemRect.top < containerRect.top) {
-          // If item is above the visible area, scroll up
-          selectedItem.scrollIntoView({ block: "start", behavior: "smooth" });
-        }
-      }
-    }
-  }, [selectedIndex]);
-
   // Listen for keyboard shortcuts globally
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Check for Cmd+K (Mac) or Ctrl+K (Windows/Linux)
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         e.preventDefault(); // Prevent browser's default behavior
-        setSearchSelected(true);
-        setShowResults(true);
-        // Focus the search input
-        searchInputRef.current?.focus();
+        setShowModal(true);
       }
 
-      // Handle Escape key to close search
-      if (e.key === "Escape" && showResults) {
-        setShowResults(false);
-        setSelectedIndex(-1);
-        searchInputRef.current?.blur();
+      // Handle Escape key to close modal
+      if (e.key === "Escape" && showModal) {
+        setShowModal(false);
       }
     };
 
@@ -134,55 +199,75 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ placeholder }) => {
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [showResults]);
+  }, [showModal]);
 
   // Filter results when query changes
   useEffect(() => {
     if (query.length < 2 || !searchData) {
       setFilteredResults([]);
-      if (query.length < 2) setShowResults(false);
       return;
     }
 
     const lowerQuery = query.toLowerCase();
-    const results = searchData
-      .filter((course: { dept: string; number: string; title: string }) => {
+    let results = searchData.filter(
+      (course: { dept: string; number: string; title: string }) => {
         const searchString =
           `${course.dept} ${course.number} ${course.title}`.toLowerCase();
         return searchString.includes(lowerQuery);
-      })
-      .slice(0, 10); // Limit to 10 results
+      }
+    );
 
-    setFilteredResults(results);
-    setShowResults(true);
+    // Limit to 15 results for better performance and UX
+    setFilteredResults(results.slice(0, 15));
     // Reset selected index when results change
     setSelectedIndex(-1);
   }, [query, searchData]);
 
-  // Handle keyboard navigation
+  // Handle keyboard navigation within results
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (filteredResults.length === 0) return;
 
     if (e.key === "ArrowDown") {
       e.preventDefault();
 
-      if (selectedIndex === -1) {
-        // If no item is selected, select the first one
-        setSelectedIndex(0);
-      } else if (selectedIndex < filteredResults.length - 1) {
-        // If not at the last item, move down
-        setSelectedIndex(selectedIndex + 1);
+      // Prevent conflicting with mouse scrolling
+      if (isScrolling) {
+        setIsScrolling(false);
+        return;
       }
+
+      setSelectedIndex((prevIndex) => {
+        if (prevIndex === -1) {
+          // If no item is selected, select the first one
+          return 0;
+        } else if (prevIndex < filteredResults.length - 1) {
+          // If not at the last item, move down
+          return prevIndex + 1;
+        }
+        // At the last item, stay there
+        return prevIndex;
+      });
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
 
-      if (selectedIndex > 0) {
-        // If not at the first item, move up
-        setSelectedIndex(selectedIndex - 1);
-      } else if (selectedIndex === 0) {
-        // If at the first item, deselect
-        setSelectedIndex(-1);
+      // Prevent conflicting with mouse scrolling
+      if (isScrolling) {
+        setIsScrolling(false);
+        return;
       }
+
+      setSelectedIndex((prevIndex) => {
+        if (prevIndex > 0) {
+          // If not at the first item, move up
+          return prevIndex - 1;
+        } else if (prevIndex === 0) {
+          // If at the first item, move focus back to search
+          searchInputRef.current?.focus();
+          return -1;
+        }
+        // No item selected, stay that way
+        return prevIndex;
+      });
     } else if (e.key === "Enter") {
       e.preventDefault();
 
@@ -190,14 +275,12 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ placeholder }) => {
         // Navigate to the selected result
         const course = filteredResults[selectedIndex];
         router.push(`/explore/${course.dept.toLowerCase()}-${course.number}`);
-        setShowResults(false);
-        setSelectedIndex(-1);
+        setShowModal(false);
       } else if (filteredResults.length > 0) {
         // Navigate to the first result if none is selected
         const course = filteredResults[0];
         router.push(`/explore/${course.dept.toLowerCase()}-${course.number}`);
-        setShowResults(false);
-        setSelectedIndex(-1);
+        setShowModal(false);
       }
     }
   };
@@ -205,55 +288,120 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ placeholder }) => {
   // Handle course selection
   const handleSelectCourse = (course: MinimalCourseData) => {
     router.push(`/explore/${course.dept.toLowerCase()}-${course.number}`);
-    setShowResults(false);
-    setSelectedIndex(-1);
+    setShowModal(false);
+  };
+
+  // Handle mouse enter for each result item
+  const handleMouseEnter = (index: number) => {
+    // Only update if not currently using keyboard navigation
+    setSelectedIndex(index);
   };
 
   return (
-    <div className="global-search-container" ref={searchContainerRef}>
-      <SearchBar
-        handleInputChange={setQuery}
-        searchSelected={searchSelected}
-        setSearchSelected={setSearchSelected}
-        placeholder={placeholder || defaultPlaceholder}
-        value={query}
-        onKeyDown={handleKeyDown}
-        className="header-search"
-        ref={searchInputRef}
-      />
+    <>
+      {/* Search Button in Header */}
+      <div className="global-search-button" onClick={() => setShowModal(true)}>
+        <Search size={20} />
+        <span className="search-label">Search</span>
+        <div className="search-shortcut">
+          <kbd>{isMac ? "⌘" : "Ctrl"}</kbd>
+          <span>+</span>
+          <kbd>K</kbd>
+        </div>
+      </div>
 
-      {showResults && (
-        <div className="search-results" ref={resultsRef}>
-          {isLoading ? (
-            <div className="search-loading">Loading...</div>
-          ) : filteredResults.length > 0 ? (
-            <ul>
-              {filteredResults.map((course, index) => (
-                <li
-                  key={`${course.dept}${course.number}`}
-                  className={index === selectedIndex ? "selected" : ""}
-                >
-                  <button
-                    className="search-result-item"
-                    onClick={() => handleSelectCourse(course)}
-                    onMouseEnter={() => setSelectedIndex(index)}
-                  >
-                    <p>
-                      <span className="course-code">
-                        {course.dept} {course.number}{" "}
-                      </span>{" "}
-                      -<span className="course-title"> {course.title}</span>
-                    </p>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          ) : query.length >= 2 ? (
-            <div className="no-results">No courses found</div>
-          ) : null}
+      {/* Search Modal */}
+      {showModal && (
+        <div className="global-search-modal">
+          <div className="global-search-modal-content" ref={modalRef}>
+            <div className="global-search-header">
+              <h3>Search Courses</h3>
+              <Button
+                label="Close"
+                onClick={() => setShowModal(false)}
+                type="secondary"
+                className="close-btn"
+              />
+            </div>
+
+            <div className="global-search-input">
+              <SearchBar
+                handleInputChange={setQuery}
+                searchSelected={true}
+                setSearchSelected={() => {}}
+                placeholder="Search by course code, title, or description"
+                value={query}
+                onKeyDown={handleKeyDown}
+                className="modal-search"
+                ref={searchInputRef}
+              />
+            </div>
+
+            <div className="global-search-results" ref={resultsContainerRef}>
+              {isLoading ? (
+                <div className="search-loading">Loading courses...</div>
+              ) : query.length < 2 ? (
+                <div className="search-hint">
+                  <p>
+                    Try searching for a course code (e.g., CMPT 225) or topic
+                  </p>
+                  <div className="search-instructions">
+                    <div className="instruction">
+                      <kbd>↑</kbd>
+                      <kbd>↓</kbd>
+                      <span>to navigate</span>
+                    </div>
+                    <div className="instruction">
+                      <kbd>Enter</kbd>
+                      <span>to select</span>
+                    </div>
+                    <div className="instruction">
+                      <kbd>Esc</kbd>
+                      <span>to close</span>
+                    </div>
+                  </div>
+                </div>
+              ) : filteredResults.length > 0 ? (
+                <ul className="search-results-list">
+                  {filteredResults.map((course, index) => (
+                    <li
+                      key={`${course.dept}${course.number}`}
+                      className={index === selectedIndex ? "selected" : ""}
+                      ref={index === selectedIndex ? selectedItemRef : null}
+                      data-index={index} // Add index as data attribute for debugging
+                    >
+                      <button
+                        className="search-result-item"
+                        onClick={() => handleSelectCourse(course)}
+                        onMouseEnter={() => handleMouseEnter(index)}
+                      >
+                        <p>
+                          <span className="course-code">
+                            {course.dept} {course.number}
+                          </span>
+                          <span className="course-title">
+                            {" "}
+                            - {course.title}
+                          </span>
+                        </p>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <div className="no-results">No courses found for "{query}"</div>
+              )}
+            </div>
+
+            <div className="global-search-footer">
+              <a href="/explore" className="browse-all-link">
+                Browse all courses
+              </a>
+            </div>
+          </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

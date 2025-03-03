@@ -44,10 +44,8 @@ export const HeaderNav: React.FC = () => {
             <h2>sfucourses</h2>
           </Link>
 
-          {/* Global Search */}
-          <div className="header-search-wrapper">
-            <GlobalSearch />
-          </div>
+          {/* Global Search - now using the modal version */}
+          <GlobalSearch />
         </div>
 
         <input
