@@ -57,8 +57,7 @@
   }
 
   .discover-ssss {
-    padding-top: 4rem;
-    padding-bottom: 1rem;
+    padding-bottom: 4rem;
 
     h3 {
       font-size: 1.75rem;
@@ -172,6 +171,157 @@
           background-image: url("../../assets/images/landing-page/schedule.webp");
         }
       }
+    }
+  }
+
+  // Schedule preview section
+  .schedule-preview-section {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+
+    h2 {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .schedule-preview-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+
+      .tab-button {
+        background-color: var(--colour-neutral-1000);
+        color: var(--colour-neutral-100);
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-weight: 500;
+
+        &:hover {
+          background-color: var(--colour-neutral-900);
+        }
+
+        &.active {
+          background-color: var(--colour-sosy-green-800);
+          color: var(--colour-neutral-000);
+        }
+      }
+    }
+
+    .schedule-preview-content {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+
+      @include viewport(desktop) {
+        flex-direction: row;
+      }
+
+      .selected-courses-preview {
+        flex: 1;
+        background-color: var(--colour-neutral-1100);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+
+        h3 {
+          margin-bottom: 1rem;
+          color: var(--colour-sosy-green-500);
+        }
+
+        .selected-courses-badges {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+        }
+
+        .no-courses {
+          color: var(--colour-neutral-500);
+          text-align: center;
+          padding: 2rem 0;
+        }
+      }
+
+      .weekly-schedule-preview {
+        flex: 2;
+        background-color: var(--colour-neutral-1100);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        min-height: 400px;
+
+        .empty-schedule-message {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          height: 100%;
+          min-height: 300px;
+
+          p {
+            color: var(--colour-neutral-500);
+            margin-bottom: 1.5rem;
+          }
+
+          .create-schedule-link {
+            background-color: var(--colour-sosy-green-700);
+            color: var(--colour-neutral-000);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            transition: all 0.2s ease;
+
+            &:hover {
+              background-color: var(--colour-sosy-green-600);
+              transform: translateY(-2px);
+            }
+          }
+        }
+      }
+    }
+
+    .no-default-schedules {
+      text-align: center;
+      padding: 3rem 0;
+
+      p {
+        color: var(--colour-neutral-400);
+        margin-bottom: 1.5rem;
+      }
+
+      .create-schedule-button {
+        display: inline-block;
+        background-color: var(--colour-sosy-green-700);
+        color: var(--colour-neutral-000);
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        text-decoration: none;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background-color: var(--colour-sosy-green-600);
+          transform: translateY(-2px);
+        }
+      }
+    }
+  }
+}
+
+// Make the schedule preview more compact for the landing page
+.landing-page {
+  .weekly-schedule {
+    .schedule-grid {
+      height: 450px;
+      font-size: 0.9rem;
+    }
+
+    .schedule-header {
+      display: none; // Hide the navigation buttons for the preview
+    }
+
+    .course-block {
+      font-size: 0.7rem;
     }
   }
 }
