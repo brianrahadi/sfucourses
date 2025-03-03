@@ -11,6 +11,8 @@ interface ScheduleManagerProps {
     React.SetStateAction<CourseWithSectionDetails[]>
   >;
   selectedTerm: string;
+  setSelectedTerm: React.Dispatch<React.SetStateAction<string>>;
+  termOptions: string[];
 }
 
 interface SavedSchedule {
@@ -22,39 +24,54 @@ interface SavedSchedule {
   timestamp: number;
 }
 
+interface ScheduleSettings {
+  defaultTerm: string;
+}
+
 export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
   coursesWithSections,
   setCoursesWithSections,
   selectedTerm,
+  setSelectedTerm,
+  termOptions,
 }) => {
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [showLoadDialog, setShowLoadDialog] = useState(false);
+  const [showSettingsDialog, setShowSettingsDialog] = useState(false);
   const [scheduleName, setScheduleName] = useState("");
   const [savedSchedules, setSavedSchedules] = useState<SavedSchedule[]>([]);
+  const [settings, setSettings] = useState<ScheduleSettings>({
+    defaultTerm: termOptions[0],
+  });
+  const [previousTerm, setPreviousTerm] = useState(selectedTerm);
 
-  // Load saved schedules from localStorage on component mount
+  // Load saved schedules and settings from localStorage on component mount
   useEffect(() => {
     const loadedSchedules = localStorage.getItem("savedSchedules");
     if (loadedSchedules) {
       setSavedSchedules(JSON.parse(loadedSchedules));
     }
+
+    const loadedSettings = localStorage.getItem("scheduleSettings");
+    if (loadedSettings) {
+      setSettings(JSON.parse(loadedSettings));
+    }
   }, []);
 
-  // Load default schedule if it exists
+  // Load default schedule for the selected term when term changes
   useEffect(() => {
-    const loadedSchedules = localStorage.getItem("savedSchedules");
-    if (loadedSchedules) {
-      const schedules: SavedSchedule[] = JSON.parse(loadedSchedules);
-      const defaultSchedule = schedules.find(
-        (schedule) => schedule.isDefault && schedule.term === selectedTerm
-      );
+    if (selectedTerm !== previousTerm) {
+      const shouldLoadDefault =
+        coursesWithSections.length === 0 ||
+        !coursesWithSections.some((course) => course.term === selectedTerm);
 
-      if (defaultSchedule && coursesWithSections.length === 0) {
-        setCoursesWithSections(defaultSchedule.courses);
-        toast.success(`Default schedule "${defaultSchedule.name}" loaded`);
+      if (shouldLoadDefault) {
+        loadDefaultScheduleForTerm(selectedTerm);
       }
+
+      setPreviousTerm(selectedTerm);
     }
-  }, [selectedTerm, setCoursesWithSections]);
+  }, [selectedTerm, coursesWithSections]);
 
   // Save schedules to localStorage when they change
   useEffect(() => {
@@ -62,6 +79,28 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
       localStorage.setItem("savedSchedules", JSON.stringify(savedSchedules));
     }
   }, [savedSchedules]);
+
+  // Save settings to localStorage when they change
+  useEffect(() => {
+    localStorage.setItem("scheduleSettings", JSON.stringify(settings));
+  }, [settings]);
+
+  // Function to load the default schedule for a specific term
+  const loadDefaultScheduleForTerm = (term: string) => {
+    const defaultSchedule = savedSchedules.find(
+      (schedule) => schedule.isDefault && schedule.term === term
+    );
+
+    if (defaultSchedule) {
+      setCoursesWithSections(defaultSchedule.courses);
+      toast.success(
+        `Default schedule "${defaultSchedule.name}" loaded for ${term}`
+      );
+    } else {
+      // Clear current schedule if no default exists for this term
+      setCoursesWithSections([]);
+    }
+  };
 
   const handleSaveSchedule = () => {
     if (coursesWithSections.length === 0) {
@@ -74,12 +113,28 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
       return;
     }
 
+    // Filter schedules by current term to check limit
+    const currentTermSchedules = savedSchedules.filter(
+      (s) => s.term === selectedTerm
+    );
+
+    // Limit to 3 saved schedules per term
+    if (
+      currentTermSchedules.length >= 3 &&
+      !currentTermSchedules.some((s) => s.name === scheduleName)
+    ) {
+      toast.error(
+        "Maximum of 3 schedules can be saved per term. Please delete one first."
+      );
+      return;
+    }
+
     const newSchedule: SavedSchedule = {
       id: Date.now(),
       name: scheduleName,
       courses: coursesWithSections,
       term: selectedTerm,
-      isDefault: savedSchedules.length === 0, // First saved schedule becomes default
+      isDefault: currentTermSchedules.length === 0, // First saved schedule for a term becomes default
       timestamp: Date.now(),
     };
 
@@ -114,17 +169,24 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
   };
 
   const handleDeleteSchedule = (id: number) => {
+    const scheduleToDelete = savedSchedules.find((s) => s.id === id);
     const updatedSchedules = savedSchedules.filter((s) => s.id !== id);
 
-    // If we're deleting the default schedule, make the most recent one the default
-    if (
-      savedSchedules.find((s) => s.id === id)?.isDefault &&
-      updatedSchedules.length > 0
-    ) {
-      const mostRecent = updatedSchedules.reduce((prev, current) =>
-        prev.timestamp > current.timestamp ? prev : current
+    // If we're deleting the default schedule, make the most recent one for that term the default
+    if (scheduleToDelete?.isDefault && updatedSchedules.length > 0) {
+      const termSchedules = updatedSchedules.filter(
+        (s) => s.term === scheduleToDelete.term
       );
-      mostRecent.isDefault = true;
+
+      if (termSchedules.length > 0) {
+        const mostRecent = termSchedules.reduce((prev, current) =>
+          prev.timestamp > current.timestamp ? prev : current
+        );
+        const mostRecentIndex = updatedSchedules.findIndex(
+          (s) => s.id === mostRecent.id
+        );
+        updatedSchedules[mostRecentIndex].isDefault = true;
+      }
     }
 
     setSavedSchedules(updatedSchedules);
@@ -132,13 +194,27 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
   };
 
   const handleSetDefault = (id: number) => {
+    const scheduleToSetDefault = savedSchedules.find((s) => s.id === id);
+    if (!scheduleToSetDefault) return;
+
     const updatedSchedules = savedSchedules.map((schedule) => ({
       ...schedule,
-      isDefault: schedule.id === id,
+      // Only update default status for schedules in the same term
+      isDefault:
+        schedule.term === scheduleToSetDefault.term
+          ? schedule.id === id
+          : schedule.isDefault,
     }));
 
     setSavedSchedules(updatedSchedules);
     toast.success("Default schedule set");
+  };
+
+  const handleSetDefaultTerm = (term: string) => {
+    setSettings({ ...settings, defaultTerm: term });
+    setSelectedTerm(term);
+    toast.success(`${term} set as default term`);
+    setShowSettingsDialog(false);
   };
 
   // Filter schedules by the currently selected term
@@ -163,6 +239,12 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
           type="primary"
           className="schedule-btn"
           disabled={filteredSchedules.length === 0}
+        />
+        <Button
+          label="Settings"
+          onClick={() => setShowSettingsDialog(true)}
+          type="secondary"
+          className="schedule-btn"
         />
       </div>
 
@@ -252,6 +334,46 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
               <Button
                 label="Close"
                 onClick={() => setShowLoadDialog(false)}
+                type="secondary"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Settings Dialog */}
+      {showSettingsDialog && (
+        <div className="schedule-dialog">
+          <div className="schedule-dialog-content">
+            <h3>Schedule Settings</h3>
+            <div className="settings-section">
+              <h4>Default Term</h4>
+              <p className="settings-description">
+                Choose which term loads by default when you open the schedule
+                page
+              </p>
+              <div className="term-options">
+                {termOptions.map((term) => (
+                  <div key={term} className="term-option">
+                    <button
+                      className={`term-button ${
+                        settings.defaultTerm === term ? "selected" : ""
+                      }`}
+                      onClick={() => handleSetDefaultTerm(term)}
+                    >
+                      {term}
+                      {settings.defaultTerm === term && (
+                        <IoMdStar className="default-star" />
+                      )}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="schedule-dialog-buttons">
+              <Button
+                label="Close"
+                onClick={() => setShowSettingsDialog(false)}
                 type="secondary"
               />
             </div>

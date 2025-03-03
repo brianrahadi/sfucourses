@@ -78,8 +78,9 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   const [query, setQuery] = useState<string>("");
   const termOptions = getCurrentAndNextTerm(); // Memoize termOptions
   const [searchSelected, setSearchSelected] = useState<boolean>(false);
-  const [selectedTerm, setSelectedTerm] = useState(termOptions[0]);
+  const [selectedTerm, setSelectedTerm] = useState("");
   const termChangeSource = useRef("initial"); // button or url
+  const [hasUserSelectedTerm, setHasUserSelectedTerm] = useState(false);
 
   const [viewColumns, setViewColumns] = useLocalStorage<
     "Two-column" | "Three-column"
@@ -88,6 +89,28 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   const searchParams = useSearchParams();
 
   const CHUNK_SIZE = 20;
+
+  useEffect(() => {
+    if (!hasUserSelectedTerm && termOptions.length > 0) {
+      const scheduleSettings = localStorage.getItem("scheduleSettings");
+
+      if (scheduleSettings) {
+        try {
+          const settings = JSON.parse(scheduleSettings);
+          if (
+            settings.defaultTerm &&
+            termOptions.includes(settings.defaultTerm)
+          ) {
+            setSelectedTerm(settings.defaultTerm);
+          } else {
+            setSelectedTerm(termOptions[0]);
+          }
+        } catch (error) {
+          console.error("Error loading schedule settings:", error);
+        }
+      }
+    }
+  }, [termOptions, hasUserSelectedTerm]);
 
   useEffect(() => {
     const termMap = new Map<string, string>();
@@ -246,7 +269,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
             <ButtonGroup
               options={termOptions}
               onSelect={(value) => {
-                termChangeSource.current = "button";
+                setHasUserSelectedTerm(true); // Mark that user has manually selected a term
                 setSelectedTerm(value);
               }}
               selectedOption={selectedTerm}
@@ -292,6 +315,11 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
               coursesWithSections={selectedOutlinesWithSections}
               setCoursesWithSections={setSelectedOutlinesWithSections}
               selectedTerm={selectedTerm}
+              setSelectedTerm={(term) => {
+                setHasUserSelectedTerm(true); // Mark that user has manually selected a term
+                setSelectedTerm(term);
+              }}
+              termOptions={termOptions}
             />
             <ButtonGroup
               className="view-column-button-group"
