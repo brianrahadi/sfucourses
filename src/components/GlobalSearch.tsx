@@ -16,20 +16,16 @@ interface MinimalCourseData {
   title: string;
 }
 
-// Access the global window object safely
-const getInitialSearchData = (): MinimalCourseData[] => {
-  if (typeof window !== "undefined" && window.__COURSE_SEARCH_DATA__) {
-    return window.__COURSE_SEARCH_DATA__;
-  }
-  return [];
-};
+// Improved platform detection
+const isMacPlatform = (): boolean => {
+  if (typeof window === "undefined") return false;
 
-// Add type definition for window object
-declare global {
-  interface Window {
-    __COURSE_SEARCH_DATA__?: MinimalCourseData[];
-  }
-}
+  return (
+    typeof navigator !== "undefined" &&
+    (navigator.platform.startsWith("Mac") ||
+      navigator.userAgent.includes("Macintosh"))
+  );
+};
 
 export const GlobalSearch: React.FC<GlobalSearchProps> = ({ placeholder }) => {
   const [query, setQuery] = useState("");
@@ -39,31 +35,48 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ placeholder }) => {
   );
   const [showResults, setShowResults] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
+  const [isMac, setIsMac] = useState(false);
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
-  const defaultPlaceholder =
-    typeof navigator !== "undefined"
-      ? navigator.platform.startsWith("Mac")
-        ? "⌘ + K and ↑↓ Enter to search courses"
-        : "Ctrl + K and ↑↓ Enter to search courses"
-      : "⌘/Ctrl + K and ↑↓ Enter to search courses";
 
-  // Use React Query with the server-side injected data as initialData
+  // Detect platform after component mounts
+  useEffect(() => {
+    setIsMac(isMacPlatform());
+  }, []);
+
+  // Default placeholder text with keyboard shortcuts
+  const defaultPlaceholder = isMac
+    ? "⌘ + K and ↑↓ Enter to search courses"
+    : "Ctrl + K and ↑↓ Enter to search courses";
+
+  // IMPORTANT: Use a separate query key for global search to ensure independent data loading
   const { data: searchData, isLoading } = useQuery({
-    queryKey: ["courseSearchIndex"],
+    queryKey: ["globalSearchIndex"], // Different from the explore page query key
     queryFn: async () => {
-      // This will only run if the initial data is not available
-      const response = await getCourseAPIData("/outlines/all");
-      return response.data.map((course: any) => ({
-        dept: course.dept,
-        number: course.number,
-        title: course.title,
-      }));
+      try {
+        // Fetch course data directly
+        const response = await getCourseAPIData("/outlines/all");
+        // Extract only what we need for search to keep it lightweight
+        return response.data.map((course: any) => ({
+          dept: course.dept,
+          number: course.number,
+          title: course.title,
+        }));
+      } catch (error) {
+        console.error("Error fetching search data:", error);
+        return [];
+      }
     },
-    initialData: getInitialSearchData(),
-    staleTime: 60 * 60 * 1000, // 1 hour
+    // Ensure data is fetched when component mounts
+    refetchOnMount: true,
+    // Keep data fresh but allow for some caching
+    staleTime: 15 * 60 * 1000, // 15 minutes
+    // Retry failed requests
+    retry: 2,
+    // Don't refetch unnecessarily
+    refetchOnWindowFocus: false,
   });
 
   // Close results when clicking outside
@@ -133,7 +146,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ placeholder }) => {
 
     const lowerQuery = query.toLowerCase();
     const results = searchData
-      .filter((course: { dept: any; number: any; title: any }) => {
+      .filter((course: { dept: string; number: string; title: string }) => {
         const searchString =
           `${course.dept} ${course.number} ${course.title}`.toLowerCase();
         return searchString.includes(lowerQuery);
@@ -152,16 +165,24 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ placeholder }) => {
 
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      setSelectedIndex((prev) => {
-        // Move to first item if nothing selected, otherwise move down
-        if (prev < filteredResults.length - 1) {
-          return prev + 1;
-        }
-        return prev;
-      });
+
+      if (selectedIndex === -1) {
+        // If no item is selected, select the first one
+        setSelectedIndex(0);
+      } else if (selectedIndex < filteredResults.length - 1) {
+        // If not at the last item, move down
+        setSelectedIndex(selectedIndex + 1);
+      }
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      setSelectedIndex((prev) => (prev > 0 ? prev - 1 : prev));
+
+      if (selectedIndex > 0) {
+        // If not at the first item, move up
+        setSelectedIndex(selectedIndex - 1);
+      } else if (selectedIndex === 0) {
+        // If at the first item, deselect
+        setSelectedIndex(-1);
+      }
     } else if (e.key === "Enter") {
       e.preventDefault();
 
@@ -194,7 +215,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ placeholder }) => {
         handleInputChange={setQuery}
         searchSelected={searchSelected}
         setSearchSelected={setSearchSelected}
-        placeholder={defaultPlaceholder}
+        placeholder={placeholder || defaultPlaceholder}
         value={query}
         onKeyDown={handleKeyDown}
         className="header-search"
@@ -217,10 +238,12 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ placeholder }) => {
                     onClick={() => handleSelectCourse(course)}
                     onMouseEnter={() => setSelectedIndex(index)}
                   >
-                    <span className="course-code">
-                      {course.dept} {course.number}
-                    </span>
-                    <span className="course-title">{course.title}</span>
+                    <p>
+                      <span className="course-code">
+                        {course.dept} {course.number}{" "}
+                      </span>{" "}
+                      -<span className="course-title"> {course.title}</span>
+                    </p>
                   </button>
                 </li>
               ))}

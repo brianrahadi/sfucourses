@@ -2,6 +2,8 @@ import React, { FC } from "react";
 import { Hero } from "@components";
 import Link from "next/link";
 import LandingPageHeroSrc from "../assets/images/landing-page/hero.webp";
+import { getCourseAPIData } from "@utils";
+import { useQuery } from "@tanstack/react-query";
 
 interface LandingPageProps {}
 
