@@ -8,6 +8,7 @@ import {
   CopyLinkButton,
   CopyScheduleButton,
   DownloadCalButton,
+  ScheduleManager,
 } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useEffect, useRef, useState } from "react";
@@ -287,6 +288,11 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
         </section>
         <section className="schedule-section">
           <div className="schedule-section__header">
+            <ScheduleManager
+              coursesWithSections={selectedOutlinesWithSections}
+              setCoursesWithSections={setSelectedOutlinesWithSections}
+              selectedTerm={selectedTerm}
+            />
             <ButtonGroup
               className="view-column-button-group"
               options={["Two-column", "Three-column"]}

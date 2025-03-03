@@ -1,0 +1,139 @@
+@import "../variables.scss";
+
+.schedule-manager {
+  position: relative;
+
+  .schedule-manager-buttons {
+    display: flex;
+    gap: 0.5rem;
+
+    .schedule-btn {
+      padding: 0.35rem 0.75rem;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+  }
+
+  .schedule-dialog {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .schedule-dialog-content {
+      background-color: var(--colour-neutral-1100);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+
+      h3 {
+        margin-top: 0;
+        margin-bottom: 1.25rem;
+        font-size: 1.3rem;
+        color: var(--colour-sosy-green-500);
+      }
+
+      input {
+        width: 100%;
+        padding: 0.75rem;
+        margin-bottom: 1.25rem;
+        background-color: var(--colour-neutral-1000);
+        border: 1px solid var(--colour-neutral-800);
+        border-radius: 0.5rem;
+        color: var(--colour-neutral-000);
+        font-size: 1rem;
+
+        &:focus {
+          outline: none;
+          border-color: var(--colour-sosy-green-600);
+        }
+      }
+
+      .schedule-dialog-buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        margin-top: 1rem;
+      }
+
+      .saved-schedules-list {
+        max-height: 300px;
+        overflow-y: auto;
+        margin-bottom: 1rem;
+
+        .saved-schedule-item {
+          background-color: var(--colour-neutral-1000);
+          border-radius: 0.5rem;
+          padding: 0.75rem 1rem;
+          margin-bottom: 0.75rem;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+
+          .saved-schedule-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+
+            .star-button {
+              background: none;
+              border: none;
+              cursor: pointer;
+              padding: 0;
+              line-height: 1;
+
+              .star-icon {
+                font-size: 1.3rem;
+                color: var(--colour-neutral-600);
+
+                &.filled {
+                  color: var(--colour-cyber-500);
+                }
+              }
+            }
+
+            .schedule-name {
+              font-weight: 600;
+              font-size: 1rem;
+            }
+
+            .course-count {
+              color: var(--colour-neutral-500);
+              font-size: 0.85rem;
+            }
+          }
+
+          .saved-schedule-actions {
+            display: flex;
+            gap: 0.5rem;
+
+            .small-btn {
+              padding: 0.35rem 0.5rem;
+              font-size: 0.85rem;
+            }
+          }
+        }
+      }
+
+      .no-schedules {
+        color: var(--colour-neutral-500);
+        text-align: center;
+        padding: 1.5rem 0;
+      }
+    }
+  }
+}
