@@ -5,7 +5,7 @@
   gap: rem;
   margin: 0;
   width: 100%;
-  max-width: 22.5rem;
+  max-width: 22rem;
   height: 100%;
   background-color: var(--colour-neutral-1100);
   display: flex;
@@ -44,6 +44,7 @@
     }
 
     .section-schedule-container {
+      font-size: 0.9rem;
       max-width: 100%;
       padding: 0.5rem 1rem;
       display: flex;
@@ -54,8 +55,7 @@
         display: flex;
         flex: 1 1 0;
         flex-shrink: 0;
-        justify-content: flex-start;
-        gap: 6rem;
+        justify-content: space-between;
         align-items: baseline;
       }
     }
