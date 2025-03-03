@@ -13,7 +13,8 @@
       "@images/*": ["./src/assets/images/*"],
       "@icons/*": ["./public/icons/*"],
       "@jsons/*": ["./src/assets/jsons/*"],
-      "@const": ["./src/const"]
+      "@const": ["./src/const"],
+      "@context/*": ["./src/context/*"]
     } /* Specify a set of entries that re-map imports to additional lookup locations. */,
     "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */,
     "forceConsistentCasingInFileNames": true /* Ensure that casing is correct in imports. */ /* Type Checking */,

@@ -1,8 +1,9 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useState, useRef } from "react";
 import Link from "next/link";
 import { CourseOutline, CourseWithSectionDetails } from "../types";
 import { Highlight, SectionDetails } from "@components";
 import { termToIcon } from "./ExploreFilter";
+import { CoursePopover } from "./CoursePopover";
 
 type CourseCardProps = {
   course: CourseOutline;
@@ -18,6 +19,7 @@ type CourseCardProps = {
     type: "ADD" | "REMOVE";
   };
   type?: "SELECTED_COURSES";
+  enablePopover?: boolean;
 };
 
 export const CourseCard: React.FC<CourseCardProps> = ({
@@ -31,13 +33,66 @@ export const CourseCard: React.FC<CourseCardProps> = ({
   isLink = true,
   setOfferings,
   type,
+  enablePopover = true,
 }) => {
+  const [showPopover, setShowPopover] = useState(false);
+  const [popoverPosition, setPopoverPosition] = useState({ x: 0, y: 0 });
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  // Used to delay hiding popover for better UX
+  const popoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   const courseDescriptionShortened =
     course.description.length > 400
       ? course.description.slice(0, 400) + " ..."
       : course.description;
 
   const header = `${course.dept} ${course.number} - ${course.title} (${course.units})`;
+
+  const handleMouseEnter = (e: React.MouseEvent) => {
+    if (!enablePopover) return;
+
+    // Clear any existing timeout
+    if (popoverTimeoutRef.current) {
+      clearTimeout(popoverTimeoutRef.current);
+      popoverTimeoutRef.current = null;
+    }
+
+    // Calculate position for popover
+    if (cardRef.current) {
+      const rect = cardRef.current.getBoundingClientRect();
+
+      // Position the popover next to the card
+      setPopoverPosition({
+        x: rect.right + 10,
+        y: rect.top,
+      });
+
+      setShowPopover(true);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (!enablePopover) return;
+
+    // Set a small timeout before hiding to allow moving to the popover
+    popoverTimeoutRef.current = setTimeout(() => {
+      setShowPopover(false);
+    }, 300);
+  };
+
+  // Handle mouse enter on popover itself
+  const handlePopoverMouseEnter = () => {
+    if (popoverTimeoutRef.current) {
+      clearTimeout(popoverTimeoutRef.current);
+      popoverTimeoutRef.current = null;
+    }
+  };
+
+  // Handle mouse leave on popover
+  const handlePopoverMouseLeave = () => {
+    setShowPopover(false);
+  };
 
   const CardContent = () => (
     <>
@@ -135,21 +190,55 @@ export const CourseCard: React.FC<CourseCardProps> = ({
     </>
   );
 
+  // Render the popover
+  const renderPopover = () => {
+    if (!enablePopover) return null;
+
+    return (
+      <div
+        onMouseEnter={handlePopoverMouseEnter}
+        onMouseLeave={handlePopoverMouseLeave}
+      >
+        <CoursePopover
+          course={course}
+          isVisible={showPopover}
+          position={popoverPosition}
+        />
+      </div>
+    );
+  };
+
   if (isLink) {
     return (
-      <Link
-        href={`/explore/${course.dept.toLowerCase()}-${course.number}`}
-        key={course.dept + course.number}
-        className="course-card is-link"
+      <div
+        ref={cardRef}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        className={`course-card-container ${showPopover ? "show-popover" : ""}`}
       >
-        <CardContent />
-      </Link>
+        <Link
+          href={`/explore/${course.dept.toLowerCase()}-${course.number}`}
+          key={course.dept + course.number}
+          className="course-card is-link"
+        >
+          <CardContent />
+        </Link>
+        {renderPopover()}
+      </div>
     );
   }
 
   return (
-    <div className="course-card">
-      <CardContent />
+    <div
+      ref={cardRef}
+      className={`course-card-container ${showPopover ? "show-popover" : ""}`}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <div className="course-card">
+        <CardContent />
+      </div>
+      {renderPopover()}
     </div>
   );
 };

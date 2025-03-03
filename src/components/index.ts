@@ -22,3 +22,4 @@ export { CopyScheduleButton } from "./CopyScheduleButton";
 export { CopyLinkButton } from "./CopyLinkButton";
 export { GlobalSearch } from "./GlobalSearch";
 export { ScheduleManager } from "./ScheduleManager";
+export { CoursePopover } from "./CoursePopover";

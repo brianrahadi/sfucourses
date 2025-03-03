@@ -196,6 +196,7 @@ const ExplorePage: React.FC = () => {
                 showPrereqs={prereqs.isShown}
                 prereqsQuery={prereqs.searchQuery}
                 showInstructors={true}
+                enablePopover={true}
               />
             ))}
           </InfiniteScroll>

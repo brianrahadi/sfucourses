@@ -1,5 +1,3 @@
-// pages/_app.tsx - Corrected version
-
 import React, { FC } from "react";
 import { HeaderNav, Footer, Helmet } from "@components";
 import { useRouter } from "next/router";
@@ -13,6 +11,7 @@ import {
   HydrationBoundary,
 } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
+import { PopoverProvider } from "@context/PopoverContext";
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
@@ -32,13 +31,15 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }: AppProps) => {
   return (
     <QueryClientProvider client={queryClient}>
       <HydrationBoundary state={pageProps.dehydratedState}>
-        <Helmet pageTitle={router.pathname} />
-        <HeaderNav />
-        <Component {...pageProps} key={router.asPath} />
-        <Footer />
-        <Toaster />
-        <Analytics />
-        <SpeedInsights />
+        <PopoverProvider>
+          <Helmet pageTitle={router.pathname} />
+          <HeaderNav />
+          <Component {...pageProps} key={router.asPath} />
+          <Footer />
+          <Toaster />
+          <Analytics />
+          <SpeedInsights />
+        </PopoverProvider>
       </HydrationBoundary>
     </QueryClientProvider>
   );
