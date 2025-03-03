@@ -28,7 +28,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
     const response = await getCourseAPIData("/outlines/all");
     const courses: CourseOutline[] = response.data;
 
-    const targetDepts = ["ACMA", "CMPT", "BUS", "MATH"];
+    const targetDepts = ["ACMA", "CMPT"];
     const filteredCourses = courses.filter((course) =>
       targetDepts.includes(course.dept)
     );
