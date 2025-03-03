@@ -3,7 +3,7 @@ import { SearchBar } from "./SearchBar";
 import { useRouter } from "next/router";
 import { useQuery } from "@tanstack/react-query";
 import { getCourseAPIData } from "@utils";
-import { Search } from "react-feather";
+import { Link, Search } from "react-feather";
 import { Button } from "./Button";
 
 interface GlobalSearchProps {
@@ -389,14 +389,16 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = () => {
                   ))}
                 </ul>
               ) : (
-                <div className="no-results">No courses found for "{query}"</div>
+                <div className="no-results">
+                  No courses found for &quot;{query}&quot;
+                </div>
               )}
             </div>
 
             <div className="global-search-footer">
-              <a href="/explore" className="browse-all-link">
+              <Link href="/explore" className="browse-all-link">
                 Browse all courses
-              </a>
+              </Link>
             </div>
           </div>
         </div>
