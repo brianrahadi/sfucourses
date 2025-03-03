@@ -43,11 +43,12 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ placeholder }) => {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
-  const defaultPlaceholder = navigator.platform
-    ? navigator.platform.startsWith("Mac")
-      ? "⌘ + K and ↑↓ Enter to search courses"
-      : "Ctrl + K and ↑↓ Enter to search courses"
-    : "⌘/Ctrl + K and ↑↓ Enter to search courses";
+  const defaultPlaceholder =
+    typeof navigator !== "undefined"
+      ? navigator.platform.startsWith("Mac")
+        ? "⌘ + K and ↑↓ Enter to search courses"
+        : "Ctrl + K and ↑↓ Enter to search courses"
+      : "⌘/Ctrl + K and ↑↓ Enter to search courses";
 
   // Use React Query with the server-side injected data as initialData
   const { data: searchData, isLoading } = useQuery({
