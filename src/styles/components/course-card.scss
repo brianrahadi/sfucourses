@@ -49,13 +49,3 @@
     gap: 0.5rem;
   }
 }
-
-.course-card-container {
-  position: relative;
-  max-width: 50rem;
-  width: 100%;
-
-  &.show-popover {
-    z-index: 10;
-  }
-}
