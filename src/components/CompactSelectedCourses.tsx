@@ -20,7 +20,13 @@ const CompactSelectedCourses: React.FC<CompactSelectedCoursesProps> = ({
 }) => {
   return (
     <div className="selected-courses">
-      <h3 className="section-title">Selected Courses - {term}</h3>
+      <h3 className="section-title">
+        Selected Course - {term} (
+        {selectedCourses
+          .map((c) => +c.units)
+          .reduce((prev, curr) => curr + Number(prev))}{" "}
+        units)
+      </h3>
 
       <div className="selected-courses__items">
         {selectedCourses.length > 0 ? (
