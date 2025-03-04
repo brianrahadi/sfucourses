@@ -134,6 +134,10 @@
 
     .schedule-section {
       position: static; // Remove sticky behavior on small screens
+
+      &__header {
+        flex-direction: column;
+      }
     }
   }
 
