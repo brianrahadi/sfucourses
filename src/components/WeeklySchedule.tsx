@@ -1,6 +1,12 @@
 import { CourseWithSectionDetails } from "@types";
 import { formatTime, getDarkColorFromHash } from "@utils/format";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useState,
+  useRef,
+} from "react";
 import { format, addDays, startOfWeek } from "date-fns";
 import toast from "react-hot-toast";
 import Button from "./Button";
@@ -76,6 +82,30 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
   const [weekStartDate, setWeekStartDate] = useState<Date | null>(null);
   const [currentWeekOffset, setCurrentWeekOffset] = useState(1);
   const [initialWeekDate, setInitialWeekDate] = useState<Date | null>(null);
+  const [slotHeight, setSlotHeight] = useState(20); // Default slot height
+  const scheduleRef = useRef<HTMLDivElement>(null);
+
+  // Effect to handle responsive slot height
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerHeight <= 700) {
+        setSlotHeight(15);
+      } else if (window.innerHeight <= 800) {
+        setSlotHeight(18);
+      } else {
+        setSlotHeight(20);
+      }
+    };
+
+    // Set initial value
+    handleResize();
+
+    // Add event listener
+    window.addEventListener("resize", handleResize);
+
+    // Clean up
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Function to calculate visible timeslots for a specific week
   const calculateTimeslotsForWeek = (weekDate: Date) => {
@@ -234,8 +264,22 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
     timeSlots.push({ hour, minute: 0 }, { hour, minute: 30 });
   }
 
+  // Helper function to calculate position and size
+  const calculateCoursePosition = (course: Course) => {
+    // Calculate top position based on start time
+    const minutesSinceStartHour = course.startTime - startHour * 60;
+    // Each hour is represented by 2 time slots (one for each 30 min)
+    const hourHeight = slotHeight * 2;
+    const topOffset = (minutesSinceStartHour / 60) * hourHeight;
+
+    // Calculate height based on duration
+    const height = (course.duration / 60) * hourHeight;
+
+    return { topOffset, height };
+  };
+
   return (
-    <div className="weekly-schedule">
+    <div className="weekly-schedule" ref={scheduleRef}>
       {weekStartDate && (
         <div className="schedule-header">
           <div className="schedule-navigation">
@@ -305,9 +349,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
             {timeslots
               .filter((course) => course.day === day)
               .map((course) => {
-                const topOffset =
-                  ((course.startTime - startHour * 60) / 60) * 45;
-                const height = (course.duration / 60) * 45;
+                const { topOffset, height } = calculateCoursePosition(course);
                 return (
                   <div
                     key={course.id}
