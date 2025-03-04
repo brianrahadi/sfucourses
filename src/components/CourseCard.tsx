@@ -36,11 +36,19 @@ export const CourseCard: React.FC<CourseCardProps> = ({
   enablePopover = true,
 }) => {
   const [showPopover, setShowPopover] = useState(false);
-  const [popoverPosition, setPopoverPosition] = useState({ x: 0, y: 0 });
+  const [popoverPosition, setPopoverPosition] = useState({
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+  });
   const cardRef = useRef<HTMLDivElement>(null);
 
   // Used to delay hiding popover for better UX
   const popoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Used to debounce popover showing to prevent unwanted triggers
+  const popoverShowDelayRef = useRef<NodeJS.Timeout | null>(null);
 
   const courseDescriptionShortened =
     course.description.length > 400
@@ -58,35 +66,73 @@ export const CourseCard: React.FC<CourseCardProps> = ({
       popoverTimeoutRef.current = null;
     }
 
-    // Calculate position for popover
+    // Get the card's dimensions
     if (cardRef.current) {
       const rect = cardRef.current.getBoundingClientRect();
 
-      // Position the popover next to the card
+      // Use cursor position for the popover placement
+      // Store initial position but don't update on every mouse move to prevent flickering
       setPopoverPosition({
-        x: rect.right + 10,
-        y: rect.top,
+        x: e.clientX,
+        y: e.clientY,
+        width: rect.width,
+        height: rect.height,
       });
 
-      setShowPopover(true);
+      // Clear any pending show delay
+      if (popoverShowDelayRef.current) {
+        clearTimeout(popoverShowDelayRef.current);
+      }
+
+      // Use a debounced delay before showing to prevent unwanted triggering
+      popoverShowDelayRef.current = setTimeout(() => {
+        setShowPopover(true);
+        popoverShowDelayRef.current = null;
+      }, 150);
     }
   };
+
+  // Remove the handleMouseMove function as it causes flickering
+  // We'll use a fixed position based on initial hover instead
 
   const handleMouseLeave = () => {
     if (!enablePopover) return;
 
+    // Cancel any pending show operation
+    if (popoverShowDelayRef.current) {
+      clearTimeout(popoverShowDelayRef.current);
+      popoverShowDelayRef.current = null;
+    }
+
     // Set a small timeout before hiding to allow moving to the popover
     popoverTimeoutRef.current = setTimeout(() => {
       setShowPopover(false);
+      popoverTimeoutRef.current = null;
     }, 300);
   };
 
+  // Clean up timeouts when component unmounts
+  React.useEffect(() => {
+    return () => {
+      if (popoverTimeoutRef.current) {
+        clearTimeout(popoverTimeoutRef.current);
+      }
+      if (popoverShowDelayRef.current) {
+        clearTimeout(popoverShowDelayRef.current);
+      }
+    };
+  }, []);
+
   // Handle mouse enter on popover itself
   const handlePopoverMouseEnter = () => {
+    // Cancel any pending hide operations when mouse enters the popover
     if (popoverTimeoutRef.current) {
       clearTimeout(popoverTimeoutRef.current);
       popoverTimeoutRef.current = null;
     }
+
+    // Ensure the popover stays visible
+    setShowPopover(true);
   };
 
   // Handle mouse leave on popover

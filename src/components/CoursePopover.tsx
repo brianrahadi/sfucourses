@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { CourseOutline, CourseWithSectionDetails } from "@types";
 import { getCourseAPIData } from "@utils";
 import { toTermCode, formatShortDate } from "@utils/format";
@@ -10,8 +10,11 @@ import { MdPlace } from "react-icons/md";
 interface CoursePopoverProps {
   course: CourseOutline;
   isVisible: boolean;
-  position: { x: number; y: number };
+  position: { x: number; y: number; width?: number; height?: number };
 }
+
+// Popover placement options
+type PopoverPlacement = "up" | "right" | "down" | "left";
 
 export const CoursePopover: React.FC<CoursePopoverProps> = ({
   course,
@@ -24,6 +27,7 @@ export const CoursePopover: React.FC<CoursePopoverProps> = ({
   const [nextTermSections, setNextTermSections] =
     useState<CourseWithSectionDetails | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [placement, setPlacement] = useState<PopoverPlacement>("right");
 
   const terms = getCurrentAndNextTerm();
   const [currentTerm, nextTerm] = terms;
@@ -57,7 +61,7 @@ export const CoursePopover: React.FC<CoursePopoverProps> = ({
         setNextTermSections(nextTermData);
       } catch (error) {
         console.error("Error fetching section data:", error);
-        setError("No offerings for current term and next term");
+        setError("Failed to load section details");
       } finally {
         setIsLoading(false);
       }
@@ -66,34 +70,126 @@ export const CoursePopover: React.FC<CoursePopoverProps> = ({
     fetchSectionData();
   }, [isVisible, course, currentTerm, nextTerm]);
 
-  if (!isVisible) return null;
+  useEffect(() => {
+    if (!isVisible) return;
 
-  // Calculate position styles to ensure popover stays within viewport
-  const calculatePosition = () => {
-    const margin = 10; // Margin from viewport edges
-    const popoverWidth = 400; // Approximate width of popover
-    const popoverHeight = 300; // Approximate height of popover
+    // Determine the best placement based on cursor position
+    // Only calculate placement when popover becomes visible or window resizes
+    // NOT when position updates slightly (prevents flickering)
+    determinePlacement();
+
+    // Add window resize listener to adjust placement if needed
+    window.addEventListener("resize", determinePlacement);
+
+    return () => {
+      window.removeEventListener("resize", determinePlacement);
+    };
+  }, [isVisible]); // Dependency on isVisible only, not on position to prevent flickering
+
+  // Determine the optimal placement for the popover
+  const determinePlacement = () => {
+    if (!position) return;
+
+    const margin = 16; // Margin from elements and viewport edges
+    const popoverWidth = 380; // Approximate width of popover
+    const popoverHeight = 400; // Approximate height of popover
+
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
 
-    let left = position.x;
-    let top = position.y;
+    const cursorX = position.x;
+    const cursorY = position.y;
 
-    // Adjust horizontal position if would overflow right edge
-    if (left + popoverWidth + margin > viewportWidth) {
-      left = Math.max(margin, viewportWidth - popoverWidth - margin);
+    // Calculate available space in each direction
+    const spaceAbove = cursorY;
+    const spaceBelow = viewportHeight - cursorY;
+    const spaceToRight = viewportWidth - cursorX;
+    const spaceToLeft = cursorX;
+
+    // Check each direction with our priority: up, right, left, down
+
+    // Check if there's enough room above
+    if (spaceAbove >= popoverHeight + margin) {
+      setPlacement("up");
+      return;
     }
 
-    // Adjust vertical position if would overflow bottom edge
-    if (top + popoverHeight + margin > viewportHeight) {
-      top = Math.max(margin, viewportHeight - popoverHeight - margin);
+    // Check if there's enough room to the right
+    if (spaceToRight >= popoverWidth + margin) {
+      setPlacement("right");
+      return;
+    }
+
+    // Check if there's enough room to the left
+    if (spaceToLeft >= popoverWidth + margin) {
+      setPlacement("left");
+      return;
+    }
+
+    // Default to below if no other option works well
+    setPlacement("down");
+  };
+
+  // Use useMemo correctly - outside of the render method
+  const positionStyles = useMemo(() => {
+    const margin = 16;
+    const popoverWidth = 380;
+    const popoverHeight = 400;
+
+    let left = 0;
+    let top = 0;
+
+    switch (placement) {
+      case "up":
+        left = Math.max(
+          margin,
+          Math.min(
+            window.innerWidth - popoverWidth - margin,
+            position.x - popoverWidth / 2
+          )
+        );
+        top = position.y - popoverHeight - margin;
+        break;
+      case "right":
+        left = position.x + margin;
+        top = Math.max(
+          margin,
+          Math.min(
+            window.innerHeight - popoverHeight - margin,
+            position.y - popoverHeight / 2
+          )
+        );
+        break;
+      case "left":
+        left = position.x - popoverWidth - margin;
+        top = Math.max(
+          margin,
+          Math.min(
+            window.innerHeight - popoverHeight - margin,
+            position.y - popoverHeight / 2
+          )
+        );
+        break;
+      case "down":
+        left = Math.max(
+          margin,
+          Math.min(
+            window.innerWidth - popoverWidth - margin,
+            position.x - popoverWidth / 2
+          )
+        );
+        top = position.y + margin;
+        break;
     }
 
     return {
       left: `${left}px`,
       top: `${top}px`,
+      arrowClass: `arrow-${placement}`,
     };
-  };
+  }, [placement, position.x, position.y]);
+
+  if (!isVisible) return null;
 
   const renderSectionDetails = (
     sections: CourseWithSectionDetails | null,
@@ -109,44 +205,59 @@ export const CoursePopover: React.FC<CoursePopoverProps> = ({
     return (
       <div className="term-sections">
         {previewSections.map((section) => (
-          <div key={section.classNumber} className="section-preview">
+          <div key={section.classNumber} className="section-container">
             <div className="section-header">
-              <span className="section-code">{section.section}</span>
-              <span className="class-number">#{section.classNumber}</span>
+              <div className="section-header__first">
+                <span className="icon-text-container">{section.section}</span>
+                <span>#{section.classNumber}</span>
+              </div>
+
+              <div className="section-header__second">
+                <span className="icon-text-container instructor">
+                  <BsFillPersonFill />
+                  <p>
+                    {section.instructors.length > 0
+                      ? section.instructors[0].name
+                      : "TBA"}
+                  </p>
+                </span>
+
+                <span className="icon-text-container">
+                  <MdPlace />
+                  {section.deliveryMethod === "Online"
+                    ? "Online"
+                    : section.schedules[0]?.campus || "TBA"}
+                </span>
+              </div>
             </div>
 
-            <div className="section-details">
-              <span className="instructor">
-                <BsFillPersonFill />
-                {section.instructors.length > 0
-                  ? section.instructors[0].name
-                  : "TBA"}
-              </span>
-
-              {section.schedules.length > 0 && (
-                <>
-                  <div className="schedule-info">
-                    <span className="days">
+            {section.schedules.length > 0 && (
+              <div className="section-schedule-container">
+                {section.schedules.slice(0, 1).map((sched) => (
+                  <div
+                    key={`${sched.days}-${sched.startTime}`}
+                    className="section-schedule-row"
+                  >
+                    <span
+                      className="icon-text-container"
+                      style={{ minWidth: "3rem" }}
+                    >
                       <CiCalendar />
-                      {section.schedules[0].days || "TBA"}
+                      {sched.days || "TBA"}
                     </span>
-                    <span className="time">
+                    <span
+                      className="icon-text-container"
+                      style={{ minWidth: "6.5rem" }}
+                    >
                       <CiClock1 />
-                      {section.schedules[0].startTime &&
-                      section.schedules[0].endTime
-                        ? `${section.schedules[0].startTime} - ${section.schedules[0].endTime}`
+                      {sched.startTime && sched.endTime
+                        ? `${sched.startTime} - ${sched.endTime}`
                         : "TBA"}
                     </span>
                   </div>
-                  <span className="location">
-                    <MdPlace />
-                    {section.deliveryMethod === "Online"
-                      ? "Online"
-                      : section.schedules[0].campus || "TBA"}
-                  </span>
-                </>
-              )}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         ))}
 
@@ -160,7 +271,15 @@ export const CoursePopover: React.FC<CoursePopoverProps> = ({
   };
 
   return (
-    <div className="course-popover" style={calculatePosition()}>
+    <div
+      className={`course-popover ${positionStyles.arrowClass}`}
+      style={{
+        left: positionStyles.left,
+        top: positionStyles.top,
+        maxWidth: "380px",
+        maxHeight: "400px",
+      }}
+    >
       <div className="popover-header">
         <h3>
           {course.dept} {course.number} Sections
