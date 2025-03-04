@@ -59,9 +59,44 @@
         align-items: baseline;
       }
     }
+
+    &.selected-course-section {
+      background-color: var(--colour-neutral-1000);
+
+      .section-header {
+        padding: 0.4rem 0.75rem;
+
+        &__first {
+          margin-bottom: 0.1rem;
+        }
+      }
+
+      .section-schedule-container {
+        padding: 0.3rem 0.75rem 0.5rem;
+
+        .section-schedule-row {
+          justify-content: flex-start;
+          gap: 1rem;
+        }
+      }
+    }
   }
 
   .toggle-row {
     margin-top: 1rem;
+  }
+}
+
+.offering {
+  &.selected-courses-offering {
+    .section-container {
+      margin: 0.15rem 0;
+    }
+
+    .toggle-row {
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      padding: 0.3rem;
+    }
   }
 }

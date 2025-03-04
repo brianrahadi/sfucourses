@@ -19,6 +19,8 @@ export interface CourseOffering {
 
 export interface CourseWithSectionDetails {
   dept: string; // CMPT
+  title: string;
+  units: string;
   number: string; // 225
   term: string; // Fall 2024
   sections: SectionDetail[];

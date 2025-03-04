@@ -65,7 +65,9 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
   return (
     <div
       key={"s" + offering.term + offering.dept + offering.number}
-      className="offering"
+      className={`offering ${
+        type === "SELECTED_COURSES" ? "selected-courses-offering" : ""
+      }`}
     >
       {shownSections.map((section, index) => {
         const schedules = section.schedules || [];
@@ -156,7 +158,12 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
         }
 
         return (
-          <div key={section.classNumber} className="section-container">
+          <div
+            key={section.classNumber}
+            className={`section-container ${
+              type === "SELECTED_COURSES" ? "selected-course-section" : ""
+            }`}
+          >
             <div className="section-header">
               <div className="section-header__first">
                 <span className="icon-text-container">
@@ -204,43 +211,45 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                   {section.deliveryMethod !== "Online"
                     ? section.schedules[0].campus || "-"
                     : "Online"}
-                  {/* {`${section.deliveryMethod} - ${section.schedules[0].campus}`} */}
                 </span>
               </div>
             </div>
 
-            <div className="section-schedule-container">
-              {section.schedules.map((sched) => (
-                <div
-                  key={"w" + sched.days + sched.startDate}
-                  className="section-schedule-row"
-                >
-                  <span
-                    className="icon-text-container"
-                    style={{ minWidth: "3rem" }} // hard-coded min width for same width
+            {/* Only show schedule details for non-selected courses */}
+            {type !== "SELECTED_COURSES" && (
+              <div className="section-schedule-container">
+                {section.schedules.map((sched) => (
+                  <div
+                    key={"w" + sched.days + sched.startDate}
+                    className="section-schedule-row"
                   >
-                    <CiCalendar />
-                    {sched.days || "-"}
-                  </span>
-                  <span
-                    className="icon-text-container"
-                    style={{ minWidth: "6.5rem" }}
-                  >
-                    <CiClock1 />
-                    {`${sched.startTime} - ${sched.endTime}`}
-                  </span>
-                  <span
-                    className="icon-text-container"
-                    style={{ minWidth: "2rem" }}
-                  >
-                    <FaTimeline />
-                    {`${formatShortDate(sched.startDate)} - ${formatShortDate(
-                      sched.endDate
-                    )}`}
-                  </span>
-                </div>
-              ))}
-            </div>
+                    <span
+                      className="icon-text-container"
+                      style={{ minWidth: "3rem" }}
+                    >
+                      <CiCalendar />
+                      {sched.days || "-"}
+                    </span>
+                    <span
+                      className="icon-text-container"
+                      style={{ minWidth: "6.5rem" }}
+                    >
+                      <CiClock1 />
+                      {`${sched.startTime} - ${sched.endTime}`}
+                    </span>
+                    <span
+                      className="icon-text-container"
+                      style={{ minWidth: "2rem" }}
+                    >
+                      <FaTimeline />
+                      {`${formatShortDate(sched.startDate)} - ${formatShortDate(
+                        sched.endDate
+                      )}`}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         );
       })}

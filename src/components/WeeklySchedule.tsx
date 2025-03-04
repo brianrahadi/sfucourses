@@ -306,8 +306,8 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
               .filter((course) => course.day === day)
               .map((course) => {
                 const topOffset =
-                  ((course.startTime - startHour * 60) / 60) * 45; // Increased from 30 to 45
-                const height = (course.duration / 60) * 45; // Increased from 30 to 45
+                  ((course.startTime - startHour * 60) / 60) * 45;
+                const height = (course.duration / 60) * 45;
                 return (
                   <div
                     key={course.id}

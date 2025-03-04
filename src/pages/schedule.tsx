@@ -32,6 +32,7 @@ import { useSearchParams } from "next/navigation";
 import { insertUrlParam, removeUrlParameter } from "@utils/url";
 import { filterCoursesByClassNumbers } from "@utils/courseFilters";
 import { numberWithCommas, toTermCode } from "@utils/format";
+import CompactSelectedCourses from "src/components/CompactSelectedCourses";
 
 interface SchedulePageProps {
   initialSections?: CourseOutlineWithSectionDetails[];
@@ -311,6 +312,18 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
         </section>
         <section className="schedule-section">
           <div className="schedule-section__header">
+            <div className="flex-row">
+              <CopyLinkButton
+                hasSelectedCourses={selectedOutlinesWithSections.length > 0}
+              />
+              <CopyScheduleButton
+                hasSelectedCourses={selectedOutlinesWithSections.length > 0}
+              />
+              <DownloadCalButton
+                coursesWithSections={selectedOutlinesWithSections}
+                term={selectedTerm}
+              />
+            </div>
             <ScheduleManager
               coursesWithSections={selectedOutlinesWithSections}
               setCoursesWithSections={setSelectedOutlinesWithSections}
@@ -321,41 +334,42 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
               }}
               termOptions={termOptions}
             />
-            <ButtonGroup
+            {/* <ButtonGroup
               className="view-column-button-group"
               options={["Two-column", "Three-column"]}
               onSelect={setViewColumns}
               selectedOption={viewColumns}
-            />
+            /> */}
           </div>
           <div className="schedule-section__content">
-            <div className="selected-courses">
-              <h3 className="section-title">
-                Selected Courses - {selectedTerm}
-              </h3>
+            <CompactSelectedCourses
+              selectedCourses={selectedOutlinesWithSections}
+              onRemoveCourse={(course, classNumber) => {
+                setSelectedOutlinesWithSections((prev) => {
+                  return prev
+                    .flatMap((c) => {
+                      if (c.dept + c.number !== course.dept + course.number) {
+                        return c;
+                      }
 
-              <div className="selected-courses__items">
-                {selectedOutlinesWithSections.length > 0 ? (
-                  selectedOutlinesWithSections.map((outline) => (
-                    <CourseCard
-                      key={"selected" + outline.dept + outline.number}
-                      course={outline as any}
-                      query={query}
-                      sectionDetails={outline}
-                      showDescription={false}
-                      isLink={false}
-                      setOfferings={{
-                        fn: setSelectedOutlinesWithSections,
-                        type: "REMOVE",
-                      }}
-                      type="SELECTED_COURSES"
-                    />
-                  ))
-                ) : (
-                  <p className="gray-text">No selected courses yet</p>
-                )}
-              </div>
-            </div>
+                      const updatedSections = c.sections.filter(
+                        (section) => section.classNumber !== classNumber
+                      );
+
+                      if (updatedSections.length === 0) {
+                        return [];
+                      }
+
+                      return {
+                        ...c,
+                        sections: updatedSections,
+                      };
+                    })
+                    .filter(Boolean);
+                });
+              }}
+              term={selectedTerm}
+            />
             <div className="schedule-container">
               <WeeklySchedule
                 coursesWithSections={selectedOutlinesWithSections}
@@ -370,18 +384,6 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
                       enableBgColor
                     />
                   ))}
-                </div>
-                <div className="utility-button-group">
-                  <CopyLinkButton
-                    hasSelectedCourses={selectedOutlinesWithSections.length > 0}
-                  />
-                  <CopyScheduleButton
-                    hasSelectedCourses={selectedOutlinesWithSections.length > 0}
-                  />
-                  <DownloadCalButton
-                    coursesWithSections={selectedOutlinesWithSections}
-                    term={selectedTerm}
-                  />
                 </div>
               </div>
             </div>
