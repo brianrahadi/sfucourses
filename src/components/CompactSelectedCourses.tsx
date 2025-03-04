@@ -22,9 +22,11 @@ const CompactSelectedCourses: React.FC<CompactSelectedCoursesProps> = ({
     <div className="selected-courses">
       <h3 className="section-title">
         Selected Course - {term} (
-        {selectedCourses
-          .map((c) => +c.units)
-          .reduce((prev, curr) => curr + Number(prev))}{" "}
+        {selectedCourses.length > 0
+          ? selectedCourses
+              .map((c) => +c.units)
+              .reduce((prev, curr) => curr + Number(prev))
+          : 0}{" "}
         units)
       </h3>
 

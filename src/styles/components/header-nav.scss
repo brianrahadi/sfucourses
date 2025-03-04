@@ -1,21 +1,22 @@
 @import "../variables.scss";
 
+/* Main header navigation styles */
 .header-nav {
   background: transparent;
   transition: transform 0.3s ease, background-color 0.3s ease;
   position: fixed;
   width: 100%;
   top: 0;
-  z-index: 100; // Higher z-index to stay above sticky elements
+  z-index: 100;
 
   &.header-hidden {
     transform: translateY(-100%);
   }
 
   &.header-scrolled {
-    background-color: rgba(20, 21, 21, 0.85); // Semi-transparent dark gray
-    backdrop-filter: blur(8px); // Adds a subtle blur effect for modern browsers
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); // Subtle shadow for depth
+    background-color: rgba(20, 21, 21, 0.85);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   }
 
   &__primary {
@@ -39,138 +40,105 @@
     left: 0;
     right: 0;
 
-    & > a {
-      cursor: pointer;
-      z-index: 20;
-    }
-
     &.container {
       padding-top: 1rem;
       padding-bottom: 1rem;
     }
+  }
 
-    input[type="checkbox"] {
-      display: none;
+  /* Desktop Navigation */
+  .desktop-nav {
+    display: flex;
+    gap: 1.5rem;
 
-      @media screen and (max-width: 869px) {
-        &:checked {
-          & ~ label .menu-icon .line {
-            &:first-child {
-              transform: rotate(225deg) translate(-3px, -4px);
-            }
-
-            &:last-child {
-              transform: rotate(-225deg) translate(-3px, 4px);
-            }
-          }
-
-          & ~ .content {
-            position: absolute;
-            display: flex;
-            flex-direction: column;
-            background-color: var(--colour-neutral-1100);
-            inset: 0;
-            height: 100vh;
-            width: 100vw;
-            justify-content: center;
-            visibility: visible;
-            opacity: 1;
-
-            .pages {
-              font-size: 2rem;
-              flex-direction: column;
-              align-items: center;
-
-              & > * {
-                opacity: 0;
-                animation: fade-up 0.5s $easing-cubic-bezier forwards;
-
-                &:nth-child(2) {
-                  animation-delay: 0.1s;
-                }
-                &:nth-child(3) {
-                  animation-delay: 0.2s;
-                }
-                &:nth-child(4) {
-                  animation-delay: 0.3s;
-                }
-                &:nth-child(5) {
-                  animation-delay: 0.3s;
-                }
-                &:nth-child(6) {
-                  animation-delay: 0.4s;
-                }
-              }
-            }
-
-            .socials {
-              opacity: 0;
-              animation: fade-up 0.5s $easing-cubic-bezier forwards;
-              animation-delay: 0.4s;
-            }
-          }
-        }
-      }
-    }
-
-    label {
-      z-index: 20;
-
-      .menu-icon {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        width: 2rem;
-        height: 0.75rem;
-        cursor: pointer;
-
-        .line {
-          width: 100%;
-          height: 20%;
-          background-color: var(--colour-neutral-000);
-          transition: all 0.3s $easing-cubic-bezier;
-        }
-
-        @media screen and (min-width: 869px) {
-          display: none;
-        }
-      }
+    @media screen and (max-width: 869px) {
+      display: none; /* Hide on mobile */
     }
 
     .page-link {
       color: var(--colour-neutral-000);
       padding: 10px;
       text-decoration: none;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: var(--colour-sosy-green-500);
+      }
     }
+  }
+}
 
-    .content {
+/* Mobile Bottom Navigation */
+.mobile-bottom-nav {
+  display: none; /* Hidden by default (for desktop) */
+
+  @media screen and (max-width: 869px) {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background-color: rgba(25, 26, 26, 0.95);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+    z-index: 101;
+
+    .mobile-nav-item {
+      flex: 1;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      transition: opacity 0.3s $easing-cubic-bezier;
-      font-size: 1.25rem;
+      justify-content: center;
+      color: var(--colour-neutral-300);
+      text-decoration: none;
+      padding: 8px 0;
+      transition: all 0.2s ease;
+      position: relative; /* For absolute positioning of active indicator */
 
-      @media screen and (max-width: 869px) {
-        opacity: 0;
-        visibility: hidden;
-        display: none;
+      span {
+        font-size: 0.7rem;
+        margin-top: 4px;
       }
 
-      .pages {
-        display: flex;
-        justify-content: space-evenly;
+      &:hover {
+        color: var(--colour-sosy-green-500);
+
+        svg {
+          stroke: var(--colour-sosy-green-500);
+        }
       }
 
-      .socials {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 10px;
+      &.active {
+        color: var(--colour-sosy-green-500);
 
-        a {
-          margin: 1px;
-          padding-right: 10px;
+        svg {
+          stroke: var(--colour-sosy-green-500);
+        }
+
+        &::after {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 25px;
+          height: 3px;
+          background-color: var(--colour-sosy-green-500);
+          border-radius: 0 0 3px 3px;
         }
       }
     }
+  }
+}
+
+/* Add bottom padding to main components to accommodate the mobile navigation */
+@media screen and (max-width: 869px) {
+  .page {
+    padding-bottom: 70px;
+  }
+
+  .footer {
+    padding-bottom: 70px;
   }
 }

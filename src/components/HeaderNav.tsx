@@ -1,11 +1,22 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import { GlobalSearch } from "./GlobalSearch";
+import { Home, Search, Calendar, HelpCircle, Database } from "react-feather";
 
 export const HeaderNav: React.FC = () => {
+  const router = useRouter();
   const [isVisible, setIsVisible] = useState(true);
   const [hasScrolled, setHasScrolled] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
+
+  // Function to check if a path is active
+  const isActivePath = (path: string): boolean => {
+    if (path === "/" && router.pathname === "/") {
+      return true;
+    }
+    return path !== "/" && router.pathname.startsWith(path);
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,36 +44,24 @@ export const HeaderNav: React.FC = () => {
   }, [lastScrollY]);
 
   return (
-    <div
-      className={`header-nav ${!isVisible ? "header-hidden" : ""} ${
-        hasScrolled ? "header-scrolled" : ""
-      }`}
-    >
-      <div className="container">
-        <div className="header-nav__primary">
-          <Link href="/" className="page-link">
-            <h2>sfucourses</h2>
-          </Link>
+    <>
+      <div
+        className={`header-nav ${!isVisible ? "header-hidden" : ""} ${
+          hasScrolled ? "header-scrolled" : ""
+        }`}
+      >
+        <div className="container">
+          <div className="header-nav__primary">
+            <Link href="/" className="page-link">
+              <h2>sfucourses</h2>
+            </Link>
 
-          {/* Global Search - now using the modal version */}
-          <GlobalSearch />
-        </div>
+            {/* Global Search */}
+            <GlobalSearch />
+          </div>
 
-        <input
-          type="checkbox"
-          className="mobile-only menu-toggle"
-          id="menu-toggle"
-        />
-
-        <label htmlFor="menu-toggle">
-          <a className="menu-icon">
-            <div className="line"></div>
-            <div className="line"></div>
-          </a>
-        </label>
-
-        <div className="content">
-          <nav className="pages">
+          {/* Desktop Navigation */}
+          <nav className="desktop-nav">
             <Link href="/explore" className="page-link">
               explore
             </Link>
@@ -83,7 +82,52 @@ export const HeaderNav: React.FC = () => {
           </nav>
         </div>
       </div>
-    </div>
+
+      {/* Mobile Bottom Navigation */}
+      <div className="mobile-bottom-nav">
+        <Link
+          href="/"
+          className={`mobile-nav-item ${isActivePath("/") ? "active" : ""}`}
+        >
+          <Home size={20} />
+          <span>Home</span>
+        </Link>
+        <Link
+          href="/explore"
+          className={`mobile-nav-item ${
+            isActivePath("/explore") ? "active" : ""
+          }`}
+        >
+          <Search size={20} />
+          <span>Explore</span>
+        </Link>
+        <Link
+          href="/schedule"
+          className={`mobile-nav-item ${
+            isActivePath("/schedule") ? "active" : ""
+          }`}
+        >
+          <Calendar size={20} />
+          <span>Schedule</span>
+        </Link>
+        <Link
+          href="/faq"
+          className={`mobile-nav-item ${isActivePath("/faq") ? "active" : ""}`}
+        >
+          <HelpCircle size={20} />
+          <span>FAQ</span>
+        </Link>
+        <Link
+          href="https://api.sfucourses.com"
+          className="mobile-nav-item"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <Database size={20} />
+          <span>API</span>
+        </Link>
+      </div>
+    </>
   );
 };
 
