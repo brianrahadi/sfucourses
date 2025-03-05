@@ -2,6 +2,7 @@
 
 // Button in header
 .global-search-button {
+  right: 0;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -16,7 +17,6 @@
   }
 
   .search-label {
-    // display: none;
     margin-right: 0.25rem;
 
     @include viewport(desktop) {
@@ -25,9 +25,13 @@
   }
 
   .search-shortcut {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
+    display: none;
+
+    @include viewport(desktop) {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
 
     kbd {
       background-color: var(--colour-neutral-900);

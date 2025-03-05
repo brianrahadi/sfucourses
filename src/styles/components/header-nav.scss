@@ -310,7 +310,6 @@
   }
 }
 
-/* Add bottom padding to main components to accommodate the mobile navigation */
 @media screen and (max-width: 869px) {
   .page {
     padding-bottom: 70px;
@@ -318,5 +317,28 @@
 
   .footer {
     padding-bottom: 70px;
+  }
+
+  .header-nav {
+    .container {
+      padding-left: 1rem;
+      padding-right: 1rem;
+
+      h2 {
+        font-size: 1.5rem;
+      }
+    }
+
+    &__primary {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      /* Logo link should not expand */
+      .page-link {
+        flex: 0 0 auto;
+      }
+    }
   }
 }

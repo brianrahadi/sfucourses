@@ -202,7 +202,6 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = () => {
     };
   }, [showModal]);
 
-  // Filter results when query changes
   useEffect(() => {
     if (query.length < 2 || !searchData) {
       setFilteredResults([]);
@@ -218,20 +217,16 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = () => {
       }
     );
 
-    // Limit to 15 results for better performance and UX
     setFilteredResults(results.slice(0, 15));
-    // Reset selected index when results change
     setSelectedIndex(-1);
   }, [query, searchData]);
 
-  // Handle keyboard navigation within results
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (filteredResults.length === 0) return;
 
     if (e.key === "ArrowDown") {
       e.preventDefault();
 
-      // Prevent conflicting with mouse scrolling
       if (isScrolling) {
         setIsScrolling(false);
         return;
@@ -300,7 +295,6 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = () => {
 
   return (
     <>
-      {/* Search Button in Header */}
       <div className="global-search-button" onClick={() => setShowModal(true)}>
         <Search size={20} />
         <span className="search-label">Search</span>
@@ -311,7 +305,6 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = () => {
         </div>
       </div>
 
-      {/* Search Modal */}
       {showModal && (
         <div className="global-search-modal">
           <div className="global-search-modal-content" ref={modalRef}>
