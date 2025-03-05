@@ -137,7 +137,6 @@
   }
 }
 
-// For smaller height screens
 @media (max-height: 800px) {
   .weekly-schedule {
     .time-slot,
@@ -161,16 +160,15 @@
   }
 }
 
-// For extremely small screens
-@media (max-height: 700px) {
-  .weekly-schedule {
-    .time-slot,
-    .time-label {
-      height: 15px;
-    }
+// @media (max-height: 700px) {
+//   .weekly-schedule {
+//     .time-slot,
+//     .time-label {
+//       height: 15px;
+//     }
 
-    .course-block {
-      font-size: 0.65rem;
-    }
-  }
-}
+//     .course-block {
+//       font-size: 0.65rem;
+//     }
+//   }
+// }
