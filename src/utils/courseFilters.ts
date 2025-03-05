@@ -188,3 +188,34 @@ export const filterCoursesByDesignations = (
     });
   });
 };
+
+export const filterCoursesByCampus = (
+  courses: CourseOutlineWithSectionDetails[],
+  campus: string
+): CourseOutlineWithSectionDetails[] => {
+  if (!campus) {
+    return courses; // Return all courses if no campus is selected
+  }
+
+  // Special handling for "Online" campus
+  if (campus === "Online") {
+    return courses.filter((course) =>
+      course.sections.some(
+        (section) =>
+          section.deliveryMethod === "Online" ||
+          section.schedules.some(
+            (schedule) =>
+              schedule.campus?.toLowerCase() === "online" ||
+              (!schedule.campus && section.deliveryMethod === "Online")
+          )
+      )
+    );
+  }
+
+  // Filter for physical campuses
+  return courses.filter((course) =>
+    course.sections.some((section) =>
+      section.schedules.some((schedule) => schedule.campus?.includes(campus))
+    )
+  );
+};

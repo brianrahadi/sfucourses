@@ -25,6 +25,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import {
   filterCoursesByQuery,
   filterCoursesByTerm,
+  filterCoursesByCampus,
 } from "@utils/courseFilters";
 import { GetStaticProps } from "next";
 import { useLocalStorage } from "@hooks";
@@ -83,6 +84,16 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   const termChangeSource = useRef("initial"); // button or url
   const [hasUserSelectedTerm, setHasUserSelectedTerm] = useState(false);
 
+  // Add campus filter state
+  const [selectedCampus, setSelectedCampus] = useState<string>("");
+  const campusOptions = [
+    "All Campuses",
+    "Burnaby",
+    "Surrey",
+    "Vancouver",
+    "Online",
+  ];
+
   const [viewColumns, setViewColumns] = useLocalStorage<
     "Two-column" | "Three-column"
   >("view", "Three-column");
@@ -126,7 +137,15 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
       const key = searchParams.get("term") as string;
       setSelectedTerm(termMap.get(key) as string);
     }
-  }, [searchParams]);
+
+    // Load campus from URL if present
+    if (searchParams.has("campus")) {
+      const campusParam = searchParams.get("campus") as string;
+      if (campusOptions.includes(campusParam)) {
+        setSelectedCampus(campusParam);
+      }
+    }
+  }, [searchParams, campusOptions]);
 
   useEffect(() => {
     if (!outlinesWithSections) return;
@@ -135,6 +154,13 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
     reverseTermMap.set("Spring 2025", "sp25");
     reverseTermMap.set("Summer 2025", "su25");
     insertUrlParam("term", reverseTermMap.get(selectedTerm) as string);
+
+    // Add campus to URL if selected
+    if (selectedCampus && selectedCampus !== "All Campuses") {
+      insertUrlParam("campus", selectedCampus);
+    } else {
+      removeUrlParameter("campus");
+    }
 
     if (termChangeSource.current === "initial") {
       return;
@@ -155,7 +181,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
         filterCoursesByClassNumbers(filteredOutlines, sectionCodes)
       );
     }
-  }, [searchParams, outlinesWithSections, selectedTerm]);
+  }, [searchParams, outlinesWithSections, selectedTerm, selectedCampus]);
 
   useEffect(() => {
     localStorage.setItem("view", viewColumns);
@@ -205,11 +231,13 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
         filterCoursesByTerm(courses, selectedTerm),
       (courses: CourseOutlineWithSectionDetails[]) =>
         filterCoursesByQuery(courses, query),
+      (courses: CourseOutlineWithSectionDetails[]) =>
+        filterCoursesByCampus(courses, selectedCampus),
     ].reduce((filtered, filterFunc) => filterFunc(filtered), courses);
     return filteredCourses;
   };
 
-  useEffect(onFilterChange, [query, selectedTerm]);
+  useEffect(onFilterChange, [query, selectedTerm, selectedCampus]);
 
   useEffect(() => {
     if (!outlinesWithSections) {
@@ -244,6 +272,11 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
     }
   }, [outlinesWithSections]);
 
+  // Handle campus change
+  const handleCampusChange = (campus: string) => {
+    setSelectedCampus(campus === "All Campuses" ? "" : campus);
+  };
+
   return (
     <div className="page courses-page">
       <Hero title="schedule courses" backgroundImage={HeroImage.src} />
@@ -252,6 +285,19 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
         className={`container ${viewColumns === "Two-column" && "two-column"}`}
       >
         <section className="courses-section">
+          <div className="campus-filter">
+            <select
+              value={selectedCampus || "All Campuses"}
+              onChange={(e) => handleCampusChange(e.target.value)}
+              className="campus-select"
+            >
+              {campusOptions.map((campus) => (
+                <option key={campus} value={campus}>
+                  {campus}
+                </option>
+              ))}
+            </select>
+          </div>
           <div className="courses-section__header">
             <TextBadge
               className="big explore"
@@ -276,12 +322,16 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
               selectedOption={selectedTerm}
             />
           </div>
-          <SearchBar
-            handleInputChange={setQuery}
-            searchSelected={searchSelected}
-            setSearchSelected={setSearchSelected}
-            placeholder="course code, title, or instructor"
-          />
+
+          <div className="search-filter-container">
+            <SearchBar
+              handleInputChange={setQuery}
+              searchSelected={searchSelected}
+              setSearchSelected={setSearchSelected}
+              placeholder="course code, title, or instructor"
+            />
+          </div>
+
           {visibleOutlinesWithSections && (
             <InfiniteScroll
               dataLength={visibleOutlinesWithSections.length}
