@@ -232,7 +232,7 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                     </span>
                     <span
                       className="icon-text-container"
-                      style={{ minWidth: "6.5rem" }}
+                      style={{ minWidth: "7.5rem" }}
                     >
                       <CiClock1 />
                       {`${sched.startTime} - ${sched.endTime}`}
