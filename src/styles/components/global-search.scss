@@ -16,7 +16,6 @@
   }
 
   .search-label {
-    // display: none;
     margin-right: 0.25rem;
 
     @include viewport(desktop) {
@@ -54,190 +53,200 @@
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.75);
-  z-index: 100;
+  z-index: 1000; /* Increased z-index to ensure it's above everything */
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 0;
   backdrop-filter: blur(3px);
   animation: modalFadeIn 0.2s ease-out;
+  overflow: auto; /* Allow scrolling if needed */
 
-  .global-search-modal-content {
-    width: 90%;
-    max-width: 600px;
-    max-height: 70vh; /* Reduced height to ensure it stays centered */
-    background-color: var(--colour-neutral-1100);
-    border-radius: 0.75rem;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    transform: translateY(0);
-    animation: modalSlideIn 0.3s ease-out; /* Add entrance animation */
+  /* Ensure it takes the full viewport */
+  width: 100vw;
+  height: 100vh;
+}
 
-    .global-search-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1.25rem 1.5rem;
-      border-bottom: 1px solid var(--colour-neutral-1000);
+.global-search-modal-content {
+  width: 90%;
+  max-width: 600px;
+  max-height: 70vh;
+  background-color: var(--colour-neutral-1100);
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin: auto; /* Center using margin auto */
+  position: relative; /* Use relative positioning */
+  animation: modalSlideIn 0.3s ease-out;
 
-      h3 {
-        margin: 0;
-        font-size: 1.25rem;
-        color: var(--colour-sosy-green-500);
-      }
+  /* Ensure the modal stays in the viewport */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
 
-      .close-btn {
-        padding: 0.3rem 0.75rem;
-        font-size: 0.9rem;
-      }
+.global-search-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--colour-neutral-1000);
+
+  h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: var(--colour-sosy-green-500);
+  }
+
+  .close-btn {
+    padding: 0.3rem 0.75rem;
+    font-size: 0.9rem;
+  }
+}
+
+.global-search-input {
+  padding: 1rem 1.5rem;
+
+  .modal-search {
+    height: 3rem;
+    background: var(--colour-neutral-1000);
+
+    input {
+      background: var(--colour-neutral-1000);
+      font-size: 1.1rem;
+      width: 100%;
+    }
+  }
+}
+
+.global-search-results {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 1.5rem;
+  max-height: calc(50vh - 120px);
+  scrollbar-width: thin;
+  scrollbar-color: var(--colour-neutral-800) var(--colour-neutral-1000);
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--colour-neutral-1000);
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--colour-neutral-800);
+    border-radius: 4px;
+    border: 2px solid var(--colour-neutral-1000);
+  }
+
+  .search-loading,
+  .search-hint,
+  .no-results {
+    padding: 1.5rem 0;
+    color: var(--colour-neutral-500);
+    text-align: center;
+  }
+
+  .search-hint {
+    p {
+      margin-bottom: 1.5rem;
     }
 
-    .global-search-input {
-      padding: 1rem 1.5rem;
-
-      .modal-search {
-        height: 3rem;
-        background: var(--colour-neutral-1000);
-
-        input {
-          background: var(--colour-neutral-1000);
-          font-size: 1.1rem;
-          width: 100%;
-        }
-      }
-    }
-
-    .global-search-results {
-      flex: 1;
-      overflow-y: auto;
-      padding: 0 1.5rem;
-      max-height: calc(
-        50vh - 120px
-      ); /* Limit height to prevent modal from being too tall */
-      scrollbar-width: thin;
-      scrollbar-color: var(--colour-neutral-800) var(--colour-neutral-1000);
-
-      &::-webkit-scrollbar {
-        width: 8px;
-      }
-
-      &::-webkit-scrollbar-track {
-        background: var(--colour-neutral-1000);
-        border-radius: 4px;
-      }
-
-      &::-webkit-scrollbar-thumb {
-        background-color: var(--colour-neutral-800);
-        border-radius: 4px;
-        border: 2px solid var(--colour-neutral-1000);
-      }
-
-      .search-loading,
-      .search-hint,
-      .no-results {
-        padding: 1.5rem 0;
-        color: var(--colour-neutral-500);
-        text-align: center;
-      }
-
-      .search-hint {
-        p {
-          margin-bottom: 1.5rem;
-        }
-
-        .search-instructions {
-          display: flex;
-          justify-content: center;
-          gap: 1.5rem;
-          flex-wrap: wrap;
-
-          .instruction {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-
-            kbd {
-              background-color: var(--colour-neutral-900);
-              border-radius: 0.25rem;
-              padding: 0.25rem 0.5rem;
-              font-size: 0.85rem;
-              font-family: monospace;
-              color: var(--colour-neutral-300);
-              border: 1px solid var(--colour-neutral-800);
-              box-shadow: 0 2px 0 var(--colour-neutral-800);
-            }
-
-            span {
-              color: var(--colour-neutral-600);
-            }
-          }
-        }
-      }
-
-      .search-results-list {
-        list-style: none;
-        padding: 0;
-        margin: 0 0 1rem 0;
-
-        li {
-          margin-bottom: 0.5rem;
-
-          &.selected {
-            .search-result-item {
-              background-color: var(--colour-sosy-green-900);
-              border-color: var(--colour-sosy-green-700);
-            }
-          }
-
-          .search-result-item {
-            width: 100%;
-            text-align: left;
-            background-color: var(--colour-neutral-1000);
-            border: 1px solid var(--colour-neutral-900);
-            border-radius: 0.5rem;
-            padding: 1rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-
-            &:hover {
-              background-color: var(--colour-neutral-900);
-              border-color: var(--colour-neutral-800);
-            }
-
-            p {
-              font-size: 1rem;
-            }
-
-            .course-code {
-              font-weight: 700;
-              margin-bottom: 0.25rem;
-              color: var(--colour-sosy-green-500);
-            }
-
-            .course-title {
-              color: var(--colour-neutral-300);
-            }
-          }
-        }
-      }
-    }
-
-    .global-search-footer {
-      padding: 1rem 1.5rem;
-      border-top: 1px solid var(--colour-neutral-1000);
+    .search-instructions {
       display: flex;
       justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
 
-      .browse-all-link {
-        color: var(--colour-sosy-green-500);
-        text-decoration: none;
+      .instruction {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
 
-        &:hover {
-          text-decoration: underline;
+        kbd {
+          background-color: var(--colour-neutral-900);
+          border-radius: 0.25rem;
+          padding: 0.25rem 0.5rem;
+          font-size: 0.85rem;
+          font-family: monospace;
+          color: var(--colour-neutral-300);
+          border: 1px solid var(--colour-neutral-800);
+          box-shadow: 0 2px 0 var(--colour-neutral-800);
+        }
+
+        span {
+          color: var(--colour-neutral-600);
         }
       }
+    }
+  }
+
+  .search-results-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem 0;
+
+    li {
+      margin-bottom: 0.5rem;
+
+      &.selected {
+        .search-result-item {
+          background-color: var(--colour-sosy-green-900);
+          border-color: var(--colour-sosy-green-700);
+        }
+      }
+
+      .search-result-item {
+        width: 100%;
+        text-align: left;
+        background-color: var(--colour-neutral-1000);
+        border: 1px solid var(--colour-neutral-900);
+        border-radius: 0.5rem;
+        padding: 1rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background-color: var(--colour-neutral-900);
+          border-color: var(--colour-neutral-800);
+        }
+
+        p {
+          font-size: 1rem;
+        }
+
+        .course-code {
+          font-weight: 700;
+          margin-bottom: 0.25rem;
+          color: var(--colour-sosy-green-500);
+        }
+
+        .course-title {
+          color: var(--colour-neutral-300);
+        }
+      }
+    }
+  }
+}
+
+.global-search-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--colour-neutral-1000);
+  display: flex;
+  justify-content: center;
+
+  .browse-all-link {
+    color: var(--colour-sosy-green-500);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
     }
   }
 }
@@ -277,7 +286,6 @@
   /* Adjust global search button positioning */
   .global-search-button {
     margin-left: auto; /* Push to the right */
-    padding: 0 2rem;
     height: 2.5rem;
     width: fit-content;
     display: flex;
@@ -296,10 +304,16 @@
   }
 
   /* Ensure global search modal is properly positioned on mobile */
-  .global-search-modal {
-    .global-search-modal-content {
-      width: 95%; /* Use more screen width */
-      max-height: 85vh; /* Allow for more height */
-    }
+  .global-search-modal .global-search-modal-content {
+    width: 95%; /* Use more screen width */
+    max-height: 80vh; /* Allow for more height on mobile */
   }
+}
+
+/* Prevent scrolling on body when modal is open */
+body.modal-open {
+  overflow: hidden !important;
+  position: fixed;
+  width: 100%;
+  height: 100%;
 }

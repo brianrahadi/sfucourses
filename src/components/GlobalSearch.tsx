@@ -44,33 +44,40 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = () => {
   const selectedItemRef = useRef<HTMLLIElement>(null);
   const router = useRouter();
 
-  // Detect platform after component mounts
+  const [scrollPosition, setScrollPosition] = useState(0);
+
   useEffect(() => {
     setIsMac(isMacPlatform());
   }, []);
 
-  // Effect to lock body scroll when modal is open
   useEffect(() => {
     if (showModal) {
-      // Lock scroll
-      document.body.style.overflow = "hidden";
+      // Store current scroll position
+      const currentScrollPosition = window.pageYOffset;
+      setScrollPosition(currentScrollPosition);
 
-      // Add class for additional styling if needed
+      // Add class for locking scroll and additional styling
       document.body.classList.add("modal-open");
-    } else {
-      // Restore scroll
-      document.body.style.overflow = "";
 
-      // Remove class
+      // Apply fixed positioning to the body
+      document.body.style.top = `-${currentScrollPosition}px`;
+    } else {
+      // Restore scroll when modal is closed
       document.body.classList.remove("modal-open");
+      document.body.style.top = "";
+
+      // Only scroll back to position if we've stored a position
+      if (scrollPosition) {
+        window.scrollTo(0, scrollPosition);
+      }
     }
 
     // Cleanup function to ensure scroll is restored on unmount
     return () => {
-      document.body.style.overflow = "";
       document.body.classList.remove("modal-open");
+      document.body.style.top = "";
     };
-  }, [showModal]);
+  }, [showModal, scrollPosition]);
 
   // Handle clicking outside the modal to close it
   useEffect(() => {
