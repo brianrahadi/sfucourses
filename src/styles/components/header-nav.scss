@@ -233,7 +233,9 @@
 
     .page-link {
       color: var(--colour-neutral-000);
-      padding: 10px;
+      // padding: 10px;
+      font-size: 1.3rem;
+      // font-weight: bold;
       text-decoration: none;
       transition: color 0.2s ease;
 

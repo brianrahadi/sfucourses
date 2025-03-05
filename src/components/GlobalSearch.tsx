@@ -3,8 +3,9 @@ import { SearchBar } from "./SearchBar";
 import { useRouter } from "next/router";
 import { useQuery } from "@tanstack/react-query";
 import { getCourseAPIData } from "@utils";
-import { Link, Search } from "react-feather";
+import { Search } from "react-feather";
 import { Button } from "./Button";
+import Link from "next/link";
 
 interface GlobalSearchProps {
   placeholder?: string;
@@ -342,9 +343,6 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = () => {
                 <div className="search-loading">Loading courses...</div>
               ) : query.length < 2 ? (
                 <div className="search-hint">
-                  <p>
-                    Try searching for a course code (e.g., CMPT 225) or topic
-                  </p>
                   <div className="search-instructions">
                     <div className="instruction">
                       <kbd>↑</kbd>
@@ -396,7 +394,11 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = () => {
             </div>
 
             <div className="global-search-footer">
-              <Link href="/explore" className="browse-all-link">
+              <Link
+                href="/explore"
+                className="browse-all-link"
+                onClick={() => setShowModal(false)}
+              >
                 Browse all courses
               </Link>
             </div>
