@@ -128,21 +128,16 @@
 
     .time-text {
       font-size: 0.7rem;
-      /* Fix for 30-minute offset issue on real mobile devices */
-      transform: translateY(0); /* Ensure no unexpected transformation */
-      top: -10px; /* Maintain consistent positioning */
     }
 
     .course-block {
       font-size: 0.7rem;
       padding: 1px 2px;
-      /* Ensure accurate positioning on mobile */
-      transform: translateY(0); /* Reset any transform that might be applied */
     }
   }
 }
 
-/* Height-responsive styles */
+// For smaller height screens
 @media (max-height: 800px) {
   .weekly-schedule {
     .time-slot,
@@ -166,7 +161,7 @@
   }
 }
 
-/* Extremely small screens */
+// For extremely small screens
 @media (max-height: 700px) {
   .weekly-schedule {
     .time-slot,
@@ -176,31 +171,6 @@
 
     .course-block {
       font-size: 0.65rem;
-    }
-  }
-}
-
-/* Mobile-specific fixes for time block positioning */
-@media screen and (max-width: 767px) {
-  .weekly-schedule {
-    /* Fix for time slot positioning */
-    .course-block {
-      /* Prevent any accidental offsets from touch screen handling */
-      top: auto !important; /* Use the top value calculated by JS without modification */
-      transform: none; /* Ensure no transforms affect positioning */
-      transition: none; /* Disable transitions that could affect positioning */
-
-      /* Ensure accurate dimensions */
-      box-sizing: border-box;
-    }
-
-    /* Fix for time labels text alignment */
-    .time-text {
-      position: absolute;
-      right: 1px;
-      top: -10px;
-      transform: none; /* Reset any transforms */
-      line-height: 1; /* Ensure consistent line height */
     }
   }
 }

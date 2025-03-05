@@ -84,16 +84,10 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
   const [initialWeekDate, setInitialWeekDate] = useState<Date | null>(null);
   const [slotHeight, setSlotHeight] = useState(20); // Default slot height
   const scheduleRef = useRef<HTMLDivElement>(null);
-  const [isMobile, setIsMobile] = useState(false);
 
-  // Effect to handle responsive slot height and detect mobile devices
+  // Effect to handle responsive slot height
   useEffect(() => {
     const handleResize = () => {
-      // Check if device is mobile
-      const isMobileView = window.innerWidth <= 767;
-      setIsMobile(isMobileView);
-
-      // Set slot height based on screen height
       if (window.innerHeight <= 700) {
         setSlotHeight(15);
       } else if (window.innerHeight <= 800) {
@@ -103,7 +97,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
       }
     };
 
-    // Set initial values
+    // Set initial value
     handleResize();
 
     // Add event listener
@@ -281,13 +275,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
     // Calculate height based on duration
     const height = (course.duration / 60) * hourHeight;
 
-    // Apply a correction for mobile devices if needed
-    const mobileCorrection = isMobile ? 0 : 0; // No offset needed with CSS fix
-
-    return {
-      topOffset: topOffset + mobileCorrection,
-      height,
-    };
+    return { topOffset, height };
   };
 
   return (
