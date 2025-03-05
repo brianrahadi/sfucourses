@@ -323,10 +323,6 @@
     .container {
       padding-left: 1rem;
       padding-right: 1rem;
-
-      h2 {
-        font-size: 1.5rem;
-      }
     }
 
     &__primary {
@@ -335,7 +331,6 @@
       justify-content: space-between;
       align-items: center;
 
-      /* Logo link should not expand */
       .page-link {
         flex: 0 0 auto;
       }

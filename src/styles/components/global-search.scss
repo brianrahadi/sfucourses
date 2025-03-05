@@ -2,7 +2,6 @@
 
 // Button in header
 .global-search-button {
-  right: 0;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -17,6 +16,7 @@
   }
 
   .search-label {
+    // display: none;
     margin-right: 0.25rem;
 
     @include viewport(desktop) {
@@ -25,13 +25,9 @@
   }
 
   .search-shortcut {
-    display: none;
-
-    @include viewport(desktop) {
-      display: flex;
-      align-items: center;
-      gap: 0.25rem;
-    }
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
 
     kbd {
       background-color: var(--colour-neutral-900);
@@ -58,23 +54,26 @@
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.75);
-  z-index: 1000;
+  z-index: 100;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  padding-top: 5rem;
+  align-items: center;
+  padding: 0;
   backdrop-filter: blur(3px);
+  animation: modalFadeIn 0.2s ease-out;
 
   .global-search-modal-content {
     width: 90%;
     max-width: 600px;
-    max-height: 80vh;
+    max-height: 70vh; /* Reduced height to ensure it stays centered */
     background-color: var(--colour-neutral-1100);
     border-radius: 0.75rem;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    transform: translateY(0);
+    animation: modalSlideIn 0.3s ease-out; /* Add entrance animation */
 
     .global-search-header {
       display: flex;
@@ -112,9 +111,11 @@
 
     .global-search-results {
       flex: 1;
-      max-height: 400px;
       overflow-y: auto;
       padding: 0 1.5rem;
+      max-height: calc(
+        50vh - 120px
+      ); /* Limit height to prevent modal from being too tall */
       scrollbar-width: thin;
       scrollbar-color: var(--colour-neutral-800) var(--colour-neutral-1000);
 
@@ -237,6 +238,68 @@
           text-decoration: underline;
         }
       }
+    }
+  }
+}
+
+/* Modal animations */
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile Specific Styling */
+@media screen and (max-width: 869px) {
+  .header-nav .container {
+    justify-content: space-between;
+  }
+
+  .header-nav__primary {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  /* Adjust global search button positioning */
+  .global-search-button {
+    margin-left: auto; /* Push to the right */
+    padding: 0 2rem;
+    height: 2.5rem;
+    width: fit-content;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 1rem;
+
+    .search-shortcut {
+      display: none;
+    }
+
+    /* Center the search icon */
+    svg {
+      margin: 0;
+    }
+  }
+
+  /* Ensure global search modal is properly positioned on mobile */
+  .global-search-modal {
+    .global-search-modal-content {
+      width: 95%; /* Use more screen width */
+      max-height: 85vh; /* Allow for more height */
     }
   }
 }

@@ -49,6 +49,29 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = () => {
     setIsMac(isMacPlatform());
   }, []);
 
+  // Effect to lock body scroll when modal is open
+  useEffect(() => {
+    if (showModal) {
+      // Lock scroll
+      document.body.style.overflow = "hidden";
+
+      // Add class for additional styling if needed
+      document.body.classList.add("modal-open");
+    } else {
+      // Restore scroll
+      document.body.style.overflow = "";
+
+      // Remove class
+      document.body.classList.remove("modal-open");
+    }
+
+    // Cleanup function to ensure scroll is restored on unmount
+    return () => {
+      document.body.style.overflow = "";
+      document.body.classList.remove("modal-open");
+    };
+  }, [showModal]);
+
   // Handle clicking outside the modal to close it
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -202,6 +225,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = () => {
     };
   }, [showModal]);
 
+  // Filter results when query changes
   useEffect(() => {
     if (query.length < 2 || !searchData) {
       setFilteredResults([]);
@@ -217,16 +241,20 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = () => {
       }
     );
 
+    // Limit to 15 results for better performance and UX
     setFilteredResults(results.slice(0, 15));
+    // Reset selected index when results change
     setSelectedIndex(-1);
   }, [query, searchData]);
 
+  // Handle keyboard navigation within results
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (filteredResults.length === 0) return;
 
     if (e.key === "ArrowDown") {
       e.preventDefault();
 
+      // Prevent conflicting with mouse scrolling
       if (isScrolling) {
         setIsScrolling(false);
         return;
@@ -293,9 +321,24 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = () => {
     setSelectedIndex(index);
   };
 
+  // Open and close modal handlers for better organization
+  const openSearchModal = () => {
+    // Reset any state that might affect positioning
+    setSelectedIndex(-1);
+    setFilteredResults([]);
+    setQuery("");
+    // Then show modal
+    setShowModal(true);
+  };
+
+  const closeSearchModal = () => {
+    setShowModal(false);
+  };
+
   return (
     <>
-      <div className="global-search-button" onClick={() => setShowModal(true)}>
+      {/* Search Button in Header */}
+      <div className="global-search-button" onClick={openSearchModal}>
         <Search size={20} />
         <span className="search-label">Search</span>
         <div className="search-shortcut">
@@ -305,14 +348,20 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = () => {
         </div>
       </div>
 
+      {/* Search Modal */}
       {showModal && (
-        <div className="global-search-modal">
+        <div
+          className="global-search-modal"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) closeSearchModal();
+          }}
+        >
           <div className="global-search-modal-content" ref={modalRef}>
             <div className="global-search-header">
               <h3>Search Courses</h3>
               <Button
                 label="Close"
-                onClick={() => setShowModal(false)}
+                onClick={closeSearchModal}
                 type="secondary"
                 className="close-btn"
               />
@@ -390,7 +439,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = () => {
               <Link
                 href="/explore"
                 className="browse-all-link"
-                onClick={() => setShowModal(false)}
+                onClick={closeSearchModal}
               >
                 Browse all courses
               </Link>
