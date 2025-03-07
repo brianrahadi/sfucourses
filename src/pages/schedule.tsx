@@ -9,8 +9,8 @@ import {
   CopyScheduleButton,
   DownloadCalButton,
   ScheduleManager,
-  CompactSelectedCourses,
   ConflictFilterButton,
+  CompactSelectedCourses,
 } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useEffect, useRef, useState } from "react";
@@ -274,6 +274,21 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
       >
         <section className="courses-section">
           <div className="courses-section__header">
+            <div className="term-filter-row">
+              <ButtonGroup
+                options={termOptions}
+                onSelect={(value) => {
+                  setHasUserSelectedTerm(true); // Mark that user has manually selected a term
+                  setSelectedTerm(value);
+                  termChangeSource.current = "button";
+                }}
+                selectedOption={selectedTerm}
+              />
+              <ConflictFilterButton
+                isActive={filterConflicts}
+                onClick={() => setFilterConflicts(!filterConflicts)}
+              />
+            </div>
             <TextBadge
               className="big explore"
               content={`exploring 
@@ -288,15 +303,6 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
                 : "course"
             }`}
             />
-            <ButtonGroup
-              options={termOptions}
-              onSelect={(value) => {
-                setHasUserSelectedTerm(true); // Mark that user has manually selected a term
-                setSelectedTerm(value);
-                termChangeSource.current = "button";
-              }}
-              selectedOption={selectedTerm}
-            />
           </div>
           <div className="search-filter-row">
             <SearchBar
@@ -304,10 +310,6 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
               searchSelected={searchSelected}
               setSearchSelected={setSearchSelected}
               placeholder="course code, title, or instructor"
-            />
-            <ConflictFilterButton
-              isActive={filterConflicts}
-              onClick={() => setFilterConflicts(!filterConflicts)}
             />
           </div>
           {visibleOutlinesWithSections && (
