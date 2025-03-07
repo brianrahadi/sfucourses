@@ -4,13 +4,12 @@ import {
   CourseCard,
   SearchBar,
   WeeklySchedule,
-  ButtonGroup,
   CopyLinkButton,
   CopyScheduleButton,
   DownloadCalButton,
   ScheduleManager,
-  ConflictFilterButton,
   CompactSelectedCourses,
+  ConflictFilterButton,
 } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useEffect, useRef, useState } from "react";
@@ -38,6 +37,8 @@ import {
   filterConflictingCourses,
   filterConflictingCoursesWithOutlines,
 } from "@utils/conflictFilter";
+import { LuFlower } from "react-icons/lu";
+import { BsSun } from "react-icons/bs";
 
 interface SchedulePageProps {
   initialSections?: CourseOutlineWithSectionDetails[];
@@ -275,15 +276,22 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
         <section className="courses-section">
           <div className="courses-section__header">
             <div className="term-filter-row">
-              <ButtonGroup
-                options={termOptions}
-                onSelect={(value) => {
-                  setHasUserSelectedTerm(true); // Mark that user has manually selected a term
-                  setSelectedTerm(value);
+              <button
+                className="term-toggle-button active"
+                onClick={() => {
+                  const nextTermIndex =
+                    termOptions.indexOf(selectedTerm) === 0 ? 1 : 0;
+                  setHasUserSelectedTerm(true);
+                  setSelectedTerm(termOptions[nextTermIndex]);
                   termChangeSource.current = "button";
                 }}
-                selectedOption={selectedTerm}
-              />
+              >
+                {selectedTerm.includes("Spring") && (
+                  <LuFlower color="skyblue" />
+                )}
+                {selectedTerm.includes("Summer") && <BsSun color="orange" />}
+                {selectedTerm}
+              </button>
               <ConflictFilterButton
                 isActive={filterConflicts}
                 onClick={() => setFilterConflicts(!filterConflicts)}
