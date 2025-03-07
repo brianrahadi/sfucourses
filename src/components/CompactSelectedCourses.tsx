@@ -13,7 +13,7 @@ interface CompactSelectedCoursesProps {
   term: string;
 }
 
-const CompactSelectedCourses: React.FC<CompactSelectedCoursesProps> = ({
+export const CompactSelectedCourses: React.FC<CompactSelectedCoursesProps> = ({
   selectedCourses,
   onRemoveCourse,
   term,
@@ -84,5 +84,3 @@ const CompactSelectedCourses: React.FC<CompactSelectedCoursesProps> = ({
     </div>
   );
 };
-
-export default CompactSelectedCourses;

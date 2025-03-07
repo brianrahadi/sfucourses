@@ -1,0 +1,39 @@
+@import "../variables.scss";
+
+.conflict-filter-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  background-color: var(--colour-neutral-1000);
+  border: 1px solid var(--colour-neutral-800);
+  color: var(--colour-neutral-000);
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  transition: all $transition-speed-fast $easing-bounce;
+  cursor: pointer;
+
+  svg {
+    font-size: 1.1rem;
+  }
+
+  &:hover {
+    background-color: var(--colour-neutral-900);
+  }
+
+  &.active {
+    background-color: var(--colour-sosy-green-800);
+    border-color: var(--colour-sosy-green-700);
+
+    &:hover {
+      background-color: var(--colour-sosy-green-700);
+    }
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .conflict-filter-button {
+    font-size: 0.8rem;
+    padding: 0.3rem 0.6rem;
+  }
+}

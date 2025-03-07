@@ -9,6 +9,8 @@ import {
   CopyScheduleButton,
   DownloadCalButton,
   ScheduleManager,
+  CompactSelectedCourses,
+  ConflictFilterButton,
 } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useEffect, useRef, useState } from "react";
@@ -25,7 +27,6 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import {
   filterCoursesByQuery,
   filterCoursesByTerm,
-  filterCoursesByCampus,
 } from "@utils/courseFilters";
 import { GetStaticProps } from "next";
 import { useLocalStorage } from "@hooks";
@@ -33,7 +34,10 @@ import { useSearchParams } from "next/navigation";
 import { insertUrlParam, removeUrlParameter } from "@utils/url";
 import { filterCoursesByClassNumbers } from "@utils/courseFilters";
 import { numberWithCommas, toTermCode } from "@utils/format";
-import CompactSelectedCourses from "src/components/CompactSelectedCourses";
+import {
+  filterConflictingCourses,
+  filterConflictingCoursesWithOutlines,
+} from "@utils/conflictFilter";
 
 interface SchedulePageProps {
   initialSections?: CourseOutlineWithSectionDetails[];
@@ -83,16 +87,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   const [selectedTerm, setSelectedTerm] = useState("");
   const termChangeSource = useRef("initial"); // button or url
   const [hasUserSelectedTerm, setHasUserSelectedTerm] = useState(false);
-
-  // Add campus filter state
-  const [selectedCampus, setSelectedCampus] = useState<string>("");
-  const campusOptions = [
-    "All Campuses",
-    "Burnaby",
-    "Surrey",
-    "Vancouver",
-    "Online",
-  ];
+  const [filterConflicts, setFilterConflicts] = useState(false);
 
   const [viewColumns, setViewColumns] = useLocalStorage<
     "Two-column" | "Three-column"
@@ -137,15 +132,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
       const key = searchParams.get("term") as string;
       setSelectedTerm(termMap.get(key) as string);
     }
-
-    // Load campus from URL if present
-    if (searchParams.has("campus")) {
-      const campusParam = searchParams.get("campus") as string;
-      if (campusOptions.includes(campusParam)) {
-        setSelectedCampus(campusParam);
-      }
-    }
-  }, [searchParams, campusOptions]);
+  }, [searchParams]);
 
   useEffect(() => {
     if (!outlinesWithSections) return;
@@ -154,13 +141,6 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
     reverseTermMap.set("Spring 2025", "sp25");
     reverseTermMap.set("Summer 2025", "su25");
     insertUrlParam("term", reverseTermMap.get(selectedTerm) as string);
-
-    // Add campus to URL if selected
-    if (selectedCampus && selectedCampus !== "All Campuses") {
-      insertUrlParam("campus", selectedCampus);
-    } else {
-      removeUrlParameter("campus");
-    }
 
     if (termChangeSource.current === "initial") {
       return;
@@ -181,7 +161,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
         filterCoursesByClassNumbers(filteredOutlines, sectionCodes)
       );
     }
-  }, [searchParams, outlinesWithSections, selectedTerm, selectedCampus]);
+  }, [searchParams, outlinesWithSections, selectedTerm]);
 
   useEffect(() => {
     localStorage.setItem("view", viewColumns);
@@ -217,7 +197,16 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
       return;
     }
 
-    const filteredCourses = filterCourses(outlinesWithSections);
+    let filteredCourses = filterCourses(outlinesWithSections);
+
+    // Apply conflict filter if enabled
+    if (filterConflicts && selectedOutlinesWithSections.length > 0) {
+      filteredCourses = filterConflictingCoursesWithOutlines(
+        filteredCourses,
+        selectedOutlinesWithSections
+      );
+    }
+
     const slicedCourses = filteredCourses.slice(0, sliceIndex);
 
     setMaxVisibleOutlinesWithSectionsLength(filteredCourses.length);
@@ -231,13 +220,17 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
         filterCoursesByTerm(courses, selectedTerm),
       (courses: CourseOutlineWithSectionDetails[]) =>
         filterCoursesByQuery(courses, query),
-      (courses: CourseOutlineWithSectionDetails[]) =>
-        filterCoursesByCampus(courses, selectedCampus),
     ].reduce((filtered, filterFunc) => filterFunc(filtered), courses);
     return filteredCourses;
   };
 
-  useEffect(onFilterChange, [query, selectedTerm, selectedCampus]);
+  // Re-run filter when any filtering criteria changes or when selected courses change
+  useEffect(onFilterChange, [
+    query,
+    selectedTerm,
+    filterConflicts,
+    selectedOutlinesWithSections,
+  ]);
 
   useEffect(() => {
     if (!outlinesWithSections) {
@@ -272,11 +265,6 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
     }
   }, [outlinesWithSections]);
 
-  // Handle campus change
-  const handleCampusChange = (campus: string) => {
-    setSelectedCampus(campus === "All Campuses" ? "" : campus);
-  };
-
   return (
     <div className="page courses-page">
       <Hero title="schedule courses" backgroundImage={HeroImage.src} />
@@ -285,19 +273,6 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
         className={`container ${viewColumns === "Two-column" && "two-column"}`}
       >
         <section className="courses-section">
-          <div className="campus-filter">
-            <select
-              value={selectedCampus || "All Campuses"}
-              onChange={(e) => handleCampusChange(e.target.value)}
-              className="campus-select"
-            >
-              {campusOptions.map((campus) => (
-                <option key={campus} value={campus}>
-                  {campus}
-                </option>
-              ))}
-            </select>
-          </div>
           <div className="courses-section__header">
             <TextBadge
               className="big explore"
@@ -318,20 +293,23 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
               onSelect={(value) => {
                 setHasUserSelectedTerm(true); // Mark that user has manually selected a term
                 setSelectedTerm(value);
+                termChangeSource.current = "button";
               }}
               selectedOption={selectedTerm}
             />
           </div>
-
-          <div className="search-filter-container">
+          <div className="search-filter-row">
             <SearchBar
               handleInputChange={setQuery}
               searchSelected={searchSelected}
               setSearchSelected={setSearchSelected}
               placeholder="course code, title, or instructor"
             />
+            <ConflictFilterButton
+              isActive={filterConflicts}
+              onClick={() => setFilterConflicts(!filterConflicts)}
+            />
           </div>
-
           {visibleOutlinesWithSections && (
             <InfiniteScroll
               dataLength={visibleOutlinesWithSections.length}
