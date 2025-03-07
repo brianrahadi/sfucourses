@@ -5,7 +5,6 @@
   max-width: 100%;
   width: 100rem;
   gap: 1rem;
-  margin-top: 1rem;
   position: relative;
 
   .courses-section {
@@ -21,7 +20,7 @@
       flex-direction: column;
       align-items: flex-start;
       gap: 0.5rem;
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.5rem;
 
       .big.explore {
         margin-top: 0;
@@ -52,27 +51,9 @@
     .term-filter-row {
       display: flex;
       align-items: center;
-      gap: 0.25rem;
+      gap: 0.5rem;
       width: 100%;
       margin-bottom: 0.75rem;
-
-      .button-group {
-        flex: 0 0 auto;
-      }
-
-      @media screen and (max-width: 600px) {
-        flex-direction: column;
-        align-items: stretch;
-
-        .button-group,
-        .conflict-filter-button {
-          width: 100%;
-        }
-
-        .conflict-filter-button {
-          justify-content: center;
-        }
-      }
     }
 
     .section-details-container {
@@ -94,7 +75,7 @@
     align-items: center;
     gap: 0.5rem;
     margin-top: 0.25rem;
-    width: 4rem;
+    width: fit-content;
 
     .campus-select {
       flex: 1;
@@ -122,7 +103,8 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.4rem 0.8rem;
+    padding: 0.4rem;
+    width: fit-content;
     background-color: var(--colour-neutral-1000);
     border: 1px solid var(--colour-neutral-800);
     color: var(--colour-neutral-000);
@@ -146,10 +128,6 @@
       &:hover {
         background-color: var(--colour-sosy-green-700);
       }
-    }
-
-    &:first-child {
-      margin-right: 0.5rem;
     }
   }
 
@@ -178,7 +156,7 @@
   }
 
   .schedule-section {
-    margin-top: 1rem;
+    margin-top: 4.5rem;
     flex: 1 1;
     width: 100%;
     display: flex;
@@ -284,6 +262,7 @@
     flex-direction: column-reverse;
 
     .schedule-section {
+      margin-top: 1rem;
       flex-direction: column;
       position: static;
 
@@ -359,4 +338,64 @@
   background: var(--colour-neutral-1100) 100%;
   color: var(--colour-sosy-green-500);
   width: fit-content;
+}
+
+.campus-filter-select {
+  display: flex;
+  align-items: center;
+  padding: 0.4rem 0.2rem;
+  width: fit-content;
+  background-color: var(--colour-neutral-1000);
+  border: 1px solid var(--colour-neutral-800);
+  color: var(--colour-neutral-000);
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  transition: all $transition-speed-fast $easing-bounce;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  &:hover {
+    background-color: var(--colour-neutral-900);
+  }
+
+  &:focus {
+    outline: 2px solid var(--colour-sosy-green-600);
+    outline-offset: 1px;
+  }
+
+  option {
+    background-color: var(--colour-neutral-1000);
+  }
+}
+
+.filter-with-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+
+  svg {
+    position: absolute;
+    left: 0.5rem;
+    color: var(--colour-sosy-green-500);
+    font-size: 1.1rem;
+  }
+
+  select {
+    padding-left: 2rem;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .campus-filter-select {
+    font-size: 0.85rem;
+    padding: 0.35rem 0.6rem;
+    padding-left: 1.8rem;
+  }
+
+  .filter-with-icon svg {
+    font-size: 1rem;
+    left: 0.4rem;
+  }
 }

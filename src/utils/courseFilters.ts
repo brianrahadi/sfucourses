@@ -193,10 +193,9 @@ export const filterCoursesByCampus = (
   courses: CourseOutlineWithSectionDetails[],
   campus: string
 ): CourseOutlineWithSectionDetails[] => {
-  if (!campus) {
+  if (!campus || campus === "All") {
     return courses; // Return all courses if no campus is selected
   }
-
   // Special handling for "Online" campus
   if (campus === "Online") {
     return courses.filter((course) =>

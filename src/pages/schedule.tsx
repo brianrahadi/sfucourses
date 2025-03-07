@@ -8,8 +8,9 @@ import {
   CopyScheduleButton,
   DownloadCalButton,
   ScheduleManager,
-  CompactSelectedCourses,
   ConflictFilterButton,
+  CompactSelectedCourses,
+  ButtonGroup,
 } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useEffect, useRef, useState } from "react";
@@ -31,7 +32,10 @@ import { GetStaticProps } from "next";
 import { useLocalStorage } from "@hooks";
 import { useSearchParams } from "next/navigation";
 import { insertUrlParam, removeUrlParameter } from "@utils/url";
-import { filterCoursesByClassNumbers } from "@utils/courseFilters";
+import {
+  filterCoursesByClassNumbers,
+  filterCoursesByCampus,
+} from "@utils/courseFilters";
 import { numberWithCommas, toTermCode } from "@utils/format";
 import {
   filterConflictingCourses,
@@ -39,6 +43,7 @@ import {
 } from "@utils/conflictFilter";
 import { LuFlower } from "react-icons/lu";
 import { BsSun } from "react-icons/bs";
+import { MdPlace } from "react-icons/md";
 
 interface SchedulePageProps {
   initialSections?: CourseOutlineWithSectionDetails[];
@@ -89,6 +94,9 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   const termChangeSource = useRef("initial"); // button or url
   const [hasUserSelectedTerm, setHasUserSelectedTerm] = useState(false);
   const [filterConflicts, setFilterConflicts] = useState(false);
+  const [campusFilter, setCampusFilter] = useState("All");
+
+  const campusOptions = ["All", "Burnaby", "Surrey", "Vancouver", "Online"];
 
   const [viewColumns, setViewColumns] = useLocalStorage<
     "Two-column" | "Three-column"
@@ -221,6 +229,8 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
         filterCoursesByTerm(courses, selectedTerm),
       (courses: CourseOutlineWithSectionDetails[]) =>
         filterCoursesByQuery(courses, query),
+      (courses: CourseOutlineWithSectionDetails[]) =>
+        filterCoursesByCampus(courses, campusFilter),
     ].reduce((filtered, filterFunc) => filterFunc(filtered), courses);
     return filteredCourses;
   };
@@ -230,6 +240,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
     query,
     selectedTerm,
     filterConflicts,
+    campusFilter,
     selectedOutlinesWithSections,
   ]);
 
@@ -276,30 +287,29 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
         <section className="courses-section">
           <div className="courses-section__header">
             <div className="term-filter-row">
-              <button
-                className="term-toggle-button active"
-                onClick={() => {
-                  const nextTermIndex =
-                    termOptions.indexOf(selectedTerm) === 0 ? 1 : 0;
-                  setHasUserSelectedTerm(true);
-                  setSelectedTerm(termOptions[nextTermIndex]);
-                  termChangeSource.current = "button";
-                }}
-              >
-                {selectedTerm.includes("Spring") && (
-                  <LuFlower color="skyblue" />
-                )}
-                {selectedTerm.includes("Summer") && <BsSun color="orange" />}
-                {selectedTerm}
-              </button>
+              <div className="filter-with-icon">
+                <MdPlace />
+                <select
+                  className="campus-filter-select"
+                  value={campusFilter}
+                  onChange={(e) => setCampusFilter(e.target.value)}
+                >
+                  {campusOptions.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              </div>
               <ConflictFilterButton
                 isActive={filterConflicts}
                 onClick={() => setFilterConflicts(!filterConflicts)}
               />
             </div>
-            <TextBadge
-              className="big explore"
-              content={`exploring 
+            <div className="flex-row">
+              <TextBadge
+                className="big explore"
+                content={`exploring 
             ${
               maxVisibleOutlinesWithSectionsLength
                 ? numberWithCommas(maxVisibleOutlinesWithSectionsLength)
@@ -310,7 +320,16 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
                 ? "courses"
                 : "course"
             }`}
-            />
+              />
+              <ButtonGroup
+                options={termOptions}
+                onSelect={(value) => {
+                  setHasUserSelectedTerm(true); // Mark that user has manually selected a term
+                  setSelectedTerm(value);
+                }}
+                selectedOption={selectedTerm}
+              />
+            </div>
           </div>
           <div className="search-filter-row">
             <SearchBar
