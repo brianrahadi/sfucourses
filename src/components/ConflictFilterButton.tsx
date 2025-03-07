@@ -17,7 +17,7 @@ export const ConflictFilterButton: React.FC<ConflictFilterButtonProps> = ({
       title={isActive ? "Show all courses" : "Hide courses with time conflicts"}
     >
       {isActive ? <IoFilterSharp /> : <IoFilterOutline />}
-      {isActive ? "Showing conflict-free" : "Filter conflicts"}
+      {isActive ? "Conflict-free" : "All"}
     </button>
   );
 };
