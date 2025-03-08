@@ -691,27 +691,27 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
   };
 
   // Mobile help overlay
-  const MobileHelpOverlay = () => {
-    if (!showMobileHelp) return null;
+  // const MobileHelpOverlay = () => {
+  //   if (!showMobileHelp) return null;
 
-    return (
-      <div className="mobile-instruction-overlay">
-        <p>To create time blocks on mobile:</p>
-        <p>1. Tap "Create Time Block" button</p>
-        <p>2. Tap and drag on the schedule</p>
-        <p>3. When finished, tap "Exit Block Mode"</p>
-        <button
-          className="instruction-btn"
-          onClick={() => {
-            setShowMobileHelp(false);
-            localStorage.setItem("seenTimeBlockMobileHelp", "true");
-          }}
-        >
-          Got it!
-        </button>
-      </div>
-    );
-  };
+  //   return (
+  //     <div className="mobile-instruction-overlay">
+  //       <p>To create time blocks on mobile:</p>
+  //       <p>1. Tap Create Time Block" button</p>
+  //       <p>2. Tap and drag on the schedule</p>
+  //       <p>3. When finished, tap "Exit Block Mode"</p>
+  //       <button
+  //         className="instruction-btn"
+  //         onClick={() => {
+  //           setShowMobileHelp(false);
+  //           localStorage.setItem("seenTimeBlockMobileHelp", "true");
+  //         }}
+  //       >
+  //         Got it!
+  //       </button>
+  //     </div>
+  //   );
+  // };
 
   return (
     <div className="weekly-schedule" ref={scheduleRef}>
@@ -719,7 +719,8 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
         <div className="time-blocking-hint">
           {isTouchDevice ? (
             <span>
-              Toggle 'Create Time Block' mode, then tap and drag to block time.
+              Toggle &apos;Create Time Block&apos; mode, then tap and drag to
+              block time.
             </span>
           ) : (
             <span>
