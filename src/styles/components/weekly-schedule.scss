@@ -446,3 +446,8 @@
     }
   }
 }
+
+.schedule-grid.no-scroll {
+  overflow: hidden !important;
+  touch-action: none !important;
+}
