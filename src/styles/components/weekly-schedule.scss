@@ -306,3 +306,143 @@
   opacity: 0.8;
   pointer-events: none;
 }
+
+.time-block-toggle-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.time-block-toggle-button {
+  padding: 8px 12px;
+  background-color: var(--colour-neutral-900);
+  color: var(--colour-neutral-100);
+  border: none;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &.active {
+    background-color: rgba(220, 76, 100, 0.9);
+    color: white;
+    box-shadow: 0 0 8px rgba(220, 76, 100, 0.6);
+  }
+
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+/* Visual indicator when in time block creation mode */
+.schedule-grid.time-block-mode {
+  border: 2px dashed rgba(220, 76, 100, 0.6);
+
+  .day-column .time-slot {
+    cursor: pointer;
+
+    &:hover {
+      background-color: rgba(220, 76, 100, 0.2);
+    }
+  }
+}
+
+/* Mobile-specific adjustments */
+@media (max-width: 768px) {
+  .weekly-schedule {
+    .course-block {
+      /* Make blocks easier to tap */
+      min-height: 30px;
+
+      &.time-block {
+        padding: 3px;
+
+        .time-block-label {
+          font-size: 0.7rem;
+          font-weight: bold;
+        }
+
+        .time-block-time {
+          font-size: 0.65rem;
+        }
+      }
+    }
+
+    /* Increase touch target sizes */
+    .time-slot {
+      min-height: 15px;
+    }
+
+    /* Simple mode for small screens */
+    .time-block-minimal {
+      .time-block-time {
+        display: none;
+      }
+    }
+  }
+
+  /* Mobile instruction helper */
+  .mobile-instruction-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    padding: 20px;
+    text-align: center;
+
+    p {
+      margin-bottom: 15px;
+    }
+
+    .instruction-btn {
+      padding: 8px 15px;
+      background-color: var(--colour-sosy-green-800);
+      border: none;
+      border-radius: 20px;
+      color: white;
+      font-weight: bold;
+    }
+  }
+}
+
+/* Make course blocks more visible on smaller screens */
+@media (max-width: 480px) {
+  .weekly-schedule {
+    .day-column {
+      min-width: 60px;
+    }
+
+    .course-block {
+      font-size: 0.7rem;
+      padding: 2px;
+      font-weight: bold;
+
+      &.time-block {
+        .time-block-label {
+          font-size: 0.65rem;
+        }
+
+        .time-block-time {
+          display: none; /* Hide time text on very small screens */
+        }
+      }
+    }
+
+    /* Show minimal day headers */
+    .day-header {
+      font-size: 0.8rem;
+
+      .day-date {
+        font-size: 0.7rem;
+      }
+    }
+  }
+}
