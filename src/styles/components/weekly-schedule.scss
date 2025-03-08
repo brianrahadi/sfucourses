@@ -172,3 +172,96 @@
 //     }
 //   }
 // }
+
+.weekly-schedule {
+  .time-blocking-hint {
+    text-align: center;
+    color: var(--colour-neutral-400);
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+  }
+
+  .schedule-grid {
+    cursor: default;
+
+    .day-column {
+      position: relative;
+
+      .time-slot {
+        cursor: cell;
+        transition: background-color 0.1s ease;
+
+        &:hover {
+          background-color: var(--colour-neutral-900);
+        }
+      }
+    }
+  }
+
+  .course-block {
+    &.time-block {
+      cursor: pointer;
+      border: 1px dashed rgba(255, 255, 255, 0.5);
+      background-image: repeating-linear-gradient(
+        45deg,
+        rgba(0, 0, 0, 0.1),
+        rgba(0, 0, 0, 0.1) 10px,
+        rgba(0, 0, 0, 0.2) 10px,
+        rgba(0, 0, 0, 0.2) 20px
+      );
+
+      .time-block-label {
+        font-weight: bold;
+        font-size: 0.85rem;
+        margin-bottom: 4px;
+      }
+
+      .time-block-time {
+        font-size: 0.75rem;
+        opacity: 0.9;
+      }
+
+      &:hover {
+        opacity: 0.8;
+        border: 1px solid white;
+      }
+
+      &.preview {
+        border: 2px dashed white;
+        animation: pulse 1.5s infinite;
+        pointer-events: none;
+      }
+    }
+  }
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0.7;
+  }
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+  .weekly-schedule {
+    .time-blocking-hint {
+      font-size: 0.8rem;
+    }
+
+    .course-block.time-block {
+      .time-block-label {
+        font-size: 0.7rem;
+      }
+
+      .time-block-time {
+        font-size: 0.65rem;
+      }
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import { CourseWithSectionDetails } from "@types";
+import { CourseWithSectionDetails, TimeBlock } from "@types";
 import { formatTime, getDarkColorFromHash } from "@utils/format";
 import React, {
   Dispatch,
@@ -26,6 +26,8 @@ const endHour = 20; // End at 8:00 PM
 interface WeeklyScheduleProps {
   coursesWithSections: CourseWithSectionDetails[];
   setCoursesWithSections: Dispatch<SetStateAction<CourseWithSectionDetails[]>>;
+  timeBlocks: TimeBlock[]; // Add this prop
+  setTimeBlocks: Dispatch<SetStateAction<TimeBlock[]>>; // Add this prop
 }
 
 const convertTimeToMinutes = (time: string): number => {
@@ -77,6 +79,8 @@ const doTimeslotsConflict = (ts1: Course, ts2: Course): ConflictResponse => {
 export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
   coursesWithSections,
   setCoursesWithSections,
+  timeBlocks,
+  setTimeBlocks,
 }) => {
   const [timeslots, setTimeslots] = useState<Course[]>([]);
   const [weekStartDate, setWeekStartDate] = useState<Date | null>(null);
@@ -84,6 +88,17 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
   const [initialWeekDate, setInitialWeekDate] = useState<Date | null>(null);
   const [slotHeight, setSlotHeight] = useState(20); // Default slot height
   const scheduleRef = useRef<HTMLDivElement>(null);
+
+  // Time blocking state
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState<{
+    day: string;
+    time: number;
+  } | null>(null);
+  const [dragEnd, setDragEnd] = useState<{ day: string; time: number } | null>(
+    null
+  );
+  const [dragPreview, setDragPreview] = useState<TimeBlock | null>(null);
 
   // Effect to handle responsive slot height
   useEffect(() => {
@@ -112,6 +127,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
     const newTimeslots: Course[] = [];
     const allConflictMessages: string[] = [];
 
+    // First process course sections
     coursesWithSections.forEach((course) => {
       course.sections.forEach((section) => {
         section.schedules.forEach((schedule) => {
@@ -143,7 +159,9 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
 
             const newTimeslot = {
               id,
-              name: `${course.dept} ${course.number} \n${section.section}\n${section.schedules[0].campus}`,
+              name: `${course.dept} ${course.number} \n${section.section}\n${
+                section.schedules[0]?.campus || ""
+              }`,
               startTime,
               duration,
               day,
@@ -167,6 +185,21 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
         });
       });
     });
+
+    // Next, process time blocks
+    timeBlocks.forEach((block) => {
+      const newTimeslot = {
+        id: block.id,
+        name: block.label,
+        startTime: block.startTime,
+        duration: block.duration,
+        day: block.day,
+      };
+
+      // No conflict check needed for time blocks, they're manually created
+      newTimeslots.push(newTimeslot);
+    });
+
     return { newTimeslots, allConflictMessages };
   };
 
@@ -219,19 +252,13 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
       toast.error(`Conflicts detected:\n${combinedConflictMessage}`, {
         duration: 4000,
         position: "top-center",
-
-        // Styling
         style: {},
         className: "",
-
         icon: "🚨",
-        // Aria
         ariaProps: {
           role: "status",
           "aria-live": "polite",
         },
-
-        // Additional Configuration
         removeDelay: 1000,
       });
     }
@@ -242,6 +269,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
     currentWeekOffset,
     coursesWithSections,
     setCoursesWithSections,
+    timeBlocks, // Re-calculate when time blocks change
   ]);
 
   // Navigate to previous week
@@ -278,8 +306,145 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
     return { topOffset, height };
   };
 
+  // Helper to get time from mouse position
+  const getTimeFromPosition = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (!scheduleRef.current) return null;
+
+    const gridRect = scheduleRef.current.getBoundingClientRect();
+    const dayColumns = scheduleRef.current.querySelectorAll(".day-column");
+
+    // Determine which day column was clicked
+    for (let i = 0; i < dayColumns.length; i++) {
+      const column = dayColumns[i] as HTMLElement;
+      const columnRect = column.getBoundingClientRect();
+
+      if (
+        event.clientX >= columnRect.left &&
+        event.clientX <= columnRect.right
+      ) {
+        // Get day
+        const day = daysOfWeek[i];
+
+        // Get time
+        const relativeY = event.clientY - gridRect.top;
+
+        // Each hour is 2 slots of slotHeight each
+        const minutesPerPixel = 30 / slotHeight; // 30 minutes per slot
+
+        const minutes = Math.floor(
+          startHour * 60 + relativeY * minutesPerPixel
+        );
+
+        // Round to nearest 15-minute increment
+        const roundedMinutes = Math.round(minutes / 15) * 15;
+
+        return { day, time: roundedMinutes };
+      }
+    }
+
+    return null;
+  };
+
+  // Handle mouse down - start dragging
+  const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (!(event.target as HTMLElement).classList.contains("time-slot")) return;
+
+    const position = getTimeFromPosition(event);
+    if (!position) return;
+
+    setIsDragging(true);
+    setDragStart(position);
+    setDragEnd(position);
+
+    // Create initial preview
+    setDragPreview({
+      id: `preview-${Math.random().toString(36).substring(2, 11)}`,
+      day: position.day,
+      startTime: position.time,
+      duration: 15, // Start with 15 minutes
+      label: "Blocked",
+    });
+  };
+
+  // Handle mouse move - update drag preview
+  const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (!isDragging || !dragStart) return;
+
+    const position = getTimeFromPosition(event);
+    if (!position || position.day !== dragStart.day) return;
+
+    setDragEnd(position);
+
+    // Update preview
+    const startTime = Math.min(dragStart.time, position.time);
+    const endTime = Math.max(dragStart.time, position.time);
+
+    setDragPreview({
+      id:
+        dragPreview?.id ||
+        `preview-${Math.random().toString(36).substring(2, 11)}`,
+      day: dragStart.day,
+      startTime,
+      duration: endTime - startTime,
+      label: "Blocked",
+    });
+  };
+
+  // Handle mouse up - create block
+  const handleMouseUp = () => {
+    if (!isDragging || !dragPreview || dragPreview.duration < 15) {
+      // Don't create blocks less than 15 minutes
+      setIsDragging(false);
+      setDragStart(null);
+      setDragEnd(null);
+      setDragPreview(null);
+      return;
+    }
+
+    // Create new timeblock
+    const newBlock = {
+      ...dragPreview,
+      id: `block-${Math.random().toString(36).substring(2, 11)}`,
+    };
+
+    setTimeBlocks((prev) => [...prev, newBlock]);
+
+    // Reset drag state
+    setIsDragging(false);
+    setDragStart(null);
+    setDragEnd(null);
+    setDragPreview(null);
+
+    // Success message
+    toast.success(
+      "Time block added! Courses with conflicts will be filtered out."
+    );
+  };
+
+  // Remove a timeblock when clicked
+  const handleTimeBlockClick = (blockId: string, event: React.MouseEvent) => {
+    // Only proceed if it's a timeblock
+    if (blockId.startsWith("block-")) {
+      event.stopPropagation();
+      setTimeBlocks((prev) => prev.filter((block) => block.id !== blockId));
+      toast.success("Time block removed");
+    }
+  };
+
+  // Format display time (8:00 AM format)
+  const formatDisplayTime = (minutes: number): string => {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    const period = hours >= 12 ? "PM" : "AM";
+    const displayHours = hours > 12 ? hours - 12 : hours === 0 ? 12 : hours;
+    return `${displayHours}:${mins.toString().padStart(2, "0")} ${period}`;
+  };
+
   return (
     <div className="weekly-schedule" ref={scheduleRef}>
+      <div className="time-blocking-hint">
+        Drag on calendar to block time. Click a time block to remove it.
+      </div>
       {weekStartDate && (
         <div className="schedule-header">
           <div className="schedule-navigation">
@@ -306,7 +471,16 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
           </div>
         </div>
       )}
-      <div className="schedule-grid">
+
+      <div
+        className="schedule-grid"
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={() => {
+          if (isDragging) handleMouseUp();
+        }}
+      >
         <div className="grid-header">
           <div className="time-label"></div>
           {daysOfWeek.map((day, index) => (
@@ -344,28 +518,77 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
                 className={`time-slot ${
                   minute === 30 ? "time-slot--half" : ""
                 }`}
+                data-day={day}
+                data-time={hour * 60 + minute}
               />
             ))}
             {timeslots
               .filter((course) => course.day === day)
               .map((course) => {
                 const { topOffset, height } = calculateCoursePosition(course);
+                const isTimeBlock = course.id.startsWith("block-");
+
                 return (
                   <div
                     key={course.id}
-                    className="course-block"
+                    className={`course-block ${
+                      isTimeBlock ? "time-block" : ""
+                    }`}
                     style={{
                       top: `${topOffset}px`,
                       height: `${height}px`,
-                      backgroundColor: getDarkColorFromHash(
-                        course.name.split(" ").slice(0, 2).join(" ")
-                      ), // CMPT 225
+                      backgroundColor: isTimeBlock
+                        ? "rgba(220, 76, 100, 0.7)" // Red-ish for blocked time
+                        : getDarkColorFromHash(
+                            course.name.split(" ").slice(0, 2).join(" ")
+                          ),
                     }}
+                    onClick={
+                      isTimeBlock
+                        ? (e) => handleTimeBlockClick(course.id, e)
+                        : undefined
+                    }
                   >
-                    {course.name}
+                    {isTimeBlock ? (
+                      <>
+                        <div className="time-block-label">Blocked</div>
+                        <div className="time-block-time">
+                          {formatDisplayTime(course.startTime)} -{" "}
+                          {formatDisplayTime(
+                            course.startTime + course.duration
+                          )}
+                        </div>
+                      </>
+                    ) : (
+                      course.name
+                    )}
                   </div>
                 );
               })}
+
+            {/* Show drag preview if we're dragging in this column */}
+            {isDragging && dragPreview && dragPreview.day === day && (
+              <div
+                className="course-block time-block preview"
+                style={{
+                  top: `${
+                    ((dragPreview.startTime - startHour * 60) / 60) *
+                    slotHeight *
+                    2
+                  }px`,
+                  height: `${(dragPreview.duration / 60) * slotHeight * 2}px`,
+                  backgroundColor: "rgba(220, 76, 100, 0.5)", // Transparent red
+                }}
+              >
+                <div className="time-block-label">Blocked</div>
+                <div className="time-block-time">
+                  {formatDisplayTime(dragPreview.startTime)} -{" "}
+                  {formatDisplayTime(
+                    dragPreview.startTime + dragPreview.duration
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         ))}
       </div>

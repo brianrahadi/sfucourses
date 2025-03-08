@@ -22,6 +22,7 @@ import {
 import {
   CourseOutlineWithSectionDetails,
   CourseWithSectionDetails,
+  TimeBlock,
 } from "@types";
 import InfiniteScroll from "react-infinite-scroll-component";
 import {
@@ -44,6 +45,12 @@ import {
 import { LuFlower } from "react-icons/lu";
 import { BsSun } from "react-icons/bs";
 import { MdPlace } from "react-icons/md";
+import {
+  getTimeBlocksFromUrl,
+  timeBlockToCourseFormat,
+  updateTimeBlocksInUrl,
+} from "@utils/timeBlocks";
+import toast from "react-hot-toast";
 
 interface SchedulePageProps {
   initialSections?: CourseOutlineWithSectionDetails[];
@@ -96,6 +103,9 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   const [filterConflicts, setFilterConflicts] = useState(false);
   const [campusFilter, setCampusFilter] = useState("All");
 
+  // Add timeBlocks state for the new feature
+  const [timeBlocks, setTimeBlocks] = useState<TimeBlock[]>([]);
+
   const campusOptions = ["All", "Burnaby", "Surrey", "Vancouver", "Online"];
 
   const [viewColumns, setViewColumns] = useLocalStorage<
@@ -105,6 +115,21 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   const searchParams = useSearchParams();
 
   const CHUNK_SIZE = 20;
+
+  // Load initial time blocks from URL
+  useEffect(() => {
+    const urlTimeBlocks = getTimeBlocksFromUrl();
+    if (urlTimeBlocks.length > 0) {
+      setTimeBlocks(urlTimeBlocks);
+      // Show notification to user
+      toast.success(`Loaded ${urlTimeBlocks.length} time block(s) from URL`);
+    }
+  }, []);
+
+  // Update URL when time blocks change
+  useEffect(() => {
+    updateTimeBlocksInUrl(timeBlocks);
+  }, [timeBlocks]);
 
   useEffect(() => {
     if (!hasUserSelectedTerm && termOptions.length > 0) {
@@ -209,11 +234,23 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
     let filteredCourses = filterCourses(outlinesWithSections);
 
     // Apply conflict filter if enabled
-    if (filterConflicts && selectedOutlinesWithSections.length > 0) {
-      filteredCourses = filterConflictingCoursesWithOutlines(
-        filteredCourses,
-        selectedOutlinesWithSections
-      );
+    if (filterConflicts) {
+      // First filter against selected courses if there are any
+      if (selectedOutlinesWithSections.length > 0) {
+        filteredCourses = filterConflictingCoursesWithOutlines(
+          filteredCourses,
+          selectedOutlinesWithSections
+        );
+      }
+
+      // Then filter against time blocks if there are any
+      if (timeBlocks.length > 0) {
+        const timeBlocksAsCourses = timeBlocks.map(timeBlockToCourseFormat);
+        filteredCourses = filterConflictingCoursesWithOutlines(
+          filteredCourses,
+          timeBlocksAsCourses
+        );
+      }
     }
 
     const slicedCourses = filteredCourses.slice(0, sliceIndex);
@@ -242,6 +279,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
     filterConflicts,
     campusFilter,
     selectedOutlinesWithSections,
+    timeBlocks, // Add timeBlocks as a dependency to re-filter when blocks change
   ]);
 
   useEffect(() => {
@@ -398,6 +436,12 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
               selectedOption={viewColumns}
             /> */}
           </div>
+          <div className="schedule-features-hint">
+            <p>
+              <strong>New!</strong> Drag on the calendar to block off time
+              slots. Blocked times will be saved in your shared schedule link.
+            </p>
+          </div>
           <div className="schedule-section__content">
             <CompactSelectedCourses
               selectedCourses={selectedOutlinesWithSections}
@@ -431,6 +475,8 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
               <WeeklySchedule
                 coursesWithSections={selectedOutlinesWithSections}
                 setCoursesWithSections={setSelectedOutlinesWithSections}
+                timeBlocks={timeBlocks}
+                setTimeBlocks={setTimeBlocks}
               />
               <div className="schedule-container__bottom">
                 <div className="selected-courses-badges">

@@ -69,3 +69,11 @@ export interface SectionDetailRaw {
   instructor: SectionInstructor[]; // Singular for parsing
   courseSchedule: SectionSchedule[]; //
 }
+
+export interface TimeBlock {
+  id: string;
+  day: string;
+  startTime: number; // in minutes since start of day
+  duration: number; // in minutes
+  label: string;
+}
