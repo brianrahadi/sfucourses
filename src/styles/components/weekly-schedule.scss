@@ -265,3 +265,44 @@
     }
   }
 }
+
+/* Animation for newly merged blocks */
+@keyframes merge-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+  }
+}
+
+/* Style for blocks that were recently merged */
+.course-block.time-block.merged {
+  border: 2px solid #fff;
+  animation: merge-pulse 1.5s ease-out;
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(0, 0, 0, 0.2),
+    rgba(0, 0, 0, 0.2) 10px,
+    rgba(0, 0, 0, 0.3) 10px,
+    rgba(0, 0, 0, 0.3) 20px
+  );
+}
+
+/* Style for the merge indicator */
+.merge-indicator {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #dc4c64;
+  font-size: 0.7rem;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-weight: bold;
+  opacity: 0.8;
+  pointer-events: none;
+}

@@ -10,6 +10,7 @@ import React, {
 import { format, addDays, startOfWeek } from "date-fns";
 import toast from "react-hot-toast";
 import Button from "./Button";
+import { mergeOverlappingBlocks } from "@utils/timeBlocks";
 
 interface Course {
   id: string;
@@ -26,8 +27,8 @@ const endHour = 20; // End at 8:00 PM
 interface WeeklyScheduleProps {
   coursesWithSections: CourseWithSectionDetails[];
   setCoursesWithSections: Dispatch<SetStateAction<CourseWithSectionDetails[]>>;
-  timeBlocks: TimeBlock[]; // Add this prop
-  setTimeBlocks: Dispatch<SetStateAction<TimeBlock[]>>; // Add this prop
+  timeBlocks?: TimeBlock[]; // Make optional
+  setTimeBlocks?: Dispatch<SetStateAction<TimeBlock[]>>; // Make optional
 }
 
 const convertTimeToMinutes = (time: string): number => {
@@ -79,7 +80,7 @@ const doTimeslotsConflict = (ts1: Course, ts2: Course): ConflictResponse => {
 export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
   coursesWithSections,
   setCoursesWithSections,
-  timeBlocks,
+  timeBlocks = [], // Default to empty array
   setTimeBlocks,
 }) => {
   const [timeslots, setTimeslots] = useState<Course[]>([]);
@@ -88,6 +89,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
   const [initialWeekDate, setInitialWeekDate] = useState<Date | null>(null);
   const [slotHeight, setSlotHeight] = useState(20); // Default slot height
   const scheduleRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
 
   // Time blocking state
   const [isDragging, setIsDragging] = useState(false);
@@ -187,18 +189,20 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
     });
 
     // Next, process time blocks
-    timeBlocks.forEach((block) => {
-      const newTimeslot = {
-        id: block.id,
-        name: block.label,
-        startTime: block.startTime,
-        duration: block.duration,
-        day: block.day,
-      };
+    if (timeBlocks && timeBlocks.length > 0) {
+      timeBlocks.forEach((block) => {
+        const newTimeslot = {
+          id: block.id,
+          name: block.label,
+          startTime: block.startTime,
+          duration: block.duration,
+          day: block.day,
+        };
 
-      // No conflict check needed for time blocks, they're manually created
-      newTimeslots.push(newTimeslot);
-    });
+        // No conflict check needed for time blocks, they're manually created
+        newTimeslots.push(newTimeslot);
+      });
+    }
 
     return { newTimeslots, allConflictMessages };
   };
@@ -306,12 +310,25 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
     return { topOffset, height };
   };
 
-  // Helper to get time from mouse position
+  // Helper to get time from mouse position - FIXED VERSION
   const getTimeFromPosition = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (!scheduleRef.current) return null;
+    if (!gridRef.current) return null;
 
-    const gridRect = scheduleRef.current.getBoundingClientRect();
-    const dayColumns = scheduleRef.current.querySelectorAll(".day-column");
+    // Get the grid element's position
+    const gridRect = gridRef.current.getBoundingClientRect();
+
+    // Get the day columns
+    const dayColumns = gridRef.current.querySelectorAll(".day-column");
+
+    // Get time column to calculate proper offsets
+    const timeColumn = gridRef.current.querySelector(".time-column");
+    const timeLabels = timeColumn
+      ? Array.from(timeColumn.querySelectorAll(".time-label"))
+      : [];
+
+    // Get header height
+    const headerHeight =
+      gridRef.current.querySelector(".grid-header")?.clientHeight || 0;
 
     // Determine which day column was clicked
     for (let i = 0; i < dayColumns.length; i++) {
@@ -325,20 +342,28 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
         // Get day
         const day = daysOfWeek[i];
 
-        // Get time
+        // Get time with corrections for position
+        // 1. Calculate Y position relative to grid
         const relativeY = event.clientY - gridRect.top;
 
-        // Each hour is 2 slots of slotHeight each
-        const minutesPerPixel = 30 / slotHeight; // 30 minutes per slot
+        // 2. Adjust for header height
+        const adjustedY = relativeY - headerHeight;
 
-        const minutes = Math.floor(
-          startHour * 60 + relativeY * minutesPerPixel
-        );
+        // 3. Find closest time slot (direct mapping approach)
+        // Each slot is slotHeight pixels tall
+        const slotIndex = Math.floor(adjustedY / slotHeight);
 
-        // Round to nearest 15-minute increment
-        const roundedMinutes = Math.round(minutes / 15) * 15;
+        // Calculate time from slot index
+        // Each 2 slots = 1 hour
+        const hourOffset = Math.floor(slotIndex / 2);
+        const minuteOffset = (slotIndex % 2) * 30;
 
-        return { day, time: roundedMinutes };
+        const time = (startHour + hourOffset) * 60 + minuteOffset;
+
+        // Round to nearest 15-minute increment if needed
+        // const roundedTime = Math.round(time / 15) * 15;
+
+        return { day, time };
       }
     }
 
@@ -347,6 +372,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
 
   // Handle mouse down - start dragging
   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
+    // Only start drag if clicking directly on a time slot
     if (!(event.target as HTMLElement).classList.contains("time-slot")) return;
 
     const position = getTimeFromPosition(event);
@@ -392,8 +418,13 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
 
   // Handle mouse up - create block
   const handleMouseUp = () => {
-    if (!isDragging || !dragPreview || dragPreview.duration < 15) {
-      // Don't create blocks less than 15 minutes
+    if (
+      !isDragging ||
+      !dragPreview ||
+      dragPreview.duration < 15 ||
+      !setTimeBlocks
+    ) {
+      // Don't create blocks less than 15 minutes or if setTimeBlocks is not provided
       setIsDragging(false);
       setDragStart(null);
       setDragEnd(null);
@@ -407,24 +438,40 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
       id: `block-${Math.random().toString(36).substring(2, 11)}`,
     };
 
-    setTimeBlocks((prev) => [...prev, newBlock]);
+    // Add the block and merge any overlapping blocks
+    setTimeBlocks((prev) => {
+      // First add the new block
+      const updatedBlocks = [...prev, newBlock];
+
+      // Then merge any overlapping blocks
+      const mergedBlocks = mergeOverlappingBlocks(updatedBlocks);
+
+      // If blocks were merged, show a different message
+      if (mergedBlocks.length < updatedBlocks.length) {
+        setTimeout(() => {
+          toast.success("Overlapping time blocks have been merged!");
+        }, 100);
+      } else {
+        setTimeout(() => {
+          toast.success(
+            "Time block added! Courses with conflicts will be filtered out."
+          );
+        }, 100);
+      }
+
+      return mergedBlocks;
+    });
 
     // Reset drag state
     setIsDragging(false);
     setDragStart(null);
     setDragEnd(null);
     setDragPreview(null);
-
-    // Success message
-    toast.success(
-      "Time block added! Courses with conflicts will be filtered out."
-    );
   };
-
   // Remove a timeblock when clicked
   const handleTimeBlockClick = (blockId: string, event: React.MouseEvent) => {
-    // Only proceed if it's a timeblock
-    if (blockId.startsWith("block-")) {
+    // Only proceed if it's a timeblock and setTimeBlocks is provided
+    if (blockId.startsWith("block-") && setTimeBlocks) {
       event.stopPropagation();
       setTimeBlocks((prev) => prev.filter((block) => block.id !== blockId));
       toast.success("Time block removed");
@@ -442,9 +489,11 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
 
   return (
     <div className="weekly-schedule" ref={scheduleRef}>
-      <div className="time-blocking-hint">
-        Drag on calendar to block time. Click a time block to remove it.
-      </div>
+      {setTimeBlocks && (
+        <div className="time-blocking-hint">
+          Drag on calendar to block time. Click a time block to remove it.
+        </div>
+      )}
       {weekStartDate && (
         <div className="schedule-header">
           <div className="schedule-navigation">
@@ -474,6 +523,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
 
       <div
         className="schedule-grid"
+        ref={gridRef}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}

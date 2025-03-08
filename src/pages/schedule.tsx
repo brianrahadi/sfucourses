@@ -436,12 +436,6 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
               selectedOption={viewColumns}
             /> */}
           </div>
-          <div className="schedule-features-hint">
-            <p>
-              <strong>New!</strong> Drag on the calendar to block off time
-              slots. Blocked times will be saved in your shared schedule link.
-            </p>
-          </div>
           <div className="schedule-section__content">
             <CompactSelectedCourses
               selectedCourses={selectedOutlinesWithSections}

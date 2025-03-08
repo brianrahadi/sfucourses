@@ -102,3 +102,67 @@ export const timeBlockToCourseFormat = (
     ],
   };
 };
+
+/**
+ * Merges overlapping time blocks on the same day
+ * @param blocks Array of time blocks to merge
+ * @returns New array with merged time blocks
+ */
+export const mergeOverlappingBlocks = (blocks: TimeBlock[]): TimeBlock[] => {
+  if (blocks.length <= 1) return blocks;
+
+  // Group blocks by day
+  const blocksByDay: Record<string, TimeBlock[]> = {};
+
+  blocks.forEach((block) => {
+    if (!blocksByDay[block.day]) {
+      blocksByDay[block.day] = [];
+    }
+    blocksByDay[block.day].push(block);
+  });
+
+  // Process each day separately
+  const mergedBlocks: TimeBlock[] = [];
+
+  Object.entries(blocksByDay).forEach(([day, dayBlocks]) => {
+    // Sort blocks by start time
+    const sortedBlocks = [...dayBlocks].sort(
+      (a, b) => a.startTime - b.startTime
+    );
+
+    // Merge overlapping blocks
+    const mergedDayBlocks: TimeBlock[] = [];
+    let currentBlock = sortedBlocks[0];
+
+    for (let i = 1; i < sortedBlocks.length; i++) {
+      const nextBlock = sortedBlocks[i];
+      const currentBlockEndTime =
+        currentBlock.startTime + currentBlock.duration;
+
+      // Check if blocks overlap or are adjacent
+      if (nextBlock.startTime <= currentBlockEndTime) {
+        // Merge the blocks
+        const endTime = Math.max(
+          currentBlockEndTime,
+          nextBlock.startTime + nextBlock.duration
+        );
+
+        currentBlock = {
+          ...currentBlock,
+          duration: endTime - currentBlock.startTime,
+          // Keep the original ID for easier tracking
+        };
+      } else {
+        // No overlap, add current block to merged list and move to next
+        mergedDayBlocks.push(currentBlock);
+        currentBlock = nextBlock;
+      }
+    }
+
+    // Add the last block
+    mergedDayBlocks.push(currentBlock);
+    mergedBlocks.push(...mergedDayBlocks);
+  });
+
+  return mergedBlocks;
+};
