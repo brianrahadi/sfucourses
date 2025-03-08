@@ -164,7 +164,12 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
       termMap.has(searchParams.get("term") as string)
     ) {
       const key = searchParams.get("term") as string;
-      setSelectedTerm(termMap.get(key) as string);
+      const newTerm = termMap.get(key) as string;
+      if (newTerm !== selectedTerm) {
+        setTimeBlocks([]);
+      }
+
+      setSelectedTerm(newTerm);
     }
   }, [searchParams]);
 
@@ -364,6 +369,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
                 onSelect={(value) => {
                   setHasUserSelectedTerm(true); // Mark that user has manually selected a term
                   setSelectedTerm(value);
+                  setTimeBlocks([]);
                 }}
                 selectedOption={selectedTerm}
               />
@@ -422,10 +428,15 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
             <ScheduleManager
               coursesWithSections={selectedOutlinesWithSections}
               setCoursesWithSections={setSelectedOutlinesWithSections}
+              timeBlocks={timeBlocks} // Add time blocks
+              setTimeBlocks={setTimeBlocks} // Add time blocks setter
               selectedTerm={selectedTerm}
               setSelectedTerm={(term) => {
-                setHasUserSelectedTerm(true); // Mark that user has manually selected a term
-                setSelectedTerm(term);
+                if (term !== selectedTerm) {
+                  setTimeBlocks([]);
+                  setHasUserSelectedTerm(true);
+                  setSelectedTerm(term);
+                }
               }}
               termOptions={termOptions}
             />

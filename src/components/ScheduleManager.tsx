@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { CourseWithSectionDetails } from "@types";
+import { CourseWithSectionDetails, TimeBlock } from "@types";
 import { Button } from "./Button";
 import { FaSave, FaFolderOpen } from "react-icons/fa";
 import { IoMdStar, IoMdStarOutline } from "react-icons/io";
@@ -10,6 +10,8 @@ interface ScheduleManagerProps {
   setCoursesWithSections: React.Dispatch<
     React.SetStateAction<CourseWithSectionDetails[]>
   >;
+  timeBlocks: TimeBlock[]; // Add time blocks to props
+  setTimeBlocks: React.Dispatch<React.SetStateAction<TimeBlock[]>>; // Add setter
   selectedTerm: string;
   setSelectedTerm: React.Dispatch<React.SetStateAction<string>>;
   termOptions: string[];
@@ -19,6 +21,7 @@ interface SavedSchedule {
   id: number;
   name: string;
   courses: CourseWithSectionDetails[];
+  timeBlocks: TimeBlock[]; // Add time blocks to saved schedule
   term: string;
   isDefault: boolean;
   timestamp: number;
@@ -31,6 +34,8 @@ interface ScheduleSettings {
 export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
   coursesWithSections,
   setCoursesWithSections,
+  timeBlocks,
+  setTimeBlocks,
   selectedTerm,
   setSelectedTerm,
   termOptions,
@@ -49,7 +54,19 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
   useEffect(() => {
     const loadedSchedules = localStorage.getItem("savedSchedules");
     if (loadedSchedules) {
-      setSavedSchedules(JSON.parse(loadedSchedules));
+      try {
+        // Check if the loaded data has the timeBlocks property
+        // Backward compatibility with older saved schedules
+        const parsedSchedules = JSON.parse(loadedSchedules);
+        const updatedSchedules = parsedSchedules.map((schedule: any) => ({
+          ...schedule,
+          timeBlocks: schedule.timeBlocks || [], // Add empty timeBlocks array if it doesn't exist
+        }));
+        setSavedSchedules(updatedSchedules);
+      } catch (error) {
+        console.error("Error parsing saved schedules:", error);
+        setSavedSchedules([]);
+      }
     }
 
     const loadedSettings = localStorage.getItem("scheduleSettings");
@@ -93,18 +110,21 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
 
     if (defaultSchedule) {
       setCoursesWithSections(defaultSchedule.courses);
+      // Also load the time blocks
+      setTimeBlocks(defaultSchedule.timeBlocks || []);
       toast.success(
         `Default schedule "${defaultSchedule.name}" loaded for ${term}`
       );
     } else {
       // Clear current schedule if no default exists for this term
       setCoursesWithSections([]);
+      setTimeBlocks([]); // Also clear time blocks
     }
   };
 
   const handleSaveSchedule = () => {
-    if (coursesWithSections.length === 0) {
-      toast.error("No courses selected to save");
+    if (coursesWithSections.length === 0 && timeBlocks.length === 0) {
+      toast.error("No courses or time blocks selected to save");
       return;
     }
 
@@ -118,21 +138,11 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
       (s) => s.term === selectedTerm
     );
 
-    // Limit to 3 saved schedules per term
-    if (
-      currentTermSchedules.length >= 3 &&
-      !currentTermSchedules.some((s) => s.name === scheduleName)
-    ) {
-      toast.error(
-        "Maximum of 3 schedules can be saved per term. Please delete one first."
-      );
-      return;
-    }
-
     const newSchedule: SavedSchedule = {
       id: Date.now(),
       name: scheduleName,
       courses: coursesWithSections,
+      timeBlocks: timeBlocks, // Save time blocks with the schedule
       term: selectedTerm,
       isDefault: currentTermSchedules.length === 0, // First saved schedule for a term becomes default
       timestamp: Date.now(),
@@ -164,6 +174,8 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
 
   const handleLoadSchedule = (schedule: SavedSchedule) => {
     setCoursesWithSections(schedule.courses);
+    // Also load the time blocks
+    setTimeBlocks(schedule.timeBlocks || []);
     setShowLoadDialog(false);
     toast.success(`Schedule "${schedule.name}" loaded`);
   };
@@ -222,6 +234,24 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
     (s) => s.term === selectedTerm
   );
 
+  // Get a summary of the schedule contents
+  const getScheduleSummary = (schedule: SavedSchedule) => {
+    const courseCount = schedule.courses.length;
+    const blockCount = schedule.timeBlocks?.length || 0;
+
+    let summary = "";
+    if (courseCount > 0) {
+      summary += `${courseCount} course${courseCount !== 1 ? "s" : ""}`;
+    }
+
+    if (blockCount > 0) {
+      if (summary) summary += ", ";
+      summary += `${blockCount} time block${blockCount !== 1 ? "s" : ""}`;
+    }
+
+    return summary || "Empty schedule";
+  };
+
   return (
     <div className="schedule-manager">
       <div className="schedule-manager-buttons">
@@ -260,6 +290,22 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
               onChange={(e) => setScheduleName(e.target.value)}
               maxLength={20}
             />
+            <div className="schedule-summary">
+              Saving:{" "}
+              {coursesWithSections.length > 0 && (
+                <span>
+                  {coursesWithSections.length} course
+                  {coursesWithSections.length !== 1 ? "s" : ""}
+                </span>
+              )}
+              {timeBlocks.length > 0 && (
+                <span>
+                  {coursesWithSections.length > 0 ? ", " : ""}
+                  {timeBlocks.length} time block
+                  {timeBlocks.length !== 1 ? "s" : ""}
+                </span>
+              )}
+            </div>
             <div className="schedule-dialog-buttons">
               <Button
                 label="Cancel"
@@ -305,9 +351,8 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
                         )}
                       </button>
                       <span className="schedule-name">{schedule.name}</span>
-                      <span className="course-count">
-                        {schedule.courses.length} course
-                        {schedule.courses.length !== 1 ? "s" : ""}
+                      <span className="schedule-contents">
+                        {getScheduleSummary(schedule)}
                       </span>
                     </div>
                     <div className="saved-schedule-actions">
@@ -383,3 +428,5 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
     </div>
   );
 };
+
+export default ScheduleManager;

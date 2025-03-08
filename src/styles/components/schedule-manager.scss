@@ -63,6 +63,37 @@
           outline: none;
           border-color: var(--colour-sosy-green-600);
         }
+
+        .schedule-summary {
+          margin-bottom: 1rem;
+          color: var(--colour-neutral-400);
+          font-size: 0.9rem;
+          padding: 0.5rem;
+          background-color: var(--colour-neutral-1000);
+          border-radius: 0.5rem;
+          text-align: center;
+        }
+
+        .saved-schedule-item {
+          .schedule-contents {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--colour-neutral-500);
+            font-size: 0.85rem;
+          }
+
+          .time-block-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            color: var(--colour-neutral-400);
+
+            svg {
+              color: #dc4c64;
+            }
+          }
+        }
       }
 
       .schedule-dialog-buttons {
