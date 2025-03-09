@@ -116,8 +116,6 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
     time: number;
   } | null>(null);
   const [showMobileHelp, setShowMobileHelp] = useState(false);
-  const [isScrollDisabled, setIsScrollDisabled] = useState(false);
-  const originalBodyOverflow = useRef("");
 
   // Effect to handle responsive slot height
   useEffect(() => {
@@ -268,47 +266,6 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
     // Reset week offset when courses change
     setCurrentWeekOffset(1);
   }, [coursesWithSections]);
-
-  // Effect to disable scrolling during drag operations on mobile
-  useEffect(() => {
-    if (!isTouchDevice) return;
-
-    if (isScrollDisabled) {
-      // Save the current overflow style
-      originalBodyOverflow.current = document.body.style.overflow;
-
-      // Disable scrolling
-      document.body.style.overflow = "hidden";
-
-      // Also prevent touchmove on the document to be extra safe
-      const preventTouchMove = (e: TouchEvent) => {
-        if (isInTimeBlockMode && selectedTimeSlot) {
-          e.preventDefault();
-        }
-      };
-
-      document.addEventListener("touchmove", preventTouchMove, {
-        passive: false,
-      });
-
-      return () => {
-        document.removeEventListener("touchmove", preventTouchMove);
-      };
-    } else {
-      // Restore previous overflow setting
-      document.body.style.overflow = originalBodyOverflow.current;
-    }
-  }, [isScrollDisabled, isTouchDevice, isInTimeBlockMode, selectedTimeSlot]);
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      // Reset body overflow to its original state when component unmounts
-      if (isScrollDisabled) {
-        document.body.style.overflow = originalBodyOverflow.current;
-      }
-    };
-  }, [isScrollDisabled]);
 
   useEffect(() => {
     if (!initialWeekDate) return;
@@ -589,13 +546,11 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
 
     // Prevent default to avoid scrolling
     event.preventDefault();
-    // Disable scrolling while dragging
-    setIsScrollDisabled(true);
 
     const touch = event.touches[0];
     setTouchStart({
       x: touch.clientX,
-      y: touch.clientY - 45,
+      y: touch.clientY,
       time: Date.now(),
     });
 
@@ -649,9 +604,6 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
       !setTimeBlocks
     )
       return;
-
-    // Disable scrolling while dragging
-    setIsScrollDisabled(true);
 
     // If drag was short in duration, create a fixed 30-minute block
     // This makes it easier to create blocks on mobile
@@ -730,17 +682,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
           className={`time-block-toggle-button ${
             isInTimeBlockMode ? "active" : ""
           }`}
-          onClick={() => {
-            const newMode = !isInTimeBlockMode;
-            setIsInTimeBlockMode(newMode);
-            // Reset any active drag operations when exiting block mode
-            if (!newMode) {
-              setIsScrollDisabled(false);
-              setTouchStart(null);
-              setSelectedTimeSlot(null);
-              setDragPreview(null);
-            }
-          }}
+          onClick={() => setIsInTimeBlockMode(!isInTimeBlockMode)}
         >
           {isInTimeBlockMode ? "Exit Block Mode" : "Create Time Block"}
         </button>
@@ -821,7 +763,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
       <div
         className={`schedule-grid ${
           isInTimeBlockMode ? "time-block-mode" : ""
-        } ${isScrollDisabled ? "no-scroll" : ""}`}
+        }`}
         ref={gridRef}
         onMouseDown={!isTouchDevice ? handleMouseDown : undefined}
         onMouseMove={!isTouchDevice ? handleMouseMove : undefined}
