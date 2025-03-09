@@ -62,13 +62,13 @@ export const HeaderNav: React.FC = () => {
 
           {/* Desktop Navigation */}
           <nav className="desktop-nav">
-            <Link href="/explore" className="page-link">
+            <Link href="/explore" className="page-link" prefetch={false}>
               explore
             </Link>
-            <Link href="/schedule" className="page-link">
+            <Link href="/schedule" className="page-link" prefetch={false}>
               schedule
             </Link>
-            <Link href="/faq" className="page-link">
+            <Link href="/faq" className="page-link" prefetch={false}>
               faq
             </Link>
             <Link
