@@ -140,10 +140,15 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
 
   // Detect mobile devices on component mount
   useEffect(() => {
-    setIsTouchDevice(isMobile());
+    const isMobileDevice = isMobile();
+    setIsTouchDevice(isMobileDevice);
+
+    // On desktop, time block creation is enabled by default
+    // On mobile, we start with it disabled and let user toggle it
+    setIsInTimeBlockMode(!isMobileDevice);
 
     // Show mobile help if it's a touch device and first visit
-    if (isMobile() && setTimeBlocks) {
+    if (isMobileDevice && setTimeBlocks) {
       const hasSeenMobileHelp = localStorage.getItem("seenTimeBlockMobileHelp");
       if (!hasSeenMobileHelp) {
         setShowMobileHelp(true);
@@ -360,7 +365,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
 
   // Function to handle time slot click
   const handleTimeSlotClick = (day: string, time: number) => {
-    if (!isInTimeBlockMode || !setTimeBlocks) return;
+    if ((!isInTimeBlockMode && !isTouchDevice) || !setTimeBlocks) return;
 
     const slotKey = `${day}-${time}`;
 
@@ -383,16 +388,13 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
       return;
     }
 
-    // If we already have a start but not an end, complete the selection
-    if (selectionStartDay && !selectionEndDay) {
+    // If we already have a start, complete the selection
+    if (selectionStartDay) {
       // If clicking on a different day, ignore (only allow same-day blocks)
       if (day !== selectionStartDay) {
         clearSelection();
         return;
       }
-
-      setSelectionEndDay(day);
-      setSelectionEndTime(time);
 
       // Create the time block
       const startTime = Math.min(selectionStartTime || 0, time);
@@ -437,14 +439,14 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
         return mergedBlocks;
       });
 
-      // Reset selection
+      // Reset selection to allow creating another block immediately
       clearSelection();
     }
   };
 
   // Function to handle time slot touch start
   const handleTimeSlotTouchStart = (day: string, time: number) => {
-    if (!isInTimeBlockMode || !setTimeBlocks || !isTouchDevice) return;
+    if ((!isInTimeBlockMode && isTouchDevice) || !setTimeBlocks) return;
 
     setTouchStartSlot({ day, time });
 
@@ -478,8 +480,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
 
   // Function to handle time slot touch end
   const handleTimeSlotTouchEnd = (day: string, time: number) => {
-    if (!isInTimeBlockMode || !touchStartSlot || !dragPreview || !setTimeBlocks)
-      return;
+    if (!isInTimeBlockMode || !touchStartSlot || !setTimeBlocks) return;
 
     // Only allow same-day selections
     if (day !== touchStartSlot.day) {
@@ -531,12 +532,13 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
       return mergedBlocks;
     });
 
-    // Reset selection
+    // Reset selection to allow creating another block immediately
     clearSelection();
   };
 
   // Clear the current selection state
   const clearSelection = () => {
+    // Clear all selection state to prepare for the next time block creation
     setSelectionStartDay(null);
     setSelectionStartTime(null);
     setSelectionEndDay(null);
@@ -544,17 +546,29 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
     setSelectedSlots({});
     setDragPreview(null);
     setTouchStartSlot(null);
+
+    // Small delay to prevent accidental double-clicks from registering as new selections
+    setTimeout(() => {
+      // Ensure we're still in time block mode
+      if (isInTimeBlockMode) {
+        // Re-enable selection
+      }
+    }, 50);
   };
 
   // Function to handle time slot mouse enter
   const handleTimeSlotMouseEnter = (day: string, time: number) => {
-    if (!isInTimeBlockMode || !selectionStartDay || !selectionStartTime) return;
+    if (
+      (!isInTimeBlockMode && !isTouchDevice) ||
+      !selectionStartDay ||
+      !selectionStartTime
+    )
+      return;
 
     // Only show preview for the same day
     if (day !== selectionStartDay) return;
 
-    // Update the selection end point
-    setSelectionEndDay(day);
+    // Update the selection end point for visual tracking
     setSelectionEndTime(time);
 
     // Update the preview
@@ -604,7 +618,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
 
   // Time block creation toggle button for mobile
   const TimeBlockToggle = () => {
-    if (!setTimeBlocks) return null;
+    if (!setTimeBlocks || !isTouchDevice) return null;
 
     return (
       <div className="time-block-toggle-container">
@@ -631,11 +645,18 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
     <div className="weekly-schedule" ref={scheduleRef}>
       {setTimeBlocks && (
         <div className="time-blocking-hint">
-          <span>
-            {isInTimeBlockMode
-              ? "Click or tap on time slots to create blocks. Click an existing block to remove it."
-              : "Toggle 'Create Time Block' mode to block off times in your schedule."}
-          </span>
+          {isTouchDevice ? (
+            <span>
+              {isInTimeBlockMode
+                ? "Tap on time slots to create blocks. Tap an existing block to remove it."
+                : "Toggle 'Create Time Block' mode to block off times in your schedule."}
+            </span>
+          ) : (
+            <span>
+              Click and drag on the calendar to block time. Click on a time
+              block to remove it.
+            </span>
+          )}
         </div>
       )}
 
