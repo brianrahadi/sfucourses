@@ -415,7 +415,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
 
         // Get time with corrections for position
         // 1. Calculate Y position relative to grid
-        const relativeY = event.clientY - gridRect.top;
+        const relativeY = event.clientY - gridRect.top - 55;
 
         // 2. Adjust for header height
         const adjustedY = relativeY - headerHeight;
