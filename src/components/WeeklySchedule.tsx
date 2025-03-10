@@ -93,30 +93,27 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
   const gridRef = useRef<HTMLDivElement>(null);
 
   // Time blocking state
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState<{
-    day: string;
-    time: number;
-  } | null>(null);
-  const [dragEnd, setDragEnd] = useState<{ day: string; time: number } | null>(
+  const [isInTimeBlockMode, setIsInTimeBlockMode] = useState(false);
+  const [selectedSlots, setSelectedSlots] = useState<{
+    [key: string]: boolean;
+  }>({});
+  const [selectionStartDay, setSelectionStartDay] = useState<string | null>(
     null
   );
+  const [selectionStartTime, setSelectionStartTime] = useState<number | null>(
+    null
+  );
+  const [selectionEndDay, setSelectionEndDay] = useState<string | null>(null);
+  const [selectionEndTime, setSelectionEndTime] = useState<number | null>(null);
   const [dragPreview, setDragPreview] = useState<TimeBlock | null>(null);
 
   // Mobile-specific state
   const [isTouchDevice, setIsTouchDevice] = useState(false);
-  const [touchStart, setTouchStart] = useState<{
-    x: number;
-    y: number;
-    time: number;
-  } | null>(null);
-  const [isInTimeBlockMode, setIsInTimeBlockMode] = useState(false);
-  const [selectedTimeSlot, setSelectedTimeSlot] = useState<{
+  const [touchStartSlot, setTouchStartSlot] = useState<{
     day: string;
     time: number;
   } | null>(null);
   const [showMobileHelp, setShowMobileHelp] = useState(false);
-  const [isScrollDisabled, setIsScrollDisabled] = useState(false);
   const originalBodyOverflow = useRef("");
 
   // Effect to handle responsive slot height
@@ -269,46 +266,13 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
     setCurrentWeekOffset(1);
   }, [coursesWithSections]);
 
-  // Effect to disable scrolling during drag operations on mobile
-  useEffect(() => {
-    if (!isTouchDevice) return;
-
-    if (isScrollDisabled) {
-      // Save the current overflow style
-      originalBodyOverflow.current = document.body.style.overflow;
-
-      // Disable scrolling
-      document.body.style.overflow = "hidden";
-
-      // Also prevent touchmove on the document to be extra safe
-      const preventTouchMove = (e: TouchEvent) => {
-        if (isInTimeBlockMode && selectedTimeSlot) {
-          e.preventDefault();
-        }
-      };
-
-      document.addEventListener("touchmove", preventTouchMove, {
-        passive: false,
-      });
-
-      return () => {
-        document.removeEventListener("touchmove", preventTouchMove);
-      };
-    } else {
-      // Restore previous overflow setting
-      document.body.style.overflow = originalBodyOverflow.current;
-    }
-  }, [isScrollDisabled, isTouchDevice, isInTimeBlockMode, selectedTimeSlot]);
-
   // Cleanup on unmount
   useEffect(() => {
     return () => {
       // Reset body overflow to its original state when component unmounts
-      if (isScrollDisabled) {
-        document.body.style.overflow = originalBodyOverflow.current;
-      }
+      document.body.style.overflow = originalBodyOverflow.current;
     };
-  }, [isScrollDisabled]);
+  }, []);
 
   useEffect(() => {
     if (!initialWeekDate) return;
@@ -347,6 +311,13 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
     timeBlocks, // Re-calculate when time blocks change
   ]);
 
+  // Clear selection when exiting time block mode
+  useEffect(() => {
+    if (!isInTimeBlockMode) {
+      clearSelection();
+    }
+  }, [isInTimeBlockMode]);
+
   // Navigate to previous week
   const goToPreviousWeek = () => {
     setCurrentWeekOffset((prev) => prev - 1);
@@ -362,12 +333,18 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
     setCurrentWeekOffset(1);
   };
 
-  let timeSlots = [];
-  for (let hour = startHour; hour <= endHour; hour++) {
-    timeSlots.push({ hour, minute: 0 }, { hour, minute: 30 });
-  }
+  // Generate time slots
+  const generateTimeSlots = () => {
+    const slots = [];
+    for (let hour = startHour; hour <= endHour; hour++) {
+      slots.push({ hour, minute: 0 }, { hour, minute: 30 });
+    }
+    return slots;
+  };
 
-  // Helper function to calculate position and size
+  const timeSlots = generateTimeSlots();
+
+  // Helper function to calculate position and size for course slots
   const calculateCoursePosition = (course: Course) => {
     // Calculate top position based on start time
     const minutesSinceStartHour = course.startTime - startHour * 60;
@@ -381,172 +358,155 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
     return { topOffset, height };
   };
 
-  // Helper to get time from mouse position - FIXED VERSION
-  const getTimeFromPosition = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (!gridRef.current) return null;
+  // Function to handle time slot click
+  const handleTimeSlotClick = (day: string, time: number) => {
+    if (!isInTimeBlockMode || !setTimeBlocks) return;
 
-    // Get the grid element's position
-    const gridRect = gridRef.current.getBoundingClientRect();
+    const slotKey = `${day}-${time}`;
 
-    // Get the day columns
-    const dayColumns = gridRef.current.querySelectorAll(".day-column");
+    // If this is the first slot selected, set it as the start
+    if (!selectionStartDay) {
+      setSelectionStartDay(day);
+      setSelectionStartTime(time);
 
-    // Get time column to calculate proper offsets
-    const timeColumn = gridRef.current.querySelector(".time-column");
-    const timeLabels = timeColumn
-      ? Array.from(timeColumn.querySelectorAll(".time-label"))
-      : [];
+      // Initialize preview
+      setDragPreview({
+        id: `preview-${Math.random().toString(36).substring(2, 11)}`,
+        day,
+        startTime: time,
+        duration: 30, // Default to 30 minutes duration
+        label: "Blocked",
+      });
 
-    // Get header height
-    const headerHeight =
-      gridRef.current.querySelector(".grid-header")?.clientHeight || 0;
-
-    // Determine which day column was clicked
-    for (let i = 0; i < dayColumns.length; i++) {
-      const column = dayColumns[i] as HTMLElement;
-      const columnRect = column.getBoundingClientRect();
-
-      if (
-        event.clientX >= columnRect.left &&
-        event.clientX <= columnRect.right
-      ) {
-        // Get day
-        const day = daysOfWeek[i];
-
-        // Get time with corrections for position
-        // 1. Calculate Y position relative to grid
-        const relativeY = event.clientY - gridRect.top - 55;
-
-        // 2. Adjust for header height
-        const adjustedY = relativeY - headerHeight;
-
-        // 3. Find closest time slot (direct mapping approach)
-        // Each slot is slotHeight pixels tall
-        const slotIndex = Math.floor(adjustedY / slotHeight);
-
-        // Calculate time from slot index
-        // Each 2 slots = 1 hour
-        const hourOffset = Math.floor(slotIndex / 2);
-        const minuteOffset = (slotIndex % 2) * 30;
-
-        const time = (startHour + hourOffset) * 60 + minuteOffset;
-
-        // Round to nearest 15-minute increment if needed
-        // const roundedTime = Math.round(time / 15) * 15;
-
-        return { day, time };
-      }
+      // Mark this slot as selected
+      setSelectedSlots({ [slotKey]: true });
+      return;
     }
 
-    return null;
-  };
-
-  // Function to get time from touch position
-  const getTouchTimePosition = (clientX: number, clientY: number) => {
-    if (!gridRef.current) return null;
-
-    const gridRect = gridRef.current.getBoundingClientRect();
-    const dayColumns = gridRef.current.querySelectorAll(".day-column");
-
-    // Get header height
-    const headerHeight =
-      gridRef.current.querySelector(".grid-header")?.clientHeight || 0;
-
-    // Determine which day column was touched
-    for (let i = 0; i < dayColumns.length; i++) {
-      const column = dayColumns[i] as HTMLElement;
-      const columnRect = column.getBoundingClientRect();
-
-      if (clientX >= columnRect.left && clientX <= columnRect.right) {
-        // Get day
-        const day = daysOfWeek[i];
-
-        // Get time with corrections for position
-        const relativeY = clientY - gridRect.top;
-        const adjustedY = relativeY - headerHeight;
-
-        // Each slot is slotHeight pixels tall
-        const slotIndex = Math.floor(adjustedY / slotHeight);
-
-        // Calculate time from slot index
-        const hourOffset = Math.floor(slotIndex / 2);
-        const minuteOffset = (slotIndex % 2) * 30;
-
-        const time = (startHour + hourOffset) * 60 + minuteOffset;
-
-        return { day, time };
+    // If we already have a start but not an end, complete the selection
+    if (selectionStartDay && !selectionEndDay) {
+      // If clicking on a different day, ignore (only allow same-day blocks)
+      if (day !== selectionStartDay) {
+        clearSelection();
+        return;
       }
-    }
 
-    return null;
+      setSelectionEndDay(day);
+      setSelectionEndTime(time);
+
+      // Create the time block
+      const startTime = Math.min(selectionStartTime || 0, time);
+      const endTime = Math.max(selectionStartTime || 0, time);
+      const duration = endTime - startTime + 30; // Include the end slot
+
+      // Don't create blocks less than 15 minutes
+      if (duration < 15) {
+        clearSelection();
+        return;
+      }
+
+      const newBlock = {
+        id: `block-${Math.random().toString(36).substring(2, 11)}`,
+        day,
+        startTime,
+        duration,
+        label: "Blocked",
+      };
+
+      // Add the block and merge any overlapping blocks
+      setTimeBlocks((prev) => {
+        // First add the new block
+        const updatedBlocks = [...prev, newBlock];
+
+        // Then merge any overlapping blocks
+        const mergedBlocks = mergeOverlappingBlocks(updatedBlocks);
+
+        // If blocks were merged, show a different message
+        if (mergedBlocks.length < updatedBlocks.length) {
+          setTimeout(() => {
+            toast.success("Overlapping time blocks have been merged!");
+          }, 100);
+        } else {
+          setTimeout(() => {
+            toast.success(
+              "Time block added! Courses with conflicts will be filtered out."
+            );
+          }, 100);
+        }
+
+        return mergedBlocks;
+      });
+
+      // Reset selection
+      clearSelection();
+    }
   };
 
-  // Handle mouse down - start dragging
-  const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
-    // Only start drag if clicking directly on a time slot
-    if (!(event.target as HTMLElement).classList.contains("time-slot")) return;
+  // Function to handle time slot touch start
+  const handleTimeSlotTouchStart = (day: string, time: number) => {
+    if (!isInTimeBlockMode || !setTimeBlocks || !isTouchDevice) return;
 
-    const position = getTimeFromPosition(event);
-    if (!position) return;
+    setTouchStartSlot({ day, time });
 
-    setIsDragging(true);
-    setDragStart(position);
-    setDragEnd(position);
-
-    // Create initial preview
+    // Initialize drag preview
     setDragPreview({
       id: `preview-${Math.random().toString(36).substring(2, 11)}`,
-      day: position.day,
-      startTime: position.time,
+      day,
+      startTime: time,
       duration: 30, // Start with 30 minutes
       label: "Blocked",
     });
   };
 
-  // Handle mouse move - update drag preview
-  const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (!isDragging || !dragStart) return;
+  // Function to handle time slot touch move
+  const handleTimeSlotTouchMove = (day: string, time: number) => {
+    if (!isInTimeBlockMode || !touchStartSlot || !dragPreview) return;
 
-    const position = getTimeFromPosition(event);
-    if (!position || position.day !== dragStart.day) return;
+    // Only allow same-day selections
+    if (day !== touchStartSlot.day) return;
 
-    setDragEnd(position);
-
-    // Update preview
-    const startTime = Math.min(dragStart.time, position.time);
-    const endTime = Math.max(dragStart.time, position.time);
+    // Update the drag preview
+    const startTime = Math.min(touchStartSlot.time, time);
+    const endTime = Math.max(touchStartSlot.time, time);
 
     setDragPreview({
-      id:
-        dragPreview?.id ||
-        `preview-${Math.random().toString(36).substring(2, 11)}`,
-      day: dragStart.day,
+      ...dragPreview,
       startTime,
-      duration: endTime - startTime,
-      label: "Blocked",
+      duration: endTime - startTime + 30, // Include the full end slot
     });
   };
 
-  // Handle mouse up - create block
-  const handleMouseUp = () => {
-    if (
-      !isDragging ||
-      !dragPreview ||
-      dragPreview.duration < 15 ||
-      !setTimeBlocks
-    ) {
-      // Don't create blocks less than 15 minutes or if setTimeBlocks is not provided
-      setIsDragging(false);
-      setDragStart(null);
-      setDragEnd(null);
-      setDragPreview(null);
+  // Function to handle time slot touch end
+  const handleTimeSlotTouchEnd = (day: string, time: number) => {
+    if (!isInTimeBlockMode || !touchStartSlot || !dragPreview || !setTimeBlocks)
+      return;
+
+    // Only allow same-day selections
+    if (day !== touchStartSlot.day) {
+      clearSelection();
       return;
     }
 
-    // Create new timeblock
+    // Create the time block
+    const startTime = Math.min(touchStartSlot.time, time);
+    const endTime = Math.max(touchStartSlot.time, time);
+    const duration = endTime - startTime + 30; // Include the full end slot
+
+    // For very short touches on mobile, create a fixed 30-minute block
+    const finalDuration = duration < 30 ? 30 : duration;
+
+    // Don't create blocks less than 15 minutes
+    if (finalDuration < 15) {
+      clearSelection();
+      return;
+    }
+
     const newBlock = {
-      ...dragPreview,
       id: `block-${Math.random().toString(36).substring(2, 11)}`,
+      day: touchStartSlot.day,
+      startTime,
+      duration: finalDuration,
+      label: "Blocked",
     };
 
     // Add the block and merge any overlapping blocks
@@ -557,148 +517,70 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
       // Then merge any overlapping blocks
       const mergedBlocks = mergeOverlappingBlocks(updatedBlocks);
 
-      // If blocks were merged, show a different message
+      // Show toast message
       if (mergedBlocks.length < updatedBlocks.length) {
         setTimeout(() => {
           toast.success("Overlapping time blocks have been merged!");
         }, 100);
       } else {
         setTimeout(() => {
-          toast.success(
-            "Time block added! Courses with conflicts will be filtered out."
-          );
+          toast.success("Time block added!");
         }, 100);
       }
 
       return mergedBlocks;
     });
 
-    // Reset drag state
-    setIsDragging(false);
-    setDragStart(null);
-    setDragEnd(null);
+    // Reset selection
+    clearSelection();
+  };
+
+  // Clear the current selection state
+  const clearSelection = () => {
+    setSelectionStartDay(null);
+    setSelectionStartTime(null);
+    setSelectionEndDay(null);
+    setSelectionEndTime(null);
+    setSelectedSlots({});
     setDragPreview(null);
+    setTouchStartSlot(null);
   };
 
-  // Mobile touch handlers
-  const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
-    if (!isInTimeBlockMode) return;
+  // Function to handle time slot mouse enter
+  const handleTimeSlotMouseEnter = (day: string, time: number) => {
+    if (!isInTimeBlockMode || !selectionStartDay || !selectionStartTime) return;
 
-    const target = event.target as HTMLElement;
-    if (!target.classList.contains("time-slot")) return;
+    // Only show preview for the same day
+    if (day !== selectionStartDay) return;
 
-    // Prevent default to avoid scrolling
-    event.preventDefault();
-    // Disable scrolling while dragging
-    setIsScrollDisabled(true);
+    // Update the selection end point
+    setSelectionEndDay(day);
+    setSelectionEndTime(time);
 
-    const touch = event.touches[0];
-    setTouchStart({
-      x: touch.clientX,
-      y: touch.clientY - 45,
-      time: Date.now(),
-    });
+    // Update the preview
+    const startTime = Math.min(selectionStartTime, time);
+    const endTime = Math.max(selectionStartTime, time);
 
-    // Get time and day from the element's data attributes
-    const day = target.dataset.day;
-    const time = target.dataset.time ? parseInt(target.dataset.time, 10) : null;
+    // Update selected slots for visual feedback
+    const newSelectedSlots: { [key: string]: boolean } = {};
 
-    if (day && time !== null) {
-      setSelectedTimeSlot({ day, time });
-
-      // Create initial preview
-      setDragPreview({
-        id: `preview-${Math.random().toString(36).substring(2, 11)}`,
-        day,
-        startTime: time,
-        duration: 30, // Start with 30 minutes for mobile
-        label: "Blocked",
-      });
+    // Mark all slots between start and end as selected
+    for (let t = startTime; t <= endTime; t += 30) {
+      newSelectedSlots[`${day}-${t}`] = true;
     }
-  };
 
-  const handleTouchMove = (event: React.TouchEvent<HTMLDivElement>) => {
-    if (!isInTimeBlockMode || !touchStart || !selectedTimeSlot || !dragPreview)
-      return;
+    setSelectedSlots(newSelectedSlots);
 
-    // Prevent default to avoid scrolling
-    event.preventDefault();
-
-    const touch = event.touches[0];
-
-    // Get position from the touch
-    const position = getTouchTimePosition(touch.clientX, touch.clientY);
-    if (!position || position.day !== selectedTimeSlot.day) return;
-
-    // Update the drag preview
-    const startTime = Math.min(selectedTimeSlot.time, position.time);
-    const endTime = Math.max(selectedTimeSlot.time, position.time);
-
+    // Update drag preview
     setDragPreview({
-      ...dragPreview,
+      id:
+        dragPreview?.id ||
+        `preview-${Math.random().toString(36).substring(2, 11)}`,
+      day,
       startTime,
-      duration: endTime - startTime,
+      duration: endTime - startTime + 30, // Include the full end slot
+      label: "Blocked",
     });
-  };
-
-  const handleTouchEnd = (event: React.TouchEvent<HTMLDivElement>) => {
-    if (
-      !isInTimeBlockMode ||
-      !selectedTimeSlot ||
-      !dragPreview ||
-      !setTimeBlocks
-    )
-      return;
-
-    // Disable scrolling while dragging
-    setIsScrollDisabled(true);
-
-    // If drag was short in duration, create a fixed 30-minute block
-    // This makes it easier to create blocks on mobile
-    const touchDuration = Date.now() - (touchStart?.time || 0);
-    let finalDragPreview = { ...dragPreview };
-
-    if (touchDuration < 300 && dragPreview.duration < 30) {
-      // Short tap - create a 30-minute block
-      finalDragPreview = {
-        ...dragPreview,
-        duration: 30,
-      };
-    }
-
-    // Only create the block if it has a reasonable duration
-    if (finalDragPreview.duration >= 15) {
-      const newBlock = {
-        ...finalDragPreview,
-        id: `block-${Math.random().toString(36).substring(2, 11)}`,
-      };
-
-      setTimeBlocks((prev) => {
-        // First add the new block
-        const updatedBlocks = [...prev, newBlock];
-
-        // Then merge any overlapping blocks
-        const mergedBlocks = mergeOverlappingBlocks(updatedBlocks);
-
-        // Show appropriate toast
-        if (mergedBlocks.length < updatedBlocks.length) {
-          setTimeout(() => {
-            toast.success("Overlapping time blocks have been merged!");
-          }, 100);
-        } else {
-          setTimeout(() => {
-            toast.success("Time block added!");
-          }, 100);
-        }
-
-        return mergedBlocks;
-      });
-    }
-
-    // Reset state
-    setTouchStart(null);
-    setSelectedTimeSlot(null);
-    setDragPreview(null);
   };
 
   // Remove a timeblock when clicked
@@ -722,7 +604,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
 
   // Time block creation toggle button for mobile
   const TimeBlockToggle = () => {
-    if (!isTouchDevice || !setTimeBlocks) return null;
+    if (!setTimeBlocks) return null;
 
     return (
       <div className="time-block-toggle-container">
@@ -733,12 +615,9 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
           onClick={() => {
             const newMode = !isInTimeBlockMode;
             setIsInTimeBlockMode(newMode);
-            // Reset any active drag operations when exiting block mode
+            // Reset any active selection operations when toggling mode
             if (!newMode) {
-              setIsScrollDisabled(false);
-              setTouchStart(null);
-              setSelectedTimeSlot(null);
-              setDragPreview(null);
+              clearSelection();
             }
           }}
         >
@@ -748,47 +627,19 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
     );
   };
 
-  // Mobile help overlay
-  // const MobileHelpOverlay = () => {
-  //   if (!showMobileHelp) return null;
-
-  //   return (
-  //     <div className="mobile-instruction-overlay">
-  //       <p>To create time blocks on mobile:</p>
-  //       <p>1. Tap Create Time Block" button</p>
-  //       <p>2. Tap and drag on the schedule</p>
-  //       <p>3. When finished, tap "Exit Block Mode"</p>
-  //       <button
-  //         className="instruction-btn"
-  //         onClick={() => {
-  //           setShowMobileHelp(false);
-  //           localStorage.setItem("seenTimeBlockMobileHelp", "true");
-  //         }}
-  //       >
-  //         Got it!
-  //       </button>
-  //     </div>
-  //   );
-  // };
-
   return (
     <div className="weekly-schedule" ref={scheduleRef}>
       {setTimeBlocks && (
         <div className="time-blocking-hint">
-          {isTouchDevice ? (
-            <span>
-              Toggle &apos;Create Time Block&apos; mode, then tap and drag to
-              block time.
-            </span>
-          ) : (
-            <span>
-              Drag on calendar to block time. Click a time block to remove it.
-            </span>
-          )}
+          <span>
+            {isInTimeBlockMode
+              ? "Click or tap on time slots to create blocks. Click an existing block to remove it."
+              : "Toggle 'Create Time Block' mode to block off times in your schedule."}
+          </span>
         </div>
       )}
 
-      {/* Time Block Toggle Button for Mobile */}
+      {/* Time Block Toggle Button */}
       <TimeBlockToggle />
 
       {weekStartDate && (
@@ -821,17 +672,8 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
       <div
         className={`schedule-grid ${
           isInTimeBlockMode ? "time-block-mode" : ""
-        } ${isScrollDisabled ? "no-scroll" : ""}`}
+        }`}
         ref={gridRef}
-        onMouseDown={!isTouchDevice ? handleMouseDown : undefined}
-        onMouseMove={!isTouchDevice ? handleMouseMove : undefined}
-        onMouseUp={!isTouchDevice ? handleMouseUp : undefined}
-        onMouseLeave={
-          !isTouchDevice && isDragging ? () => handleMouseUp() : undefined
-        }
-        onTouchStart={isTouchDevice ? handleTouchStart : undefined}
-        onTouchMove={isTouchDevice ? handleTouchMove : undefined}
-        onTouchEnd={isTouchDevice ? handleTouchEnd : undefined}
       >
         <div className="grid-header">
           <div className="time-label"></div>
@@ -862,18 +704,29 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
           ))}
         </div>
 
-        {daysOfWeek.map((day, dayIndex) => (
+        {daysOfWeek.map((day) => (
           <div key={day} className="day-column">
-            {timeSlots.map(({ hour, minute }, index) => (
-              <div
-                key={`${day}-${hour}-${minute}`}
-                className={`time-slot ${
-                  minute === 30 ? "time-slot--half" : ""
-                }`}
-                data-day={day}
-                data-time={hour * 60 + minute}
-              />
-            ))}
+            {timeSlots.map(({ hour, minute }) => {
+              const time = hour * 60 + minute;
+              const slotKey = `${day}-${time}`;
+              const isSelected = Boolean(selectedSlots[slotKey]);
+
+              return (
+                <div
+                  key={`${day}-${hour}-${minute}`}
+                  className={`time-slot ${
+                    minute === 30 ? "time-slot--half" : ""
+                  } ${isSelected ? "selected" : ""}`}
+                  data-day={day}
+                  data-time={time}
+                  onClick={() => handleTimeSlotClick(day, time)}
+                  onMouseEnter={() => handleTimeSlotMouseEnter(day, time)}
+                  onTouchStart={() => handleTimeSlotTouchStart(day, time)}
+                  onTouchMove={() => handleTimeSlotTouchMove(day, time)}
+                  onTouchEnd={() => handleTimeSlotTouchEnd(day, time)}
+                />
+              );
+            })}
             {timeslots
               .filter((course) => course.day === day)
               .map((course) => {
@@ -918,11 +771,8 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
                 );
               })}
 
-            {/* Show drag preview if we're dragging in this column */}
-            {((isDragging && dragPreview && dragPreview.day === day) ||
-              (selectedTimeSlot &&
-                dragPreview &&
-                selectedTimeSlot.day === day)) && (
+            {/* Show drag preview if we have one for this day */}
+            {dragPreview && dragPreview.day === day && (
               <div
                 className="course-block time-block preview"
                 style={{
