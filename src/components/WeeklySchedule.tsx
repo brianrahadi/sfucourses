@@ -308,13 +308,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
     }
 
     setTimeslots(newTimeslots);
-  }, [
-    initialWeekDate,
-    currentWeekOffset,
-    coursesWithSections,
-    setCoursesWithSections,
-    timeBlocks, // Re-calculate when time blocks change
-  ]);
+  }, [initialWeekDate, currentWeekOffset]);
 
   // Clear selection when exiting time block mode
   useEffect(() => {

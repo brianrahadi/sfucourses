@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Hero, WeeklySchedule, TextBadge } from "@components";
 import Link from "next/link";
 import LandingPageHeroSrc from "../assets/images/landing-page/hero.webp";
-import { getCourseAPIData } from "@utils";
+import { getCourseAPIData, getCurrentAndNextTerm } from "@utils";
 import { CourseWithSectionDetails } from "@types";
 import { useQuery } from "@tanstack/react-query";
 
@@ -17,6 +17,7 @@ interface SavedSchedule {
   term: string;
   isDefault: boolean;
   timestamp: number;
+  timeBlocks?: any[];
 }
 
 interface CourseBlockData {
@@ -27,16 +28,28 @@ interface CourseBlockData {
 }
 
 const LandingPage: React.FC = () => {
-  const [springSchedule, setSpringSchedule] = useState<
-    CourseWithSectionDetails[]
-  >([]);
-  const [summerSchedule, setSummerSchedule] = useState<
-    CourseWithSectionDetails[]
-  >([]);
-  const [activePreview, setActivePreview] = useState<string>("Spring 2025");
+  // Get available terms dynamically
+  const availableTerms = getCurrentAndNextTerm();
+
+  // State for the saved schedules
+  const [savedSchedules, setSavedSchedules] = useState<SavedSchedule[]>([]);
+
+  // State for the schedules organized by term
+  const [schedulesByTerm, setSchedulesByTerm] = useState<{
+    [term: string]: CourseWithSectionDetails[];
+  }>({});
+
+  // Set the initial active preview to the first available term
+  const [activePreview, setActivePreview] = useState<string>(
+    availableTerms.length > 0 ? availableTerms[0] : ""
+  );
+
   const [animatedCourses, setAnimatedCourses] = useState<CourseBlockData[][]>(
     []
   );
+
+  // Prevent the useEffect from running multiple times
+  const hasLoadedRef = useRef(false);
 
   // Fetch popular courses for the animated blocks
   const { data: coursesData } = useQuery({
@@ -55,33 +68,38 @@ const LandingPage: React.FC = () => {
 
   // Load saved schedules from localStorage on component mount
   useEffect(() => {
-    // Load default schedules
+    // Skip if already loaded
+    if (hasLoadedRef.current) return;
+    hasLoadedRef.current = true;
+
     const loadedSchedules = localStorage.getItem("savedSchedules");
 
-    if (loadedSchedules) {
-      try {
-        const schedules: SavedSchedule[] = JSON.parse(loadedSchedules);
+    if (!loadedSchedules) return;
 
-        // Find the default schedule for Spring
-        const springDefault = schedules.find(
-          (s) => s.term === "Spring 2025" && s.isDefault
-        );
+    try {
+      const parsedSchedules: SavedSchedule[] = JSON.parse(loadedSchedules);
 
-        if (springDefault) {
-          setSpringSchedule(springDefault.courses);
-        }
+      // Set the saved schedules in state
+      setSavedSchedules(parsedSchedules);
 
-        // Find the default schedule for Summer
-        const summerDefault = schedules.find(
-          (s) => s.term === "Summer 2025" && s.isDefault
-        );
+      // Find all default schedules
+      const defaultSchedules = parsedSchedules.filter(
+        (schedule) => schedule.isDefault
+      );
 
-        if (summerDefault) {
-          setSummerSchedule(summerDefault.courses);
-        }
-      } catch (error) {
-        console.error("Error loading schedule data:", error);
-      }
+      if (defaultSchedules.length === 0) return;
+
+      // Create a map of term to courses
+      const termCoursesMap: { [term: string]: CourseWithSectionDetails[] } = {};
+
+      defaultSchedules.forEach((schedule) => {
+        termCoursesMap[schedule.term] = schedule.courses;
+      });
+
+      // Set the schedules by term
+      setSchedulesByTerm(termCoursesMap);
+    } catch (error) {
+      console.error("Error loading schedule data:", error);
     }
   }, []);
 
@@ -122,8 +140,25 @@ const LandingPage: React.FC = () => {
   };
 
   // Get the appropriate schedule based on active tab
-  const currentSchedule =
-    activePreview === "Spring 2025" ? springSchedule : summerSchedule;
+  const currentSchedule = schedulesByTerm[activePreview] || [];
+
+  // Get the default schedule for a specific term
+  const getDefaultScheduleForTerm = (
+    term: string
+  ): SavedSchedule | undefined => {
+    return savedSchedules.find(
+      (schedule) => schedule.term === term && schedule.isDefault
+    );
+  };
+
+  // Get terms that have default schedules
+  const termsWithDefaultSchedules = Object.keys(schedulesByTerm);
+
+  // If no terms with defaults, use available terms
+  const displayTerms =
+    termsWithDefaultSchedules.length > 0
+      ? termsWithDefaultSchedules
+      : availableTerms;
 
   return (
     <div className="page landing-page">
@@ -137,24 +172,19 @@ const LandingPage: React.FC = () => {
         <section className="container schedule-preview-section">
           <h2>Your Default Schedules</h2>
           <div className="schedule-preview-tabs">
-            <button
-              className={`tab-button ${
-                activePreview === "Spring 2025" ? "active" : ""
-              }`}
-              onClick={() => handleTabChange("Spring 2025")}
-            >
-              Spring 2025
-            </button>
-            <button
-              className={`tab-button ${
-                activePreview === "Summer 2025" ? "active" : ""
-              }`}
-              onClick={() => handleTabChange("Summer 2025")}
-            >
-              Summer 2025
-            </button>
+            {displayTerms.map((term) => (
+              <button
+                key={term}
+                className={`tab-button ${
+                  activePreview === term ? "active" : ""
+                }`}
+                onClick={() => handleTabChange(term)}
+              >
+                {term}
+              </button>
+            ))}
           </div>
-          {springSchedule.length > 0 || summerSchedule.length > 0 ? (
+          {Object.keys(schedulesByTerm).length > 0 ? (
             <div className="schedule-preview-content">
               <div className="selected-courses-preview">
                 <h3>Selected Courses</h3>
