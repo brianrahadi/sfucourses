@@ -218,21 +218,6 @@
       gap: 1rem;
       height: auto;
       /* Allow natural height */
-
-      &__bottom {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        justify-content: space-between;
-        gap: 1rem;
-
-        > div {
-          display: flex;
-          flex-wrap: wrap;
-          align-items: center;
-          gap: 0.5rem;
-        }
-      }
     }
   }
 

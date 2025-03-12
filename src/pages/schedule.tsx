@@ -483,17 +483,6 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
                 timeBlocks={timeBlocks}
                 setTimeBlocks={setTimeBlocks}
               />
-              <div className="schedule-container__bottom">
-                <div className="selected-courses-badges">
-                  {selectedOutlinesWithSections.map((outline) => (
-                    <TextBadge
-                      key={`badge ${outline.dept} ${outline.number}`}
-                      content={`${outline.dept} ${outline.number}`}
-                      enableBgColor
-                    />
-                  ))}
-                </div>
-              </div>
             </div>
           </div>
         </section>
