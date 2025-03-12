@@ -81,7 +81,7 @@ const doTimeslotsConflict = (ts1: Course, ts2: Course): ConflictResponse => {
 export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
   coursesWithSections,
   setCoursesWithSections,
-  timeBlocks = [], // Default to empty array
+  timeBlocks, // Default to empty array
   setTimeBlocks,
 }) => {
   const [timeslots, setTimeslots] = useState<Course[]>([]);
@@ -308,7 +308,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
     }
 
     setTimeslots(newTimeslots);
-  }, [initialWeekDate, currentWeekOffset]);
+  }, [initialWeekDate, currentWeekOffset, timeBlocks]);
 
   // Clear selection when exiting time block mode
   useEffect(() => {
