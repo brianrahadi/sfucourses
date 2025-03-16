@@ -117,26 +117,26 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
   const originalBodyOverflow = useRef("");
 
   // Effect to handle responsive slot height
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerHeight <= 700) {
-        setSlotHeight(15);
-      } else if (window.innerHeight <= 800) {
-        setSlotHeight(18);
-      } else {
-        setSlotHeight(20);
-      }
-    };
+  // useEffect(() => {
+  //   const handleResize = () => {
+  //     if (window.innerHeight <= 700) {
+  //       setSlotHeight(15);
+  //     } else if (window.innerHeight <= 800) {
+  //       setSlotHeight(18);
+  //     } else {
+  //       setSlotHeight(20);
+  //     }
+  //   };
 
-    // Set initial value
-    handleResize();
+  //   // Set initial value
+  //   handleResize();
 
-    // Add event listener
-    window.addEventListener("resize", handleResize);
+  //   // Add event listener
+  //   window.addEventListener("resize", handleResize);
 
-    // Clean up
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  //   // Clean up
+  //   return () => window.removeEventListener("resize", handleResize);
+  // }, []);
 
   // Detect mobile devices on component mount
   useEffect(() => {

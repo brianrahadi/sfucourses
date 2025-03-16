@@ -137,42 +137,6 @@
   }
 }
 
-@media (max-height: 800px) {
-  .weekly-schedule {
-    .time-slot,
-    .time-label {
-      height: 18px;
-    }
-
-    .time-text {
-      font-size: 0.7rem;
-    }
-
-    .course-block {
-      font-size: 0.7rem;
-      padding: 1px 2px;
-    }
-
-    .day-header {
-      padding: 4px;
-      font-size: 0.8rem;
-    }
-  }
-}
-
-// @media (max-height: 700px) {
-//   .weekly-schedule {
-//     .time-slot,
-//     .time-label {
-//       height: 15px;
-//     }
-
-//     .course-block {
-//       font-size: 0.65rem;
-//     }
-//   }
-// }
-
 .weekly-schedule {
   .time-blocking-hint {
     text-align: center;
