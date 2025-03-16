@@ -601,13 +601,12 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
     }
   };
 
-  // Format display time (8:00 AM format)
   const formatDisplayTime = (minutes: number): string => {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
-    const period = hours >= 12 ? "PM" : "AM";
-    const displayHours = hours > 12 ? hours - 12 : hours === 0 ? 12 : hours;
-    return `${displayHours}:${mins.toString().padStart(2, "0")} ${period}`;
+    // const period = hours >= 12 ? "PM" : "AM";
+    // const displayHours = hours > 12 ? hours - 12 : hours === 0 ? 12 : hours;
+    return `${hours}:${mins.toString().padStart(2, "0")}`;
   };
 
   // Time block creation toggle button for mobile

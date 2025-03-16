@@ -373,12 +373,12 @@
       min-height: 15px;
     }
 
-    /* Simple mode for small screens */
-    .time-block-minimal {
-      .time-block-time {
-        display: none;
-      }
-    }
+    // /* Simple mode for small screens */
+    // .time-block-minimal {
+    //   .time-block-time {
+    //     display: none;
+    //   }
+    // }
   }
 
   /* Mobile instruction helper */
@@ -423,10 +423,6 @@
       &.time-block {
         .time-block-label {
           font-size: 0.65rem;
-        }
-
-        .time-block-time {
-          display: none;
         }
       }
     }
