@@ -92,8 +92,6 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
   const scheduleRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
 
-  // Time blocking state
-  const [isInTimeBlockMode, setIsInTimeBlockMode] = useState(false);
   const [selectedSlots, setSelectedSlots] = useState<{
     [key: string]: boolean;
   }>({});
@@ -142,10 +140,6 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
   useEffect(() => {
     const isMobileDevice = isMobile();
     setIsTouchDevice(isMobileDevice);
-
-    // On desktop, time block creation is enabled by default
-    // On mobile, we start with it disabled and let user toggle it
-    setIsInTimeBlockMode(!isMobileDevice);
 
     // Show mobile help if it's a touch device and first visit
     if (isMobileDevice && setTimeBlocks) {
@@ -310,13 +304,6 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
     setTimeslots(newTimeslots);
   }, [initialWeekDate, currentWeekOffset, timeBlocks]);
 
-  // Clear selection when exiting time block mode
-  useEffect(() => {
-    if (!isInTimeBlockMode) {
-      clearSelection();
-    }
-  }, [isInTimeBlockMode]);
-
   // Navigate to previous week
   const goToPreviousWeek = () => {
     setCurrentWeekOffset((prev) => prev - 1);
@@ -359,7 +346,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
 
   // Function to handle time slot click
   const handleTimeSlotClick = (day: string, time: number) => {
-    if ((!isInTimeBlockMode && !isTouchDevice) || !setTimeBlocks) return;
+    if (!setTimeBlocks) return;
 
     const slotKey = `${day}-${time}`;
 
@@ -440,7 +427,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
 
   // Function to handle time slot touch start
   const handleTimeSlotTouchStart = (day: string, time: number) => {
-    if ((!isInTimeBlockMode && isTouchDevice) || !setTimeBlocks) return;
+    if (!setTimeBlocks) return;
 
     setTouchStartSlot({ day, time });
 
@@ -456,7 +443,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
 
   // Function to handle time slot touch move
   const handleTimeSlotTouchMove = (day: string, time: number) => {
-    if (!isInTimeBlockMode || !touchStartSlot || !dragPreview) return;
+    if (!touchStartSlot || !dragPreview) return;
 
     // Only allow same-day selections
     if (day !== touchStartSlot.day) return;
@@ -474,7 +461,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
 
   // Function to handle time slot touch end
   const handleTimeSlotTouchEnd = (day: string, time: number) => {
-    if (!isInTimeBlockMode || !touchStartSlot || !setTimeBlocks) return;
+    if (isTouchDevice || !touchStartSlot || !setTimeBlocks) return;
 
     // Only allow same-day selections
     if (day !== touchStartSlot.day) {
@@ -540,24 +527,11 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
     setSelectedSlots({});
     setDragPreview(null);
     setTouchStartSlot(null);
-
-    // Small delay to prevent accidental double-clicks from registering as new selections
-    setTimeout(() => {
-      // Ensure we're still in time block mode
-      if (isInTimeBlockMode) {
-        // Re-enable selection
-      }
-    }, 50);
   };
 
   // Function to handle time slot mouse enter
   const handleTimeSlotMouseEnter = (day: string, time: number) => {
-    if (
-      (!isInTimeBlockMode && !isTouchDevice) ||
-      !selectionStartDay ||
-      !selectionStartTime
-    )
-      return;
+    if (!selectionStartDay || !selectionStartTime) return;
 
     // Only show preview for the same day
     if (day !== selectionStartDay) return;
@@ -609,52 +583,16 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
     return `${hours}:${mins.toString().padStart(2, "0")}`;
   };
 
-  // Time block creation toggle button for mobile
-  const TimeBlockToggle = () => {
-    if (!setTimeBlocks || !isTouchDevice) return null;
-
-    return (
-      <div className="time-block-toggle-container">
-        <button
-          className={`time-block-toggle-button ${
-            isInTimeBlockMode ? "active" : ""
-          }`}
-          onClick={() => {
-            const newMode = !isInTimeBlockMode;
-            setIsInTimeBlockMode(newMode);
-            // Reset any active selection operations when toggling mode
-            if (!newMode) {
-              clearSelection();
-            }
-          }}
-        >
-          {isInTimeBlockMode ? "Exit Block Mode" : "Create Time Block"}
-        </button>
-      </div>
-    );
-  };
-
   return (
     <div className="weekly-schedule" ref={scheduleRef}>
       {setTimeBlocks && (
         <div className="time-blocking-hint">
-          {isTouchDevice ? (
-            <span>
-              {isInTimeBlockMode
-                ? "Tap on time slots to create blocks. Tap an existing block to remove it."
-                : "Toggle 'Create Time Block' mode to block off times in your schedule."}
-            </span>
-          ) : (
-            <span>
-              Click and drag on the calendar to block time. Click on a time
-              block to remove it.
-            </span>
-          )}
+          <span>
+            Tap on time slots to create blocks. Tap an existing block to remove
+            it.
+          </span>
         </div>
       )}
-
-      {/* Time Block Toggle Button */}
-      <TimeBlockToggle />
 
       {weekStartDate && (
         <div className="schedule-header">
@@ -683,12 +621,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
         </div>
       )}
 
-      <div
-        className={`schedule-grid ${
-          isInTimeBlockMode ? "time-block-mode" : ""
-        }`}
-        ref={gridRef}
-      >
+      <div className={`schedule-grid`} ref={gridRef}>
         <div className="grid-header">
           <div className="time-label"></div>
           {daysOfWeek.map((day, index) => (
