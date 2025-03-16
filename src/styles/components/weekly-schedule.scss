@@ -413,13 +413,8 @@
   }
 }
 
-/* Make course blocks more visible on smaller screens */
 @media (max-width: 480px) {
   .weekly-schedule {
-    .day-column {
-      min-width: 60px;
-    }
-
     .course-block {
       font-size: 0.7rem;
       padding: 2px;
@@ -431,12 +426,11 @@
         }
 
         .time-block-time {
-          display: none; /* Hide time text on very small screens */
+          display: none;
         }
       }
     }
 
-    /* Show minimal day headers */
     .day-header {
       font-size: 0.8rem;
 
@@ -445,11 +439,6 @@
       }
     }
   }
-}
-
-.schedule-grid.no-scroll {
-  overflow: hidden !important;
-  touch-action: none !important;
 }
 
 .weekly-schedule {
