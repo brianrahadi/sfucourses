@@ -307,21 +307,3 @@
     }
   }
 }
-
-// Make the schedule preview more compact for the landing page
-.landing-page {
-  .weekly-schedule {
-    .schedule-grid {
-      height: 450px;
-      font-size: 0.9rem;
-    }
-
-    .schedule-header {
-      display: none; // Hide the navigation buttons for the preview
-    }
-
-    .course-block {
-      font-size: 0.7rem;
-    }
-  }
-}
