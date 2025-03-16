@@ -588,8 +588,8 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
       {setTimeBlocks && (
         <div className="time-blocking-hint">
           <span>
-            Tap on time slots to create blocks. Tap an existing block to remove
-            it.
+            Tap start and end time to create a time block. Tap an existing block
+            to remove it.
           </span>
         </div>
       )}
