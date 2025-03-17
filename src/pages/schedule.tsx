@@ -97,7 +97,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   const [query, setQuery] = useState<string>("");
   const termOptions = getCurrentAndNextTerm(); // Memoize termOptions
   const [searchSelected, setSearchSelected] = useState<boolean>(false);
-  const [selectedTerm, setSelectedTerm] = useState("");
+  const [selectedTerm, setSelectedTerm] = useState(termOptions[0]);
   const termChangeSource = useRef("initial"); // button or url
   const [hasUserSelectedTerm, setHasUserSelectedTerm] = useState(false);
   const [filterConflicts, setFilterConflicts] = useState(false);
@@ -132,28 +132,6 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   }, [timeBlocks]);
 
   useEffect(() => {
-    if (!hasUserSelectedTerm && termOptions.length > 0) {
-      const scheduleSettings = localStorage.getItem("scheduleSettings");
-
-      if (scheduleSettings) {
-        try {
-          const settings = JSON.parse(scheduleSettings);
-          if (
-            settings.defaultTerm &&
-            termOptions.includes(settings.defaultTerm)
-          ) {
-            setSelectedTerm(settings.defaultTerm);
-          } else {
-            setSelectedTerm(termOptions[0]);
-          }
-        } catch (error) {
-          console.error("Error loading schedule settings:", error);
-        }
-      }
-    }
-  }, [termOptions, hasUserSelectedTerm]);
-
-  useEffect(() => {
     const termMap = new Map<string, string>();
     termMap.set("sp25", "Spring 2025");
     termMap.set("su25", "Summer 2025");
@@ -168,7 +146,6 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
       if (newTerm !== selectedTerm) {
         setTimeBlocks([]);
       }
-
       setSelectedTerm(newTerm);
     }
   }, [searchParams]);
@@ -367,6 +344,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
               <ButtonGroup
                 options={termOptions}
                 onSelect={(value) => {
+                  termChangeSource.current = "button";
                   setHasUserSelectedTerm(true); // Mark that user has manually selected a term
                   setSelectedTerm(value);
                   setTimeBlocks([]);
@@ -432,11 +410,11 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
               setTimeBlocks={setTimeBlocks} // Add time blocks setter
               selectedTerm={selectedTerm}
               setSelectedTerm={(term) => {
-                if (term !== selectedTerm) {
-                  setTimeBlocks([]);
-                  setHasUserSelectedTerm(true);
-                  setSelectedTerm(term);
-                }
+                // if (term !== selectedTerm) {
+                //   setTimeBlocks([]);
+                //   setHasUserSelectedTerm(true);
+                //   setSelectedTerm(term);
+                // }
               }}
               termOptions={termOptions}
             />

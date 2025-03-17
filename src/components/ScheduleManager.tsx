@@ -98,9 +98,9 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
   }, [savedSchedules]);
 
   // Save settings to localStorage when they change
-  useEffect(() => {
-    localStorage.setItem("scheduleSettings", JSON.stringify(settings));
-  }, [settings]);
+  // useEffect(() => {
+  //   localStorage.setItem("scheduleSettings", JSON.stringify(settings));
+  // }, [settings]);
 
   // Function to load the default schedule for a specific term
   const loadDefaultScheduleForTerm = (term: string) => {
@@ -223,10 +223,10 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
   };
 
   const handleSetDefaultTerm = (term: string) => {
-    setSettings({ ...settings, defaultTerm: term });
-    setSelectedTerm(term);
-    toast.success(`${term} set as default term`);
-    setShowSettingsDialog(false);
+    // setSettings({ ...settings, defaultTerm: term });
+    // setSelectedTerm(term);
+    // toast.success(`${term} set as default term`);
+    // setShowSettingsDialog(false);
   };
 
   // Filter schedules by the currently selected term
@@ -270,12 +270,12 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
           className="schedule-btn"
           disabled={filteredSchedules.length === 0}
         />
-        <Button
+        {/* <Button
           label="Settings"
           onClick={() => setShowSettingsDialog(true)}
           type="secondary"
           className="schedule-btn"
-        />
+        /> */}
       </div>
 
       {/* Save Dialog */}
