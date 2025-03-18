@@ -24,6 +24,7 @@ interface Course {
 const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri"];
 const startHour = 8; // Start at 8:00 AM
 const endHour = 20; // End at 8:00 PM
+const slotHeight = 17.5; // Default slot height
 
 interface WeeklyScheduleProps {
   coursesWithSections: CourseWithSectionDetails[];
@@ -88,7 +89,6 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
   const [weekStartDate, setWeekStartDate] = useState<Date | null>(null);
   const [currentWeekOffset, setCurrentWeekOffset] = useState(1);
   const [initialWeekDate, setInitialWeekDate] = useState<Date | null>(null);
-  const [slotHeight, setSlotHeight] = useState(20); // Default slot height
   const scheduleRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
 
