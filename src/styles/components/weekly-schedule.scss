@@ -334,7 +334,7 @@
 
     /* Increase touch target sizes */
     .time-slot {
-      min-height: 15px;
+      height: 17.5px;
     }
 
     // /* Simple mode for small screens */
@@ -493,7 +493,6 @@
     }
   }
 
-  /* Responsive adjustments */
   @media (max-width: 768px) {
     .time-block-toggle-button {
       width: 100%;
@@ -504,11 +503,6 @@
     .time-blocking-hint {
       font-size: 0.8rem;
       padding: 0 5px;
-    }
-
-    .schedule-grid .day-column .time-slot {
-      /* Make touch targets easier to hit on mobile */
-      min-height: 20px;
     }
   }
 }
