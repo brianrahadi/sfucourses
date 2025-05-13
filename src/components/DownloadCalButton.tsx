@@ -134,8 +134,8 @@ export const DownloadCalButton: React.FC<ICalendarExportProps> = ({
     const link = document.createElement("a");
     link.href = url;
     const reverseTermMap = new Map<string, string>();
-    reverseTermMap.set("Spring 2025", "sp25");
     reverseTermMap.set("Summer 2025", "su25");
+    reverseTermMap.set("Fall 2025", "fa25");
     const termCode = reverseTermMap.get(term) || toTermCode(term);
     const courseCodes = coursesWithSections
       .map((c) => c.dept.toLowerCase() + c.number)

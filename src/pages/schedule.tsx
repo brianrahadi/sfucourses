@@ -133,8 +133,8 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
 
   useEffect(() => {
     const termMap = new Map<string, string>();
-    termMap.set("sp25", "Spring 2025");
     termMap.set("su25", "Summer 2025");
+    termMap.set("fa25", "Fall 2025");
     termChangeSource.current = "url";
 
     if (

@@ -59,6 +59,7 @@ const termOptions = [
   "Fall 2024",
   "Spring 2025",
   "Summer 2025",
+  "Fall 2025",
 ];
 const deliveryOptions = ["In Person", "Online"];
 const designationOptions = ["W", "Q", "B-Sci", "B-Hum", "B-Soc"];
