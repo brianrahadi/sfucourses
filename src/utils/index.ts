@@ -96,6 +96,16 @@ export function getCurrentAndNextTerm() {
   return [currentTerm, nextTerm];
 }
 
+export function toShortenedTerm(term: string) {
+  const termMap: { [key: string]: string } = {
+    Spring: "sp",
+    Summer: "su",
+    Fall: "fa",
+  };
+  const [termName, year] = term.split(" ");
+  return `${termMap[termName]}${year.slice(-2)}`;
+}
+
 export const fetchLastUpdated = async () => {
   const response = await fetch(
     "https://api.github.com/repos/brianrahadi/sfucourses-api/commits?per_page=1"

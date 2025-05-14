@@ -3,6 +3,7 @@ import { CourseWithSectionDetails, SectionSchedule } from "@types";
 import { formatISODate, getDayOfWeek, toTermCode } from "@utils/format";
 import { CiCalendar } from "react-icons/ci";
 import toast from "react-hot-toast";
+import { getCurrentAndNextTerm, toShortenedTerm } from "@utils";
 
 interface ICalendarExportProps {
   coursesWithSections: CourseWithSectionDetails[];
@@ -133,9 +134,11 @@ export const DownloadCalButton: React.FC<ICalendarExportProps> = ({
 
     const link = document.createElement("a");
     link.href = url;
+
+    const [currentTerm, nextTerm] = getCurrentAndNextTerm();
     const reverseTermMap = new Map<string, string>();
-    reverseTermMap.set("Summer 2025", "su25");
-    reverseTermMap.set("Fall 2025", "fa25");
+    reverseTermMap.set(currentTerm, toShortenedTerm(currentTerm));
+    reverseTermMap.set(nextTerm, toShortenedTerm(nextTerm));
     const termCode = reverseTermMap.get(term) || toTermCode(term);
     const courseCodes = coursesWithSections
       .map((c) => c.dept.toLowerCase() + c.number)

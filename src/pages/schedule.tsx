@@ -17,6 +17,7 @@ import { useEffect, useRef, useState } from "react";
 import {
   getCourseAPIData,
   getCurrentAndNextTerm,
+  toShortenedTerm,
   loadCourseAPIData,
 } from "@utils";
 import {
@@ -102,6 +103,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   const [hasUserSelectedTerm, setHasUserSelectedTerm] = useState(false);
   const [filterConflicts, setFilterConflicts] = useState(false);
   const [campusFilter, setCampusFilter] = useState("All");
+  const [currentTerm, nextTerm] = getCurrentAndNextTerm();
 
   // Add timeBlocks state for the new feature
   const [timeBlocks, setTimeBlocks] = useState<TimeBlock[]>([]);
@@ -133,8 +135,8 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
 
   useEffect(() => {
     const termMap = new Map<string, string>();
-    termMap.set("su25", "Summer 2025");
-    termMap.set("fa25", "Fall 2025");
+    termMap.set(toShortenedTerm(currentTerm), currentTerm);
+    termMap.set(toShortenedTerm(nextTerm), nextTerm);
     termChangeSource.current = "url";
 
     if (
@@ -154,8 +156,8 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
     if (!outlinesWithSections) return;
 
     const reverseTermMap = new Map<string, string>();
-    reverseTermMap.set("Spring 2025", "sp25");
-    reverseTermMap.set("Summer 2025", "su25");
+    reverseTermMap.set(currentTerm, toShortenedTerm(currentTerm));
+    reverseTermMap.set(nextTerm, toShortenedTerm(nextTerm));
     insertUrlParam("term", reverseTermMap.get(selectedTerm) as string);
 
     if (termChangeSource.current === "initial") {
