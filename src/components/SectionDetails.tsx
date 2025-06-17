@@ -47,6 +47,7 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
   query,
 }) => {
   const processedSections = processSectionDetails(offering.sections);
+  const [showAllSections, setShowAllSections] = useState(false);
   const [showLabTut, setShowLabTut] = useState(false);
   const notLabOrTut = (sectionCode: string) =>
     sectionCode !== "LAB" && sectionCode !== "TUT" && sectionCode !== "OPL";
@@ -60,7 +61,11 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
   const hasLabTut =
     processedSections.length > 1 &&
     processedSections.length !== initialShownSections.length;
-  const shownSections = showLabTut ? processedSections : initialShownSections;
+  const shownSections = showLabTut
+    ? processedSections
+    : showAllSections
+    ? processedSections
+    : initialShownSections.slice(0, 2);
 
   return (
     <div
@@ -255,15 +260,25 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
           </div>
         );
       })}
-      {hasLabTut && (
-        <div
+      {!hasLabTut && initialShownSections.length > 2 && (
+        <button
           className="toggle-row btn"
-          onClick={() => setShowLabTut(!showLabTut)}
+          onClick={() =>
+            setShowAllSections((showAllSections) => !showAllSections)
+          }
+        >
+          {showAllSections ? "Show Less Sections" : "Show More Sections"}
+        </button>
+      )}
+      {hasLabTut && (
+        <button
+          className="toggle-row btn"
+          onClick={() => setShowLabTut((showLabTut) => !showLabTut)}
         >
           {showLabTut
             ? "Hide Lab/Tutorial Sections"
             : "Show Lab/Tutorial Sections"}
-        </div>
+        </button>
       )}
     </div>
   );
