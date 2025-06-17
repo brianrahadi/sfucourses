@@ -106,16 +106,17 @@ export function toShortenedTerm(term: string) {
   return `${termMap[termName]}${year.slice(-2)}`;
 }
 
-export const fetchLastUpdated = async () => {
-  const response = await fetch(
-    "https://api.github.com/repos/brianrahadi/sfucourses-api/commits?per_page=1"
-  );
+interface HealthResponse {
+  status: string;
+  version: string;
+  lastDataUpdate: string;
+}
+
+export const fetchLastUpdated = async (): Promise<string> => {
+  const response = await fetch("https://api.sfucourses.com/health");
   if (!response.ok) {
-    throw new Error("Network response was not ok");
+    throw new Error("Failed to fetch health data");
   }
-  const commits = await response.json();
-  if (commits.length === 0) {
-    throw new Error("No commits found");
-  }
-  return commits[0].commit.author.date;
+  const data: HealthResponse = await response.json();
+  return data.lastDataUpdate;
 };

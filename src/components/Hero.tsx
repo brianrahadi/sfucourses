@@ -40,7 +40,9 @@ export const Hero: React.FC<HeroProps> = ({
       <p className="gray-text">
         data last updated:{" "}
         {!isLoading
-          ? formatShortDescriptiveDate(new Date(lastUpdatedData))
+          ? lastUpdatedData
+            ? formatShortDescriptiveDate(new Date(lastUpdatedData))
+            : "N/A"
           : ""}
       </p>
     </header>
