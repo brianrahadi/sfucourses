@@ -177,7 +177,9 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                       {section.schedules[0]?.sectionCode} {section.section}
                     </Link>
                   ) : (
-                    <>{section.section}</>
+                    <>
+                      {section.schedules[0]?.sectionCode} {section.section}
+                    </>
                   )}
                 </span>
                 {setOfferings ? (
