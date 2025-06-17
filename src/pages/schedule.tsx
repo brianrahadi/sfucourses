@@ -72,7 +72,7 @@ export const getStaticProps: GetStaticProps<SchedulePageProps> = async () => {
       props: {
         initialSections: [...currentTermSections, ...nextTermSections],
       },
-      revalidate: 86400, // 24 hours
+      revalidate: 60 * 60, // hourly
     };
   } catch (error) {
     console.error("Error getting all courses", error);
@@ -101,7 +101,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   const [selectedTerm, setSelectedTerm] = useState(termOptions[0]);
   const termChangeSource = useRef("initial"); // button or url
   const [hasUserSelectedTerm, setHasUserSelectedTerm] = useState(false);
-  const [filterConflicts, setFilterConflicts] = useState(false);
+  const [filterConflicts, setFilterConflicts] = useState(true); // default filter conflicts
   const [campusFilter, setCampusFilter] = useState("All");
   const [currentTerm, nextTerm] = getCurrentAndNextTerm();
 
