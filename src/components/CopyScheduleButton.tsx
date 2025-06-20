@@ -21,6 +21,23 @@ export const CopyScheduleButton: React.FC<ScheduleScreenshotProps> = ({
         return;
       }
 
+      const timeBlockingHint = document.querySelector(
+        ".time-blocking-hint span"
+      );
+      let originalHintText = "";
+      let originalHintStyle = "";
+
+      if (timeBlockingHint) {
+        originalHintText = timeBlockingHint.textContent || "";
+        originalHintStyle = timeBlockingHint.getAttribute("style") || "";
+
+        timeBlockingHint.textContent = "sfucourses.com";
+        timeBlockingHint.setAttribute(
+          "style",
+          "color: #24a98b; font-size: 1.2rem; font-weight: bold;"
+        );
+      }
+
       const buttonGroup = document.querySelector(".utility-button-group");
       let parentElement = null;
       let watermarkElement = null;
@@ -33,7 +50,7 @@ export const CopyScheduleButton: React.FC<ScheduleScreenshotProps> = ({
         watermarkElement = document.createElement("div");
         watermarkElement.className = "utility-button-group-placeholder";
         watermarkElement.textContent = "sfucourses.com";
-        watermarkElement.style.fontSize = "2rem";
+        watermarkElement.style.fontSize = "1.2rem";
         watermarkElement.style.fontWeight = "bold";
         watermarkElement.style.color = "#24a98b";
         watermarkElement.style.display = "flex";
@@ -63,6 +80,16 @@ export const CopyScheduleButton: React.FC<ScheduleScreenshotProps> = ({
 
       if (buttonGroup && parentElement) {
         parentElement.appendChild(buttonGroup);
+      }
+
+      // Restore the original time blocking hint text
+      if (timeBlockingHint) {
+        timeBlockingHint.textContent = originalHintText;
+        if (originalHintStyle) {
+          timeBlockingHint.setAttribute("style", originalHintStyle);
+        } else {
+          timeBlockingHint.removeAttribute("style");
+        }
       }
 
       canvas.toBlob(async (blob) => {
