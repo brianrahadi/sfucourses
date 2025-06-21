@@ -54,16 +54,22 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
 
   const notLabOrTut = (sectionCode: string) =>
     sectionCode !== "LAB" && sectionCode !== "TUT" && sectionCode !== "OPL";
-  const initialShownSections =
-    type === "SELECTED_COURSES" || processedSections.length === 1
-      ? processedSections
-      : processedSections.filter((section) =>
-          section.schedules.every((sched) => notLabOrTut(sched.sectionCode))
-        );
+
+  const nonLabTutSections = processedSections.filter((section) =>
+    section.schedules.every((sched) => notLabOrTut(sched.sectionCode))
+  );
+
+  const hasOnlyLabTut =
+    nonLabTutSections.length === 0 && processedSections.length > 0;
+
+  const initialShownSections = hasOnlyLabTut
+    ? processedSections
+    : type === "SELECTED_COURSES" || processedSections.length === 1
+    ? processedSections
+    : nonLabTutSections;
 
   const hasLabTut =
-    processedSections.length >= 1 &&
-    processedSections.length !== initialShownSections.length;
+    processedSections.length > nonLabTutSections.length && !hasOnlyLabTut;
 
   const shownSections = showLabTut
     ? processedSections
@@ -264,16 +270,17 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
           </div>
         );
       })}
-      {!hasLabTut && initialShownSections.length > 2 && (
-        <button
-          className="toggle-row btn"
-          onClick={() =>
-            setShowAllSections((showAllSections) => !showAllSections)
-          }
-        >
-          {showAllSections ? "Show Less Sections" : "Show More Sections"}
-        </button>
-      )}
+      {(hasOnlyLabTut && processedSections.length > 2) ||
+        (!hasLabTut && initialShownSections.length > 2 && (
+          <button
+            className="toggle-row btn"
+            onClick={() =>
+              setShowAllSections((showAllSections) => !showAllSections)
+            }
+          >
+            {showAllSections ? "Show Less Sections" : "Show More Sections"}
+          </button>
+        ))}
       {hasLabTut && (
         <button
           className="toggle-row btn"
