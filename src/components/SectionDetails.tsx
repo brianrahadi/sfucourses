@@ -46,7 +46,9 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
   type,
   query,
 }) => {
-  const processedSections = processSectionDetails(offering.sections);
+  const processedSections = processSectionDetails(offering.sections).filter(
+    (section) => section.schedules && section.schedules.length > 0
+  );
   const [showAllSections, setShowAllSections] = useState(false);
   const [showLabTut, setShowLabTut] = useState(false);
 
