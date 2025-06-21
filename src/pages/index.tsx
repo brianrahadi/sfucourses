@@ -168,9 +168,8 @@ const LandingPage: React.FC = () => {
         backgroundImage={LandingPageHeroSrc.src}
       />
       <main>
-        {/* Schedule Preview Section */}
         <section className="container schedule-preview-section">
-          <h2>Your Default Schedules</h2>
+          <h2>Your Schedules</h2>
           <div className="schedule-preview-tabs">
             {displayTerms.map((term) => (
               <button

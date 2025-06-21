@@ -86,7 +86,7 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
     }
 
     setPreviousTerm(selectedTerm);
-  }, [coursesWithSections]);
+  }, [savedSchedules, coursesWithSections]);
 
   // Save schedules to localStorage when they change
   useEffect(() => {
