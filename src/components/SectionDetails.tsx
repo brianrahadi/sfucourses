@@ -49,18 +49,20 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
   const processedSections = processSectionDetails(offering.sections);
   const [showAllSections, setShowAllSections] = useState(false);
   const [showLabTut, setShowLabTut] = useState(false);
+
   const notLabOrTut = (sectionCode: string) =>
     sectionCode !== "LAB" && sectionCode !== "TUT" && sectionCode !== "OPL";
   const initialShownSections =
-    type === "SELECTED_COURSES"
+    type === "SELECTED_COURSES" || processedSections.length === 1
       ? processedSections
       : processedSections.filter((section) =>
           section.schedules.every((sched) => notLabOrTut(sched.sectionCode))
         );
 
   const hasLabTut =
-    processedSections.length > 1 &&
+    processedSections.length >= 1 &&
     processedSections.length !== initialShownSections.length;
+
   const shownSections = showLabTut
     ? processedSections
     : showAllSections
