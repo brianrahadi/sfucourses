@@ -75,20 +75,18 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
     }
   }, []);
 
-  // Load default schedule for the selected term when term changes
+  // Load default schedule when selected coursesWithSections changes (term)
   useEffect(() => {
-    if (selectedTerm !== previousTerm) {
-      const shouldLoadDefault =
-        coursesWithSections.length === 0 ||
-        !coursesWithSections.some((course) => course.term === selectedTerm);
+    const shouldLoadDefault =
+      coursesWithSections.length === 0 ||
+      !coursesWithSections.some((course) => course.term === selectedTerm);
 
-      if (shouldLoadDefault) {
-        loadDefaultScheduleForTerm(selectedTerm);
-      }
-
-      setPreviousTerm(selectedTerm);
+    if (shouldLoadDefault) {
+      loadDefaultScheduleForTerm(selectedTerm);
     }
-  }, [selectedTerm, coursesWithSections]);
+
+    setPreviousTerm(selectedTerm);
+  }, [coursesWithSections]);
 
   // Save schedules to localStorage when they change
   useEffect(() => {
@@ -115,10 +113,6 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
       toast.success(
         `Default schedule "${defaultSchedule.name}" loaded for ${term}`
       );
-    } else {
-      // Clear current schedule if no default exists for this term
-      setCoursesWithSections([]);
-      setTimeBlocks([]); // Also clear time blocks
     }
   };
 

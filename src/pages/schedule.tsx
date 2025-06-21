@@ -105,7 +105,6 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   const [campusFilter, setCampusFilter] = useState("All");
   const [currentTerm, nextTerm] = getCurrentAndNextTerm();
 
-  // Add timeBlocks state for the new feature
   const [timeBlocks, setTimeBlocks] = useState<TimeBlock[]>([]);
 
   const campusOptions = ["All", "Burnaby", "Surrey", "Vancouver", "Online"];
@@ -118,7 +117,6 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
 
   const CHUNK_SIZE = 20;
 
-  // Load initial time blocks from URL
   useEffect(() => {
     const urlTimeBlocks = getTimeBlocksFromUrl();
     if (urlTimeBlocks.length > 0) {
@@ -128,7 +126,6 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
     }
   }, []);
 
-  // Update URL when time blocks change
   useEffect(() => {
     updateTimeBlocksInUrl(timeBlocks);
   }, [timeBlocks]);
