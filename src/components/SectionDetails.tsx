@@ -108,7 +108,7 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                 .map((i) => i.name)
                 .filter(onlyUnique)
                 .join(", ")
-            : "Unknown";
+            : "N/A";
 
         const handleAddSection = () => {
           if (!setOfferings) return;
