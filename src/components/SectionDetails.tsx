@@ -301,11 +301,11 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
         >
           {showLabTut ? (
             <>
-              <IoChevronUp /> Hide Lab/ Tutorial Sections
+              <IoChevronUp /> Hide Lab/Tutorial Sections
             </>
           ) : (
             <>
-              <IoChevronDown /> Show Lab/ Tutorial Sections
+              <IoChevronDown /> Show Lab/Tutorial Sections
             </>
           )}
         </button>
