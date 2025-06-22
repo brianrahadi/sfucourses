@@ -1,5 +1,4 @@
 import Select, { SelectInstance } from "react-select";
-import { RefreshCw } from "react-feather";
 import { Button } from "@components";
 import { SearchBar } from "@components";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
@@ -7,6 +6,7 @@ import { ExploreFilters } from "src/hooks/UseExploreFilters";
 import { BsSun } from "react-icons/bs";
 import { FaLeaf } from "react-icons/fa";
 import { LuFlower } from "react-icons/lu";
+import { RiResetLeftFill } from "react-icons/ri";
 import { SUBJECTS } from "@const";
 
 const colourNeutral1000 = "#323434";
@@ -124,7 +124,7 @@ export const ExploreFilter: React.FC<ExploreFilters> = ({
           </p>
           <Button
             className="explore-filter__reset secondary"
-            label={<RefreshCw />}
+            label={<RiResetLeftFill />}
             onClick={() => {
               selectInputRef?.current?.clearValue();
               subjects.setSelected([]);

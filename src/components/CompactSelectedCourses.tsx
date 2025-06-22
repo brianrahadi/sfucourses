@@ -39,8 +39,12 @@ export const CompactSelectedCourses: React.FC<CompactSelectedCoursesProps> = ({
             >
               <div className="compact-course-header">
                 <span className="course-code">
-                  {course.dept} {course.number} - {course.title} ({course.units}
-                  )
+                  {course.dept} {course.number} - {course.title}
+                  {course.units &&
+                  course.units !== "0" &&
+                  course.units !== "N/A"
+                    ? ` (${course.units})`
+                    : ""}
                 </span>
               </div>
 

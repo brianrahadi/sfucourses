@@ -11,7 +11,12 @@ import { BsFillPersonFill } from "react-icons/bs";
 import { CiCalendar, CiClock1 } from "react-icons/ci";
 import { FaTimeline } from "react-icons/fa6";
 import { MdPlace } from "react-icons/md";
-import { IoAddCircle, IoRemoveCircle } from "react-icons/io5";
+import {
+  IoAddCircle,
+  IoRemoveCircle,
+  IoChevronUp,
+  IoChevronDown,
+} from "react-icons/io5";
 import { formatShortDate } from "@utils/format";
 
 interface SectionDetailsProps {
@@ -103,7 +108,7 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                 .map((i) => i.name)
                 .filter(onlyUnique)
                 .join(", ")
-            : "Unknown";
+            : "N/A";
 
         const handleAddSection = () => {
           if (!setOfferings) return;
@@ -278,7 +283,15 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
               setShowAllSections((showAllSections) => !showAllSections)
             }
           >
-            {showAllSections ? "Show Less Sections" : "Show More Sections"}
+            {showAllSections ? (
+              <>
+                <IoChevronUp /> Show Less Sections
+              </>
+            ) : (
+              <>
+                <IoChevronDown /> Show More Sections
+              </>
+            )}
           </button>
         ))}
       {hasLabTut && (
@@ -286,9 +299,15 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
           className="toggle-row btn"
           onClick={() => setShowLabTut((showLabTut) => !showLabTut)}
         >
-          {showLabTut
-            ? "Hide Lab/Tutorial Sections"
-            : "Show Lab/Tutorial Sections"}
+          {showLabTut ? (
+            <>
+              <IoChevronUp /> Hide Lab/Tutorial Sections
+            </>
+          ) : (
+            <>
+              <IoChevronDown /> Show Lab/Tutorial Sections
+            </>
+          )}
         </button>
       )}
     </div>
