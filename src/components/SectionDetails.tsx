@@ -28,6 +28,10 @@ interface SectionDetailsProps {
   type?: "SELECTED_COURSES";
   query?: string;
   setPreviewCourse?: Dispatch<CourseWithSectionDetails | null>;
+  showAllSections: boolean;
+  onToggleShowAllSections: () => void;
+  showLabTut: boolean;
+  onToggleShowLabTut: () => void;
 }
 
 const processSchedules = (schedules: SectionSchedule[]): SectionSchedule[] =>
@@ -52,12 +56,14 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
   type,
   query,
   setPreviewCourse,
+  showAllSections,
+  onToggleShowAllSections,
+  showLabTut,
+  onToggleShowLabTut,
 }) => {
   const processedSections = processSectionDetails(offering.sections).filter(
     (section) => section.schedules && section.schedules.length > 0
   );
-  const [showAllSections, setShowAllSections] = useState(false);
-  const [showLabTut, setShowLabTut] = useState(false);
 
   const notLabOrTut = (sectionCode: string) =>
     sectionCode !== "LAB" && sectionCode !== "TUT" && sectionCode !== "OPL";
@@ -216,8 +222,8 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                     }
                     label={`#${section.classNumber}`}
                     onClick={handleAddSection}
-                    // onMouseEnter={() => setPreviewCourse?.(courseWithSection)}
-                    // onMouseLeave={() => setPreviewCourse?.(null)}
+                    onMouseEnter={() => setPreviewCourse?.(courseWithSection)}
+                    onMouseLeave={() => setPreviewCourse?.(null)}
                   />
                 ) : (
                   <span>#{section.classNumber}</span>
@@ -288,9 +294,7 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
         (!hasLabTut && initialShownSections.length > 2 && (
           <button
             className="toggle-row btn"
-            onClick={() =>
-              setShowAllSections((showAllSections) => !showAllSections)
-            }
+            onClick={() => onToggleShowAllSections()}
           >
             {showAllSections ? (
               <>
@@ -304,10 +308,7 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
           </button>
         ))}
       {hasLabTut && (
-        <button
-          className="toggle-row btn"
-          onClick={() => setShowLabTut((showLabTut) => !showLabTut)}
-        >
+        <button className="toggle-row btn" onClick={() => onToggleShowLabTut()}>
           {showLabTut ? (
             <>
               <IoChevronUp /> Hide Lab/Tutorial Sections
