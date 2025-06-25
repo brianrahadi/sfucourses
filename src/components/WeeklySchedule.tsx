@@ -744,41 +744,46 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
               </div>
             )}
 
-            {previewCourse &&
-              previewCourse.sections &&
-              previewCourse.sections.flatMap((section) =>
-                section.schedules
-                  .filter((sched) => getDayFromCode(sched.days).includes(day))
-                  .map((sched, idx) => {
-                    const startTime = convertTimeToMinutes(sched.startTime);
-                    const duration = calculateDuration(
-                      sched.startTime,
-                      sched.endTime
-                    );
-                    const { topOffset, height } = calculateCoursePosition({
-                      id: `${previewCourse.dept}${previewCourse.number}-${section.section}-${day}-preview`,
-                      name: `${previewCourse.dept} ${previewCourse.number} \n${section.section}\nPREVIEW`,
-                      startTime,
-                      duration,
-                      day,
-                    });
-                    return (
-                      <div
-                        key={`preview-${previewCourse.dept}${previewCourse.number}-${section.section}-${day}-${idx}`}
-                        className="course-block preview-course-block"
-                        style={{
-                          top: `${topOffset}px`,
-                          height: `${height}px`,
-                          backgroundColor: "rgba(100, 180, 255, 0.4)",
-                          border: "2px dashed #2196f3",
-                          zIndex: 10,
-                        }}
-                      >
-                        {`${previewCourse.dept} ${previewCourse.number} (${section.section})`}
-                      </div>
-                    );
-                  })
-              )}
+            {previewCourse?.sections?.flatMap((section) =>
+              section.schedules
+                .filter((sched) => getDayFromCode(sched.days).includes(day))
+                .map((sched, idx) => {
+                  const startTime = convertTimeToMinutes(sched.startTime);
+                  const duration = calculateDuration(
+                    sched.startTime,
+                    sched.endTime
+                  );
+                  const name = `${previewCourse.dept} ${
+                    previewCourse.number
+                  } \n${section.section}\n${
+                    section.schedules[0]?.campus || ""
+                  }`;
+                  const { topOffset, height } = calculateCoursePosition({
+                    id: `${previewCourse.dept}${previewCourse.number}-${section.section}-${day}-preview`,
+                    name: name,
+                    startTime,
+                    duration,
+                    day,
+                  });
+                  return (
+                    <div
+                      key={`preview-${previewCourse.dept}${previewCourse.number}-${section.section}-${day}-${idx}`}
+                      className="course-block preview-course-block"
+                      style={{
+                        top: `${topOffset}px`,
+                        height: `${height}px`,
+                        backgroundColor: getDarkColorFromHash(
+                          name.split(" ").slice(0, 2).join(" ")
+                        ),
+                        opacity: 0.5,
+                        zIndex: 10,
+                      }}
+                    >
+                      {name}
+                    </div>
+                  );
+                })
+            )}
           </div>
         ))}
       </div>
