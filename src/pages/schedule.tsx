@@ -405,17 +405,9 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
             <ScheduleManager
               coursesWithSections={selectedOutlinesWithSections}
               setCoursesWithSections={setSelectedOutlinesWithSections}
-              timeBlocks={timeBlocks} // Add time blocks
-              setTimeBlocks={setTimeBlocks} // Add time blocks setter
+              timeBlocks={timeBlocks}
+              setTimeBlocks={setTimeBlocks}
               selectedTerm={selectedTerm}
-              setSelectedTerm={(term) => {
-                // if (term !== selectedTerm) {
-                //   setTimeBlocks([]);
-                //   setHasUserSelectedTerm(true);
-                //   setSelectedTerm(term);
-                // }
-              }}
-              termOptions={termOptions}
             />
             {/* <ButtonGroup
               className="view-column-button-group"

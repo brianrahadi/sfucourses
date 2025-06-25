@@ -10,25 +10,19 @@ interface ScheduleManagerProps {
   setCoursesWithSections: React.Dispatch<
     React.SetStateAction<CourseWithSectionDetails[]>
   >;
-  timeBlocks: TimeBlock[]; // Add time blocks to props
-  setTimeBlocks: React.Dispatch<React.SetStateAction<TimeBlock[]>>; // Add setter
+  timeBlocks: TimeBlock[];
+  setTimeBlocks: React.Dispatch<React.SetStateAction<TimeBlock[]>>;
   selectedTerm: string;
-  setSelectedTerm: React.Dispatch<React.SetStateAction<string>>;
-  termOptions: string[];
 }
 
 interface SavedSchedule {
   id: number;
   name: string;
   courses: CourseWithSectionDetails[];
-  timeBlocks: TimeBlock[]; // Add time blocks to saved schedule
+  timeBlocks: TimeBlock[];
   term: string;
   isDefault: boolean;
   timestamp: number;
-}
-
-interface ScheduleSettings {
-  defaultTerm: string;
 }
 
 export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
@@ -37,20 +31,12 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
   timeBlocks,
   setTimeBlocks,
   selectedTerm,
-  setSelectedTerm,
-  termOptions,
 }) => {
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [showLoadDialog, setShowLoadDialog] = useState(false);
-  const [showSettingsDialog, setShowSettingsDialog] = useState(false);
   const [scheduleName, setScheduleName] = useState("");
   const [savedSchedules, setSavedSchedules] = useState<SavedSchedule[]>([]);
-  const [settings, setSettings] = useState<ScheduleSettings>({
-    defaultTerm: termOptions[0],
-  });
-  const [previousTerm, setPreviousTerm] = useState(selectedTerm);
 
-  // Load saved schedules and settings from localStorage on component mount
   useEffect(() => {
     const loadedSchedules = localStorage.getItem("savedSchedules");
     if (loadedSchedules) {
@@ -68,11 +54,6 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
         setSavedSchedules([]);
       }
     }
-
-    const loadedSettings = localStorage.getItem("scheduleSettings");
-    if (loadedSettings) {
-      setSettings(JSON.parse(loadedSettings));
-    }
   }, []);
 
   // Load default schedule when selected coursesWithSections changes (term)
@@ -84,8 +65,6 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
     if (shouldLoadDefault) {
       loadDefaultScheduleForTerm(selectedTerm);
     }
-
-    setPreviousTerm(selectedTerm);
   }, [savedSchedules, coursesWithSections]);
 
   // Save schedules to localStorage when they change
@@ -94,11 +73,6 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
       localStorage.setItem("savedSchedules", JSON.stringify(savedSchedules));
     }
   }, [savedSchedules]);
-
-  // Save settings to localStorage when they change
-  // useEffect(() => {
-  //   localStorage.setItem("scheduleSettings", JSON.stringify(settings));
-  // }, [settings]);
 
   // Function to load the default schedule for a specific term
   const loadDefaultScheduleForTerm = (term: string) => {
@@ -216,13 +190,6 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
     toast.success("Default schedule set");
   };
 
-  const handleSetDefaultTerm = (term: string) => {
-    // setSettings({ ...settings, defaultTerm: term });
-    // setSelectedTerm(term);
-    // toast.success(`${term} set as default term`);
-    // setShowSettingsDialog(false);
-  };
-
   // Filter schedules by the currently selected term
   const filteredSchedules = savedSchedules.filter(
     (s) => s.term === selectedTerm
@@ -264,12 +231,6 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
           className="schedule-btn"
           disabled={filteredSchedules.length === 0}
         />
-        {/* <Button
-          label="Settings"
-          onClick={() => setShowSettingsDialog(true)}
-          type="secondary"
-          className="schedule-btn"
-        /> */}
       </div>
 
       {/* Save Dialog */}
@@ -373,46 +334,6 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
               <Button
                 label="Close"
                 onClick={() => setShowLoadDialog(false)}
-                type="secondary"
-              />
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Settings Dialog */}
-      {showSettingsDialog && (
-        <div className="schedule-dialog">
-          <div className="schedule-dialog-content">
-            <h3>Schedule Settings</h3>
-            <div className="settings-section">
-              <h4>Default Term</h4>
-              <p className="settings-description">
-                Choose which term loads by default when you open the schedule
-                page
-              </p>
-              <div className="term-options">
-                {termOptions.map((term) => (
-                  <div key={term} className="term-option">
-                    <button
-                      className={`term-button ${
-                        settings.defaultTerm === term ? "selected" : ""
-                      }`}
-                      onClick={() => handleSetDefaultTerm(term)}
-                    >
-                      {term}
-                      {settings.defaultTerm === term && (
-                        <IoMdStar className="default-star" />
-                      )}
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="schedule-dialog-buttons">
-              <Button
-                label="Close"
-                onClick={() => setShowSettingsDialog(false)}
                 type="secondary"
               />
             </div>
