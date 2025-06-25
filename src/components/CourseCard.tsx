@@ -42,7 +42,11 @@ export const CourseCard: React.FC<CourseCardProps> = ({
       ? course.description.slice(0, 400) + " ..."
       : course.description;
 
-  const header = `${course.dept} ${course.number} - ${course.title} (${course.units})`;
+  const header = `${course.dept} ${course.number} - ${course.title}${
+    course.units && course.units !== "0" && course.units !== "N/A"
+      ? ` (${course.units})`
+      : ""
+  }`;
 
   const CardContent = () => (
     <>
@@ -86,7 +90,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({
           ))}
         {showPrereqs && !prereqsQuery ? (
           <p className="course-description">
-            Prerequisite: {course.prerequisites || "None"}
+            Prerequisite: {course.prerequisites || "N/A"}
           </p>
         ) : prereqsQuery ? (
           <Highlight

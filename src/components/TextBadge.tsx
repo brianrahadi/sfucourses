@@ -1,5 +1,6 @@
 import { getDarkColorFromHash } from "@utils/format";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
 interface TextBadgeProps {
   content: JSX.Element | string;
@@ -14,13 +15,15 @@ export const TextBadge: React.FC<TextBadgeProps> = ({
   icon,
   enableBgColor,
 }) => {
+  const bgColor = enableBgColor
+    ? getDarkColorFromHash(String(content))
+    : undefined;
+
   return (
     <div
-      className={`text-badge ${className}`}
+      className={`text-badge ${className ?? ""}`}
       style={{
-        backgroundColor: enableBgColor
-          ? getDarkColorFromHash(String(content))
-          : "",
+        backgroundColor: bgColor,
       }}
     >
       {icon}

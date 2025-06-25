@@ -11,7 +11,12 @@ import { BsFillPersonFill } from "react-icons/bs";
 import { CiCalendar, CiClock1 } from "react-icons/ci";
 import { FaTimeline } from "react-icons/fa6";
 import { MdPlace } from "react-icons/md";
-import { IoAddCircle, IoRemoveCircle } from "react-icons/io5";
+import {
+  IoAddCircle,
+  IoRemoveCircle,
+  IoChevronUp,
+  IoChevronDown,
+} from "react-icons/io5";
 import { formatShortDate } from "@utils/format";
 
 interface SectionDetailsProps {
@@ -111,7 +116,7 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                 .map((i) => i.name)
                 .filter(onlyUnique)
                 .join(", ")
-            : "Unknown";
+            : "N/A";
 
         const handleAddSection = () => {
           if (!setOfferings) return;
@@ -247,7 +252,12 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
               <div className="section-schedule-container">
                 {section.schedules.map((sched) => (
                   <div
-                    key={"w" + sched.days + sched.startDate}
+                    key={
+                      sched.days +
+                      sched.startDate +
+                      sched.startTime +
+                      sched.sectionCode
+                    }
                     className="section-schedule-row"
                   >
                     <span
@@ -282,15 +292,32 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
       })}
       {(hasOnlyLabTut && processedSections.length > 2) ||
         (!hasLabTut && initialShownSections.length > 2 && (
-          <button className="toggle-row btn" onClick={onToggleShowAllSections}>
-            {showAllSections ? "Show Less Sections" : "Show More Sections"}
+          <button
+            className="toggle-row btn"
+            onClick={() => onToggleShowAllSections()}
+          >
+            {showAllSections ? (
+              <>
+                <IoChevronUp /> Show Less Sections
+              </>
+            ) : (
+              <>
+                <IoChevronDown /> Show More Sections
+              </>
+            )}
           </button>
         ))}
       {hasLabTut && (
-        <button className="toggle-row btn" onClick={onToggleShowLabTut}>
-          {showLabTut
-            ? "Hide Lab/Tutorial Sections"
-            : "Show Lab/Tutorial Sections"}
+        <button className="toggle-row btn" onClick={() => onToggleShowLabTut()}>
+          {showLabTut ? (
+            <>
+              <IoChevronUp /> Hide Lab/Tutorial Sections
+            </>
+          ) : (
+            <>
+              <IoChevronDown /> Show Lab/Tutorial Sections
+            </>
+          )}
         </button>
       )}
     </div>

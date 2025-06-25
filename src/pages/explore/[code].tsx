@@ -89,7 +89,11 @@ const CoursePage: React.FC<CoursePageProps> = () => {
         <div className="course-top-container">
           <div className="course-page-card">
             <div className="course-title">
-              {`${course.dept} ${course.number} - ${course.title} (${course.units})`}
+              {`${course.dept} ${course.number} - ${course.title}${
+                course.units && course.units !== "0" && course.units !== "N/A"
+                  ? ` (${course.units})`
+                  : ""
+              }`}
             </div>
             <div className="course-page-card__connt">
               <p className="course-description">
@@ -99,7 +103,7 @@ const CoursePage: React.FC<CoursePageProps> = () => {
                   : ""}
               </p>
               <p className="course-description">
-                Prerequisite: {course.prerequisites || "None"}
+                Prerequisite: {course.prerequisites || "N/A"}
               </p>
             </div>
           </div>

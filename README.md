@@ -25,7 +25,7 @@
 <h3 align="center">sfucourses</h3>
 
   <p align="center">
-    Explores and schedule SFU courses with the best user experience
+    Explore and schedule SFU courses with the best user experience
     <br />
     <a href="https://github.com/brianrahadi/sfucourses"><strong>Explore the docs »</strong></a>
     <br />
@@ -79,7 +79,6 @@
 - Typescript
 - SCSS
 - React Query
-- More...
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -98,21 +97,15 @@ To get a local copy up and running follow these simple example steps.
 
 ### Installation
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
+1. Clone the repo
    ```sh
    git clone https://github.com/brianrahadi/sfucourses.git
    ```
-3. Install NPM packages
+2. Install NPM packages
    ```sh
    npm install
    ```
-4. Change git remote url to avoid accidental pushes to base project
-   ```sh
-   git remote set-url origin brianrahadi/sfucourses
-   git remote -v # confirm the changes
-   ```
-5. Run the project
+3. Run the project
    ```sh
    npm run dev
    ```
@@ -174,7 +167,7 @@ Project Link: [https://github.com/brianrahadi/sfucourses](https://github.com/bri
 
 ## Acknowledgments
 
-- uwflow.com - Pioneer of SFU course finders
+- uwflow.com - Pioneer of course finders
 - mcgill.courses - UI inspirations
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>

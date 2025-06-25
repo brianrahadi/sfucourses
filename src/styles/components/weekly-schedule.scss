@@ -65,7 +65,6 @@
     color: var(--colour-neutral-000);
     height: 17.5px;
     position: relative;
-    border-right: 1px solid var(--colour-neutral-800);
   }
 
   .time-text {
@@ -75,6 +74,7 @@
     font-size: 0.8rem;
     background-color: var(--colour-neutral-1000);
     padding: 0 2px;
+    font-family: monospace;
   }
 
   .time-label--half {
