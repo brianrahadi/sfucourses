@@ -109,10 +109,6 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
 
   const campusOptions = ["All", "Burnaby", "Surrey", "Vancouver", "Online"];
 
-  const [viewColumns, setViewColumns] = useLocalStorage<
-    "Two-column" | "Three-column"
-  >("view", "Three-column");
-
   const searchParams = useSearchParams();
 
   const CHUNK_SIZE = 20;
@@ -177,10 +173,6 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
       );
     }
   }, [searchParams, outlinesWithSections, selectedTerm]);
-
-  useEffect(() => {
-    localStorage.setItem("view", viewColumns);
-  }, [viewColumns]);
 
   useEffect(() => {
     if (selectedOutlinesWithSections.length === 0) {
@@ -299,10 +291,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   return (
     <div className="page courses-page">
       <Hero title="schedule courses" backgroundImage={HeroImage.src} />
-      <main
-        id="schedule-container"
-        className={`container ${viewColumns === "Two-column" && "two-column"}`}
-      >
+      <main id="schedule-container" className="container">
         <section className="courses-section">
           <div className="courses-section__header">
             <div className="term-filter-row">
@@ -409,12 +398,6 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
               setTimeBlocks={setTimeBlocks}
               selectedTerm={selectedTerm}
             />
-            {/* <ButtonGroup
-              className="view-column-button-group"
-              options={["Two-column", "Three-column"]}
-              onSelect={setViewColumns}
-              selectedOption={viewColumns}
-            /> */}
           </div>
           <div className="schedule-section__content">
             <CompactSelectedCourses
