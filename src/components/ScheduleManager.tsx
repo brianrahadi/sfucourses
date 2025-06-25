@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { CourseWithSectionDetails, TimeBlock } from "@types";
 import { Button } from "./Button";
 import { FaSave, FaFolderOpen } from "react-icons/fa";
@@ -36,13 +36,12 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
   const [showLoadDialog, setShowLoadDialog] = useState(false);
   const [scheduleName, setScheduleName] = useState("");
   const [savedSchedules, setSavedSchedules] = useState<SavedSchedule[]>([]);
+  const previousTermRef = useRef(selectedTerm);
 
   useEffect(() => {
     const loadedSchedules = localStorage.getItem("savedSchedules");
     if (loadedSchedules) {
       try {
-        // Check if the loaded data has the timeBlocks property
-        // Backward compatibility with older saved schedules
         const parsedSchedules = JSON.parse(loadedSchedules);
         const updatedSchedules = parsedSchedules.map((schedule: any) => ({
           ...schedule,
@@ -56,16 +55,17 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
     }
   }, []);
 
-  // Load default schedule when selected coursesWithSections changes (term)
   useEffect(() => {
-    const shouldLoadDefault =
+    // Only load default schedule if the term has changed and coursesWithSections is not for the new term
+    if (
       coursesWithSections.length === 0 ||
-      !coursesWithSections.some((course) => course.term === selectedTerm);
-
-    if (shouldLoadDefault) {
+      !coursesWithSections.some((course) => course.term === selectedTerm)
+    ) {
+      console.log("loadDefaultScheduleForTerm", savedSchedules);
       loadDefaultScheduleForTerm(selectedTerm);
+      previousTermRef.current = selectedTerm;
     }
-  }, [savedSchedules, coursesWithSections]);
+  }, [selectedTerm, coursesWithSections, savedSchedules]);
 
   // Save schedules to localStorage when they change
   useEffect(() => {
@@ -81,8 +81,8 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
     );
 
     if (defaultSchedule) {
+      console.log("YAY", defaultSchedule);
       setCoursesWithSections(defaultSchedule.courses);
-      // Also load the time blocks
       setTimeBlocks(defaultSchedule.timeBlocks || []);
       toast.success(
         `Default schedule "${defaultSchedule.name}" loaded for ${term}`
