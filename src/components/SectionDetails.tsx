@@ -22,6 +22,7 @@ interface SectionDetailsProps {
   };
   type?: "SELECTED_COURSES";
   query?: string;
+  setPreviewCourse?: Dispatch<CourseWithSectionDetails | null>;
 }
 
 const processSchedules = (schedules: SectionSchedule[]): SectionSchedule[] =>
@@ -45,6 +46,7 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
   setOfferings,
   type,
   query,
+  setPreviewCourse,
 }) => {
   const processedSections = processSectionDetails(offering.sections).filter(
     (section) => section.schedules && section.schedules.length > 0
@@ -209,6 +211,8 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                     }
                     label={`#${section.classNumber}`}
                     onClick={handleAddSection}
+                    onMouseEnter={() => setPreviewCourse?.(courseWithSection)}
+                    onMouseLeave={() => setPreviewCourse?.(null)}
                   />
                 ) : (
                   <span>#{section.classNumber}</span>

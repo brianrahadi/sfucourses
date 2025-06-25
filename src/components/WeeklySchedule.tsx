@@ -31,6 +31,7 @@ interface WeeklyScheduleProps {
   setCoursesWithSections: Dispatch<SetStateAction<CourseWithSectionDetails[]>>;
   timeBlocks?: TimeBlock[]; // Make optional
   setTimeBlocks?: Dispatch<SetStateAction<TimeBlock[]>>; // Make optional
+  previewCourse?: CourseWithSectionDetails | null;
 }
 
 const convertTimeToMinutes = (time: string): number => {
@@ -84,6 +85,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
   setCoursesWithSections,
   timeBlocks, // Default to empty array
   setTimeBlocks,
+  previewCourse,
 }) => {
   const [timeslots, setTimeslots] = useState<Course[]>([]);
   const [weekStartDate, setWeekStartDate] = useState<Date | null>(null);
@@ -741,6 +743,42 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
                 </div>
               </div>
             )}
+
+            {previewCourse &&
+              previewCourse.sections &&
+              previewCourse.sections.flatMap((section) =>
+                section.schedules
+                  .filter((sched) => getDayFromCode(sched.days).includes(day))
+                  .map((sched, idx) => {
+                    const startTime = convertTimeToMinutes(sched.startTime);
+                    const duration = calculateDuration(
+                      sched.startTime,
+                      sched.endTime
+                    );
+                    const { topOffset, height } = calculateCoursePosition({
+                      id: `${previewCourse.dept}${previewCourse.number}-${section.section}-${day}-preview`,
+                      name: `${previewCourse.dept} ${previewCourse.number} \n${section.section}\nPREVIEW`,
+                      startTime,
+                      duration,
+                      day,
+                    });
+                    return (
+                      <div
+                        key={`preview-${previewCourse.dept}${previewCourse.number}-${section.section}-${day}-${idx}`}
+                        className="course-block preview-course-block"
+                        style={{
+                          top: `${topOffset}px`,
+                          height: `${height}px`,
+                          backgroundColor: "rgba(100, 180, 255, 0.4)",
+                          border: "2px dashed #2196f3",
+                          zIndex: 10,
+                        }}
+                      >
+                        {`${previewCourse.dept} ${previewCourse.number} (${section.section})`}
+                      </div>
+                    );
+                  })
+              )}
           </div>
         ))}
       </div>
