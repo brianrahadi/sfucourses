@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import Link from "next/link";
 import { CourseOutline, CourseWithSectionDetails } from "../types";
 import { Highlight, SectionDetails } from "@components";
@@ -34,6 +34,9 @@ export const CourseCard: React.FC<CourseCardProps> = ({
   type,
   setPreviewCourse,
 }) => {
+  const [showAllSections, setShowAllSections] = useState(false);
+  const [showLabTut, setShowLabTut] = useState(false);
+
   const courseDescriptionShortened =
     course.description.length > 400
       ? course.description.slice(0, 400) + " ..."
@@ -131,6 +134,10 @@ export const CourseCard: React.FC<CourseCardProps> = ({
               type={type}
               query={query}
               setPreviewCourse={setPreviewCourse}
+              showAllSections={showAllSections}
+              onToggleShowAllSections={() => setShowAllSections((v) => !v)}
+              showLabTut={showLabTut}
+              onToggleShowLabTut={() => setShowLabTut((v) => !v)}
             />
           )}
         </div>
