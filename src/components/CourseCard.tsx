@@ -18,6 +18,7 @@ type CourseCardProps = {
     type: "ADD" | "REMOVE";
   };
   type?: "SELECTED_COURSES";
+  setPreviewCourse?: Dispatch<CourseWithSectionDetails | null>;
 };
 
 export const CourseCard: React.FC<CourseCardProps> = ({
@@ -31,6 +32,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({
   isLink = true,
   setOfferings,
   type,
+  setPreviewCourse,
 }) => {
   const courseDescriptionShortened =
     course.description.length > 400
@@ -132,6 +134,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({
               setOfferings={setOfferings}
               type={type}
               query={query}
+              setPreviewCourse={setPreviewCourse}
             />
           )}
         </div>

@@ -4,6 +4,7 @@ import { Button } from "./Button";
 import { FaSave, FaFolderOpen } from "react-icons/fa";
 import { IoMdStar, IoMdStarOutline } from "react-icons/io";
 import toast from "react-hot-toast";
+import { SectionDetails, WeeklySchedule } from "@components";
 
 interface ScheduleManagerProps {
   coursesWithSections: CourseWithSectionDetails[];
@@ -218,6 +219,27 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
 
   return (
     <div className="schedule-manager">
+      {/* Weekly Schedule with preview support */}
+      {/* <WeeklySchedule
+        coursesWithSections={coursesWithSections}
+        setCoursesWithSections={setCoursesWithSections}
+        timeBlocks={timeBlocks}
+        setTimeBlocks={setTimeBlocks}
+        previewCourse={previewCourse}
+      /> */}
+      {/* Section details for each selected course */}
+      {/* <div className="selected-courses-section-details">
+        {coursesWithSections.map((course) => (
+          <SectionDetails
+            key={course.dept + course.number}
+            offering={course}
+            setOfferings={{ fn: setCoursesWithSections, type: "REMOVE" }}
+            type="SELECTED_COURSES"
+            onPreviewStart={setPreviewCourse}
+            onPreviewEnd={() => setPreviewCourse(null)}
+          />
+        ))}
+      </div> */}
       <div className="schedule-manager-buttons">
         <Button
           label="Save"

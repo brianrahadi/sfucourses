@@ -104,6 +104,8 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   const [filterConflicts, setFilterConflicts] = useState(false);
   const [campusFilter, setCampusFilter] = useState("All");
   const [currentTerm, nextTerm] = getCurrentAndNextTerm();
+  const [previewCourse, setPreviewCourse] =
+    useState<CourseWithSectionDetails | null>(null);
 
   const [timeBlocks, setTimeBlocks] = useState<TimeBlock[]>([]);
 
@@ -372,6 +374,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
                     fn: setSelectedOutlinesWithSections,
                     type: "ADD",
                   }}
+                  setPreviewCourse={setPreviewCourse}
                 />
               ))}
             </InfiniteScroll>
@@ -434,6 +437,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
                 setCoursesWithSections={setSelectedOutlinesWithSections}
                 timeBlocks={timeBlocks}
                 setTimeBlocks={setTimeBlocks}
+                previewCourse={previewCourse}
               />
             </div>
           </div>
