@@ -45,6 +45,13 @@ const CoursePage: React.FC<CoursePageProps> = () => {
 
   const { offerings, isLoading, error, isIdle } = useCourseOfferings(course);
 
+  const [showAllSectionsMap, setShowAllSectionsMap] = useState<
+    Record<string, boolean>
+  >({});
+  const [showLabTutMap, setShowLabTutMap] = useState<Record<string, boolean>>(
+    {}
+  );
+
   if (!courseCode.dept || !courseCode.number) {
     return (
       <div className="page courses-page">
@@ -72,11 +79,33 @@ const CoursePage: React.FC<CoursePageProps> = () => {
   }
 
   // Prepare tabs for the TabContainer
-  const tabs = offerings.map((offering) => ({
-    id: offering.term,
-    label: offering.term,
-    content: <SectionDetails offering={offering} />,
-  }));
+  const tabs = offerings.map((offering) => {
+    const key = offering.term;
+
+    return {
+      id: offering.term,
+      label: offering.term,
+      content: (
+        <SectionDetails
+          offering={offering}
+          showAllSections={!!showAllSectionsMap[key]}
+          onToggleShowAllSections={() =>
+            setShowAllSectionsMap((prev) => ({
+              ...prev,
+              [key]: !prev[key],
+            }))
+          }
+          showLabTut={!!showLabTutMap[key]}
+          onToggleShowLabTut={() =>
+            setShowLabTutMap((prev) => ({
+              ...prev,
+              [key]: !prev[key],
+            }))
+          }
+        />
+      ),
+    };
+  });
 
   return (
     <div className="page courses-page">
