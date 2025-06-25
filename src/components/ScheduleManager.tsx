@@ -58,8 +58,9 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
   useEffect(() => {
     // Only load default schedule if the term has changed and coursesWithSections is not for the new term
     if (
-      coursesWithSections.length === 0 ||
-      !coursesWithSections.some((course) => course.term === selectedTerm)
+      previousTermRef.current !== selectedTerm &&
+      (coursesWithSections.length === 0 ||
+        !coursesWithSections.some((course) => course.term === selectedTerm))
     ) {
       console.log("loadDefaultScheduleForTerm", savedSchedules);
       loadDefaultScheduleForTerm(selectedTerm);
@@ -81,12 +82,14 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
     );
 
     if (defaultSchedule) {
-      console.log("YAY", defaultSchedule);
-      setCoursesWithSections(defaultSchedule.courses);
-      setTimeBlocks(defaultSchedule.timeBlocks || []);
-      toast.success(
-        `Default schedule "${defaultSchedule.name}" loaded for ${term}`
-      );
+      // tried without setTimeout but didn't work, RIP CLEAN CODE
+      setTimeout(() => {
+        setCoursesWithSections(defaultSchedule.courses);
+        setTimeBlocks(defaultSchedule.timeBlocks || []);
+        toast.success(
+          `Default schedule "${defaultSchedule.name}" loaded for ${term}`
+        );
+      }, 10);
     }
   };
 
