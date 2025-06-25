@@ -242,7 +242,12 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
               <div className="section-schedule-container">
                 {section.schedules.map((sched) => (
                   <div
-                    key={"w" + sched.days + sched.startDate}
+                    key={
+                      sched.days +
+                      sched.startDate +
+                      sched.startTime +
+                      sched.sectionCode
+                    }
                     className="section-schedule-row"
                   >
                     <span
