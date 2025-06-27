@@ -221,7 +221,7 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                       )
                     }
                     label={`#${section.classNumber}`}
-                    onClick={handleAddSection}
+                    onMouseDown={handleAddSection}
                     onMouseEnter={() => setPreviewCourse?.(courseWithSection)}
                     onMouseLeave={() => setPreviewCourse?.(null)}
                   />

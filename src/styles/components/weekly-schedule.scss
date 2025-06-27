@@ -444,11 +444,12 @@
     }
   }
 
-  /* More obvious drag preview */
-  .course-block.time-block.preview {
-    z-index: 10;
-    border: 2px dashed white;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  .course-block {
+    &.time-block.preview {
+      z-index: 10;
+      border: 2px dashed white;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    }
   }
 
   /* Improved time block toggle button */

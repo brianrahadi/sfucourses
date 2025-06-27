@@ -5,6 +5,7 @@ interface ButtonProps {
   onClick?: () => void;
   icon?: JSX.Element;
   disabled?: boolean;
+  onMouseDown?: () => void;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
 }
@@ -16,12 +17,14 @@ export const Button: React.FC<ButtonProps> = ({
   onClick,
   icon,
   disabled,
+  onMouseDown,
   onMouseEnter,
   onMouseLeave,
 }) => {
   return (
     <button
       onClick={onClick}
+      onMouseDown={onMouseDown}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       className={`btn ${type} ${className}`}
