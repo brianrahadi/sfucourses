@@ -72,7 +72,7 @@ export const getStaticProps: GetStaticProps<SchedulePageProps> = async () => {
       props: {
         initialSections: [...currentTermSections, ...nextTermSections],
       },
-      revalidate: 60 * 60, // hourly
+      revalidate: 60 * 60 * 24, // hourly
     };
   } catch (error) {
     console.error("Error getting all courses", error);
