@@ -45,7 +45,9 @@ export const RedditPosts: React.FC<RedditPostsProps> = ({ dept, number }) => {
       <h2>r/simonfraser posts</h2>
       <div className="reddit-posts">
         {isLoading ? (
-          <RotatingLines visible={true} strokeColor="#24a98b" />
+          <div className="loading-spinner-container">
+            <RotatingLines visible={true} strokeColor="#24a98b" />
+          </div>
         ) : error ? (
           <div className="error">Error: {error.message}</div>
         ) : redditResults && redditResults.length > 0 ? (

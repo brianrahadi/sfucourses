@@ -81,7 +81,7 @@ const CoursePage: React.FC<CoursePageProps> = () => {
       <div className="page courses-page">
         <Hero title="explore courses" backgroundImage={HeroImage.src} />
         <main className="container">
-          <div className="center">
+          <div className="center loading-spinner-container">
             <RotatingLines visible={true} strokeColor="#24a98b" />
           </div>
         </main>
@@ -149,7 +149,9 @@ const CoursePage: React.FC<CoursePageProps> = () => {
           </div>
           <div className="course-offerings">
             {isLoadingOfferings || isIdleOfferings ? (
-              <RotatingLines visible={true} strokeColor="#24a98b" />
+              <div className="loading-spinner-container">
+                <RotatingLines visible={true} strokeColor="#24a98b" />
+              </div>
             ) : errorOfferings ? (
               `Error loading offerings: ${errorOfferings.message}`
             ) : offerings.length === 0 ? (
