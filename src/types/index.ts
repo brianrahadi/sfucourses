@@ -53,6 +53,18 @@ export interface SectionInstructor {
   email: string;
 }
 
+export interface Instructor {
+  name: string;
+  offerings: InstructorOffering[];
+}
+
+export interface InstructorOffering {
+  dept: string;
+  number: string;
+  term: string;
+  title: string;
+}
+
 export interface SectionSchedule {
   startDate: string; // Ex: 2024-09-04
   endDate: string; // Ex: 2024-12-04
