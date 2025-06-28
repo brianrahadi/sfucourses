@@ -69,7 +69,7 @@
 
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+<img width="1492" alt="image" src="https://github.com/user-attachments/assets/3ebc5b8b-cae3-476e-8c48-8f4f2244200d" />
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
