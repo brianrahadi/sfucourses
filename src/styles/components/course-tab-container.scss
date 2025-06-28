@@ -1,15 +1,17 @@
 .course-tab-container {
-  max-width: 600px;
+  width: 100%;
+  max-width: 400px;
   border-radius: 8px;
-  overflow: scroll;
   background: var(--colour-neutral-1100) 100%;
 
   .tabs {
     display: flex;
     background: var(--colour-neutral-1100) 100%;
     border-bottom: 2px solid var(--colour-neutral-900);
+    font-size: 0.95rem;
 
     .tab {
+      flex: 1 1;
       padding: 0.75rem;
       cursor: pointer;
       border: none;
