@@ -5,9 +5,9 @@ import { toTermCode } from "@utils/format";
 
 export interface CourseOfferingsResult {
   offerings: CourseWithSectionDetails[];
-  isLoading: boolean;
-  error: Error | null;
-  isIdle: boolean;
+  isLoadingOfferings: boolean;
+  errorOfferings: Error | null;
+  isIdleOfferings: boolean;
 }
 
 export const useCourseOfferings = (
@@ -18,12 +18,12 @@ export const useCourseOfferings = (
     queries: course?.offerings
       ? course.offerings.map((offering) => {
           const termURL = toTermCode(offering.term);
-          const queryUrl = `/sections/${termURL}/${courseCodeURL}?gzip=true`;
+          const queryUrl = `/sections/${termURL}/${courseCodeURL}`;
           return {
             queryKey: ["courseOffering", queryUrl],
             queryFn: () => getCourseAPIData(queryUrl),
-            staleTime: 5 * 60 * 1000,
-            cacheTime: 30 * 60 * 1000,
+            staleTime: 24 * 60 * 60 * 1000, // 24 hours
+            cacheTime: 24 * 60 * 60 * 1000, // 24 hours
           };
         })
       : [],
@@ -32,9 +32,9 @@ export const useCourseOfferings = (
   if (!course?.offerings) {
     return {
       offerings: [],
-      isLoading: false,
-      error: null,
-      isIdle: true,
+      isLoadingOfferings: false,
+      errorOfferings: null,
+      isIdleOfferings: true,
     };
   }
 
@@ -47,8 +47,8 @@ export const useCourseOfferings = (
 
   return {
     offerings,
-    isLoading,
-    error,
-    isIdle: false,
+    isLoadingOfferings: isLoading,
+    errorOfferings: error,
+    isIdleOfferings: false,
   };
 };
