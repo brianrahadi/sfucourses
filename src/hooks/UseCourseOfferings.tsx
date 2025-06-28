@@ -10,13 +10,14 @@ export interface CourseOfferingsResult {
   isIdle: boolean;
 }
 
+// Show the last 4 offerings
 export const useCourseOfferings = (
   course: CourseOutline | undefined
 ): CourseOfferingsResult => {
   const courseCodeURL = course ? `${course.dept}/${course.number}` : "";
   const queries = useQueries({
     queries: course?.offerings
-      ? course.offerings.map((offering) => {
+      ? course.offerings.slice(-4).map((offering) => {
           const termURL = toTermCode(offering.term);
           const queryUrl = `/sections/${termURL}/${courseCodeURL}?gzip=true`;
           return {

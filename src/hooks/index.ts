@@ -3,3 +3,4 @@ export { useCourseOfferings } from "./UseCourseOfferings";
 export { useLocalStorage } from "./UseLocalStorage";
 export { useOnClickOutside } from "./UseOnClickOutside";
 export { useCoursesData } from "./UseCoursesData";
+export { useCourseOffering } from "./useCourseOffering";
