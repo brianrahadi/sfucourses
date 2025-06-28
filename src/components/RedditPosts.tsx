@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { BiSolidUpvote } from "react-icons/bi";
 import { formatShortDate } from "@utils/format";
+import { RotatingLines } from "react-loader-spinner";
 
 interface RedditPostData {
   title: string;
@@ -39,19 +40,15 @@ export const RedditPosts: React.FC<RedditPostsProps> = ({ dept, number }) => {
     queryFn: () => fetchRedditPosts(dept, number),
   });
 
-  if (isLoading) {
-    return <div className="loading">Loading Reddit posts...</div>;
-  }
-
-  if (error) {
-    return <div className="error">Error: {error.message}</div>;
-  }
-
   return (
     <div className="reddit-posts-container">
       <h2>r/simonfraser posts</h2>
       <div className="reddit-posts">
-        {redditResults && redditResults.length > 0 ? (
+        {isLoading ? (
+          <RotatingLines visible={true} strokeColor="#24a98b" />
+        ) : error ? (
+          <div className="error">Error: {error.message}</div>
+        ) : redditResults && redditResults.length > 0 ? (
           redditResults.map((post, index) => (
             <Link
               key={index}

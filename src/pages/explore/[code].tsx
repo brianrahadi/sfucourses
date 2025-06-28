@@ -33,6 +33,7 @@ const CoursePage: React.FC<CoursePageProps> = () => {
   };
 
   const [course, setCourse] = useState<CourseOutline | undefined>();
+  const [showInvalid, setShowInvalid] = useState(false);
 
   useEffect(() => {
     if (courseCode.dept && courseCode.number) {
@@ -43,7 +44,17 @@ const CoursePage: React.FC<CoursePageProps> = () => {
     }
   }, [courseCode.dept, courseCode.number]);
 
-  const { offerings, isLoading, error, isIdle } = useCourseOfferings(course);
+  useEffect(() => {
+    if (!courseCode.dept || !courseCode.number) {
+      const timer = setTimeout(() => setShowInvalid(true), 3000);
+      return () => clearTimeout(timer);
+    } else {
+      setShowInvalid(false);
+    }
+  }, [courseCode.dept, courseCode.number]);
+
+  const { offerings, isLoadingOfferings, errorOfferings, isIdleOfferings } =
+    useCourseOfferings(course);
 
   const [showAllSectionsMap, setShowAllSectionsMap] = useState<
     Record<string, boolean>
@@ -52,7 +63,7 @@ const CoursePage: React.FC<CoursePageProps> = () => {
     {}
   );
 
-  if (!courseCode.dept || !courseCode.number) {
+  if (showInvalid) {
     return (
       <div className="page courses-page">
         <Hero title="explore courses" backgroundImage={HeroImage.src} />
@@ -65,7 +76,7 @@ const CoursePage: React.FC<CoursePageProps> = () => {
     );
   }
 
-  if (!course || isLoading) {
+  if (!course) {
     return (
       <div className="page courses-page">
         <Hero title="explore courses" backgroundImage={HeroImage.src} />
@@ -137,10 +148,10 @@ const CoursePage: React.FC<CoursePageProps> = () => {
             </div>
           </div>
           <div className="course-offerings">
-            {isIdle ? (
-              "Waiting for course data..."
-            ) : error ? (
-              `Error loading offerings: ${error.message}`
+            {isLoadingOfferings || isIdleOfferings ? (
+              <RotatingLines visible={true} strokeColor="#24a98b" />
+            ) : errorOfferings ? (
+              `Error loading offerings: ${errorOfferings.message}`
             ) : offerings.length === 0 ? (
               "No offerings available"
             ) : (
