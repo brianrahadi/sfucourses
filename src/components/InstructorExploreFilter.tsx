@@ -1,13 +1,12 @@
 import Select, { SelectInstance } from "react-select";
 import { Button } from "@components";
 import { Dispatch, SetStateAction, useRef } from "react";
-import { ExploreFilters } from "src/hooks/UseExploreFilters";
 import { BsSun } from "react-icons/bs";
 import { FaLeaf } from "react-icons/fa";
 import { LuFlower } from "react-icons/lu";
 import { RiResetLeftFill } from "react-icons/ri";
 import { SUBJECTS } from "@const";
-
+import { InstructorExploreFilters } from "@hooks";
 const colourNeutral1000 = "#323434";
 const colourNeutral900 = "#4b4e4d";
 const colourNeutral800 = "#646867";
@@ -94,7 +93,7 @@ const FilterButton: React.FC<FilterButtonProps> = ({
   );
 };
 
-export const InstructorExploreFilter: React.FC<ExploreFilters> = ({
+export const InstructorExploreFilter: React.FC<InstructorExploreFilters> = ({
   subjects,
   terms,
 }) => {

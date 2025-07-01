@@ -16,18 +16,20 @@ export const InstructorCard: React.FC<InstructorCardProps> = ({
   isLink = false,
 }) => {
   const InstructorCardContent = () => (
-    <div className="course-title dark">
-      {query ? (
-        <Highlight text={instructor.name} query={query} />
-      ) : (
-        <p>{instructor.name}</p>
-      )}
-      <br />
+    <>
+      <div className="course-title dark">
+        {query ? (
+          <Highlight text={instructor.name} query={query} />
+        ) : (
+          <p>{instructor.name}</p>
+        )}
+      </div>
       <div className="course-card__row">
         {instructor.offerings.length &&
           instructor.offerings
             .filter(
               (offering) =>
+                // TODO: Refactor to be automated last 4 terms
                 offering.term.includes("2025") ||
                 offering.term.includes("Fall 2024")
             )
@@ -47,19 +49,22 @@ export const InstructorCard: React.FC<InstructorCardProps> = ({
               );
             })}
       </div>
-    </div>
+    </>
   );
 
   if (isLink) {
     return (
-      <Link href={`/instructors/${instructor.name}}`} className="course-card">
+      <Link
+        href={`/instructors/${instructor.name}}`}
+        className="course-card instructor-card"
+      >
         <InstructorCardContent />
       </Link>
     );
   }
 
   return (
-    <div className="course-card">
+    <div className="course-card instructor-card">
       <InstructorCardContent />
     </div>
   );

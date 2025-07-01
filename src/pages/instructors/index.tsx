@@ -1,9 +1,6 @@
-// pages/explore/index.tsx
 import {
-  ExploreFilter,
   Hero,
   TextBadge,
-  CourseCard,
   SearchBar,
   InstructorCard,
   InstructorExploreFilter,
@@ -12,20 +9,11 @@ import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useState, useEffect } from "react";
 import { CourseOutline, Instructor } from "@types";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { useExploreFilters } from "src/hooks/UseExploreFilters";
+import { useInstructorExploreFilters } from "@hooks";
 import { GetStaticProps } from "next";
 import { useQuery } from "@tanstack/react-query";
 import { dehydrate, QueryClient } from "@tanstack/react-query";
 import { getCourseAPIData } from "@utils";
-import {
-  filterCoursesByQuery,
-  filterCourseBySubjects,
-  filterCoursesByLevels,
-  filterCoursesByOfferedTerms,
-  filterCoursesByDeliveries,
-  filterCoursesByPrereqs,
-  filterCoursesByDesignations,
-} from "@utils/courseFilters";
 import { numberWithCommas } from "@utils/format";
 import {
   filterInstructorsByQuery,
@@ -81,8 +69,7 @@ const InstructorPage: React.FC = () => {
   const [searchSelected, setSearchSelected] = useState<boolean>(false);
   const CHUNK_SIZE = 20;
 
-  const { subjects, levels, terms, prereqs, designations, deliveries } =
-    useExploreFilters();
+  const { subjects, terms } = useInstructorExploreFilters();
 
   const loadMore = () => {
     if (instructors.length === 0) {
@@ -125,16 +112,7 @@ const InstructorPage: React.FC = () => {
   };
 
   // Update visible courses when filter changes
-  useEffect(onFilterChange, [
-    query,
-    subjects.selected,
-    levels.selected,
-    terms.selected,
-    deliveries.selected,
-    prereqs.searchQuery,
-    prereqs.hasNone,
-    designations.selected,
-  ]);
+  useEffect(onFilterChange, [query, subjects.selected, terms.selected]);
 
   // Initialize visible courses when data is loaded
   useEffect(() => {
@@ -196,14 +174,7 @@ const InstructorPage: React.FC = () => {
           </InfiniteScroll>
         </section>
         <section className="filter-section">
-          <InstructorExploreFilter
-            subjects={subjects}
-            levels={levels}
-            terms={terms}
-            prereqs={prereqs}
-            designations={designations}
-            deliveries={deliveries}
-          />
+          <InstructorExploreFilter subjects={subjects} terms={terms} />
         </section>
       </main>
     </div>
