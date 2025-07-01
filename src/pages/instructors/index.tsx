@@ -21,11 +21,9 @@ import {
   filterInstructorsByTerm,
 } from "@utils/instructorFilters";
 
-// Use getStaticProps to fetch and cache data at build time
 export const getStaticProps: GetStaticProps = async () => {
   const queryClient = new QueryClient();
 
-  // Prefetch the full course data
   await queryClient.prefetchQuery({
     queryKey: ["allCourses"],
     queryFn: async () => {

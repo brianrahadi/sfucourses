@@ -25,7 +25,8 @@ export const InstructorCard: React.FC<InstructorCardProps> = ({
         )}
       </div>
       <div className="course-card__row">
-        {instructor.offerings.length &&
+        {instructor.offerings &&
+          instructor.offerings.length &&
           instructor.offerings
             .filter(
               (offering) =>
@@ -55,7 +56,7 @@ export const InstructorCard: React.FC<InstructorCardProps> = ({
   if (isLink) {
     return (
       <Link
-        href={`/instructors/${instructor.name}}`}
+        href={`/instructors/${instructor.name}`}
         className="course-card instructor-card"
       >
         <InstructorCardContent />
