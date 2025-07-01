@@ -1,12 +1,9 @@
 import Select, { SelectInstance } from "react-select";
 import { Button } from "@components";
 import { Dispatch, SetStateAction, useRef } from "react";
-import { BsSun } from "react-icons/bs";
-import { FaLeaf } from "react-icons/fa";
-import { LuFlower } from "react-icons/lu";
 import { RiResetLeftFill } from "react-icons/ri";
-import { SUBJECTS } from "@const";
 import { InstructorExploreFilters } from "@hooks";
+import { subjectOptions, termOptions, termToIcon } from "@utils/exploreFilters";
 const colourNeutral1000 = "#323434";
 const colourNeutral900 = "#4b4e4d";
 const colourNeutral800 = "#646867";
@@ -47,20 +44,6 @@ const customStyles = {
   }),
 };
 
-const subjectOptions = SUBJECTS.map((subj) => {
-  return { value: subj, label: subj };
-});
-const termOptions = ["Fall 2024", "Spring 2025", "Summer 2025", "Fall 2025"];
-export const termToIcon = (term: string) => {
-  switch (term) {
-    case "Fall":
-      return <FaLeaf color="brown" />;
-    case "Spring":
-      return <LuFlower color="skyblue" />;
-    case "Summer":
-      return <BsSun color="orange" />;
-  }
-};
 interface FilterButtonProps {
   icon?: JSX.Element;
   value: string;

@@ -7,7 +7,14 @@ import { BsSun } from "react-icons/bs";
 import { FaLeaf } from "react-icons/fa";
 import { LuFlower } from "react-icons/lu";
 import { RiResetLeftFill } from "react-icons/ri";
-import { SUBJECTS } from "@const";
+import {
+  deliveryOptions,
+  levelOptions,
+  designationOptions,
+  termOptions,
+  termToIcon,
+} from "@utils/exploreFilters";
+import { subjectOptions } from "@utils/exploreFilters";
 
 const colourNeutral1000 = "#323434";
 const colourNeutral900 = "#4b4e4d";
@@ -49,23 +56,6 @@ const customStyles = {
   }),
 };
 
-const subjectOptions = SUBJECTS.map((subj) => {
-  return { value: subj, label: subj };
-});
-const levelOptions = ["1XX", "2XX", "3XX", "4XX", "5XX+"];
-const termOptions = ["Fall 2024", "Spring 2025", "Summer 2025", "Fall 2025"];
-const deliveryOptions = ["In Person", "Online"];
-const designationOptions = ["W", "Q", "B-Sci", "B-Hum", "B-Soc"];
-export const termToIcon = (term: string) => {
-  switch (term) {
-    case "Fall":
-      return <FaLeaf color="brown" />;
-    case "Spring":
-      return <LuFlower color="skyblue" />;
-    case "Summer":
-      return <BsSun color="orange" />;
-  }
-};
 interface FilterButtonProps {
   icon?: JSX.Element;
   value: string;

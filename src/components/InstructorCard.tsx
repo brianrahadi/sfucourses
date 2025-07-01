@@ -2,7 +2,7 @@ import React from "react";
 import { Instructor } from "@types";
 import { Highlight } from "@components";
 import Link from "next/link";
-import { termToIcon } from "./ExploreFilter";
+import { termToIcon } from "@utils/exploreFilters";
 
 type InstructorCardProps = {
   instructor: Instructor;
