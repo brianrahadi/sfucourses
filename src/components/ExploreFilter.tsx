@@ -66,11 +66,28 @@ const designationOptions = ["W", "Q", "B-Sci", "B-Hum", "B-Soc"];
 export const termToIcon = (term: string) => {
   switch (term) {
     case "Fall":
-      return <FaLeaf color="brown" />;
+      return (
+        <FaLeaf
+          style={{ fill: "#A0522D", verticalAlign: "middle" }}
+          title="Fall"
+        />
+      );
     case "Spring":
-      return <LuFlower color="skyblue" />;
+      return (
+        <LuFlower
+          style={{ fill: "#FF69B4", verticalAlign: "middle" }}
+          title="Spring"
+        />
+      );
     case "Summer":
-      return <BsSun color="orange" />;
+      return (
+        <BsSun
+          style={{ fill: "#FFD700", verticalAlign: "middle" }}
+          title="Summer"
+        />
+      );
+    default:
+      return undefined;
   }
 };
 interface FilterButtonProps {
