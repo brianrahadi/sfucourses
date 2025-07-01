@@ -13,13 +13,14 @@ interface RedditPostData {
 }
 
 interface RedditPostsProps {
-  dept: string;
-  number: string;
+  query: string;
 }
 
-const fetchRedditPosts = async (dept: string, number: string) => {
+const fetchRedditPosts = async (query: string) => {
   const response = await fetch(
-    `https://www.reddit.com/r/simonfraser/search.json?q=${dept}%20${number}&restrict_sr=on`
+    `https://www.reddit.com/r/simonfraser/search.json?q=${encodeURIComponent(
+      query
+    )}&restrict_sr=on`
   );
   const data = await response.json();
   return data.data.children.map((post: any) => ({
@@ -30,14 +31,14 @@ const fetchRedditPosts = async (dept: string, number: string) => {
   }));
 };
 
-export const RedditPosts: React.FC<RedditPostsProps> = ({ dept, number }) => {
+export const RedditPosts: React.FC<RedditPostsProps> = ({ query }) => {
   const {
     data: redditResults,
     isLoading,
     error,
   } = useQuery<RedditPostData[], Error>({
-    queryKey: ["redditPosts", dept, number],
-    queryFn: () => fetchRedditPosts(dept, number),
+    queryKey: ["redditPosts", query],
+    queryFn: () => fetchRedditPosts(query),
   });
 
   return (

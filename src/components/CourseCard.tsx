@@ -2,7 +2,7 @@ import React, { Dispatch, SetStateAction, useState } from "react";
 import Link from "next/link";
 import { CourseOutline, CourseWithSectionDetails } from "../types";
 import { Highlight, SectionDetails } from "@components";
-import { termToIcon } from "./ExploreFilter";
+import { termToIcon } from "@utils/exploreFilters";
 
 type CourseCardProps = {
   course: CourseOutline;

@@ -4,3 +4,5 @@ export { useLocalStorage } from "./UseLocalStorage";
 export { useOnClickOutside } from "./UseOnClickOutside";
 export { useCoursesData } from "./UseCoursesData";
 export { useCourseOffering } from "./useCourseOffering";
+export { useInstructorExploreFilters } from "./useInstructorExploreFilters";
+export type { InstructorExploreFilters } from "./useInstructorExploreFilters";
