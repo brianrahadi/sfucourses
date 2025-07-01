@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Instructor, InstructorOffering } from "@types";
 import { getCourseAPIData } from "@utils";
-import { Hero, InstructorCard } from "@components";
+import { Hero, InstructorCard, RedditPosts } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { RotatingLines } from "react-loader-spinner";
 
@@ -87,6 +87,7 @@ const InstructorPage = () => {
             </div>
           </div>
         ) : null}
+        {instructor && <RedditPosts query={`${instructor.name}`} />}
       </main>
     </div>
   );

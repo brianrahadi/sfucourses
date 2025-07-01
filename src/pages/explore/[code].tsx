@@ -161,7 +161,7 @@ const CoursePage: React.FC<CoursePageProps> = () => {
             )}
           </div>
         </div>
-        <RedditPosts dept={course.dept} number={course.number} />{" "}
+        <RedditPosts query={`${course.dept.toLowerCase()} ${course.number}`} />
       </main>
     </div>
   );
