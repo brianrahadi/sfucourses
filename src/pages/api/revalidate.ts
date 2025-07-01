@@ -16,6 +16,9 @@ export default async function handler(
     } else if (type === "revalidate-schedule") {
       await res.revalidate("/schedule");
       return res.json({ revalidated: true, page: "/schedule" });
+    } else if (type === "revalidate-instructors") {
+      await res.revalidate("/instructors");
+      return res.json({ revalidated: true, page: "/instructors" });
     } else {
       return res.status(400).json({ message: "Invalid revalidate type" });
     }
