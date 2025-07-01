@@ -123,7 +123,10 @@ const InstructorPage: React.FC = () => {
   if (isLoading && instructors.length === 0) {
     return (
       <div className="page courses-page">
-        <Hero title={`explore courses`} backgroundImage={HeroImage.src} />
+        <Hero
+          title={`explore instructors - feature wip`}
+          backgroundImage={HeroImage.src}
+        />
         <main id="explore-container" className="container">
           <div className="center">
             <p>Loading courses...</p>
@@ -135,7 +138,10 @@ const InstructorPage: React.FC = () => {
 
   return (
     <div className="page courses-page">
-      <Hero title={`explore courses`} backgroundImage={HeroImage.src} />
+      <Hero
+        title={`explore instructors - feature wip`}
+        backgroundImage={HeroImage.src}
+      />
       <main id="explore-container" className="container">
         <section className="courses-section">
           <TextBadge
