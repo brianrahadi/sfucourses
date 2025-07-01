@@ -8,9 +8,17 @@ export const filterInstructorsByQuery = (
     return instructors;
   }
 
-  return instructors.filter((instructor) =>
-    instructor.name.toLowerCase().includes(query.toLowerCase())
-  );
+  return instructors.filter((instructor) => {
+    const isInstructor = instructor.name
+      .toLowerCase()
+      .includes(query.toLowerCase());
+    const isInstructorOffering = instructor.offerings.some((offering) =>
+      `${offering.dept} ${offering.number}`
+        .toLowerCase()
+        .includes(query.toLowerCase())
+    );
+    return isInstructor || isInstructorOffering;
+  });
 };
 
 export const filterInstructorsBySubject = (

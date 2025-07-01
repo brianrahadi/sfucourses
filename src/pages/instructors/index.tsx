@@ -176,7 +176,7 @@ const InstructorPage: React.FC = () => {
             handleInputChange={setQuery}
             searchSelected={searchSelected}
             setSearchSelected={setSearchSelected}
-            placeholder="instructor name"
+            placeholder="instructor name or course code"
           />
           <InfiniteScroll
             dataLength={visibleInstructors.length}
@@ -190,6 +190,7 @@ const InstructorPage: React.FC = () => {
                 key={instructor.name}
                 instructor={instructor}
                 query={query}
+                isLink
               />
             ))}
           </InfiniteScroll>
