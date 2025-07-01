@@ -25,21 +25,27 @@ export const InstructorCard: React.FC<InstructorCardProps> = ({
       <br />
       <div className="course-card__row">
         {instructor.offerings.length &&
-          instructor.offerings.map((offering) => {
-            const text = `${offering.dept} ${offering.number}`;
-            return (
-              <div className="text-badge" key={text}>
-                {termToIcon(offering.term.split(" ")[0])}
-                {offering.term.split(" ")[1].slice(2)}
-                &thinsp;
-                {query ? (
-                  <Highlight text={text} query={query} />
-                ) : (
-                  <p>{text}</p>
-                )}
-              </div>
-            );
-          })}
+          instructor.offerings
+            .filter(
+              (offering) =>
+                offering.term.includes("2025") ||
+                offering.term.includes("Fall 2024")
+            )
+            .map((offering) => {
+              const text = `${offering.dept} ${offering.number}`;
+              return (
+                <div className="text-badge" key={text}>
+                  {termToIcon(offering.term.split(" ")[0])}
+                  {offering.term.split(" ")[1].slice(2)}
+                  &thinsp;
+                  {query ? (
+                    <Highlight text={text} query={query} />
+                  ) : (
+                    <p>{text}</p>
+                  )}
+                </div>
+              );
+            })}
       </div>
     </div>
   );

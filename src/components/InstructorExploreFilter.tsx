@@ -1,7 +1,6 @@
 import Select, { SelectInstance } from "react-select";
 import { Button } from "@components";
-import { SearchBar } from "@components";
-import { Dispatch, SetStateAction, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useRef } from "react";
 import { ExploreFilters } from "src/hooks/UseExploreFilters";
 import { BsSun } from "react-icons/bs";
 import { FaLeaf } from "react-icons/fa";
@@ -52,17 +51,7 @@ const customStyles = {
 const subjectOptions = SUBJECTS.map((subj) => {
   return { value: subj, label: subj };
 });
-const levelOptions = ["1XX", "2XX", "3XX", "4XX", "5XX+"];
-const termOptions = [
-  "Spring 2024",
-  "Summer 2024",
-  "Fall 2024",
-  "Spring 2025",
-  "Summer 2025",
-  "Fall 2025",
-];
-const deliveryOptions = ["In Person", "Online"];
-const designationOptions = ["W", "Q", "B-Sci", "B-Hum", "B-Soc"];
+const termOptions = ["Fall 2024", "Spring 2025", "Summer 2025", "Fall 2025"];
 export const termToIcon = (term: string) => {
   switch (term) {
     case "Fall":
@@ -107,11 +96,7 @@ const FilterButton: React.FC<FilterButtonProps> = ({
 
 export const InstructorExploreFilter: React.FC<ExploreFilters> = ({
   subjects,
-  levels,
   terms,
-  prereqs,
-  designations,
-  deliveries,
 }) => {
   const selectInputRef = useRef<SelectInstance<any>>(null);
 
@@ -128,13 +113,7 @@ export const InstructorExploreFilter: React.FC<ExploreFilters> = ({
             onClick={() => {
               selectInputRef?.current?.clearValue();
               subjects.setSelected([]);
-              levels.setSelected([]);
               terms.setSelected([]);
-              deliveries.setSelected([]);
-              prereqs.setSearchQuery("");
-              prereqs.setIsShown(false);
-              prereqs.setHasNone(false);
-              designations.setSelected([]);
             }}
           />
         </div>
