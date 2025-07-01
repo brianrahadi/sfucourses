@@ -6,6 +6,7 @@ import {
   CourseCard,
   SearchBar,
   InstructorCard,
+  InstructorExploreFilter,
 } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useState, useEffect } from "react";
@@ -26,7 +27,11 @@ import {
   filterCoursesByDesignations,
 } from "@utils/courseFilters";
 import { numberWithCommas } from "@utils/format";
-import { filterInstructorsByQuery } from "@utils/instructorFilters";
+import {
+  filterInstructorsByQuery,
+  filterInstructorsBySubject,
+  filterInstructorsByTerm,
+} from "@utils/instructorFilters";
 
 // Use getStaticProps to fetch and cache data at build time
 export const getStaticProps: GetStaticProps = async () => {
@@ -110,7 +115,12 @@ const InstructorPage: React.FC = () => {
     const filteredInstructors = [
       (instructors: Instructor[]) =>
         filterInstructorsByQuery(instructors, query),
+      (instructors: Instructor[]) =>
+        filterInstructorsBySubject(instructors, subjects.selected),
+      (instructors: Instructor[]) =>
+        filterInstructorsByTerm(instructors, terms.selected),
     ].reduce((filtered, filterFunc) => filterFunc(filtered), instructors);
+    console.log(filteredInstructors);
     return filteredInstructors;
   };
 
@@ -124,7 +134,6 @@ const InstructorPage: React.FC = () => {
     prereqs.searchQuery,
     prereqs.hasNone,
     designations.selected,
-    instructors, // Re-run when courses data changes
   ]);
 
   // Initialize visible courses when data is loaded
@@ -186,7 +195,7 @@ const InstructorPage: React.FC = () => {
           </InfiniteScroll>
         </section>
         <section className="filter-section">
-          <ExploreFilter
+          <InstructorExploreFilter
             subjects={subjects}
             levels={levels}
             terms={terms}
