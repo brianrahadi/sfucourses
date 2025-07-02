@@ -6,19 +6,27 @@ import { getCourseAPIData } from "@utils";
 import { Search } from "react-feather";
 import { Button } from "./Button";
 import Link from "next/link";
+import { InstructorCard } from "./InstructorCard";
 
 interface GlobalSearchProps {
   placeholder?: string;
 }
 
-// Minimal course data needed for search
 interface MinimalCourseData {
   dept: string;
   number: string;
   title: string;
 }
 
-// Improved platform detection
+interface MinimalInstructorData {
+  name: string;
+  offerings: { dept: string; number: string; term: string; title: string }[];
+}
+
+type SearchResult =
+  | { type: "course"; data: MinimalCourseData }
+  | { type: "instructor"; data: MinimalInstructorData };
+
 const isMacPlatform = (): boolean => {
   if (typeof window === "undefined") return false;
 
@@ -32,12 +40,10 @@ const isMacPlatform = (): boolean => {
 export const GlobalSearch: React.FC<GlobalSearchProps> = () => {
   const [query, setQuery] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const [filteredResults, setFilteredResults] = useState<MinimalCourseData[]>(
-    []
-  );
+  const [results, setResults] = useState<SearchResult[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [isMac, setIsMac] = useState(false);
-  const [isScrolling, setIsScrolling] = useState(false); // Track scrolling state
+  const [isScrolling, setIsScrolling] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const resultsContainerRef = useRef<HTMLDivElement>(null);
@@ -45,6 +51,45 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = () => {
   const router = useRouter();
 
   const [scrollPosition, setScrollPosition] = useState(0);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const { data: courseData, isLoading: isLoadingCourses } = useQuery({
+    queryKey: ["globalSearchIndex"],
+    queryFn: async () => {
+      try {
+        const response = await getCourseAPIData("/outlines/all");
+        return response.data.map((course: any) => ({
+          dept: course.dept,
+          number: course.number,
+          title: course.title,
+        }));
+      } catch (error) {
+        console.error("Error fetching search data:", error);
+        return [];
+      }
+    },
+    refetchOnMount: true,
+    staleTime: 15 * 60 * 1000,
+    retry: 2,
+    refetchOnWindowFocus: false,
+  });
+
+  const { data: instructorData, isLoading: isLoadingInstructors } = useQuery({
+    queryKey: ["globalInstructorSearchIndex"],
+    queryFn: async () => {
+      try {
+        const response = await getCourseAPIData("/instructors/all", false);
+        return response as MinimalInstructorData[];
+      } catch (error) {
+        console.error("Error fetching instructor data:", error);
+        return [];
+      }
+    },
+    refetchOnMount: true,
+    staleTime: 15 * 60 * 1000,
+    retry: 2,
+    refetchOnWindowFocus: false,
+  });
 
   useEffect(() => {
     setIsMac(isMacPlatform());
@@ -52,34 +97,27 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = () => {
 
   useEffect(() => {
     if (showModal) {
-      // Store current scroll position
       const currentScrollPosition = window.pageYOffset;
       setScrollPosition(currentScrollPosition);
 
-      // Add class for locking scroll and additional styling
       document.body.classList.add("modal-open");
 
-      // Apply fixed positioning to the body
       document.body.style.top = `-${currentScrollPosition}px`;
     } else {
-      // Restore scroll when modal is closed
       document.body.classList.remove("modal-open");
       document.body.style.top = "";
 
-      // Only scroll back to position if we've stored a position
       if (scrollPosition) {
         window.scrollTo(0, scrollPosition);
       }
     }
 
-    // Cleanup function to ensure scroll is restored on unmount
     return () => {
       document.body.classList.remove("modal-open");
       document.body.style.top = "";
     };
   }, [showModal, scrollPosition]);
 
-  // Handle clicking outside the modal to close it
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -99,68 +137,51 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = () => {
     };
   }, [showModal]);
 
-  // Focus the input when the modal opens
   useEffect(() => {
     if (showModal) {
       setTimeout(() => {
         searchInputRef.current?.focus();
       }, 50);
     } else {
-      // Reset state when modal closes
       setQuery("");
       setSelectedIndex(-1);
     }
   }, [showModal]);
 
-  // Scroll selected item into view when navigating with keyboard
   useEffect(() => {
     if (
       selectedIndex >= 0 &&
       resultsContainerRef.current &&
-      filteredResults.length > 0
+      results.length > 0
     ) {
-      // Don't scroll if currently scrolling from mouse
       if (isScrolling) return;
-
-      // Use a timeout to ensure we don't interrupt any ongoing scrolling
       const scrollTimeout = setTimeout(() => {
         if (!resultsContainerRef.current) return;
-
         const selectedElement = resultsContainerRef.current.querySelector(
           `li:nth-child(${selectedIndex + 1})`
         ) as HTMLElement;
-
         if (selectedElement) {
-          // Use a more controlled scrolling approach
           const container = resultsContainerRef.current;
           const containerRect = container.getBoundingClientRect();
           const elementRect = selectedElement.getBoundingClientRect();
-
-          // Only scroll if the element is out of view
           if (elementRect.bottom > containerRect.bottom) {
-            // Element is below view, scroll down just enough
-            const scrollAmount = elementRect.bottom - containerRect.bottom + 10; // Add small padding
+            const scrollAmount = elementRect.bottom - containerRect.bottom + 10;
             container.scrollTop += scrollAmount;
           } else if (elementRect.top < containerRect.top) {
-            // Element is above view, scroll up just enough
-            const scrollAmount = containerRect.top - elementRect.top + 10; // Add small padding
+            const scrollAmount = containerRect.top - elementRect.top + 10;
             container.scrollTop -= scrollAmount;
           }
         }
-      }, 50); // Small delay to avoid race conditions
-
+      }, 50);
       return () => clearTimeout(scrollTimeout);
     }
-  }, [selectedIndex, filteredResults, isScrolling]);
+  }, [selectedIndex, results, isScrolling]);
 
-  // Add a scroll event listener to prevent keyboard nav conflicts
   useEffect(() => {
     const resultsContainer = resultsContainerRef.current;
     if (!resultsContainer) return;
-
     const handleScroll = () => {
       setIsScrolling(true);
-      // Reset the scrolling flag after scrolling stops
       if (scrollTimeoutRef.current !== null) {
         clearTimeout(scrollTimeoutRef.current);
       }
@@ -168,173 +189,137 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = () => {
         setIsScrolling(false);
       }, 150);
     };
-
     resultsContainer.addEventListener("scroll", handleScroll);
-
     return () => {
       resultsContainer.removeEventListener("scroll", handleScroll);
       if (scrollTimeoutRef.current !== null) {
         clearTimeout(scrollTimeoutRef.current);
       }
     };
-  }, [showModal]); // Re-run when modal visibility changes
+  }, [showModal]);
 
-  // Store the timeout ID for scroll tracking
-  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  useEffect(() => {
+    if (query.length < 2) {
+      setResults([]);
+      return;
+    }
+    const lowerQuery = query.toLowerCase();
+    let courseResults: SearchResult[] = [];
+    let instructorResults: SearchResult[] = [];
+    if (courseData) {
+      courseResults = courseData
+        .filter((course: MinimalCourseData) =>
+          `${course.dept} ${course.number} ${course.title}`
+            .toLowerCase()
+            .includes(lowerQuery)
+        )
+        .slice(0, 10)
+        .map((course) => ({ type: "course", data: course }));
+    }
+    if (instructorData) {
+      instructorResults = instructorData
+        .filter((instructor: MinimalInstructorData) =>
+          instructor.name.toLowerCase().includes(lowerQuery)
+        )
+        .slice(0, 5)
+        .map((instructor) => ({ type: "instructor", data: instructor }));
+    }
+    setResults([...courseResults, ...instructorResults]);
+    setSelectedIndex(-1);
+  }, [query, courseData, instructorData]);
 
-  // IMPORTANT: Use a separate query key for global search to ensure independent data loading
-  const { data: searchData, isLoading } = useQuery({
-    queryKey: ["globalSearchIndex"], // Different from the explore page query key
-    queryFn: async () => {
-      try {
-        // Fetch course data directly
-        const response = await getCourseAPIData("/outlines/all");
-        // Extract only what we need for search to keep it lightweight
-        return response.data.map((course: any) => ({
-          dept: course.dept,
-          number: course.number,
-          title: course.title,
-        }));
-      } catch (error) {
-        console.error("Error fetching search data:", error);
-        return [];
-      }
-    },
-    // Ensure data is fetched when component mounts
-    refetchOnMount: true,
-    // Keep data fresh but allow for some caching
-    staleTime: 15 * 60 * 1000, // 15 minutes
-    // Retry failed requests
-    retry: 2,
-    // Don't refetch unnecessarily
-    refetchOnWindowFocus: false,
-  });
-
-  // Listen for keyboard shortcuts globally
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Check for Cmd+K (Mac) or Ctrl+K (Windows/Linux)
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
-        e.preventDefault(); // Prevent browser's default behavior
+        e.preventDefault();
         setShowModal(true);
       }
-
-      // Handle Escape key to close modal
       if (e.key === "Escape" && showModal) {
         setShowModal(false);
       }
     };
-
     document.addEventListener("keydown", handleKeyDown);
-
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [showModal]);
 
-  // Filter results when query changes
-  useEffect(() => {
-    if (query.length < 2 || !searchData) {
-      setFilteredResults([]);
-      return;
-    }
-
-    const lowerQuery = query.toLowerCase();
-    let results = searchData.filter(
-      (course: { dept: string; number: string; title: string }) => {
-        const searchString =
-          `${course.dept} ${course.number} ${course.title}`.toLowerCase();
-        return searchString.includes(lowerQuery);
-      }
-    );
-
-    // Limit to 15 results for better performance and UX
-    setFilteredResults(results.slice(0, 15));
-    // Reset selected index when results change
-    setSelectedIndex(-1);
-  }, [query, searchData]);
-
-  // Handle keyboard navigation within results
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (filteredResults.length === 0) return;
-
+    if (results.length === 0) return;
     if (e.key === "ArrowDown") {
       e.preventDefault();
-
-      // Prevent conflicting with mouse scrolling
       if (isScrolling) {
         setIsScrolling(false);
         return;
       }
-
       setSelectedIndex((prevIndex) => {
         if (prevIndex === -1) {
-          // If no item is selected, select the first one
           return 0;
-        } else if (prevIndex < filteredResults.length - 1) {
-          // If not at the last item, move down
+        } else if (prevIndex < results.length - 1) {
           return prevIndex + 1;
         }
-        // At the last item, stay there
         return prevIndex;
       });
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
-
-      // Prevent conflicting with mouse scrolling
       if (isScrolling) {
         setIsScrolling(false);
         return;
       }
-
       setSelectedIndex((prevIndex) => {
         if (prevIndex > 0) {
-          // If not at the first item, move up
           return prevIndex - 1;
         } else if (prevIndex === 0) {
-          // If at the first item, move focus back to search
           searchInputRef.current?.focus();
           return -1;
         }
-        // No item selected, stay that way
         return prevIndex;
       });
     } else if (e.key === "Enter") {
       e.preventDefault();
-
-      if (selectedIndex >= 0 && selectedIndex < filteredResults.length) {
-        // Navigate to the selected result
-        const course = filteredResults[selectedIndex];
-        router.push(`/explore/${course.dept.toLowerCase()}-${course.number}`);
+      if (selectedIndex >= 0 && selectedIndex < results.length) {
+        const result = results[selectedIndex];
+        if (result.type === "course") {
+          const course = result.data as MinimalCourseData;
+          router.push(`/explore/${course.dept.toLowerCase()}-${course.number}`);
+        } else {
+          const instructor = result.data as MinimalInstructorData;
+          router.push(`/instructors/${encodeURIComponent(instructor.name)}`);
+        }
         setShowModal(false);
-      } else if (filteredResults.length > 0) {
-        // Navigate to the first result if none is selected
-        const course = filteredResults[0];
-        router.push(`/explore/${course.dept.toLowerCase()}-${course.number}`);
+      } else if (results.length > 0) {
+        const result = results[0];
+        if (result.type === "course") {
+          const course = result.data as MinimalCourseData;
+          router.push(`/explore/${course.dept.toLowerCase()}-${course.number}`);
+        } else {
+          const instructor = result.data as MinimalInstructorData;
+          router.push(`/instructors/${encodeURIComponent(instructor.name)}`);
+        }
         setShowModal(false);
       }
     }
   };
 
-  // Handle course selection
-  const handleSelectCourse = (course: MinimalCourseData) => {
-    router.push(`/explore/${course.dept.toLowerCase()}-${course.number}`);
+  const handleSelect = (result: SearchResult) => {
+    if (result.type === "course") {
+      const course = result.data as MinimalCourseData;
+      router.push(`/explore/${course.dept.toLowerCase()}-${course.number}`);
+    } else {
+      const instructor = result.data as MinimalInstructorData;
+      router.push(`/instructors/${encodeURIComponent(instructor.name)}`);
+    }
     setShowModal(false);
   };
 
-  // Handle mouse enter for each result item
   const handleMouseEnter = (index: number) => {
-    // Only update if not currently using keyboard navigation
     setSelectedIndex(index);
   };
 
-  // Open and close modal handlers for better organization
   const openSearchModal = () => {
-    // Reset any state that might affect positioning
     setSelectedIndex(-1);
-    setFilteredResults([]);
+    setResults([]);
     setQuery("");
-    // Then show modal
     setShowModal(true);
   };
 
@@ -344,7 +329,6 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = () => {
 
   return (
     <>
-      {/* Search Button in Header */}
       <div className="global-search-button" onClick={openSearchModal}>
         <Search size={20} />
         <span className="search-label">Search</span>
@@ -354,8 +338,6 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = () => {
           <kbd>K</kbd>
         </div>
       </div>
-
-      {/* Search Modal */}
       {showModal && (
         <div
           className="global-search-modal"
@@ -365,7 +347,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = () => {
         >
           <div className="global-search-modal-content" ref={modalRef}>
             <div className="global-search-header">
-              <h3>Search Courses</h3>
+              <h3>Search</h3>
               <Button
                 label="Close"
                 onClick={closeSearchModal}
@@ -373,23 +355,21 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = () => {
                 className="close-btn"
               />
             </div>
-
             <div className="global-search-input">
               <SearchBar
                 handleInputChange={setQuery}
                 searchSelected={true}
                 setSearchSelected={() => {}}
-                placeholder="Search by course code, title, or description"
+                placeholder="course code, title, or instructor name"
                 value={query}
                 onKeyDown={handleKeyDown}
                 className="modal-search"
                 ref={searchInputRef}
               />
             </div>
-
             <div className="global-search-results" ref={resultsContainerRef}>
-              {isLoading ? (
-                <div className="search-loading">Loading courses...</div>
+              {isLoadingCourses || isLoadingInstructors ? (
+                <div className="search-loading">Loading...</div>
               ) : query.length < 2 ? (
                 <div className="search-hint">
                   <div className="search-instructions">
@@ -408,47 +388,58 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = () => {
                     </div>
                   </div>
                 </div>
-              ) : filteredResults.length > 0 ? (
+              ) : results.length > 0 ? (
                 <ul className="search-results-list">
-                  {filteredResults.map((course, index) => (
+                  {results.map((result, index) => (
                     <li
-                      key={`${course.dept}${course.number}`}
+                      key={
+                        result.type === "course"
+                          ? `${result.data.dept}${result.data.number}`
+                          : result.data.name
+                      }
                       className={index === selectedIndex ? "selected" : ""}
                       ref={index === selectedIndex ? selectedItemRef : null}
-                      data-index={index} // Add index as data attribute for debugging
+                      data-index={index}
                     >
                       <button
                         className="search-result-item"
-                        onClick={() => handleSelectCourse(course)}
+                        onClick={() => handleSelect(result)}
                         onMouseEnter={() => handleMouseEnter(index)}
+                        style={{ width: "100%", textAlign: "left" }}
                       >
-                        <p>
-                          <span className="course-code">
-                            {course.dept} {course.number}
-                          </span>
-                          <span className="course-title">
-                            {" "}
-                            - {course.title}
-                          </span>
-                        </p>
+                        {result.type === "course" ? (
+                          <p>
+                            <span className="course-code">
+                              {result.data.dept} {result.data.number}
+                            </span>
+                            <span className="course-title">
+                              {" "}
+                              - {result.data.title}
+                            </span>
+                          </p>
+                        ) : (
+                          <InstructorCard
+                            instructor={result.data}
+                            query={query}
+                          />
+                        )}
                       </button>
                     </li>
                   ))}
                 </ul>
               ) : (
                 <div className="no-results">
-                  No courses found for &quot;{query}&quot;
+                  No results found for &quot;{query}&quot;
                 </div>
               )}
             </div>
-
             <div className="global-search-footer">
               <Link
                 href="/explore"
                 className="browse-all-link"
                 onClick={closeSearchModal}
               >
-                Browse all courses
+                Explore all
               </Link>
             </div>
           </div>
