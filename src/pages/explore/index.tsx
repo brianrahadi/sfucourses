@@ -10,7 +10,7 @@ import {
   ButtonGroup,
 } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { CourseOutline, Instructor } from "@types";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useExploreFilters } from "src/hooks/UseExploreFilters";
@@ -30,6 +30,7 @@ import {
 } from "@utils/courseFilters";
 import { numberWithCommas } from "@utils/format";
 import { RotatingLines } from "react-loader-spinner";
+import { SelectInstance } from "react-select";
 
 export const getStaticProps: GetStaticProps = async () => {
   const queryClient = new QueryClient();
@@ -274,6 +275,8 @@ const ExplorePage: React.FC = () => {
               options={["courses", "instructors"]}
               onSelect={(value) => {
                 setMode(value as "courses" | "instructors");
+                courseFilters.onReset();
+                instructorFilters.onReset();
               }}
               selectedOption={mode}
             />
@@ -335,11 +338,19 @@ const ExplorePage: React.FC = () => {
               prereqs={courseFilters.prereqs}
               designations={courseFilters.designations}
               deliveries={courseFilters.deliveries}
+              courseSubjectSelectInputRef={
+                courseFilters.courseSubjectSelectInputRef
+              }
+              onReset={courseFilters.onReset}
             />
           ) : (
             <InstructorExploreFilter
               subjects={instructorFilters.subjects}
               terms={instructorFilters.terms}
+              instructorSubjectSelectInputRef={
+                instructorFilters.instructorSubjectSelectInputRef
+              }
+              onReset={instructorFilters.onReset}
             />
           )}
         </section>
