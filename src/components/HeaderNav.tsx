@@ -110,9 +110,6 @@ export const HeaderNav: React.FC = () => {
             <Link href="/schedule" className="page-link" prefetch={false}>
               schedule
             </Link>
-            <Link href="/instructors" className="page-link" prefetch={false}>
-              instructors
-            </Link>
             <Link href="/faq" className="page-link" prefetch={false}>
               faq
             </Link>
@@ -154,15 +151,6 @@ export const HeaderNav: React.FC = () => {
         >
           <Calendar size={20} />
           <span>Schedule</span>
-        </Link>
-        <Link
-          href="/instructors"
-          className={`mobile-nav-item ${
-            isActivePath("/instructors") ? "active" : ""
-          }`}
-        >
-          <Users size={20} />
-          <span>Instructors</span>
         </Link>
         <Link
           href="/faq"
