@@ -31,13 +31,17 @@ const InstructorPage = () => {
   return (
     <div className="page courses-page">
       <Helmet
-        pageTitle={`${instructor ? instructor.name : "instructor details"}`}
+        pageTitle={`${
+          instructor ? `${instructor.name} @ sfucourses` : "instructor details"
+        }`}
       />
       <Hero
-        title={instructor ? instructor.name : "instructor details"}
+        title={
+          instructor ? `${instructor.name} @ sfucourses` : "instructor details"
+        }
         backgroundImage={HeroImage.src}
       />
-      <main className="container">
+      <main className="container course-container">
         {loading ? (
           <div className="center loading-spinner-container">
             <RotatingLines visible={true} strokeColor="#24a98b" />
@@ -48,8 +52,7 @@ const InstructorPage = () => {
           </div>
         ) : instructor ? (
           <div className="instructor-details-container">
-            <h2>{instructor.name}</h2>
-            <h3>Courses Taught</h3>
+            <h2>{instructor.name} - Courses Taught</h2>
             <div className="instructor-offerings-list">
               {instructor.offerings && instructor.offerings.length > 0 ? (
                 Object.entries(
