@@ -241,21 +241,22 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
         ))}
       </div> */}
       <div className="schedule-manager-buttons">
-        <Button
-          label="Save"
-          icon={<FaSave />}
+        <button
           onClick={() => setShowSaveDialog(true)}
-          type="primary"
-          className="schedule-btn"
-        />
-        <Button
-          label="Load"
-          icon={<FaFolderOpen />}
+          className="utility-button"
+          disabled={coursesWithSections.length === 0}
+        >
+          <FaSave />
+          &nbsp; Save
+        </button>
+        <button
           onClick={() => setShowLoadDialog(true)}
-          type="primary"
-          className="schedule-btn"
+          className="utility-button"
           disabled={filteredSchedules.length === 0}
-        />
+        >
+          <FaFolderOpen />
+          &nbsp; Load
+        </button>
       </div>
 
       {/* Save Dialog */}

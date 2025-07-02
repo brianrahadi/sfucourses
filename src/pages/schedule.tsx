@@ -311,9 +311,18 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
                   ))}
                 </select>
               </div>
-              <ConflictFilterButton
-                isActive={filterConflicts}
-                onClick={() => setFilterConflicts(!filterConflicts)}
+              <ButtonGroup
+                options={["All courses", "Conflict-free"]}
+                selectedOption={
+                  filterConflicts ? "Conflict-free" : "All courses"
+                }
+                onSelect={(value) => {
+                  if (value === "Conflict-free") {
+                    setFilterConflicts(true);
+                  } else {
+                    setFilterConflicts(false);
+                  }
+                }}
               />
             </div>
             <div className="flex-row">
@@ -382,6 +391,13 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
         </section>
         <section className="schedule-section">
           <div className="schedule-section__header">
+            <ScheduleManager
+              coursesWithSections={selectedOutlinesWithSections}
+              setCoursesWithSections={setSelectedOutlinesWithSections}
+              timeBlocks={timeBlocks}
+              setTimeBlocks={setTimeBlocks}
+              selectedTerm={selectedTerm}
+            />
             <div className="flex-row">
               <CopyLinkButton
                 hasSelectedCourses={selectedOutlinesWithSections.length > 0}
@@ -394,13 +410,6 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
                 term={selectedTerm}
               />
             </div>
-            <ScheduleManager
-              coursesWithSections={selectedOutlinesWithSections}
-              setCoursesWithSections={setSelectedOutlinesWithSections}
-              timeBlocks={timeBlocks}
-              setTimeBlocks={setTimeBlocks}
-              selectedTerm={selectedTerm}
-            />
           </div>
           <div className="schedule-section__content">
             <CompactSelectedCourses

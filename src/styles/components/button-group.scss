@@ -3,6 +3,7 @@
 .button-group {
   display: flex;
   overflow: hidden;
+  height: 100%;
 
   button {
     &:hover {

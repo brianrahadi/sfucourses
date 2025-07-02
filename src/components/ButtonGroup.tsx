@@ -19,7 +19,7 @@ export const ButtonGroup = <T,>({
       {options.map((option, index) => (
         <Button
           key={index}
-          label={String(option)}
+          label={option as string | JSX.Element}
           type={selectedOption === option ? "primary" : "secondary"}
           onClick={() => onSelect(option)}
           className={selectedOption === option ? "selected" : ""}
