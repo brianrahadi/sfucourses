@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Instructor, InstructorOffering } from "@types";
 import { getCourseAPIData } from "@utils";
-import { Hero, RedditPosts } from "@components";
+import { Hero, RedditPosts, Helmet } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { RotatingLines } from "react-loader-spinner";
 
@@ -30,6 +30,9 @@ const InstructorPage = () => {
 
   return (
     <div className="page courses-page">
+      <Helmet
+        pageTitle={`${instructor ? instructor.name : "instructor details"}`}
+      />
       <Hero
         title={instructor ? instructor.name : "instructor details"}
         backgroundImage={HeroImage.src}

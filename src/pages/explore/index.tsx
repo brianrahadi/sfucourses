@@ -5,12 +5,16 @@ import {
   TextBadge,
   CourseCard,
   SearchBar,
+  InstructorCard,
+  InstructorExploreFilter,
+  ButtonGroup,
 } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
-import { useState, useEffect } from "react";
-import { CourseOutline } from "@types";
+import { useState, useEffect, useRef } from "react";
+import { CourseOutline, Instructor } from "@types";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useExploreFilters } from "src/hooks/UseExploreFilters";
+import { useInstructorExploreFilters } from "@hooks";
 import { GetStaticProps } from "next";
 import { useQuery } from "@tanstack/react-query";
 import { dehydrate, QueryClient } from "@tanstack/react-query";
@@ -25,12 +29,12 @@ import {
   filterCoursesByDesignations,
 } from "@utils/courseFilters";
 import { numberWithCommas } from "@utils/format";
+import { RotatingLines } from "react-loader-spinner";
+import { SelectInstance } from "react-select";
 
-// Use getStaticProps to fetch and cache data at build time
 export const getStaticProps: GetStaticProps = async () => {
   const queryClient = new QueryClient();
 
-  // Prefetch the full course data
   await queryClient.prefetchQuery({
     queryKey: ["allCourses"],
     queryFn: async () => {
@@ -39,6 +43,14 @@ export const getStaticProps: GetStaticProps = async () => {
         courses: res.data,
         totalCount: res.total_count,
       };
+    },
+  });
+
+  await queryClient.prefetchQuery({
+    queryKey: ["allInstructors"],
+    queryFn: async () => {
+      const res = await getCourseAPIData("/instructors/all", false);
+      return res as Instructor[];
     },
   });
 
@@ -51,10 +63,9 @@ export const getStaticProps: GetStaticProps = async () => {
 };
 
 const ExplorePage: React.FC = () => {
-  // Use React Query to access the prefetched data
-  const { data: courseData, isLoading } = useQuery({
+  // Course data and logic
+  const { data: courseData, isLoading: isLoadingCourses } = useQuery({
     queryKey: ["allCourses"],
-    // Add queryFn as a fallback in case the data isn't hydrated
     queryFn: async () => {
       const res = await getCourseAPIData("/outlines/all");
       return {
@@ -62,97 +73,170 @@ const ExplorePage: React.FC = () => {
         totalCount: res.total_count,
       };
     },
-    // Keep the data fresh for a long time
-    staleTime: 60 * 60 * 1000, // 1 hour
+    staleTime: 60 * 60 * 1000,
+  });
+  const { data: instructorData, isLoading: isLoadingInstructors } = useQuery({
+    queryKey: ["allInstructors"],
+    queryFn: async () => {
+      const res = await getCourseAPIData("/instructors/all", false);
+      return res as Instructor[];
+    },
+    staleTime: 60 * 60 * 1000,
   });
 
   const courses = courseData?.courses || [];
-
   const [visibleCourses, setVisibleCourses] = useState<CourseOutline[]>([]);
   const [maxVisibleCoursesLength, setMaxVisibleCoursesLength] =
     useState<number>(0);
-  const [sliceIndex, setSliceIndex] = useState(20);
+  const [courseSliceIndex, setCourseSliceIndex] = useState(20);
+  const instructors = instructorData || [];
+  const [visibleInstructors, setVisibleInstructors] = useState<Instructor[]>(
+    []
+  );
+  const [maxVisibleInstructors, setMaxVisibleInstructors] = useState<number>(0);
+  const [instructorSliceIndex, setInstructorSliceIndex] = useState(20);
+
+  // Shared state
   const [query, setQuery] = useState<string>("");
   const [searchSelected, setSearchSelected] = useState<boolean>(false);
+  const [mode, setMode] = useState<"courses" | "instructors">("courses");
   const CHUNK_SIZE = 20;
 
-  const { subjects, levels, terms, prereqs, designations, deliveries } =
-    useExploreFilters();
-
-  const loadMore = () => {
-    if (courses.length === 0) {
-      return;
-    }
-
-    const filteredCourses = filterCourses(courses);
-    const nextCourses = filteredCourses.slice(
-      sliceIndex,
-      sliceIndex + CHUNK_SIZE
-    );
-    setVisibleCourses((prev) => [...prev, ...nextCourses]);
-    setSliceIndex((prev) => prev + CHUNK_SIZE);
-  };
-
-  const onFilterChange = () => {
-    if (courses.length === 0) {
-      return;
-    }
-
-    const filteredCourses = filterCourses(courses);
-    const slicedCourses = filteredCourses.slice(0, CHUNK_SIZE);
-
-    setMaxVisibleCoursesLength(filteredCourses.length);
-    setVisibleCourses(slicedCourses);
-    setSliceIndex(CHUNK_SIZE);
-  };
+  const courseFilters = useExploreFilters();
+  const instructorFilters = useInstructorExploreFilters();
 
   const filterCourses = (courses: CourseOutline[]) => {
     const filteredCourses = [
       (courses: CourseOutline[]) =>
-        filterCourseBySubjects(courses, subjects.selected),
+        filterCourseBySubjects(courses, courseFilters.subjects.selected),
       (courses: CourseOutline[]) =>
-        filterCoursesByLevels(courses, levels.selected),
+        filterCoursesByLevels(courses, courseFilters.levels.selected),
       (courses: CourseOutline[]) =>
-        filterCoursesByOfferedTerms(courses, terms.selected),
+        filterCoursesByOfferedTerms(courses, courseFilters.terms.selected),
       (courses: CourseOutline[]) =>
-        filterCoursesByDeliveries(courses, deliveries.selected),
+        filterCoursesByDeliveries(courses, courseFilters.deliveries.selected),
       (courses: CourseOutline[]) =>
-        filterCoursesByDesignations(courses, designations.selected),
+        filterCoursesByDesignations(
+          courses,
+          courseFilters.designations.selected
+        ),
       (courses: CourseOutline[]) =>
-        filterCoursesByPrereqs(courses, prereqs.searchQuery, prereqs.hasNone),
+        filterCoursesByPrereqs(
+          courses,
+          courseFilters.prereqs.searchQuery,
+          courseFilters.prereqs.hasNone
+        ),
       (courses: CourseOutline[]) => filterCoursesByQuery(courses, query),
     ].reduce((filtered, filterFunc) => filterFunc(filtered), courses);
     return filteredCourses;
   };
 
-  // Update visible courses when filter changes
-  useEffect(onFilterChange, [
+  const filterInstructors = (instructors: Instructor[]) => {
+    const filtered = [
+      (instructors: Instructor[]) =>
+        instructorFilters.subjects.selected.length > 0
+          ? instructors.filter((instructor) =>
+              instructor.offerings.some((offering) =>
+                instructorFilters.subjects.selected.includes(offering.dept)
+              )
+            )
+          : instructors,
+      (instructors: Instructor[]) =>
+        instructorFilters.terms.selected.length > 0
+          ? instructors.filter((instructor) =>
+              instructor.offerings.some((offering) =>
+                instructorFilters.terms.selected.some((term) =>
+                  offering.term.toLowerCase().includes(term.toLowerCase())
+                )
+              )
+            )
+          : instructors,
+      (instructors: Instructor[]) =>
+        query
+          ? instructors.filter(
+              (instructor) =>
+                instructor.name.toLowerCase().includes(query.toLowerCase()) ||
+                instructor.offerings.some((offering) =>
+                  `${offering.dept} ${offering.number}`
+                    .toLowerCase()
+                    .includes(query.toLowerCase())
+                )
+            )
+          : instructors,
+    ].reduce((filtered, filterFunc) => filterFunc(filtered), instructors);
+    return filtered;
+  };
+
+  // Handlers for loading more
+  const loadMoreCourses = () => {
+    if (courses.length === 0) return;
+    const filtered = filterCourses(courses);
+    const next = filtered.slice(
+      courseSliceIndex,
+      courseSliceIndex + CHUNK_SIZE
+    );
+    setVisibleCourses((prev) => [...prev, ...next]);
+    setCourseSliceIndex((prev) => prev + CHUNK_SIZE);
+  };
+  const loadMoreInstructors = () => {
+    if (instructors.length === 0) return;
+    const filtered = filterInstructors(instructors);
+    const next = filtered.slice(
+      instructorSliceIndex,
+      instructorSliceIndex + CHUNK_SIZE
+    );
+    setVisibleInstructors((prev) => [...prev, ...next]);
+    setInstructorSliceIndex((prev) => prev + CHUNK_SIZE);
+  };
+
+  // Effect: update visible courses when filters change
+  useEffect(() => {
+    if (mode !== "courses") return;
+    if (courses.length === 0) return;
+    const filtered = filterCourses(courses);
+    setMaxVisibleCoursesLength(filtered.length);
+    setVisibleCourses(filtered.slice(0, CHUNK_SIZE));
+    setCourseSliceIndex(CHUNK_SIZE);
+  }, [
     query,
-    subjects.selected,
-    levels.selected,
-    terms.selected,
-    deliveries.selected,
-    prereqs.searchQuery,
-    prereqs.hasNone,
-    designations.selected,
-    courses, // Re-run when courses data changes
+    courseFilters.subjects.selected,
+    courseFilters.levels.selected,
+    courseFilters.terms.selected,
+    courseFilters.deliveries.selected,
+    courseFilters.prereqs.searchQuery,
+    courseFilters.prereqs.hasNone,
+    courseFilters.designations.selected,
+    courses,
+    mode,
   ]);
 
-  // Initialize visible courses when data is loaded
+  // Effect: update visible instructors when filters change
   useEffect(() => {
-    if (courses.length > 0) {
-      setVisibleCourses(courses.slice(0, CHUNK_SIZE));
-      setMaxVisibleCoursesLength(courses.length);
-    }
-  }, [courses]);
+    if (mode !== "instructors") return;
+    if (instructors.length === 0) return;
+    const filtered = filterInstructors(instructors);
+    setMaxVisibleInstructors(filtered.length);
+    setVisibleInstructors(filtered.slice(0, CHUNK_SIZE));
+    setInstructorSliceIndex(CHUNK_SIZE);
+  }, [
+    query,
+    instructorFilters.subjects.selected,
+    instructorFilters.terms.selected,
+    instructors,
+    mode,
+  ]);
 
-  if (isLoading && courses.length === 0) {
+  // Loading state
+  if (
+    (mode === "courses" && isLoadingCourses && courses.length === 0) ||
+    (mode === "instructors" && isLoadingInstructors && instructors.length === 0)
+  ) {
     return (
       <div className="page courses-page">
-        <Hero title={`explore courses`} backgroundImage={HeroImage.src} />
+        <Hero title={`explore ${mode}`} backgroundImage={HeroImage.src} />
         <main id="explore-container" className="container">
           <div className="center">
-            <p>Loading courses...</p>
+            <RotatingLines visible={true} strokeColor="#24a98b" />
           </div>
         </main>
       </div>
@@ -161,53 +245,114 @@ const ExplorePage: React.FC = () => {
 
   return (
     <div className="page courses-page">
-      <Hero title={`explore courses`} backgroundImage={HeroImage.src} />
+      <Hero title={`explore ${mode}`} backgroundImage={HeroImage.src} />
       <main id="explore-container" className="container">
         <section className="courses-section">
-          <TextBadge
-            className="big explore"
-            content={`exploring 
-            ${
-              maxVisibleCoursesLength
-                ? numberWithCommas(maxVisibleCoursesLength)
-                : "0"
-            }
-            ${maxVisibleCoursesLength > 1 ? "courses" : "course"}`}
-          />
+          <div className="courses-section__explore-header">
+            <TextBadge
+              className="big explore"
+              content={`exploring 
+                ${
+                  mode === "courses"
+                    ? maxVisibleCoursesLength
+                      ? numberWithCommas(maxVisibleCoursesLength)
+                      : "0"
+                    : maxVisibleInstructors
+                    ? numberWithCommas(maxVisibleInstructors)
+                    : "0"
+                }
+                ${
+                  mode === "courses"
+                    ? maxVisibleCoursesLength > 1
+                      ? "courses"
+                      : "course"
+                    : maxVisibleInstructors > 1
+                    ? "instructors"
+                    : "instructor"
+                }`}
+            />
+            <ButtonGroup
+              options={["courses", "instructors"]}
+              onSelect={(value) => {
+                setMode(value as "courses" | "instructors");
+                courseFilters.onReset();
+                instructorFilters.onReset();
+              }}
+              selectedOption={mode}
+            />
+          </div>
           <SearchBar
             handleInputChange={setQuery}
             searchSelected={searchSelected}
             setSearchSelected={setSearchSelected}
-            placeholder="course code, title, description, or instructor"
+            placeholder={
+              mode === "courses"
+                ? "course code, title, description, or instructor"
+                : "instructor name or course code"
+            }
           />
-          <InfiniteScroll
-            dataLength={visibleCourses.length}
-            hasMore={visibleCourses.length < maxVisibleCoursesLength}
-            loader={<p>Loading...</p>}
-            next={loadMore}
-            className="courses-container"
-          >
-            {visibleCourses.map((outline) => (
-              <CourseCard
-                key={outline.dept + outline.number}
-                course={outline}
-                query={query}
-                showPrereqs={prereqs.isShown}
-                prereqsQuery={prereqs.searchQuery}
-                showInstructors={true}
-              />
-            ))}
-          </InfiniteScroll>
+          {mode === "courses" ? (
+            <InfiniteScroll
+              dataLength={visibleCourses.length}
+              hasMore={visibleCourses.length < maxVisibleCoursesLength}
+              loader={<p>Loading...</p>}
+              next={loadMoreCourses}
+              className="courses-container"
+            >
+              {visibleCourses.map((outline) => (
+                <CourseCard
+                  key={outline.dept + outline.number}
+                  course={outline}
+                  query={query}
+                  showPrereqs={courseFilters.prereqs.isShown}
+                  prereqsQuery={courseFilters.prereqs.searchQuery}
+                  showInstructors={true}
+                />
+              ))}
+            </InfiniteScroll>
+          ) : (
+            <InfiniteScroll
+              dataLength={visibleInstructors.length}
+              hasMore={visibleInstructors.length < maxVisibleInstructors}
+              loader={<p>Loading...</p>}
+              next={loadMoreInstructors}
+              className="courses-container"
+            >
+              {visibleInstructors.map((instructor) => (
+                <InstructorCard
+                  key={instructor.name}
+                  instructor={instructor}
+                  query={query}
+                  isLink
+                />
+              ))}
+            </InfiniteScroll>
+          )}
         </section>
         <section className="filter-section">
-          <ExploreFilter
-            subjects={subjects}
-            levels={levels}
-            terms={terms}
-            prereqs={prereqs}
-            designations={designations}
-            deliveries={deliveries}
-          />
+          {mode === "courses" ? (
+            <ExploreFilter
+              subjects={courseFilters.subjects}
+              levels={courseFilters.levels}
+              terms={courseFilters.terms}
+              prereqs={courseFilters.prereqs}
+              designations={courseFilters.designations}
+              deliveries={courseFilters.deliveries}
+              courseSubjectSelectInputRef={
+                courseFilters.courseSubjectSelectInputRef
+              }
+              onReset={courseFilters.onReset}
+            />
+          ) : (
+            <InstructorExploreFilter
+              subjects={instructorFilters.subjects}
+              terms={instructorFilters.terms}
+              instructorSubjectSelectInputRef={
+                instructorFilters.instructorSubjectSelectInputRef
+              }
+              onReset={instructorFilters.onReset}
+            />
+          )}
         </section>
       </main>
     </div>

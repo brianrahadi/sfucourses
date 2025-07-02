@@ -95,9 +95,9 @@ export const ExploreFilter: React.FC<ExploreFilters> = ({
   prereqs,
   designations,
   deliveries,
+  onReset,
+  courseSubjectSelectInputRef,
 }) => {
-  const selectInputRef = useRef<SelectInstance<any>>(null);
-
   return (
     <div className="explore-filter">
       <section className="explore-filter__section">
@@ -108,21 +108,11 @@ export const ExploreFilter: React.FC<ExploreFilters> = ({
           <Button
             className="explore-filter__reset secondary"
             label={<RiResetLeftFill />}
-            onClick={() => {
-              selectInputRef?.current?.clearValue();
-              subjects.setSelected([]);
-              levels.setSelected([]);
-              terms.setSelected([]);
-              deliveries.setSelected([]);
-              prereqs.setSearchQuery("");
-              prereqs.setIsShown(false);
-              prereqs.setHasNone(false);
-              designations.setSelected([]);
-            }}
+            onClick={onReset}
           />
         </div>
         <Select
-          ref={selectInputRef}
+          ref={courseSubjectSelectInputRef}
           className="explore-filter__subject-select"
           options={subjectOptions}
           isMulti={true}

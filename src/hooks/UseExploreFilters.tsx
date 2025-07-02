@@ -1,4 +1,5 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
+import { SelectInstance } from "react-select";
 
 export interface ExploreFilters {
   subjects: {
@@ -31,6 +32,8 @@ export interface ExploreFilters {
     selected: string[];
     setSelected: Dispatch<SetStateAction<string[]>>;
   };
+  courseSubjectSelectInputRef: React.RefObject<SelectInstance<any>>;
+  onReset: () => void;
 }
 
 export const useExploreFilters = (): ExploreFilters => {
@@ -50,6 +53,18 @@ export const useExploreFilters = (): ExploreFilters => {
   const [selectedDesignations, setSelectedDesignations] = useState<string[]>(
     []
   );
+
+  const courseSubjectSelectInputRef = useRef<SelectInstance<any>>(null);
+
+  const onReset = () => {
+    courseSubjectSelectInputRef.current?.clearValue();
+    setSelectedSubjects([]);
+    setSelectedLevels([]);
+    setSelectedTerms([]);
+    setSelectedDeliveries([]);
+    setPrereqSearchQuery("");
+    setShowPrereqs(false);
+  };
 
   return {
     subjects: {
@@ -82,5 +97,7 @@ export const useExploreFilters = (): ExploreFilters => {
       selected: selectedDesignations,
       setSelected: setSelectedDesignations,
     },
+    courseSubjectSelectInputRef,
+    onReset,
   };
 };
