@@ -214,7 +214,10 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = () => {
             .includes(lowerQuery)
         )
         .slice(0, 10)
-        .map((course) => ({ type: "course", data: course }));
+        .map((course: MinimalCourseData) => ({
+          type: "course",
+          data: course,
+        }));
     }
     if (instructorData) {
       instructorResults = instructorData
@@ -222,7 +225,10 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = () => {
           instructor.name.toLowerCase().includes(lowerQuery)
         )
         .slice(0, 5)
-        .map((instructor) => ({ type: "instructor", data: instructor }));
+        .map((instructor: MinimalInstructorData) => ({
+          type: "instructor",
+          data: instructor,
+        }));
     }
     setResults([...courseResults, ...instructorResults]);
     setSelectedIndex(-1);
