@@ -2,7 +2,14 @@ import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import { GlobalSearch } from "./GlobalSearch";
-import { Home, Search, Calendar, HelpCircle, Database } from "react-feather";
+import {
+  Home,
+  Search,
+  Calendar,
+  HelpCircle,
+  Database,
+  Users,
+} from "react-feather";
 
 export const HeaderNav: React.FC = () => {
   const router = useRouter();

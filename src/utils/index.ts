@@ -46,15 +46,21 @@ export async function loadCourseAPIData(
   }
 }
 
-export async function getCourseAPIData(queryString: string): Promise<any> {
+export async function getCourseAPIData(
+  queryString: string,
+  hasGzip: boolean = true
+): Promise<any> {
   const url = `${BASE_URL}${queryString}`;
 
   try {
-    const response = await fetch(addParameterToUrl(url, "gzip", "true"), {
-      headers: {
-        "Accept-Encoding": "gzip, deflate, br",
-      },
-    });
+    const response = await fetch(
+      addParameterToUrl(url, "gzip", hasGzip ? "true" : "false"),
+      {
+        headers: {
+          "Accept-Encoding": "gzip, deflate, br",
+        },
+      }
+    );
 
     if (!response.ok) {
       if (response.status === 404) {
@@ -63,7 +69,7 @@ export async function getCourseAPIData(queryString: string): Promise<any> {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    return await decompressGzip(response);
+    return hasGzip ? decompressGzip(response) : response.json();
   } catch (error) {
     console.error(`Error fetching ${url}:`, error);
     throw error; // Re-throw to allow caller to handle errors

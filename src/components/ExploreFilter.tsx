@@ -7,7 +7,14 @@ import { BsSun } from "react-icons/bs";
 import { FaLeaf } from "react-icons/fa";
 import { LuFlower } from "react-icons/lu";
 import { RiResetLeftFill } from "react-icons/ri";
-import { SUBJECTS } from "@const";
+import {
+  deliveryOptions,
+  levelOptions,
+  designationOptions,
+  termOptions,
+  termToIcon,
+} from "@utils/exploreFilters";
+import { subjectOptions } from "@utils/exploreFilters";
 
 const colourNeutral1000 = "#323434";
 const colourNeutral900 = "#4b4e4d";
@@ -49,47 +56,6 @@ const customStyles = {
   }),
 };
 
-const subjectOptions = SUBJECTS.map((subj) => {
-  return { value: subj, label: subj };
-});
-const levelOptions = ["1XX", "2XX", "3XX", "4XX", "5XX+"];
-const termOptions = [
-  "Spring 2024",
-  "Summer 2024",
-  "Fall 2024",
-  "Spring 2025",
-  "Summer 2025",
-  "Fall 2025",
-];
-const deliveryOptions = ["In Person", "Online"];
-const designationOptions = ["W", "Q", "B-Sci", "B-Hum", "B-Soc"];
-export const termToIcon = (term: string) => {
-  switch (term) {
-    case "Fall":
-      return (
-        <FaLeaf
-          style={{ fill: "#A0522D", verticalAlign: "middle" }}
-          title="Fall"
-        />
-      );
-    case "Spring":
-      return (
-        <LuFlower
-          style={{ fill: "#FF69B4", verticalAlign: "middle" }}
-          title="Spring"
-        />
-      );
-    case "Summer":
-      return (
-        <BsSun
-          style={{ fill: "#FFD700", verticalAlign: "middle" }}
-          title="Summer"
-        />
-      );
-    default:
-      return undefined;
-  }
-};
 interface FilterButtonProps {
   icon?: JSX.Element;
   value: string;
@@ -129,9 +95,9 @@ export const ExploreFilter: React.FC<ExploreFilters> = ({
   prereqs,
   designations,
   deliveries,
+  onReset,
+  courseSubjectSelectInputRef,
 }) => {
-  const selectInputRef = useRef<SelectInstance<any>>(null);
-
   return (
     <div className="explore-filter">
       <section className="explore-filter__section">
@@ -142,21 +108,11 @@ export const ExploreFilter: React.FC<ExploreFilters> = ({
           <Button
             className="explore-filter__reset secondary"
             label={<RiResetLeftFill />}
-            onClick={() => {
-              selectInputRef?.current?.clearValue();
-              subjects.setSelected([]);
-              levels.setSelected([]);
-              terms.setSelected([]);
-              deliveries.setSelected([]);
-              prereqs.setSearchQuery("");
-              prereqs.setIsShown(false);
-              prereqs.setHasNone(false);
-              designations.setSelected([]);
-            }}
+            onClick={onReset}
           />
         </div>
         <Select
-          ref={selectInputRef}
+          ref={courseSubjectSelectInputRef}
           className="explore-filter__subject-select"
           options={subjectOptions}
           isMulti={true}

@@ -48,4 +48,10 @@
     max-width: 100%;
     gap: 0.5rem;
   }
+
+  &.instructor-card {
+    .course-title {
+      margin-bottom: 1rem;
+    }
+  }
 }
