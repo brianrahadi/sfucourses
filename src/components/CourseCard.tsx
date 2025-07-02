@@ -38,7 +38,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({
   const [showLabTut, setShowLabTut] = useState(false);
 
   const courseDescriptionShortened =
-    course.description.length > 400
+    showDescription && course.description.length > 400
       ? course.description.slice(0, 400) + " ..."
       : course.description;
 

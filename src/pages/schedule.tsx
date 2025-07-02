@@ -62,10 +62,10 @@ export const getStaticProps: GetStaticProps<SchedulePageProps> = async () => {
     const terms = getCurrentAndNextTerm();
     const termCodes = terms.map(toTermCode);
     const currentTermSections = await getCourseAPIData(
-      `/sections/${termCodes[0]}?withOutlines=true`
+      `/sections/${termCodes[0]}`
     );
     const nextTermSections = await getCourseAPIData(
-      `/sections/${termCodes[1]}?withOutlines=true`
+      `/sections/${termCodes[1]}`
     );
 
     return {
