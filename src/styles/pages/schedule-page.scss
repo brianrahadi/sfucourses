@@ -235,10 +235,6 @@
 
     .schedule-section {
       position: static; // Remove sticky behavior on small screens
-
-      &__header {
-        flex-direction: column-reverse;
-      }
     }
   }
 
@@ -256,6 +252,10 @@
       margin-top: 1rem;
       flex-direction: column;
       position: static;
+
+      &__header {
+        flex-direction: column;
+      }
 
       .view-column-button-group {
         display: none;
