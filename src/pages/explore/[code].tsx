@@ -122,7 +122,7 @@ const CoursePage: React.FC<CoursePageProps> = () => {
     <div className="page courses-page">
       <Helmet pageTitle={`${course.dept.toLowerCase()} ${course.number}`} />
       <Hero
-        title={`explore ${course.dept.toLowerCase()} ${course.number} @ sfu`}
+        title={`${course.dept.toLowerCase()} ${course.number} @ sfucourses`}
         backgroundImage={HeroImage.src}
       />
       <main className="container course-container">
