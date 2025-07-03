@@ -424,10 +424,9 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = () => {
                             </span>
                           </p>
                         ) : (
-                          <InstructorCard
-                            instructor={result.data}
-                            query={query}
-                          />
+                          <span className="course-code">
+                            {result.data.name}
+                          </span>
                         )}
                       </button>
                     </li>
