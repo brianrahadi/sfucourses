@@ -5,6 +5,8 @@ import { getCourseAPIData } from "@utils";
 import { Hero, RedditPosts, Helmet } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { RotatingLines } from "react-loader-spinner";
+import Link from "next/link";
+import { termToIcon } from "@utils/exploreFilters";
 
 const InstructorPage = () => {
   const router = useRouter();
@@ -62,26 +64,30 @@ const InstructorPage = () => {
                     return acc;
                   }, {} as Record<string, InstructorOffering[]>)
                 ).map(([term, offerings]) => (
-                  <div key={term} className="instructor-offering-term-group">
-                    <div className="offering-term">
+                  <div
+                    key={term}
+                    className="course-card instructor-card instructor-offering-term-group"
+                  >
+                    <div className="course-title dark">
+                      {termToIcon(term.split(" ")[0])}&nbsp;
                       <b>{term}</b>
                     </div>
-                    <div className="offering-courses">
+                    <div className="course-card__row">
                       {offerings.map((offering) => (
                         <div
                           key={offering.dept + offering.number + offering.term}
+                          style={{ width: "100%" }}
                         >
-                          <a
+                          <Link
                             href={`/explore/${offering.dept.toLowerCase()}-${
                               offering.number
                             }`}
-                            className="offering-course-link"
+                            className="offering-course-link no-underline"
                             target="_blank"
                             rel="noopener noreferrer"
                           >
-                            {offering.dept} {offering.number}
-                          </a>
-                          {` - ${offering.title}`}
+                            {offering.dept} {offering.number} - {offering.title}
+                          </Link>
                         </div>
                       ))}
                     </div>
