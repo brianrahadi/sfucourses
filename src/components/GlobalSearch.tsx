@@ -413,21 +413,26 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = () => {
                         onMouseEnter={() => handleMouseEnter(index)}
                         style={{ width: "100%", textAlign: "left" }}
                       >
-                        {result.type === "course" ? (
-                          <p>
-                            <span className="course-code">
-                              {result.data.dept} {result.data.number}
-                            </span>
-                            <span className="course-title">
-                              {" "}
-                              - {result.data.title}
-                            </span>
-                          </p>
-                        ) : (
-                          <span className="course-code">
-                            {result.data.name}
-                          </span>
-                        )}
+                        <p>
+                          {result.type === "course" ? (
+                            <>
+                              <span className="course-code">
+                                {result.data.dept} {result.data.number}
+                              </span>
+                              <span className="course-title">
+                                {" "}
+                                — {result.data.title}
+                              </span>
+                            </>
+                          ) : (
+                            <>
+                              <span className="course-code">
+                                {result.data.name}
+                              </span>
+                              <span> — Instructor</span>
+                            </>
+                          )}
+                        </p>
                       </button>
                     </li>
                   ))}
