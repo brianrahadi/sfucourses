@@ -15,7 +15,13 @@
 
     &__explore-header {
       display: flex;
+      align-items: center;
       gap: 0.5rem;
+      height: 3rem;
+
+      div {
+        height: 100%;
+      }
 
       .courses-container {
         padding: 0.5rem;
