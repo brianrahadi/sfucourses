@@ -14,15 +14,14 @@ export interface CourseOfferingsResult {
 export const useCourseOfferings = (
   course: CourseOutline | undefined
 ): CourseOfferingsResult => {
-  const courseCodeURL = course ? `${course.dept}/${course.number}` : "";
   const queries = useQueries({
     queries: course?.offerings
       ? course.offerings.slice(-3).map((offering) => {
           const termURL = toTermCode(offering.term);
-          const queryUrl = `/sections/${termURL}/${courseCodeURL}`;
+          const queryUrl = `/sections?term=${termURL}&dept=${course.dept}&number=${course.number}`;
           return {
             queryKey: ["courseOffering", queryUrl],
-            queryFn: () => getCourseAPIData(queryUrl),
+            queryFn: () => getCourseAPIData(queryUrl).then((res) => res[0]), // array of 1
             staleTime: 24 * 60 * 60 * 1000, // 24 hours
             cacheTime: 24 * 60 * 60 * 1000, // 24 hours
           };

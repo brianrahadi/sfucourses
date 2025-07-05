@@ -6,10 +6,7 @@ import { getCourseAPIData } from "@utils";
  * Custom hook to fetch and cache course outlines data
  * Supports SSR with initial data
  */
-export function useCoursesData(initialData?: {
-  courses: CourseOutline[];
-  totalCount: number;
-}) {
+export function useCoursesData(initialData?: CourseOutline[]) {
   const {
     data: coursesData,
     isLoading,
@@ -19,11 +16,8 @@ export function useCoursesData(initialData?: {
     queryKey: ["allCourses"],
     queryFn: async () => {
       try {
-        const response = await getCourseAPIData("/outlines/all");
-        return {
-          courses: response.data as CourseOutline[],
-          totalCount: response.total_count as number,
-        };
+        const response = await getCourseAPIData("/outlines");
+        return response as CourseOutline[];
       } catch (err) {
         console.error("Error fetching all courses:", err);
         throw err;
@@ -38,8 +32,7 @@ export function useCoursesData(initialData?: {
   });
 
   return {
-    courses: coursesData?.courses || [],
-    totalCount: coursesData?.totalCount || 0,
+    courses: coursesData || [],
     isLoading,
     error: isError ? error : null,
   };

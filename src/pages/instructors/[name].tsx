@@ -19,7 +19,7 @@ const InstructorPage = () => {
     if (!name || typeof name !== "string") return;
     setLoading(true);
     setError(null);
-    getCourseAPIData(`/instructors/names/${name}`, false)
+    getCourseAPIData(`/instructors?name=${name}`)
       .then((data) => {
         setInstructor(data[0]);
         setLoading(false);

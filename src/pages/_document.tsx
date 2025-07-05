@@ -19,8 +19,8 @@ class MyDocument extends Document {
     if (ctx.req) {
       try {
         // Fetch minimal course data for the global search
-        const response = await getCourseAPIData("/outlines/all");
-        courseSearchData = response.data.map((course: any) => ({
+        const response = await getCourseAPIData("/outlines");
+        courseSearchData = response.map((course: any) => ({
           dept: course.dept,
           number: course.number,
           title: course.title,

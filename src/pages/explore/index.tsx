@@ -38,18 +38,15 @@ export const getStaticProps: GetStaticProps = async () => {
   await queryClient.prefetchQuery({
     queryKey: ["allCourses"],
     queryFn: async () => {
-      const res = await getCourseAPIData("/outlines/all");
-      return {
-        courses: res.data,
-        totalCount: res.total_count,
-      };
+      const res = await getCourseAPIData("/outlines");
+      return res as CourseOutline[];
     },
   });
 
   await queryClient.prefetchQuery({
     queryKey: ["allInstructors"],
     queryFn: async () => {
-      const res = await getCourseAPIData("/instructors/all", false);
+      const res = await getCourseAPIData("/instructors");
       return res as Instructor[];
     },
   });
@@ -67,24 +64,21 @@ const ExplorePage: React.FC = () => {
   const { data: courseData, isLoading: isLoadingCourses } = useQuery({
     queryKey: ["allCourses"],
     queryFn: async () => {
-      const res = await getCourseAPIData("/outlines/all");
-      return {
-        courses: res.data,
-        totalCount: res.total_count,
-      };
+      const res = await getCourseAPIData("/outlines");
+      return res as CourseOutline[];
     },
     staleTime: 60 * 60 * 1000,
   });
   const { data: instructorData, isLoading: isLoadingInstructors } = useQuery({
     queryKey: ["allInstructors"],
     queryFn: async () => {
-      const res = await getCourseAPIData("/instructors/all", false);
+      const res = await getCourseAPIData("/instructors");
       return res as Instructor[];
     },
     staleTime: 60 * 60 * 1000,
   });
 
-  const courses = courseData?.courses || [];
+  const courses = courseData || [];
   const [visibleCourses, setVisibleCourses] = useState<CourseOutline[]>([]);
   const [maxVisibleCoursesLength, setMaxVisibleCoursesLength] =
     useState<number>(0);

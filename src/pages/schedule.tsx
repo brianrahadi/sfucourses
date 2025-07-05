@@ -62,10 +62,10 @@ export const getStaticProps: GetStaticProps<SchedulePageProps> = async () => {
     const terms = getCurrentAndNextTerm();
     const termCodes = terms.map(toTermCode);
     const currentTermSections = await getCourseAPIData(
-      `/sections/${termCodes[0]}`
+      `/sections?term=${termCodes[0]}`
     );
     const nextTermSections = await getCourseAPIData(
-      `/sections/${termCodes[1]}`
+      `/sections?term=${termCodes[1]}`
     );
 
     return {
@@ -260,7 +260,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   useEffect(() => {
     if (!outlinesWithSections) {
       loadCourseAPIData(
-        `/sections/${toTermCode(selectedTerm)}?withOutlines=true`,
+        `/sections?term=${toTermCode(selectedTerm)}`,
         (res: any) => {
           setOutlinesWithSections((prev) => {
             if (prev) {
@@ -272,7 +272,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
       );
 
       loadCourseAPIData(
-        `/sections/${toTermCode(selectedTerm)}?withOutlines=true`,
+        `/sections?term=${toTermCode(selectedTerm)}`,
         (res: any) => {
           setOutlinesWithSections((prev) => {
             if (prev) {

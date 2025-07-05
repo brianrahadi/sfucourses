@@ -7,7 +7,7 @@ import {
 } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useEffect, useState } from "react";
-import { loadCourseAPIData } from "@utils";
+import { getCourseAPIData, loadCourseAPIData } from "@utils";
 import { CourseOutline } from "@types";
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -37,10 +37,11 @@ const CoursePage: React.FC<CoursePageProps> = () => {
 
   useEffect(() => {
     if (courseCode.dept && courseCode.number) {
-      loadCourseAPIData(
-        `/outlines/${courseCode.dept}/${courseCode.number}`,
-        setCourse
-      );
+      getCourseAPIData(
+        `/outlines?dept=${courseCode.dept}&number=${courseCode.number}`
+      ).then((res) => {
+        setCourse(res[0]);
+      });
     }
   }, [courseCode.dept, courseCode.number]);
 
@@ -90,6 +91,7 @@ const CoursePage: React.FC<CoursePageProps> = () => {
   }
 
   // Prepare tabs for the TabContainer
+  console.log("offerings rawr", offerings);
   const tabs = offerings.map((offering) => {
     const key = offering.term;
 

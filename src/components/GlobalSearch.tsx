@@ -57,8 +57,8 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = () => {
     queryKey: ["globalSearchIndex"],
     queryFn: async () => {
       try {
-        const response = await getCourseAPIData("/outlines/all");
-        return response.data.map((course: any) => ({
+        const response = await getCourseAPIData("/outlines");
+        return response.map((course: any) => ({
           dept: course.dept,
           number: course.number,
           title: course.title,
@@ -78,7 +78,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = () => {
     queryKey: ["globalInstructorSearchIndex"],
     queryFn: async () => {
       try {
-        const response = await getCourseAPIData("/instructors/all", false);
+        const response = await getCourseAPIData("/instructors");
         return response as MinimalInstructorData[];
       } catch (error) {
         console.error("Error fetching instructor data:", error);

@@ -44,27 +44,7 @@ const LandingPage: React.FC = () => {
     availableTerms.length > 0 ? availableTerms[0] : ""
   );
 
-  const [animatedCourses, setAnimatedCourses] = useState<CourseBlockData[][]>(
-    []
-  );
-
-  // Prevent the useEffect from running multiple times
   const hasLoadedRef = useRef(false);
-
-  // Fetch popular courses for the animated blocks
-  const { data: coursesData } = useQuery({
-    queryKey: ["popularCourses"],
-    queryFn: async () => {
-      try {
-        const response = await getCourseAPIData("/outlines/all");
-        return response.data.slice(0, 100); // Just grab a subset of courses for animation
-      } catch (error) {
-        console.error("Error fetching courses:", error);
-        return [];
-      }
-    },
-    staleTime: 60 * 60 * 1000, // 1 hour
-  });
 
   // Load saved schedules from localStorage on component mount
   useEffect(() => {
@@ -102,37 +82,6 @@ const LandingPage: React.FC = () => {
       console.error("Error loading schedule data:", error);
     }
   }, []);
-
-  // Create animated course rows when courses data is available
-  useEffect(() => {
-    if (!coursesData) return;
-
-    // Function to shuffle array
-    const shuffleArray = (array: any[]) => {
-      const shuffled = [...array];
-      for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-      }
-      return shuffled;
-    };
-
-    // Create 3 rows with random courses and assign unique speeds/directions
-    const rows = [];
-    for (let i = 0; i < 3; i++) {
-      const shuffled = shuffleArray(coursesData)
-        .slice(0, 10 + i * 5) // Different number of items per row
-        .map((course) => ({
-          dept: course.dept,
-          number: course.number,
-          title: course.title,
-          id: `${course.dept}-${course.number}-${i}`,
-        }));
-      rows.push(shuffled);
-    }
-
-    setAnimatedCourses(rows);
-  }, [coursesData]);
 
   // Handle schedule tab change
   const handleTabChange = (term: string) => {

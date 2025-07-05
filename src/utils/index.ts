@@ -25,7 +25,35 @@ export async function loadCourseAPIData(
   const url = `${BASE_URL}${queryString}`;
 
   try {
-    const response = await fetch(`${url}?gzip=true`, {
+    const response = await fetch(`${url}`);
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        throw new Error("404");
+      }
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    setData(response);
+  } catch (error) {
+    console.error(`Error fetching ${url}:`, error);
+    throw error; // Re-throw to allow caller to handle errors
+  }
+}
+
+export async function getCourseAPIData(
+  path: string,
+  params: Record<string, string> = {}
+): Promise<any> {
+  let url = `${BASE_URL}${path}`;
+
+  // Add parameters to URL
+  Object.entries(params).forEach(([key, value]) => {
+    url = addParameterToUrl(url, key, value);
+  });
+
+  try {
+    const response = await fetch(url, {
       headers: {
         "Accept-Encoding": "gzip, deflate, br",
       },
@@ -38,41 +66,10 @@ export async function loadCourseAPIData(
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    const data = await decompressGzip(response);
-    setData(data);
+    return response.json();
   } catch (error) {
     console.error(`Error fetching ${url}:`, error);
-    throw error; // Re-throw to allow caller to handle errors
-  }
-}
-
-export async function getCourseAPIData(
-  queryString: string,
-  hasGzip: boolean = true
-): Promise<any> {
-  const url = `${BASE_URL}${queryString}`;
-
-  try {
-    const response = await fetch(
-      addParameterToUrl(url, "gzip", hasGzip ? "true" : "false"),
-      {
-        headers: {
-          "Accept-Encoding": "gzip, deflate, br",
-        },
-      }
-    );
-
-    if (!response.ok) {
-      if (response.status === 404) {
-        throw new Error("404");
-      }
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-
-    return hasGzip ? decompressGzip(response) : response.json();
-  } catch (error) {
-    console.error(`Error fetching ${url}:`, error);
-    throw error; // Re-throw to allow caller to handle errors
+    throw error;
   }
 }
 

@@ -61,6 +61,7 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
   showLabTut,
   onToggleShowLabTut,
 }) => {
+  console.log("offering rawr", offering);
   const processedSections = processSectionDetails(offering.sections).filter(
     (section) => section.schedules && section.schedules.length > 0
   );

@@ -8,9 +8,8 @@ export function useCourseOffering(
   term: string,
   enabled: boolean
 ) {
-  const courseCodeURL = course ? `${course.dept}/${course.number}` : "";
   const termURL = toTermCode(term);
-  const queryUrl = `/sections/${termURL}/${courseCodeURL}`;
+  const queryUrl = `/sections?term=${termURL}&dept=${course?.dept}&number=${course?.number}`;
 
   return useQuery<CourseWithSectionDetails>({
     queryKey: ["courseOffering", queryUrl],
