@@ -91,7 +91,6 @@ const CoursePage: React.FC<CoursePageProps> = () => {
   }
 
   // Prepare tabs for the TabContainer
-  console.log("offerings rawr", offerings);
   const tabs = offerings.map((offering) => {
     const key = offering.term;
 

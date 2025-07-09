@@ -16,7 +16,7 @@ export const useCourseOfferings = (
 ): CourseOfferingsResult => {
   const queries = useQueries({
     queries: course?.offerings
-      ? course.offerings.slice(-3).map((offering) => {
+      ? course.offerings.slice(0, 3).map((offering) => {
           const termURL = toTermCode(offering.term);
           const queryUrl = `/sections?term=${termURL}&dept=${course.dept}&number=${course.number}`;
           return {
