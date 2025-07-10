@@ -61,7 +61,6 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
   showLabTut,
   onToggleShowLabTut,
 }) => {
-  console.log("offering rawr", offering);
   const processedSections = processSectionDetails(offering.sections).filter(
     (section) => section.schedules && section.schedules.length > 0
   );
@@ -236,7 +235,12 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                   {query ? (
                     <Highlight text={instructorsText} query={query} />
                   ) : (
-                    <p>{instructorsText}</p>
+                    <Link
+                      href={`/instructors/${instructorsText}`}
+                      className="no-underline"
+                    >
+                      {instructorsText}
+                    </Link>
                   )}
                 </span>
                 <span className="icon-text-container">

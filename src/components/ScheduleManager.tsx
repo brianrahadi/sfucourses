@@ -63,7 +63,6 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
       (coursesWithSections.length === 0 ||
         !coursesWithSections.some((course) => course.term === selectedTerm))
     ) {
-      console.log("loadDefaultScheduleForTerm", savedSchedules);
       loadDefaultScheduleForTerm(selectedTerm);
       previousTermRef.current = selectedTerm;
     }
