@@ -3,6 +3,7 @@ import { CourseWithSectionDetails } from "@types";
 import { IoRemoveCircle } from "react-icons/io5";
 import { BsFillPersonFill } from "react-icons/bs";
 import { MdPlace } from "react-icons/md";
+import Link from "next/link";
 
 interface CompactSelectedCoursesProps {
   selectedCourses: CourseWithSectionDetails[];
@@ -38,14 +39,19 @@ export const CompactSelectedCourses: React.FC<CompactSelectedCoursesProps> = ({
               className="compact-course-card"
             >
               <div className="compact-course-header">
-                <span className="course-code">
-                  {course.dept} {course.number} - {course.title}
-                  {course.units &&
-                  course.units !== "0" &&
-                  course.units !== "N/A"
-                    ? ` (${course.units})`
-                    : ""}
-                </span>
+                <Link
+                  href={`/explore/${course.dept}${course.number}`}
+                  className="no-underline"
+                >
+                  <span className="course-code">
+                    {course.dept} {course.number} - {course.title}
+                    {course.units &&
+                    course.units !== "0" &&
+                    course.units !== "N/A"
+                      ? ` (${course.units})`
+                      : ""}
+                  </span>
+                </Link>
               </div>
 
               {course.sections.map((section) => (
@@ -57,9 +63,14 @@ export const CompactSelectedCourses: React.FC<CompactSelectedCoursesProps> = ({
                     <div className="section-details">
                       <span className="instructor">
                         <BsFillPersonFill />
-                        {section.instructors.length > 0
-                          ? section.instructors[0].name // Just show first name to save space
-                          : "TBA"}
+                        <Link
+                          href={`/instructors/${section.instructors[0].name}`}
+                          className="no-underline"
+                        >
+                          {section.instructors.length > 0
+                            ? section.instructors[0].name // Just show first name to save space
+                            : "TBA"}
+                        </Link>
                       </span>
                       <span className="location">
                         <MdPlace />
