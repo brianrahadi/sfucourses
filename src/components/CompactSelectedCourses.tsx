@@ -40,7 +40,9 @@ export const CompactSelectedCourses: React.FC<CompactSelectedCoursesProps> = ({
             >
               <div className="compact-course-header">
                 <Link
-                  href={`/explore/${course.dept}${course.number}`}
+                  href={`/explore/${course.dept.toLowerCase()}-${
+                    course.number
+                  }`}
                   className="no-underline"
                 >
                   <span className="course-code">
