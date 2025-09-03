@@ -95,7 +95,7 @@ export function getCurrentAndNextTerm() {
   const nextTerm =
     terms[(terms.indexOf(currentTerm.split(" ")[0]) + 1) % 3] +
     " " +
-    (new Date().getFullYear() + (currentTerm === "Fall" ? 1 : 0));
+    (new Date().getFullYear() + (currentTerm.split(" ")[0] === "Fall" ? 1 : 0));
   return [currentTerm, nextTerm];
 }
 
