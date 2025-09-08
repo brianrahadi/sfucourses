@@ -8,7 +8,6 @@ import {
   CopyScheduleButton,
   DownloadCalButton,
   ScheduleManager,
-  ConflictFilterButton,
   CompactSelectedCourses,
   ButtonGroup,
 } from "@components";
@@ -31,7 +30,6 @@ import {
   filterCoursesByTerm,
 } from "@utils/courseFilters";
 import { GetStaticProps } from "next";
-import { useLocalStorage } from "@hooks";
 import { useSearchParams } from "next/navigation";
 import { insertUrlParam, removeUrlParameter } from "@utils/url";
 import {
@@ -39,12 +37,7 @@ import {
   filterCoursesByCampus,
 } from "@utils/courseFilters";
 import { numberWithCommas, toTermCode } from "@utils/format";
-import {
-  filterConflictingCourses,
-  filterConflictingCoursesWithOutlines,
-} from "@utils/conflictFilter";
-import { LuFlower } from "react-icons/lu";
-import { BsSun } from "react-icons/bs";
+import { filterConflictingCoursesWithOutlines } from "@utils/conflictFilter";
 import { MdPlace } from "react-icons/md";
 import {
   getTimeBlocksFromUrl,
@@ -98,7 +91,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   const [query, setQuery] = useState<string>("");
   const termOptions = getCurrentAndNextTerm(); // Memoize termOptions
   const [searchSelected, setSearchSelected] = useState<boolean>(false);
-  const [selectedTerm, setSelectedTerm] = useState(termOptions[0]);
+  const [selectedTerm, setSelectedTerm] = useState(termOptions[1]);
   const termChangeSource = useRef("initial"); // button or url
   const [hasUserSelectedTerm, setHasUserSelectedTerm] = useState(false);
   const [filterConflicts, setFilterConflicts] = useState(false);
