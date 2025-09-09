@@ -10,7 +10,6 @@ import { useEffect, useState } from "react";
 import { getCourseAPIData, loadCourseAPIData } from "@utils";
 import { CourseOutline } from "@types";
 import { useRouter } from "next/router";
-import Link from "next/link";
 import { useCourseOfferings } from "@hooks";
 import { RotatingLines } from "react-loader-spinner";
 

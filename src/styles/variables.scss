@@ -92,6 +92,10 @@ $desktop-min-width: 1025px;
 
 .green-text {
   color: var(--colour-sosy-green-500);
+
+  &:hover {
+    color: var(--colour-sosy-green-600);
+  }
 }
 
 .right-align {

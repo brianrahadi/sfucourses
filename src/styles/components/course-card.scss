@@ -64,6 +64,7 @@
   flex: 0 0 60%;
   right: 4rem;
   top: 6rem;
+  width: 35rem;
   max-height: 75vh;
   overflow-x: hidden;
   overflow-y: scroll;
@@ -126,9 +127,8 @@
   }
 }
 
-@include viewport(mobile) {
+@media (max-width: 480px) {
   .sidebar-course {
-    // make it center
     left: 50%;
     transform: translateX(-50%);
     top: 1rem;
@@ -140,6 +140,6 @@
     box-shadow: none;
     padding: 1rem;
     width: 90%;
-    max-width: 35rem;
+    max-width: 30rem;
   }
 }
