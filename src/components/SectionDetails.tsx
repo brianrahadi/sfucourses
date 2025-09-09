@@ -232,15 +232,17 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
               <div className="section-header__second">
                 <span className="icon-text-container instructor">
                   <BsFillPersonFill />
-                  {query ? (
+                  {instructorsText !== "N/A" && query ? (
                     <Highlight text={instructorsText} query={query} />
-                  ) : (
+                  ) : instructorsText !== "N/A" ? (
                     <Link
                       href={`/instructors/${instructorsText}`}
                       className="no-underline"
                     >
                       {instructorsText}
                     </Link>
+                  ) : (
+                    "N/A"
                   )}
                 </span>
                 <span className="icon-text-container">

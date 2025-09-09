@@ -65,14 +65,16 @@ export const CompactSelectedCourses: React.FC<CompactSelectedCoursesProps> = ({
                     <div className="section-details">
                       <span className="instructor">
                         <BsFillPersonFill />
-                        <Link
-                          href={`/instructors/${section.instructors[0].name}`}
-                          className="no-underline"
-                        >
-                          {section.instructors.length > 0
-                            ? section.instructors[0].name // Just show first name to save space
-                            : "TBA"}
-                        </Link>
+                        {section.instructors.length > 0 ? (
+                          <Link
+                            href={`/instructors/${section.instructors[0]?.name}`}
+                            className="no-underline"
+                          >
+                            {section.instructors[0].name}
+                          </Link>
+                        ) : (
+                          "N/A"
+                        )}
                       </span>
                       <span className="location">
                         <MdPlace />
