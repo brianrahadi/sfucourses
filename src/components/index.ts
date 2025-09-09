@@ -10,7 +10,7 @@ export { Dropdown } from "./Dropdown";
 export { SocialIcon } from "./SocialIcon";
 export { Highlight } from "./Highlight";
 export { TextBadge } from "./TextBadge";
-export { CourseCard } from "./CourseCard";
+export { CourseCard, SidebarCourse } from "./CourseCard";
 export { SearchBar } from "./SearchBar";
 export { CourseTabContainer } from "./CourseTabContainer";
 export { RedditPosts } from "./RedditPosts";

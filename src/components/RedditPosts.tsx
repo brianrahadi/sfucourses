@@ -18,17 +18,14 @@ interface RedditPostsProps {
 
 const fetchRedditPosts = async (query: string) => {
   const response = await fetch(
-    `https://www.reddit.com/r/simonfraser/search.json?q=${encodeURIComponent(
-      query
-    )}&restrict_sr=on`
+    `/api/reddit?query=${encodeURIComponent(query)}`
   );
-  const data = await response.json();
-  return data.data.children.map((post: any) => ({
-    title: post.data.title,
-    upvotes: post.data.ups,
-    date_created: new Date(post.data.created_utc * 1000),
-    url: `https://www.reddit.com${post.data.permalink}`,
-  }));
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch Reddit posts: ${response.status}`);
+  }
+
+  return await response.json();
 };
 
 export const RedditPosts: React.FC<RedditPostsProps> = ({ query }) => {

@@ -10,6 +10,7 @@ import {
   ScheduleManager,
   CompactSelectedCourses,
   ButtonGroup,
+  SidebarCourse,
 } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useEffect, useRef, useState } from "react";
@@ -20,6 +21,7 @@ import {
   loadCourseAPIData,
 } from "@utils";
 import {
+  CourseOutline,
   CourseOutlineWithSectionDetails,
   CourseWithSectionDetails,
   TimeBlock,
@@ -99,6 +101,12 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   const [currentTerm, nextTerm] = getCurrentAndNextTerm();
   const [previewCourse, setPreviewCourse] =
     useState<CourseWithSectionDetails | null>(null);
+  const [hoveredCourse, setHoveredCourse] = useState<
+    CourseOutline | CourseOutlineWithSectionDetails | null
+  >(null);
+  const [pinnedCourse, setPinnedCourse] = useState<
+    CourseOutline | CourseOutlineWithSectionDetails | null
+  >(null);
 
   const [timeBlocks, setTimeBlocks] = useState<TimeBlock[]>([]);
 
@@ -377,6 +385,8 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
                     type: "ADD",
                   }}
                   setPreviewCourse={setPreviewCourse}
+                  onCourseHover={(course) => setHoveredCourse(course)}
+                  onCourseClick={(course) => setPinnedCourse(course)}
                 />
               ))}
             </InfiniteScroll>
@@ -445,6 +455,16 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
           </div>
         </section>
       </main>
+      {(hoveredCourse || pinnedCourse) && (
+        <SidebarCourse
+          course={(hoveredCourse || pinnedCourse)!}
+          onClose={() => {
+            setPinnedCourse(null);
+            setHoveredCourse(null);
+          }}
+          isPinned={!!pinnedCourse && !hoveredCourse}
+        />
+      )}
     </div>
   );
 };
