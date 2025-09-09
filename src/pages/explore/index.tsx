@@ -3,7 +3,7 @@ import {
   ExploreFilter,
   Hero,
   TextBadge,
-  CourseCard,
+  ExploreCourseCard,
   SearchBar,
   InstructorCard,
   InstructorExploreFilter,
@@ -294,7 +294,7 @@ const ExplorePage: React.FC = () => {
               className="courses-container"
             >
               {visibleCourses.map((outline) => (
-                <CourseCard
+                <ExploreCourseCard
                   key={outline.dept + outline.number}
                   course={outline}
                   query={query}

@@ -1,7 +1,7 @@
 import {
   Hero,
   TextBadge,
-  CourseCard,
+  ScheduleCourseCard,
   SearchBar,
   WeeklySchedule,
   CopyLinkButton,
@@ -373,7 +373,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
               className="courses-container"
             >
               {visibleOutlinesWithSections.map((outline) => (
-                <CourseCard
+                <ScheduleCourseCard
                   key={outline.dept + outline.number}
                   course={outline}
                   query={query}
