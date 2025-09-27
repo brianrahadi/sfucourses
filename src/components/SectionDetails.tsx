@@ -6,7 +6,7 @@ import {
 } from "@types";
 import { generateBaseOutlinePath, onlyUnique } from "@utils";
 import Link from "next/link";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useState, useRef } from "react";
 import { BsFillPersonFill } from "react-icons/bs";
 import { CiCalendar, CiClock1 } from "react-icons/ci";
 import { FaTimeline } from "react-icons/fa6";
@@ -62,6 +62,7 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
   showLabTut,
   onToggleShowLabTut,
 }) => {
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const processedSections = processSectionDetails(offering.sections).filter(
     (section) => section.schedules && section.schedules.length > 0
   );
@@ -225,8 +226,17 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                     }
                     label={`#${section.classNumber}`}
                     onMouseDown={handleAddSection}
-                    onMouseEnter={() => setPreviewCourse?.(courseWithSection)}
-                    onMouseLeave={() => setPreviewCourse?.(null)}
+                    onMouseEnter={() => {
+                      if (timeoutRef.current) {
+                        clearTimeout(timeoutRef.current);
+                      }
+                      setPreviewCourse?.(courseWithSection);
+                    }}
+                    onMouseLeave={() => {
+                      timeoutRef.current = setTimeout(() => {
+                        setPreviewCourse?.(null);
+                      }, 100);
+                    }}
                   />
                 ) : (
                   <span>#{section.classNumber}</span>
