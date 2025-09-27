@@ -4,6 +4,7 @@ import { IoRemoveCircle } from "react-icons/io5";
 import { BsFillPersonFill } from "react-icons/bs";
 import { MdPlace } from "react-icons/md";
 import Link from "next/link";
+import { Tooltip } from "react-tooltip";
 
 interface CompactSelectedCoursesProps {
   selectedCourses: CourseWithSectionDetails[];
@@ -44,6 +45,10 @@ export const CompactSelectedCourses: React.FC<CompactSelectedCoursesProps> = ({
                     course.number
                   }`}
                   className="no-underline"
+                  data-tooltip-id="new-tab-tooltip"
+                  data-tooltip-content="New tab"
+                  target="_blank"
+                  rel="noreferrer"
                 >
                   <span className="course-code">
                     {course.dept} {course.number} - {course.title}
@@ -71,6 +76,8 @@ export const CompactSelectedCourses: React.FC<CompactSelectedCoursesProps> = ({
                             className="no-underline"
                             target="_blank"
                             rel="noreferrer"
+                            data-tooltip-id="new-tab-tooltip"
+                            data-tooltip-content="New tab"
                           >
                             {section.instructors[0].name}
                           </Link>
@@ -102,6 +109,7 @@ export const CompactSelectedCourses: React.FC<CompactSelectedCoursesProps> = ({
           <p className="gray-text empty-message">No selected courses yet</p>
         )}
       </div>
+      <Tooltip id="new-tab-tooltip" place="top" />
     </div>
   );
 };

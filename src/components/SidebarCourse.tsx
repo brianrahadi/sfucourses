@@ -5,6 +5,7 @@ import { RedditPosts } from "@components";
 import { getCourseAPIData } from "@utils";
 import { IoArrowBackOutline } from "react-icons/io5";
 import { FaExternalLinkAlt } from "react-icons/fa";
+import { Tooltip } from "react-tooltip";
 
 // Cache for course outline data
 const courseOutlineCache = new Map<string, CourseOutline>();

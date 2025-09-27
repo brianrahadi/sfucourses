@@ -18,6 +18,7 @@ import {
   IoChevronDown,
 } from "react-icons/io5";
 import { formatShortDate } from "@utils/format";
+import { Tooltip } from "react-tooltip";
 
 interface SectionDetailsProps {
   offering: CourseWithSectionDetails;
@@ -201,6 +202,8 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                       href={`${baseOutlinePath}/${section.section.toLowerCase()}`}
                       target="_blank"
                       rel="noreferrer"
+                      data-tooltip-id="new-tab-tooltip"
+                      data-tooltip-content="New tab"
                     >
                       {section.schedules[0]?.sectionCode} {section.section}
                     </Link>
@@ -240,6 +243,8 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                       className="no-underline"
                       target="_blank"
                       rel="noreferrer"
+                      data-tooltip-id="new-tab-tooltip"
+                      data-tooltip-content="New tab"
                     >
                       {instructorsText}
                     </Link>
@@ -329,6 +334,7 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
           )}
         </button>
       )}
+      <Tooltip id="new-tab-tooltip" place="top" />
     </div>
   );
 };

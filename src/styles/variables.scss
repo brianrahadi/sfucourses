@@ -98,6 +98,14 @@ $desktop-min-width: 1025px;
   }
 }
 
+.white-text {
+  color: var(--colour-neutral-100) !important;
+
+  &:hover {
+    color: var(--colour-neutral-200);
+  }
+}
+
 .right-align {
   text-align: right;
 }
