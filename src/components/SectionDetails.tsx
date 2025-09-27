@@ -238,6 +238,8 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                     <Link
                       href={`/instructors/${instructorsText}`}
                       className="no-underline"
+                      target="_blank"
+                      rel="noreferrer"
                     >
                       {instructorsText}
                     </Link>

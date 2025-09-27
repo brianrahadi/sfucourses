@@ -69,6 +69,8 @@ export const CompactSelectedCourses: React.FC<CompactSelectedCoursesProps> = ({
                           <Link
                             href={`/instructors/${section.instructors[0]?.name}`}
                             className="no-underline"
+                            target="_blank"
+                            rel="noreferrer"
                           >
                             {section.instructors[0].name}
                           </Link>
