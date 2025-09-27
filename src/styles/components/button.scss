@@ -28,9 +28,19 @@
   }
 
   &.section-btn {
-    background-color: var(--colour-neutral-900);
-    border: 0.5px solid white;
+    background: transparent;
+    border: 1px solid var(--colour-neutral-500);
+    border-radius: 0.25rem;
     width: fit-content;
     overflow: hidden;
+
+    &:hover {
+      background-color: var(--colour-neutral-900);
+      transform: none;
+    }
+
+    &:active {
+      background-color: var(--colour-neutral-800);
+    }
   }
 }
