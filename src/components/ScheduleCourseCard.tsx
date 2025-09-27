@@ -5,14 +5,13 @@ import {
   CourseWithSectionDetails,
 } from "../types";
 import { Highlight, SectionDetails } from "@components";
-import { termToIcon } from "@utils/exploreFilters"; // Add this import
 
 type ScheduleCourseCardProps = {
   course: CourseWithSectionDetails;
   query?: string;
   sectionDetails: CourseWithSectionDetails;
   showDescription?: boolean;
-  showInstructors?: boolean; // Add this prop
+  showInstructors?: boolean;
   isLink?: boolean;
   setOfferings?: {
     fn: Dispatch<SetStateAction<CourseWithSectionDetails[]>>;
@@ -21,6 +20,7 @@ type ScheduleCourseCardProps = {
   setPreviewCourse?: Dispatch<CourseWithSectionDetails | null>;
   onCourseHover?: (course: CourseWithSectionDetails | null) => void;
   onCourseClick?: (course: CourseWithSectionDetails) => void;
+  setCourseDetails?: (course: CourseWithSectionDetails) => void;
 };
 
 export const ScheduleCourseCard: React.FC<ScheduleCourseCardProps> = ({
@@ -34,24 +34,13 @@ export const ScheduleCourseCard: React.FC<ScheduleCourseCardProps> = ({
   setPreviewCourse,
   onCourseHover,
   onCourseClick,
+  setCourseDetails,
 }) => {
   const [showAllSections, setShowAllSections] = useState(false);
   const [showLabTut, setShowLabTut] = useState(false);
 
-  const handleCourseHover = (courseData: CourseWithSectionDetails | null) => {
-    if (!onCourseHover) return;
-
-    if (!courseData) {
-      onCourseHover(null);
-      return;
-    }
-
-    onCourseHover(courseData);
-  };
-
   const handleCourseClick = (courseData: CourseWithSectionDetails) => {
-    if (!onCourseClick) return;
-    onCourseClick(courseData);
+    setCourseDetails?.(courseData);
   };
 
   const header = `${course.dept} ${course.number} - ${course.title}${
@@ -64,10 +53,8 @@ export const ScheduleCourseCard: React.FC<ScheduleCourseCardProps> = ({
     <>
       <div
         className="course-title"
-        onMouseEnter={() => handleCourseHover(course)}
-        onMouseLeave={() => handleCourseHover(null)}
         onClick={() => handleCourseClick(course)}
-        style={{ cursor: onCourseClick ? "pointer" : "default" }}
+        style={{ cursor: setCourseDetails ? "pointer" : "default" }}
       >
         {query ? (
           <Highlight text={header} query={query} className="green-text" />

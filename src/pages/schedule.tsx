@@ -107,6 +107,8 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   const [pinnedCourse, setPinnedCourse] = useState<
     CourseOutline | CourseOutlineWithSectionDetails | null
   >(null);
+  const [courseDetails, setCourseDetails] =
+    useState<CourseWithSectionDetails | null>(null);
 
   const [timeBlocks, setTimeBlocks] = useState<TimeBlock[]>([]);
 
@@ -291,6 +293,50 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
     }
   }, [outlinesWithSections]);
 
+  const InfiniteScrollCourses = (
+    visibleOutlinesWithSections: CourseOutlineWithSectionDetails[],
+    maxVisibleOutlinesWithSectionsLength: number,
+    setCourseDetails: (course: CourseOutlineWithSectionDetails) => void
+  ) => {
+    return (
+      <InfiniteScroll
+        dataLength={visibleOutlinesWithSections.length}
+        hasMore={
+          visibleOutlinesWithSections.length <
+          (maxVisibleOutlinesWithSectionsLength || 0)
+        }
+        loader={<p>Loading...</p>}
+        next={loadMore}
+        className="courses-container"
+      >
+        {visibleOutlinesWithSections.map((outline) => (
+          <ScheduleCourseCard
+            key={outline.dept + outline.number}
+            course={outline}
+            query={query}
+            sectionDetails={outline}
+            showDescription={false}
+            isLink={false}
+            setOfferings={{
+              fn: setSelectedOutlinesWithSections,
+              type: "ADD",
+            }}
+            setPreviewCourse={setPreviewCourse}
+            onCourseHover={(course) =>
+              setHoveredCourse(course as CourseOutlineWithSectionDetails)
+            }
+            onCourseClick={(course) =>
+              setPinnedCourse(course as CourseOutlineWithSectionDetails)
+            }
+            setCourseDetails={() =>
+              setCourseDetails(outline as CourseOutlineWithSectionDetails)
+            }
+          />
+        ))}
+      </InfiniteScroll>
+    );
+  };
+
   return (
     <div className="page courses-page">
       <Hero title="schedule courses" backgroundImage={HeroImage.src} />
@@ -361,35 +407,19 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
               placeholder="course code, title, or instructor"
             />
           </div>
-          {visibleOutlinesWithSections && (
-            <InfiniteScroll
-              dataLength={visibleOutlinesWithSections.length}
-              hasMore={
-                visibleOutlinesWithSections.length <
-                (maxVisibleOutlinesWithSectionsLength || 0)
-              }
-              loader={<p>Loading...</p>}
-              next={loadMore}
-              className="courses-container"
-            >
-              {visibleOutlinesWithSections.map((outline) => (
-                <ScheduleCourseCard
-                  key={outline.dept + outline.number}
-                  course={outline}
-                  query={query}
-                  sectionDetails={outline}
-                  showDescription={false}
-                  isLink={false}
-                  setOfferings={{
-                    fn: setSelectedOutlinesWithSections,
-                    type: "ADD",
-                  }}
-                  setPreviewCourse={setPreviewCourse}
-                  onCourseHover={(course) => setHoveredCourse(course)}
-                  onCourseClick={(course) => setPinnedCourse(course)}
-                />
-              ))}
-            </InfiniteScroll>
+          {courseDetails ? (
+            <SidebarCourse
+              course={courseDetails}
+              onClose={() => setCourseDetails(null)}
+            />
+          ) : visibleOutlinesWithSections ? (
+            InfiniteScrollCourses(
+              visibleOutlinesWithSections,
+              maxVisibleOutlinesWithSectionsLength || 0,
+              setCourseDetails
+            )
+          ) : (
+            <p>No courses found</p>
           )}
         </section>
         <section className="schedule-section">
