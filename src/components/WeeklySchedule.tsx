@@ -35,6 +35,8 @@ interface Course {
 
 const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri"];
 const slotHeight = 17.5; // Default slot height
+const startHour = 8;
+const endHour = 20;
 
 interface WeeklyScheduleProps {
   coursesWithSections: CourseWithSectionDetails[];
@@ -219,73 +221,6 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
   } | null>(null);
   const originalBodyOverflow = useRef("");
 
-  // State for dynamic start and end hours
-  const [dynamicStartHour, setDynamicStartHour] = useState(10);
-  const [dynamicEndHour, setDynamicEndHour] = useState(17);
-
-  // Adjust start and end hours based on schedule
-  useEffect(() => {
-    const combinedCourses = [
-      ...coursesWithSections,
-      ...(previewCourse ? [previewCourse] : []),
-    ];
-
-    const allStartTimes = [
-      ...combinedCourses.flatMap((course) =>
-        course.sections.flatMap((section) =>
-          section.schedules
-            .map((schedule) => convertTimeStringToHours(schedule.startTime))
-            .filter((time) => !isNaN(time))
-        )
-      ),
-      ...(timeBlocks?.map((block) => block.startTime / 60) || []),
-    ];
-
-    const allEndTimes = [
-      ...combinedCourses.flatMap((course) =>
-        course.sections.flatMap((section) =>
-          section.schedules
-            .map((schedule) => convertTimeStringToHours(schedule.endTime))
-            .filter((time) => !isNaN(time))
-        )
-      ),
-      ...(timeBlocks?.map((block) => (block.startTime + block.duration) / 60) ||
-        []),
-    ];
-
-    const earliestStart =
-      allStartTimes.length > 0 ? Math.min(...allStartTimes) : 10;
-    const latestEnd = allEndTimes.length > 0 ? Math.max(...allEndTimes) : 17;
-
-    const adjustedStartHour = Math.min(10, Math.floor(earliestStart));
-    const adjustedEndHour = Math.max(17, Math.floor(latestEnd));
-
-    setDynamicStartHour(adjustedStartHour);
-    setDynamicEndHour(adjustedEndHour);
-  }, [coursesWithSections, previewCourse, timeBlocks]);
-
-  // Effect to handle responsive slot height
-  // useEffect(() => {
-  //   const handleResize = () => {
-  //     if (window.innerHeight <= 700) {
-  //       setSlotHeight(15);
-  //     } else if (window.innerHeight <= 800) {
-  //       setSlotHeight(18);
-  //     } else {
-  //       setSlotHeight(20);
-  //     }
-  //   };
-
-  //   // Set initial value
-  //   handleResize();
-
-  //   // Add event listener
-  //   window.addEventListener("resize", handleResize);
-
-  //   // Clean up
-  //   return () => window.removeEventListener("resize", handleResize);
-  // }, []);
-
   // Function to calculate visible timeslots for a specific week
   const calculateTimeslotsForWeek = (weekDate: Date) => {
     const newTimeslots: Course[] = [];
@@ -457,7 +392,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
   // Generate time slots
   const generateTimeSlots = () => {
     const slots = [];
-    for (let hour = dynamicStartHour; hour <= dynamicEndHour; hour++) {
+    for (let hour = startHour; hour <= endHour; hour++) {
       slots.push({ hour, minute: 0 }, { hour, minute: 30 });
     }
     return slots;
@@ -468,7 +403,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
   // Helper function to calculate position and size for course slots
   const calculateCoursePosition = (course: Course) => {
     // Calculate top position based on start time
-    const minutesSinceStartHour = course.startTime - dynamicStartHour * 60;
+    const minutesSinceStartHour = course.startTime - startHour * 60;
     // Each hour is represented by 2 time slots (one for each 30 min)
     const hourHeight = slotHeight * 2;
     const topOffset = (minutesSinceStartHour / 60) * hourHeight;
@@ -841,7 +776,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
                 className="course-block time-block preview"
                 style={{
                   top: `${
-                    ((dragPreview.startTime - dynamicStartHour * 60) / 60) *
+                    ((dragPreview.startTime - startHour * 60) / 60) *
                     slotHeight *
                     2
                   }px`,
