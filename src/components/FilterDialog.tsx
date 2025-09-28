@@ -105,7 +105,7 @@ export const FilterDialog: React.FC<FilterDialogProps> = ({
     );
   };
 
-  const clearAllFilters = () => {
+  const resetAllFilters = () => {
     setCampusFilter([]);
     setFilterConflicts(false);
     setDaysFilter([]);
@@ -326,8 +326,8 @@ export const FilterDialog: React.FC<FilterDialogProps> = ({
 
             <div className="schedule-dialog-buttons">
               <Button
-                label="Clear All"
-                onClick={clearAllFilters}
+                label="Reset All"
+                onClick={resetAllFilters}
                 type="secondary"
                 disabled={!hasActiveFilters}
               />
