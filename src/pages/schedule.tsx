@@ -6,13 +6,13 @@ import {
   WeeklySchedule,
   CopyLinkButton,
   CopyScheduleButton,
-  ClearFilterButton,
   DownloadCalButton,
   ScheduleManager,
   CompactSelectedCourses,
   ButtonGroup,
   SidebarCourse,
   FilterDialog,
+  ResetFilterButton,
 } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useEffect, useRef, useState } from "react";
@@ -144,7 +144,6 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
       switch (e.key.toLowerCase()) {
         case "f":
           e.preventDefault();
-          // Trigger filter dialog - find and click the filter button
           const filterButton = document.querySelector(
             "[data-filter-button]"
           ) as HTMLButtonElement;
@@ -152,16 +151,14 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
             filterButton.click();
           }
           break;
-        case "c":
+        case "r":
           e.preventDefault();
-          // Clear filters if any are applied
           if (hasFiltersApplied) {
             clearAllFilters();
           }
           break;
         case "s":
           e.preventDefault();
-          // Focus on search bar
           const searchInput = document.querySelector(
             'input[placeholder*="course code"]'
           ) as HTMLInputElement;
@@ -171,7 +168,6 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
           break;
         case "t":
           e.preventDefault();
-          // Switch between terms
           const currentIndex = termOptions.indexOf(selectedTerm);
           const nextIndex = (currentIndex + 1) % termOptions.length;
           termChangeSource.current = "keyboard";
@@ -458,9 +454,9 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
                 levelFilter={levelFilter}
                 setLevelFilter={setLevelFilter}
               />
-              <ClearFilterButton
+              <ResetFilterButton
                 hasFiltersApplied={hasFiltersApplied}
-                onClearFilters={clearAllFilters}
+                onResetFilters={clearAllFilters}
               />
             </div>
             <div className="flex-row">

@@ -2,29 +2,29 @@ import React from "react";
 import { MdClear } from "react-icons/md";
 import toast from "react-hot-toast";
 
-interface ClearFilterButtonProps {
+interface ResetFilterButtonProps {
   hasFiltersApplied: boolean;
-  onClearFilters: () => void;
+  onResetFilters: () => void;
 }
 
-export const ClearFilterButton: React.FC<ClearFilterButtonProps> = ({
+export const ResetFilterButton: React.FC<ResetFilterButtonProps> = ({
   hasFiltersApplied,
-  onClearFilters,
+  onResetFilters,
 }) => {
-  const handleClearFilters = () => {
-    onClearFilters();
+  const handleResetFilters = () => {
+    onResetFilters();
     toast.success("Filters cleared!");
   };
 
   return (
     <button
       className="utility-button"
-      onClick={handleClearFilters}
+      onClick={handleResetFilters}
       disabled={!hasFiltersApplied}
-      title="Clear all filters"
+      title="Reset all filters"
     >
       <MdClear />
-      &nbsp; Clear Filters
+      &nbsp; Reset Filters
     </button>
   );
 };
