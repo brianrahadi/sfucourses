@@ -28,6 +28,7 @@ export const HelpDialog: React.FC = () => {
     { key: "s", description: "Focus search" },
     { key: "r", description: "Reset filters" },
     { key: "f", description: "Open filters" },
+    { key: "t", description: "Switch term" },
   ];
 
   const [isOpen, setIsOpen] = useState(false);

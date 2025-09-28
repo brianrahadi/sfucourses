@@ -169,6 +169,16 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
             searchInput.focus();
           }
           break;
+        case "t":
+          e.preventDefault();
+          // Switch between terms
+          const currentIndex = termOptions.indexOf(selectedTerm);
+          const nextIndex = (currentIndex + 1) % termOptions.length;
+          termChangeSource.current = "keyboard";
+          setHasUserSelectedTerm(true);
+          setSelectedTerm(termOptions[nextIndex]);
+          setTimeBlocks([]);
+          break;
       }
     };
 
