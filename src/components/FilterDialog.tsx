@@ -143,6 +143,7 @@ export const FilterDialog: React.FC<FilterDialogProps> = ({
       <button
         onClick={() => setShowDialog(true)}
         className={`utility-button ${hasActiveFilters ? "active" : ""}`}
+        data-filter-button
       >
         <MdTune />
         &nbsp; Filters
