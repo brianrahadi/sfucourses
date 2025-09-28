@@ -17,6 +17,7 @@ type ScheduleCourseCardProps = {
     fn: Dispatch<SetStateAction<CourseWithSectionDetails[]>>;
     type: "ADD" | "REMOVE";
   };
+  previewCourse?: CourseWithSectionDetails | null;
   setPreviewCourse?: Dispatch<CourseWithSectionDetails | null>;
   onCourseHover?: (course: CourseWithSectionDetails | null) => void;
   onCourseClick?: (course: CourseWithSectionDetails) => void;
@@ -31,6 +32,7 @@ export const ScheduleCourseCard: React.FC<ScheduleCourseCardProps> = ({
   showInstructors = false, // Add default value
   isLink = false,
   setOfferings,
+  previewCourse,
   setPreviewCourse,
   onCourseHover,
   onCourseClick,
@@ -68,6 +70,7 @@ export const ScheduleCourseCard: React.FC<ScheduleCourseCardProps> = ({
             offering={sectionDetails}
             setOfferings={setOfferings}
             query={query}
+            previewCourse={previewCourse}
             setPreviewCourse={setPreviewCourse}
             showAllSections={showAllSections}
             onToggleShowAllSections={() => setShowAllSections((v) => !v)}

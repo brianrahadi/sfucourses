@@ -28,6 +28,7 @@ interface SectionDetailsProps {
   };
   type?: "SELECTED_COURSES";
   query?: string;
+  previewCourse?: CourseWithSectionDetails | null;
   setPreviewCourse?: Dispatch<CourseWithSectionDetails | null>;
   showAllSections: boolean;
   onToggleShowAllSections: () => void;
@@ -56,6 +57,7 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
   setOfferings,
   type,
   query,
+  previewCourse,
   setPreviewCourse,
   showAllSections,
   onToggleShowAllSections,
@@ -229,6 +231,13 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                     onMouseEnter={() => {
                       if (timeoutRef.current) {
                         clearTimeout(timeoutRef.current);
+                      }
+                      if (
+                        previewCourse &&
+                        previewCourse.dept + previewCourse.number ===
+                          courseWithSection.dept + courseWithSection.number
+                      ) {
+                        return;
                       }
                       setPreviewCourse?.(courseWithSection);
                     }}

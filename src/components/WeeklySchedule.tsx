@@ -34,8 +34,6 @@ interface Course {
 }
 
 const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri"];
-const startHour = 8; // Start at 8:00 AM
-const endHour = 20; // End at 8:00 PM
 const slotHeight = 17.5; // Default slot height
 
 interface WeeklyScheduleProps {
@@ -49,6 +47,11 @@ interface WeeklyScheduleProps {
 const convertTimeToMinutes = (time: string): number => {
   const [hours, minutes] = time.split(":").map(Number);
   return hours * 60 + minutes;
+};
+
+const convertTimeStringToHours = (time: string): number => {
+  const [hours, minutes] = time.split(":").map(Number);
+  return hours + minutes / 60;
 };
 
 const calculateDuration = (startTime: string, endTime: string): number => {
@@ -206,8 +209,6 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
   const [selectionStartTime, setSelectionStartTime] = useState<number | null>(
     null
   );
-  const [selectionEndDay, setSelectionEndDay] = useState<string | null>(null);
-  const [selectionEndTime, setSelectionEndTime] = useState<number | null>(null);
   const [dragPreview, setDragPreview] = useState<TimeBlock | null>(null);
 
   // Mobile-specific state
@@ -216,8 +217,52 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
     day: string;
     time: number;
   } | null>(null);
-  const [showMobileHelp, setShowMobileHelp] = useState(false);
   const originalBodyOverflow = useRef("");
+
+  // State for dynamic start and end hours
+  const [dynamicStartHour, setDynamicStartHour] = useState(10);
+  const [dynamicEndHour, setDynamicEndHour] = useState(17);
+
+  // Adjust start and end hours based on schedule
+  useEffect(() => {
+    const combinedCourses = [
+      ...coursesWithSections,
+      ...(previewCourse ? [previewCourse] : []),
+    ];
+
+    const allStartTimes = [
+      ...combinedCourses.flatMap((course) =>
+        course.sections.flatMap((section) =>
+          section.schedules
+            .map((schedule) => convertTimeStringToHours(schedule.startTime))
+            .filter((time) => !isNaN(time))
+        )
+      ),
+      ...(timeBlocks?.map((block) => block.startTime / 60) || []),
+    ];
+
+    const allEndTimes = [
+      ...combinedCourses.flatMap((course) =>
+        course.sections.flatMap((section) =>
+          section.schedules
+            .map((schedule) => convertTimeStringToHours(schedule.endTime))
+            .filter((time) => !isNaN(time))
+        )
+      ),
+      ...(timeBlocks?.map((block) => (block.startTime + block.duration) / 60) ||
+        []),
+    ];
+
+    const earliestStart =
+      allStartTimes.length > 0 ? Math.min(...allStartTimes) : 10;
+    const latestEnd = allEndTimes.length > 0 ? Math.max(...allEndTimes) : 17;
+
+    const adjustedStartHour = Math.min(10, Math.floor(earliestStart));
+    const adjustedEndHour = Math.max(17, Math.floor(latestEnd));
+
+    setDynamicStartHour(adjustedStartHour);
+    setDynamicEndHour(adjustedEndHour);
+  }, [coursesWithSections, previewCourse, timeBlocks]);
 
   // Effect to handle responsive slot height
   // useEffect(() => {
@@ -240,20 +285,6 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
   //   // Clean up
   //   return () => window.removeEventListener("resize", handleResize);
   // }, []);
-
-  // Detect mobile devices on component mount
-  useEffect(() => {
-    const isMobileDevice = isMobile();
-    setIsTouchDevice(isMobileDevice);
-
-    // Show mobile help if it's a touch device and first visit
-    if (isMobileDevice && setTimeBlocks) {
-      const hasSeenMobileHelp = localStorage.getItem("seenTimeBlockMobileHelp");
-      if (!hasSeenMobileHelp) {
-        setShowMobileHelp(true);
-      }
-    }
-  }, [setTimeBlocks]);
 
   // Function to calculate visible timeslots for a specific week
   const calculateTimeslotsForWeek = (weekDate: Date) => {
@@ -338,7 +369,6 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
     return { newTimeslots, allConflictMessages };
   };
 
-  // Initialize the schedule with the earliest week
   useEffect(() => {
     let earliestStartDate: Date | null = null;
 
@@ -427,7 +457,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
   // Generate time slots
   const generateTimeSlots = () => {
     const slots = [];
-    for (let hour = startHour; hour <= endHour; hour++) {
+    for (let hour = dynamicStartHour; hour <= dynamicEndHour; hour++) {
       slots.push({ hour, minute: 0 }, { hour, minute: 30 });
     }
     return slots;
@@ -438,7 +468,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
   // Helper function to calculate position and size for course slots
   const calculateCoursePosition = (course: Course) => {
     // Calculate top position based on start time
-    const minutesSinceStartHour = course.startTime - startHour * 60;
+    const minutesSinceStartHour = course.startTime - dynamicStartHour * 60;
     // Each hour is represented by 2 time slots (one for each 30 min)
     const hourHeight = slotHeight * 2;
     const topOffset = (minutesSinceStartHour / 60) * hourHeight;
@@ -627,8 +657,6 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
     // Clear all selection state to prepare for the next time block creation
     setSelectionStartDay(null);
     setSelectionStartTime(null);
-    setSelectionEndDay(null);
-    setSelectionEndTime(null);
     setSelectedSlots({});
     setDragPreview(null);
     setTouchStartSlot(null);
@@ -640,10 +668,6 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
 
     // Only show preview for the same day
     if (day !== selectionStartDay) return;
-
-    // Update the selection end point for visual tracking
-    setSelectionEndTime(time);
-
     // Update the preview
     const startTime = Math.min(selectionStartTime, time);
     const endTime = Math.max(selectionStartTime, time);
@@ -682,16 +706,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
 
   return (
     <div className="weekly-schedule" ref={scheduleRef}>
-      {setTimeBlocks && (
-        <div className="time-blocking-hint">
-          <span>
-            Tap start and end time to create a time block. Tap an existing block
-            to remove it.
-          </span>
-        </div>
-      )}
-
-      {weekStartDate && (
+      {/* {weekStartDate && (
         <div className="schedule-header">
           <div className="schedule-navigation">
             <Button
@@ -700,6 +715,11 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
               label={`< Previous`}
             />
             <div className="date-range-header">
+              <IoIosInformationCircleOutline 
+                className="info-icon"
+                data-tooltip-id="time-blocking-tooltip"
+                data-tooltip-html="Tap start and end time to create a time block. Tap an existing block to remove it."
+              />
               {format(weekStartDate, "MMM d")} -{" "}
               {format(addDays(weekStartDate, 4), "MMM d")}
               <Button
@@ -716,7 +736,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
             />
           </div>
         </div>
-      )}
+      )} */}
 
       <div className={`schedule-grid`} ref={gridRef}>
         <div className="grid-header">
@@ -726,7 +746,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
               {day}
               {weekStartDate && (
                 <div className="day-date">
-                  {format(addDays(weekStartDate, index), "MMM d")}
+                  {/* {format(addDays(weekStartDate, index), "MMM d")} */}
                 </div>
               )}
             </div>
@@ -734,7 +754,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
         </div>
 
         <div className="time-column">
-          {timeSlots.map(({ hour, minute }, index) => (
+          {generateTimeSlots().map(({ hour, minute }, index) => (
             <div
               key={`${hour}-${minute}`}
               className={`time-label ${
@@ -750,7 +770,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
 
         {daysOfWeek.map((day) => (
           <div key={day} className="day-column">
-            {timeSlots.map(({ hour, minute }) => {
+            {generateTimeSlots().map(({ hour, minute }) => {
               const time = hour * 60 + minute;
               const slotKey = `${day}-${time}`;
               const isSelected = Boolean(selectedSlots[slotKey]);
@@ -821,7 +841,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
                 className="course-block time-block preview"
                 style={{
                   top: `${
-                    ((dragPreview.startTime - startHour * 60) / 60) *
+                    ((dragPreview.startTime - dynamicStartHour * 60) / 60) *
                     slotHeight *
                     2
                   }px`,
@@ -935,6 +955,10 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
                 <CustomTooltip
                   id="info-tooltip"
                   content="To achieve a good score:<br/>• Schedule classes between 9 AM - 5 PM<br/>• Limit daily hours to 6 or less<br/>• Minimize campus transitions"
+                />
+                <CustomTooltip
+                  id="time-blocking-tooltip"
+                  content="Tap start and end time to create a time block. Tap an existing block to remove it."
                 />
               </>
             );

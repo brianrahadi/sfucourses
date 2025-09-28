@@ -321,6 +321,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
               fn: setSelectedOutlinesWithSections,
               type: "ADD",
             }}
+            previewCourse={previewCourse}
             setPreviewCourse={setPreviewCourse}
             onCourseHover={(course) =>
               setHoveredCourse(course as CourseOutlineWithSectionDetails)

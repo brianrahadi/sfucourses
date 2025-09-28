@@ -4,7 +4,6 @@ import { Button } from "./Button";
 import { FaSave, FaFolderOpen } from "react-icons/fa";
 import { IoMdStar, IoMdStarOutline } from "react-icons/io";
 import toast from "react-hot-toast";
-import { SectionDetails, WeeklySchedule } from "@components";
 
 interface ScheduleManagerProps {
   coursesWithSections: CourseWithSectionDetails[];
