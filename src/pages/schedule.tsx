@@ -129,6 +129,55 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
     setSubjectFilter([]);
     setLevelFilter([]);
   };
+
+  // Keyboard shortcuts for schedule page
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Skip if user is typing in an input field
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement
+      ) {
+        return;
+      }
+
+      switch (e.key.toLowerCase()) {
+        case "f":
+          e.preventDefault();
+          // Trigger filter dialog - find and click the filter button
+          const filterButton = document.querySelector(
+            "[data-filter-button]"
+          ) as HTMLButtonElement;
+          if (filterButton) {
+            filterButton.click();
+          }
+          break;
+        case "c":
+          e.preventDefault();
+          // Clear filters if any are applied
+          if (hasFiltersApplied) {
+            clearAllFilters();
+          }
+          break;
+        case "s":
+          e.preventDefault();
+          // Focus on search bar
+          const searchInput = document.querySelector(
+            'input[placeholder*="course code"]'
+          ) as HTMLInputElement;
+          if (searchInput) {
+            searchInput.focus();
+          }
+          break;
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [hasFiltersApplied, clearAllFilters]);
   const [previewCourse, setPreviewCourse] =
     useState<CourseWithSectionDetails | null>(null);
   const [hoveredCourse, setHoveredCourse] = useState<
