@@ -191,30 +191,159 @@ export const filterCoursesByDesignations = (
 
 export const filterCoursesByCampus = (
   courses: CourseOutlineWithSectionDetails[],
-  campus: string
+  campusFilters: string[]
 ): CourseOutlineWithSectionDetails[] => {
-  if (!campus || campus === "All") {
+  if (!campusFilters || campusFilters.length === 0) {
     return courses; // Return all courses if no campus is selected
   }
-  // Special handling for "Online" campus
-  if (campus === "Online") {
-    return courses.filter((course) =>
-      course.sections.some(
-        (section) =>
+
+  return courses.filter((course) =>
+    course.sections.some((section) => {
+      // Check for online courses
+      if (campusFilters.includes("Online")) {
+        const isOnline =
           section.deliveryMethod === "Online" ||
           section.schedules.some(
             (schedule) =>
               schedule.campus?.toLowerCase() === "online" ||
               (!schedule.campus && section.deliveryMethod === "Online")
-          )
-      )
-    );
+          );
+        if (isOnline) return true;
+      }
+
+      // Check for physical campuses
+      return section.schedules.some((schedule) =>
+        campusFilters.some(
+          (campus) => campus !== "Online" && schedule.campus?.includes(campus)
+        )
+      );
+    })
+  );
+};
+
+export const filterCoursesByDays = (
+  courses: CourseOutlineWithSectionDetails[],
+  selectedDays: string[]
+): CourseOutlineWithSectionDetails[] => {
+  if (selectedDays.length === 0) {
+    return courses;
   }
 
-  // Filter for physical campuses
   return courses.filter((course) =>
     course.sections.some((section) =>
-      section.schedules.some((schedule) => schedule.campus?.includes(campus))
+      section.schedules.some((schedule) => {
+        if (!schedule.days) return false;
+
+        // Convert day abbreviations to match schedule format
+        const dayMap: { [key: string]: string } = {
+          Mo: "M",
+          Tu: "T",
+          We: "W",
+          Th: "Th",
+          Fr: "F",
+          Sa: "S",
+          Su: "Su",
+        };
+
+        const scheduleDays = schedule.days.split("");
+        return selectedDays.some((day) => {
+          const mappedDay = dayMap[day];
+          return (
+            scheduleDays.includes(mappedDay) ||
+            (day === "Th" && schedule.days.includes("Th")) ||
+            (day === "Su" && schedule.days.includes("Su"))
+          );
+        });
+      })
     )
   );
+};
+
+export const filterCoursesByTime = (
+  courses: CourseOutlineWithSectionDetails[],
+  timeFilter: { start: string; end: string }
+): CourseOutlineWithSectionDetails[] => {
+  if (!timeFilter.start && !timeFilter.end) {
+    return courses;
+  }
+
+  const parseTimeInput = (timeInput: string): number | null => {
+    if (!timeInput.trim()) return null;
+
+    // Handle formats like "8", "08", "8:30", "08:30", "14:15"
+    const timeStr = timeInput.trim();
+
+    // If it's just a number (like "8" or "14"), assume it's hours
+    if (/^\d{1,2}$/.test(timeStr)) {
+      const hour = parseInt(timeStr);
+      return hour >= 0 && hour <= 23 ? hour * 60 : null;
+    }
+
+    // If it's in HH:MM format
+    if (/^\d{1,2}:\d{2}$/.test(timeStr)) {
+      const [hours, minutes] = timeStr.split(":").map(Number);
+      if (hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59) {
+        return hours * 60 + minutes;
+      }
+    }
+
+    return null;
+  };
+
+  const timeToMinutes = (time: string): number => {
+    const [hours, minutes] = time.split(":").map(Number);
+    return hours * 60 + minutes;
+  };
+
+  const filterStart = parseTimeInput(timeFilter.start);
+  const filterEnd = parseTimeInput(timeFilter.end);
+
+  return courses.filter((course) =>
+    course.sections.some((section) =>
+      section.schedules.some((schedule) => {
+        if (!schedule.startTime || !schedule.endTime) return false;
+
+        const courseStart = timeToMinutes(schedule.startTime);
+        const courseEnd = timeToMinutes(schedule.endTime);
+
+        // Course must start after filter start time (if specified)
+        // and end before filter end time (if specified)
+        const startsAfterFilter =
+          filterStart === null || courseStart >= filterStart;
+        const endsBeforeFilter = filterEnd === null || courseEnd <= filterEnd;
+
+        return startsAfterFilter && endsBeforeFilter;
+      })
+    )
+  );
+};
+
+export const filterCoursesBySubjectsWithSections = (
+  courses: CourseOutlineWithSectionDetails[],
+  selectedSubjects: string[]
+): CourseOutlineWithSectionDetails[] => {
+  if (selectedSubjects.length === 0) {
+    return courses;
+  }
+  const selectedSubjectsSet = new Set(selectedSubjects);
+  return courses.filter((course) => selectedSubjectsSet.has(course.dept));
+};
+
+export const filterCoursesByLevelsWithSections = (
+  courses: CourseOutlineWithSectionDetails[],
+  selectedLevels: string[]
+): CourseOutlineWithSectionDetails[] => {
+  if (selectedLevels.length === 0) {
+    return courses;
+  }
+  const levelsFirstChar = selectedLevels.map((level) => +level[0]);
+  return courses.filter((course) => {
+    const courseLevelFirstChar = +course.number[0];
+    return levelsFirstChar.some((level) => {
+      if (+level >= 5) {
+        return courseLevelFirstChar >= 5;
+      }
+      return courseLevelFirstChar == level;
+    });
+  });
 };

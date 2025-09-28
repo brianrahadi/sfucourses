@@ -28,3 +28,4 @@ export { CompactSelectedCourses } from "./CompactSelectedCourses";
 export { ConflictFilterButton } from "./ConflictFilterButton";
 export { InstructorCard } from "./InstructorCard";
 export { InstructorExploreFilter } from "./InstructorExploreFilter";
+export { FilterDialog } from "./FilterDialog";

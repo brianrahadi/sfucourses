@@ -31,6 +31,7 @@
 @use "./components/schedule-manager.scss";
 @use "./components/compact-selected-courses.scss";
 @use "./components/conflict-filter-button.scss";
+@use "./components/filter-dialog.scss";
 
 :root {
   --colour-sosy-green-900: #07221c;
@@ -38,6 +39,7 @@
   --colour-sosy-green-700: #166553;
   --colour-sosy-green-600: #1d876f;
   --colour-sosy-green-500: #24a98b;
+  --colour-sosy-green-500-rgb: 36, 169, 139;
   --colour-sosy-green-400: #50baa2;
   --colour-sosy-green-300: #7ccbb9;
   --colour-sosy-green-200: #a7ddd1;

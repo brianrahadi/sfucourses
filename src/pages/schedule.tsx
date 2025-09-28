@@ -11,6 +11,7 @@ import {
   CompactSelectedCourses,
   ButtonGroup,
   SidebarCourse,
+  FilterDialog,
 } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useEffect, useRef, useState } from "react";
@@ -30,17 +31,18 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import {
   filterCoursesByQuery,
   filterCoursesByTerm,
+  filterCoursesByClassNumbers,
+  filterCoursesByCampus,
+  filterCoursesByDays,
+  filterCoursesByTime,
+  filterCoursesBySubjectsWithSections,
+  filterCoursesByLevelsWithSections,
 } from "@utils/courseFilters";
 import { GetStaticProps } from "next";
 import { useSearchParams } from "next/navigation";
 import { insertUrlParam, removeUrlParameter } from "@utils/url";
-import {
-  filterCoursesByClassNumbers,
-  filterCoursesByCampus,
-} from "@utils/courseFilters";
 import { numberWithCommas, toTermCode } from "@utils/format";
 import { filterConflictingCoursesWithOutlines } from "@utils/conflictFilter";
-import { MdPlace } from "react-icons/md";
 import {
   getTimeBlocksFromUrl,
   timeBlockToCourseFormat,
@@ -97,7 +99,14 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   const termChangeSource = useRef("initial"); // button or url
   const [hasUserSelectedTerm, setHasUserSelectedTerm] = useState(false);
   const [filterConflicts, setFilterConflicts] = useState(false);
-  const [campusFilter, setCampusFilter] = useState("All");
+  const [campusFilter, setCampusFilter] = useState<string[]>([]);
+  const [daysFilter, setDaysFilter] = useState<string[]>([]);
+  const [timeFilter, setTimeFilter] = useState<{ start: string; end: string }>({
+    start: "",
+    end: "",
+  });
+  const [subjectFilter, setSubjectFilter] = useState<string[]>([]);
+  const [levelFilter, setLevelFilter] = useState<string[]>([]);
   const [currentTerm, nextTerm] = getCurrentAndNextTerm();
   const [previewCourse, setPreviewCourse] =
     useState<CourseWithSectionDetails | null>(null);
@@ -111,8 +120,6 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
     useState<CourseWithSectionDetails | null>(null);
 
   const [timeBlocks, setTimeBlocks] = useState<TimeBlock[]>([]);
-
-  const campusOptions = ["All", "Burnaby", "Surrey", "Vancouver", "Online"];
 
   const searchParams = useSearchParams();
 
@@ -245,7 +252,15 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
       (courses: CourseOutlineWithSectionDetails[]) =>
         filterCoursesByQuery(courses, query),
       (courses: CourseOutlineWithSectionDetails[]) =>
+        filterCoursesBySubjectsWithSections(courses, subjectFilter),
+      (courses: CourseOutlineWithSectionDetails[]) =>
+        filterCoursesByLevelsWithSections(courses, levelFilter),
+      (courses: CourseOutlineWithSectionDetails[]) =>
         filterCoursesByCampus(courses, campusFilter),
+      (courses: CourseOutlineWithSectionDetails[]) =>
+        filterCoursesByDays(courses, daysFilter),
+      (courses: CourseOutlineWithSectionDetails[]) =>
+        filterCoursesByTime(courses, timeFilter),
     ].reduce((filtered, filterFunc) => filterFunc(filtered), courses);
     return filteredCourses;
   };
@@ -256,6 +271,10 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
     selectedTerm,
     filterConflicts,
     campusFilter,
+    daysFilter,
+    timeFilter,
+    subjectFilter,
+    levelFilter,
     selectedOutlinesWithSections,
     timeBlocks, // Add timeBlocks as a dependency to re-filter when blocks change
   ]);
@@ -345,32 +364,19 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
         <section className="courses-section">
           <div className="courses-section__header">
             <div className="term-filter-row">
-              <div className="filter-with-icon">
-                <MdPlace />
-                <select
-                  className="campus-filter-select"
-                  value={campusFilter}
-                  onChange={(e) => setCampusFilter(e.target.value)}
-                >
-                  {campusOptions.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <ButtonGroup
-                options={["All courses", "Conflict-free"]}
-                selectedOption={
-                  filterConflicts ? "Conflict-free" : "All courses"
-                }
-                onSelect={(value) => {
-                  if (value === "Conflict-free") {
-                    setFilterConflicts(true);
-                  } else {
-                    setFilterConflicts(false);
-                  }
-                }}
+              <FilterDialog
+                campusFilter={campusFilter}
+                setCampusFilter={setCampusFilter}
+                filterConflicts={filterConflicts}
+                setFilterConflicts={setFilterConflicts}
+                daysFilter={daysFilter}
+                setDaysFilter={setDaysFilter}
+                timeFilter={timeFilter}
+                setTimeFilter={setTimeFilter}
+                subjectFilter={subjectFilter}
+                setSubjectFilter={setSubjectFilter}
+                levelFilter={levelFilter}
+                setLevelFilter={setLevelFilter}
               />
             </div>
             <div className="flex-row">
