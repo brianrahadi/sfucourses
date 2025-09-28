@@ -115,8 +115,8 @@ export const HelpDialog: React.FC = () => {
           {/* Page shortcuts side by side */}
           <div className="page-shortcuts-container">
             <div className="shortcut-section">
-              <h4>Schedule</h4>
-              {scheduleShortcuts.map((shortcut, index) => (
+              <h4>Explore</h4>
+              {exploreShortcuts.map((shortcut, index) => (
                 <div key={index} className="shortcut-item">
                   <kbd className="shortcut-key">{shortcut.key}</kbd>
                   <span className="shortcut-description">
@@ -125,10 +125,9 @@ export const HelpDialog: React.FC = () => {
                 </div>
               ))}
             </div>
-
             <div className="shortcut-section">
-              <h4>Explore</h4>
-              {exploreShortcuts.map((shortcut, index) => (
+              <h4>Schedule</h4>
+              {scheduleShortcuts.map((shortcut, index) => (
                 <div key={index} className="shortcut-item">
                   <kbd className="shortcut-key">{shortcut.key}</kbd>
                   <span className="shortcut-description">
