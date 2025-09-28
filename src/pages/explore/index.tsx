@@ -99,6 +99,62 @@ const ExplorePage: React.FC = () => {
   const courseFilters = useExploreFilters();
   const instructorFilters = useInstructorExploreFilters();
 
+  // Keyboard shortcuts for explore page
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Skip if user is typing in an input field
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement
+      ) {
+        return;
+      }
+
+      switch (e.key.toLowerCase()) {
+        case "s":
+          e.preventDefault();
+          // Focus on search bar
+          const searchInput = document.querySelector(
+            'input[placeholder*="course"]'
+          ) as HTMLInputElement;
+          if (searchInput) {
+            searchInput.focus();
+          }
+          break;
+        case "c":
+          e.preventDefault();
+          // Switch to courses mode
+          if (mode !== "courses") {
+            setMode("courses");
+            courseFilters.onReset();
+            instructorFilters.onReset();
+          }
+          break;
+        case "i":
+          e.preventDefault();
+          // Switch to instructors mode
+          if (mode !== "instructors") {
+            setMode("instructors");
+            courseFilters.onReset();
+            instructorFilters.onReset();
+          }
+          break;
+        case "r":
+          e.preventDefault();
+          // Reset all filters
+          courseFilters.onReset();
+          instructorFilters.onReset();
+          break;
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [mode, courseFilters, instructorFilters]);
+
   const filterCourses = (courses: CourseOutline[]) => {
     const filteredCourses = [
       (courses: CourseOutline[]) =>

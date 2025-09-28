@@ -1,0 +1,196 @@
+@import "../variables.scss";
+
+.help-dialog-trigger {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  z-index: 999;
+
+  background-color: var(--colour-sosy-green-800);
+  color: white;
+  border: none;
+  border-radius: 2rem 0 0 2rem;
+  width: 2rem;
+  height: 4rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  padding-left: 0.25rem;
+
+  transition: all 0.3s ease;
+  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.3);
+
+  &:hover {
+    background-color: var(--colour-sosy-green-500);
+    width: 2.5rem;
+    padding-left: 0.5rem;
+  }
+
+  &:focus {
+    outline: 2px solid var(--colour-sosy-green-500);
+    outline-offset: -2px;
+  }
+}
+
+.help-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  opacity: 0;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.help-dialog {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 400px;
+  max-width: 90vw;
+  background-color: var(--colour-neutral-1000);
+  border-left: 1px solid var(--colour-neutral-800);
+  z-index: 1001;
+
+  transform: translateX(100%);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+  display: flex;
+  flex-direction: column;
+
+  &.open {
+    transform: translateX(0);
+  }
+}
+
+.help-dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--colour-neutral-800);
+  background-color: var(--colour-neutral-1100);
+
+  h3 {
+    margin: 0;
+    color: var(--colour-neutral-100);
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+}
+
+.help-dialog-close {
+  background: none;
+  border: none;
+  color: var(--colour-neutral-400);
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: var(--colour-neutral-900);
+    color: var(--colour-neutral-100);
+  }
+
+  &:focus {
+    outline: 2px solid var(--colour-sosy-green-500);
+    outline-offset: 2px;
+  }
+}
+
+.help-dialog-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem 1.5rem;
+}
+
+.shortcut-section {
+  margin-bottom: 1.25rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  h4 {
+    margin: 0 0 0.5rem 0;
+    color: var(--colour-sosy-green-400);
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+.shortcut-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--colour-neutral-900);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.shortcut-key {
+  background-color: var(--colour-neutral-900);
+  color: var(--colour-neutral-100);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-family: "Courier New", monospace;
+  font-size: 0.875rem;
+  font-weight: 600;
+  min-width: 3rem;
+  text-align: center;
+  border: 1px solid var(--colour-neutral-700);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.shortcut-description {
+  color: var(--colour-neutral-300);
+  font-size: 0.9rem;
+  flex: 1;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .help-dialog {
+    width: 100vw;
+    max-width: 100vw;
+  }
+
+  .help-dialog-trigger {
+    right: 0;
+    width: 1.5rem;
+    height: 3rem;
+    font-size: 1rem;
+    padding-left: 0.125rem;
+
+    &:hover {
+      width: 2rem;
+      padding-left: 0.25rem;
+    }
+  }
+}

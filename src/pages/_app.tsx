@@ -1,7 +1,7 @@
 // pages/_app.tsx - Corrected version
 
 import React, { FC, useEffect } from "react";
-import { HeaderNav, Footer, Helmet } from "@components";
+import { HeaderNav, Footer, Helmet, HelpDialog } from "@components";
 import { useRouter } from "next/router";
 import "../styles/main.scss";
 import type { AppProps } from "next/app";
@@ -91,6 +91,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }: AppProps) => {
         <Toaster />
         <Analytics />
         <SpeedInsights />
+        <HelpDialog />
       </HydrationBoundary>
     </QueryClientProvider>
   );
