@@ -6,6 +6,7 @@ import {
   WeeklySchedule,
   CopyLinkButton,
   CopyScheduleButton,
+  ClearFilterButton,
   DownloadCalButton,
   ScheduleManager,
   CompactSelectedCourses,
@@ -108,6 +109,26 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   const [subjectFilter, setSubjectFilter] = useState<string[]>([]);
   const [levelFilter, setLevelFilter] = useState<string[]>([]);
   const [currentTerm, nextTerm] = getCurrentAndNextTerm();
+
+  // Check if any filters are applied
+  const hasFiltersApplied =
+    filterConflicts ||
+    campusFilter.length > 0 ||
+    daysFilter.length > 0 ||
+    timeFilter.start !== "" ||
+    timeFilter.end !== "" ||
+    subjectFilter.length > 0 ||
+    levelFilter.length > 0;
+
+  // Clear all filters function
+  const clearAllFilters = () => {
+    setFilterConflicts(false);
+    setCampusFilter([]);
+    setDaysFilter([]);
+    setTimeFilter({ start: "", end: "" });
+    setSubjectFilter([]);
+    setLevelFilter([]);
+  };
   const [previewCourse, setPreviewCourse] =
     useState<CourseWithSectionDetails | null>(null);
   const [hoveredCourse, setHoveredCourse] = useState<
@@ -377,6 +398,10 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
                 setSubjectFilter={setSubjectFilter}
                 levelFilter={levelFilter}
                 setLevelFilter={setLevelFilter}
+              />
+              <ClearFilterButton
+                hasFiltersApplied={hasFiltersApplied}
+                onClearFilters={clearAllFilters}
               />
             </div>
             <div className="flex-row">

@@ -22,6 +22,7 @@ export { ButtonGroup } from "./ButtonGroup";
 export { DownloadCalButton } from "./DownloadCalButton";
 export { CopyScheduleButton } from "./CopyScheduleButton";
 export { CopyLinkButton } from "./CopyLinkButton";
+export { ClearFilterButton } from "./ClearFilterButton";
 export { GlobalSearch } from "./GlobalSearch";
 export { ScheduleManager } from "./ScheduleManager";
 export { CompactSelectedCourses } from "./CompactSelectedCourses";
