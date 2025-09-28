@@ -1,6 +1,6 @@
 import { CourseWithSectionDetails } from "@types";
 
-interface ScheduleInsights {
+export interface ScheduleInsights {
   maxHours: number;
   averageDailyHours: number;
   totalHours: number;

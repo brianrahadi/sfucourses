@@ -13,7 +13,10 @@ import Button from "./Button";
 import { TextBadge } from "./TextBadge";
 import { mergeOverlappingBlocks } from "@utils/timeBlocks";
 import { isMobile } from "@utils/deviceDetection";
-import { calculateScheduleInsights } from "@utils/scheduleCalculation";
+import {
+  calculateScheduleInsights,
+  ScheduleInsights,
+} from "@utils/scheduleCalculation";
 import {
   MdBarChart,
   MdAccessTime,
@@ -150,8 +153,7 @@ const InsightRow = ({
   </div>
 );
 
-// Reusable Insights List Component
-const InsightsList = ({ insights }: { insights: any }) => (
+const InsightsList = ({ insights }: { insights: ScheduleInsights }) => (
   <div className="insights-list">
     <InsightRow
       icon={MdBarChart}
