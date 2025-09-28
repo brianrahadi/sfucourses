@@ -8,26 +8,26 @@ interface Shortcut {
 
 export const HelpDialog: React.FC = () => {
   const globalShortcuts = [
-    { key: "cmd/ctrl + k", description: "Global search bar" },
-    { key: "g + 0", description: "Go to homepage" },
-    { key: "g + 1", description: "Go to explore" },
-    { key: "g + 2", description: "Go to schedule" },
-    { key: "g + 3", description: "Go to FAQ" },
-    { key: "h", description: "Show this help" },
-    { key: "esc", description: "Close any dialog" },
+    { key: "⌘ + k", description: "Global search" },
+    { key: "g + 0", description: "Homepage" },
+    { key: "g + 1", description: "Explore" },
+    { key: "g + 2", description: "Schedule" },
+    { key: "g + 3", description: "FAQ" },
+    { key: "h", description: "Help" },
+    { key: "esc", description: "Close dialogs" },
   ];
 
   const exploreShortcuts = [
-    { key: "s", description: "Focus search bar" },
-    { key: "r", description: "Reset all filters" },
-    { key: "c", description: "Switch to courses mode" },
-    { key: "i", description: "Switch to instructors mode" },
+    { key: "s", description: "Focus search" },
+    { key: "r", description: "Reset filters" },
+    { key: "c", description: "Courses mode" },
+    { key: "i", description: "Instructors mode" },
   ];
 
   const scheduleShortcuts = [
-    { key: "s", description: "Focus search bar" },
-    { key: "r", description: "Reset all filters" },
-    { key: "f", description: "Open filters dialog" },
+    { key: "s", description: "Focus search" },
+    { key: "r", description: "Reset filters" },
+    { key: "f", description: "Open filters" },
   ];
 
   const [isOpen, setIsOpen] = useState(false);
@@ -76,54 +76,66 @@ export const HelpDialog: React.FC = () => {
 
       {/* Help Dialog */}
       <div className={`help-dialog ${isOpen ? "open" : ""}`}>
-        <div className="help-dialog-header">
-          <h3>Keyboard Shortcuts</h3>
-          <button
-            className="help-dialog-close"
-            onClick={() => setIsOpen(false)}
-            title="Close (Esc)"
-          >
-            <MdClose />
-          </button>
-        </div>
-
         <div className="help-dialog-content">
-          {/* Global shortcuts */}
-          <div className="shortcut-section">
-            <h4>Global Shortcuts</h4>
-            {globalShortcuts.map((shortcut, index) => (
-              <div key={index} className="shortcut-item">
-                <kbd className="shortcut-key">{shortcut.key}</kbd>
-                <span className="shortcut-description">
-                  {shortcut.description}
-                </span>
-              </div>
-            ))}
-          </div>
-          {/* Explore page shortcuts */}
-          <div className="shortcut-section">
-            <h4>Explore Page</h4>
-            {exploreShortcuts.map((shortcut, index) => (
-              <div key={index} className="shortcut-item">
-                <kbd className="shortcut-key">{shortcut.key}</kbd>
-                <span className="shortcut-description">
-                  {shortcut.description}
-                </span>
-              </div>
-            ))}
+          {/* Global shortcuts in two columns */}
+          <div className="page-shortcuts-container">
+            <div className="shortcut-section">
+              <h4>Global</h4>
+              {globalShortcuts
+                .slice(0, Math.ceil(globalShortcuts.length / 2))
+                .map((shortcut, index) => (
+                  <div key={index} className="shortcut-item">
+                    <kbd className="shortcut-key">{shortcut.key}</kbd>
+                    <span className="shortcut-description">
+                      {shortcut.description}
+                    </span>
+                  </div>
+                ))}
+            </div>
+
+            <div className="shortcut-section">
+              <h4>&nbsp;</h4>
+              {globalShortcuts
+                .slice(Math.ceil(globalShortcuts.length / 2))
+                .map((shortcut, index) => (
+                  <div
+                    key={index + Math.ceil(globalShortcuts.length / 2)}
+                    className="shortcut-item"
+                  >
+                    <kbd className="shortcut-key">{shortcut.key}</kbd>
+                    <span className="shortcut-description">
+                      {shortcut.description}
+                    </span>
+                  </div>
+                ))}
+            </div>
           </div>
 
-          {/* Schedule page shortcuts */}
-          <div className="shortcut-section">
-            <h4>Schedule Page</h4>
-            {scheduleShortcuts.map((shortcut, index) => (
-              <div key={index} className="shortcut-item">
-                <kbd className="shortcut-key">{shortcut.key}</kbd>
-                <span className="shortcut-description">
-                  {shortcut.description}
-                </span>
-              </div>
-            ))}
+          {/* Page shortcuts side by side */}
+          <div className="page-shortcuts-container">
+            <div className="shortcut-section">
+              <h4>Schedule</h4>
+              {scheduleShortcuts.map((shortcut, index) => (
+                <div key={index} className="shortcut-item">
+                  <kbd className="shortcut-key">{shortcut.key}</kbd>
+                  <span className="shortcut-description">
+                    {shortcut.description}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <div className="shortcut-section">
+              <h4>Explore</h4>
+              {exploreShortcuts.map((shortcut, index) => (
+                <div key={index} className="shortcut-item">
+                  <kbd className="shortcut-key">{shortcut.key}</kbd>
+                  <span className="shortcut-description">
+                    {shortcut.description}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
