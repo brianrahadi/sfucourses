@@ -167,15 +167,15 @@ export const calculateScheduleInsights = (
     }
   }
 
-  // Reward reasonable total hours (12-20 hours per week is ideal)
-  if (totalWeeklyHours < 12) {
+  // Reward reasonable total hours (8-15 hours per week is ideal)
+  if (totalWeeklyHours < 8) {
     qualityScore -= (12 - totalWeeklyHours) * 2;
-    qualityReasons.push("Light course load may indicate part-time enrollment");
-  } else if (totalWeeklyHours > 25) {
-    qualityScore -= (totalWeeklyHours - 25) * 1.5;
+    qualityReasons.push("Relatively light course load");
+  } else if (totalWeeklyHours > 15) {
+    qualityScore -= (totalWeeklyHours - 15) * 1.5;
     qualityReasons.push("Heavy course load may be challenging to manage");
   } else {
-    qualityReasons.push("Optimal weekly hour range (12-25 hours)");
+    qualityReasons.push("Optimal weekly hour range (8-15 hours)");
   }
 
   // Add positive reasons for high scores
