@@ -162,6 +162,16 @@ const CoursePage: React.FC<CoursePageProps> = () => {
           </div>
         </div>
         <RedditPosts query={`${course.dept.toLowerCase()} ${course.number}`} />
+        <div>
+          <h2 style={{ marginBottom: "6px" }}>prerequisites graph</h2>
+          <iframe
+            src={`https://prerequisites-visualization.vercel.app/sfu/courses/${course.dept.toLowerCase()}/${
+              course.number
+            }`}
+            style={{ width: "100%", height: "600px", border: "none" }}
+            title="Prerequisites Visualization"
+          ></iframe>
+        </div>
       </main>
     </div>
   );
