@@ -127,49 +127,50 @@ const CoursePage: React.FC<CoursePageProps> = () => {
       />
       <main className="container course-container">
         <div className="course-top-container">
-          <div className="course-page-card">
-            <div className="course-title">
-              {`${course.dept} ${course.number} - ${course.title}${
-                course.units && course.units !== "0" && course.units !== "N/A"
-                  ? ` (${course.units})`
-                  : ""
-              }`}
-            </div>
-            <div className="course-page-card__connt">
-              <p className="course-description">
-                {course.description}
-                {course.designation && course.designation != "N/A"
-                  ? " " + course.designation
-                  : ""}
-              </p>
-              <p className="course-description">
-                Prerequisite: {course.prerequisites || "N/A"}
-              </p>
-            </div>
-          </div>
-          <div className="course-offerings">
-            {isLoadingOfferings || isIdleOfferings ? (
-              <div className="loading-spinner-container">
-                <RotatingLines visible={true} strokeColor="#24a98b" />
+          <div className="course-left-section">
+            <div className="course-page-card">
+              <div className="course-title">
+                {`${course.dept} ${course.number} - ${course.title}${
+                  course.units && course.units !== "0" && course.units !== "N/A"
+                    ? ` (${course.units})`
+                    : ""
+                }`}
               </div>
-            ) : errorOfferings ? (
-              `Error loading offerings: ${errorOfferings.message}`
-            ) : offerings.length === 0 ? (
-              "No offerings available"
-            ) : (
-              <CourseTabContainer tabs={tabs} />
-            )}
+              <div className="course-page-card__connt">
+                <p className="course-description">
+                  {course.description}
+                  {course.designation && course.designation != "N/A"
+                    ? " " + course.designation
+                    : ""}
+                </p>
+                <p className="course-description">
+                  Prerequisite: {course.prerequisites || "N/A"}
+                </p>
+              </div>
+            </div>
+            <div className="course-offerings">
+              {isLoadingOfferings || isIdleOfferings ? (
+                <div className="loading-spinner-container">
+                  <RotatingLines visible={true} strokeColor="#24a98b" />
+                </div>
+              ) : errorOfferings ? (
+                `Error loading offerings: ${errorOfferings.message}`
+              ) : offerings.length === 0 ? (
+                "No offerings available"
+              ) : (
+                <CourseTabContainer tabs={tabs} />
+              )}
+            </div>
           </div>
-        </div>
-        <div>
-          <h2 style={{ marginBottom: "6px" }}>prerequisites graph</h2>
-          <iframe
-            src={`https://prerequisites-visualization.vercel.app/sfu/courses/${course.dept.toLowerCase()}/${
-              course.number
-            }`}
-            style={{ width: "100%", height: "600px", border: "none" }}
-            title="Prerequisites Visualization"
-          ></iframe>
+          <div className="prerequisites-visualization">
+            <iframe
+              src={`https://prerequisites-visualization.vercel.app/sfu/courses/${course.dept.toLowerCase()}/${
+                course.number
+              }`}
+              style={{ width: "100%", height: "600px", border: "none" }}
+              title="Prerequisites Visualization"
+            ></iframe>
+          </div>
         </div>
         <RedditPosts query={`${course.dept.toLowerCase()} ${course.number}`} />
       </main>
