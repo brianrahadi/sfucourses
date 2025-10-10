@@ -161,7 +161,6 @@ const CoursePage: React.FC<CoursePageProps> = () => {
             )}
           </div>
         </div>
-        <RedditPosts query={`${course.dept.toLowerCase()} ${course.number}`} />
         <div>
           <h2 style={{ marginBottom: "6px" }}>prerequisites graph</h2>
           <iframe
@@ -172,6 +171,7 @@ const CoursePage: React.FC<CoursePageProps> = () => {
             title="Prerequisites Visualization"
           ></iframe>
         </div>
+        <RedditPosts query={`${course.dept.toLowerCase()} ${course.number}`} />
       </main>
     </div>
   );
