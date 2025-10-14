@@ -461,7 +461,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
             </div>
             <div className="flex-row">
               <TextBadge
-                className="big explore white-text"
+                className="big explore gray-text"
                 content={`exploring 
             ${
               maxVisibleOutlinesWithSectionsLength

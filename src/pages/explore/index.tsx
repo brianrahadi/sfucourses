@@ -300,7 +300,7 @@ const ExplorePage: React.FC = () => {
         <section className="courses-section">
           <div className="courses-section__explore-header">
             <TextBadge
-              className="big explore white-text"
+              className="big explore gray-text"
               content={`exploring 
                 ${
                   mode === "courses"
