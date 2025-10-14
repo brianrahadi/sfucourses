@@ -67,6 +67,9 @@ export const SidebarCourse: React.FC<SidebarCourseProps> = ({
   if (isLoading) {
     return (
       <div className="course-details-inline">
+        <div className="back-arrow" onClick={onClose}>
+          <IoArrowBackOutline className="back-arrow-icon" />
+        </div>
         <div className="course-info">
           <p>Loading course information...</p>
         </div>
@@ -77,6 +80,9 @@ export const SidebarCourse: React.FC<SidebarCourseProps> = ({
   if (!courseOutline) {
     return (
       <div className="course-details-inline">
+        <div className="back-arrow" onClick={onClose}>
+          <IoArrowBackOutline className="back-arrow-icon" />
+        </div>
         <div className="course-info">
           <p>Course information not available</p>
         </div>
