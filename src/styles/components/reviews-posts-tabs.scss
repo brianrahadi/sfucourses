@@ -192,6 +192,18 @@
   }
 }
 
+// Mobile responsive styles for metadata
+@media (max-width: 768px) {
+  .review-metadata {
+    justify-content: flex-start;
+    gap: 0.5rem;
+  }
+
+  .metadata-item {
+    font-size: 0.8rem;
+  }
+}
+
 .review-rating {
   display: flex;
   flex-direction: column;
@@ -236,7 +248,36 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  justify-content: flex-start;
   gap: 0.5rem;
+
+  @media (max-width: 768px) {
+    align-items: flex-start;
+  }
+}
+
+.sidebar {
+  .review-meta {
+    align-items: flex-start;
+  }
+}
+
+.review-metadata {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: flex-start;
+  margin-bottom: 0.25rem;
+}
+
+.metadata-item {
+  font-size: 0.875rem;
+  color: var(--colour-neutral-300);
+
+  strong {
+    color: var(--colour-neutral-200);
+    font-weight: 600;
+  }
 }
 
 .review-metadata-tags {

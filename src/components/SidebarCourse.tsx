@@ -611,6 +611,7 @@ export const SidebarCourse: React.FC<SidebarCourseProps> = ({
         onCourseFilterChange={setSelectedInstructorFilter}
         selectedSortOption={selectedSortOption}
         onSortOptionChange={setSelectedSortOption}
+        className="sidebar"
       />
     </div>
   );

@@ -35,6 +35,7 @@ interface ReviewsAndPostsTabsProps {
   selectedSortOption: string;
   onSortOptionChange: (value: string) => void;
   getInstructorName?: (courseCode: string) => string; // Optional function to get instructor name for course code
+  className?: string; // Optional className for styling
 }
 
 const ReviewsAndPostsTabs: React.FC<ReviewsAndPostsTabsProps> = ({
@@ -56,6 +57,7 @@ const ReviewsAndPostsTabs: React.FC<ReviewsAndPostsTabsProps> = ({
   selectedSortOption,
   onSortOptionChange,
   getInstructorName,
+  className,
 }) => {
   const [activeTab, setActiveTab] = useState<"reviews" | "reddit">("reviews");
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
@@ -92,7 +94,7 @@ const ReviewsAndPostsTabs: React.FC<ReviewsAndPostsTabsProps> = ({
   }, [activeTab, onLoadMoreReviews, onLoadMoreRedditPosts]);
 
   return (
-    <div className="reviews-posts-tabs-section">
+    <div className={`reviews-posts-tabs-section ${className || ""}`}>
       <div className="tab-navigation">
         <button
           className={`tab-button ${activeTab === "reviews" ? "active" : ""}`}
@@ -200,6 +202,49 @@ const ReviewsAndPostsTabs: React.FC<ReviewsAndPostsTabsProps> = ({
                           </div>
                         </div>
                         <div className="review-meta">
+                          <div className="review-metadata">
+                            <span className="metadata-item">
+                              For Credit:{" "}
+                              <strong>{review.metadata["For Credit"]}</strong>
+                            </span>
+                            <span className="metadata-item">
+                              Attendance:{" "}
+                              <strong>{review.metadata["Attendance"]}</strong>
+                            </span>
+                            {review.metadata["Would Take Again"] &&
+                              review.metadata["Would Take Again"].trim() !==
+                                "" && (
+                                <span className="metadata-item">
+                                  Would Take Again:{" "}
+                                  <strong>
+                                    {review.metadata["Would Take Again"]}
+                                  </strong>
+                                </span>
+                              )}
+                            {review.metadata["Grade"] &&
+                              review.metadata["Grade"].trim() !== "" && (
+                                <span className="metadata-item">
+                                  Grade:{" "}
+                                  <strong>{review.metadata["Grade"]}</strong>
+                                </span>
+                              )}
+                            {review.metadata["Textbook"] &&
+                              review.metadata["Textbook"].trim() !== "" && (
+                                <span className="metadata-item">
+                                  Textbook:{" "}
+                                  <strong>{review.metadata["Textbook"]}</strong>
+                                </span>
+                              )}
+                            {review.metadata["Online Class"] &&
+                              review.metadata["Online Class"].trim() !== "" && (
+                                <span className="metadata-item">
+                                  Online Class:{" "}
+                                  <strong>
+                                    {review.metadata["Online Class"]}
+                                  </strong>
+                                </span>
+                              )}
+                          </div>
                           <span className="review-date">{review.date}</span>
                         </div>
                       </div>

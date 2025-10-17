@@ -92,12 +92,12 @@ export interface TimeBlock {
 
 // Review metadata information
 export interface ReviewMetadata {
-  for_credit: string; // "For Credit"
-  attendance: string; // "Attendance"
-  wouldTakeAgain: string; // "Would Take Again"
-  grade: string; // "Grade"
-  textbook: string; // "Textbook"
-  onlineClass?: string; // "Online Class" (optional)
+  "For Credit": string;
+  Attendance: string;
+  "Would Take Again"?: string;
+  Grade?: string;
+  Textbook: string;
+  "Online Class"?: string;
 }
 
 // Detailed review information
