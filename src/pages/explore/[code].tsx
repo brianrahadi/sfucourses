@@ -78,7 +78,7 @@ const CoursePage: React.FC<CoursePageProps> = () => {
   const [reviewsPage, setReviewsPage] = useState(1);
   const [selectedInstructorFilter, setSelectedInstructorFilter] =
     useState("all");
-  const [selectedSortOption, setSelectedSortOption] = useState("latest");
+  const [selectedSortOption, setSelectedSortOption] = useState("most-recent");
 
   // Reddit posts state
   const [redditPosts, setRedditPosts] = useState<RedditPostData[]>([]);
@@ -180,41 +180,83 @@ const CoursePage: React.FC<CoursePageProps> = () => {
       );
     }
 
+    // Helper function to parse date strings more reliably
+    const parseDate = (dateStr: string): Date => {
+      // Handle formats like "Aug 19th, 2025" or "Sep 1st, 2020"
+      const cleaned = dateStr.replace(/(\d+)(st|nd|rd|th)/, "$1");
+      const parsed = new Date(cleaned);
+      return isNaN(parsed.getTime()) ? new Date(0) : parsed;
+    };
+
     // Sort reviews based on selected sort option
     switch (selectedSortOption) {
-      case "latest":
+      case "most-recent":
         filteredReviews.sort((a, b) => {
-          // Parse dates and sort by latest first
-          const dateA = new Date(a.date);
-          const dateB = new Date(b.date);
+          const dateA = parseDate(a.date);
+          const dateB = parseDate(b.date);
           return dateB.getTime() - dateA.getTime();
         });
         break;
-      case "highest":
+      case "least-recent":
         filteredReviews.sort((a, b) => {
-          const ratingA = parseFloat(a.rating);
-          const ratingB = parseFloat(b.rating);
-          // Primary sort by rating (highest first)
-          if (ratingA !== ratingB) {
-            return ratingB - ratingA;
+          const dateA = parseDate(a.date);
+          const dateB = parseDate(b.date);
+          return dateA.getTime() - dateB.getTime();
+        });
+        break;
+      case "hardest":
+        filteredReviews.sort((a, b) => {
+          const difficultyA = parseFloat(a.difficulty);
+          const difficultyB = parseFloat(b.difficulty);
+          // Primary sort by difficulty (highest first)
+          if (difficultyA !== difficultyB) {
+            return difficultyB - difficultyA;
           }
           // Secondary sort by latest date
-          const dateA = new Date(a.date);
-          const dateB = new Date(b.date);
+          const dateA = parseDate(a.date);
+          const dateB = parseDate(b.date);
           return dateB.getTime() - dateA.getTime();
         });
         break;
-      case "lowest":
+      case "easiest":
         filteredReviews.sort((a, b) => {
-          const ratingA = parseFloat(a.rating);
-          const ratingB = parseFloat(b.rating);
-          // Primary sort by rating (lowest first)
-          if (ratingA !== ratingB) {
-            return ratingA - ratingB;
+          const difficultyA = parseFloat(a.difficulty);
+          const difficultyB = parseFloat(b.difficulty);
+          // Primary sort by difficulty (lowest first)
+          if (difficultyA !== difficultyB) {
+            return difficultyA - difficultyB;
           }
           // Secondary sort by latest date
-          const dateA = new Date(a.date);
-          const dateB = new Date(b.date);
+          const dateA = parseDate(a.date);
+          const dateB = parseDate(b.date);
+          return dateB.getTime() - dateA.getTime();
+        });
+        break;
+      case "most-liked":
+        filteredReviews.sort((a, b) => {
+          const helpfulA = parseInt(a.helpful) || 0;
+          const helpfulB = parseInt(b.helpful) || 0;
+          // Primary sort by helpful votes (highest first)
+          if (helpfulA !== helpfulB) {
+            return helpfulB - helpfulA;
+          }
+          // Secondary sort by latest date
+          const dateA = parseDate(a.date);
+          const dateB = parseDate(b.date);
+          return dateB.getTime() - dateA.getTime();
+        });
+        break;
+      case "most-disliked":
+        filteredReviews.sort((a, b) => {
+          const notHelpfulA = parseInt(a.not_helpful) || 0;
+          const notHelpfulB = parseInt(b.not_helpful) || 0;
+          // Primary sort by not helpful votes (highest first)
+          if (notHelpfulA !== notHelpfulB) {
+            return notHelpfulB - notHelpfulA;
+          }
+          // Secondary sort by latest date
+          const dateA = parseDate(a.date);
+          const dateB = parseDate(b.date);
           return dateB.getTime() - dateA.getTime();
         });
         break;

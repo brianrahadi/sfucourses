@@ -151,9 +151,12 @@ const ReviewsAndPostsTabs: React.FC<ReviewsAndPostsTabsProps> = ({
                           onChange={(e) => onSortOptionChange(e.target.value)}
                           className="review-sorter-dropdown"
                         >
-                          <option value="latest">Latest Date</option>
-                          <option value="highest">Highest Rating</option>
-                          <option value="lowest">Lowest Rating</option>
+                          <option value="most-recent">Most Recent</option>
+                          <option value="least-recent">Least Recent</option>
+                          <option value="hardest">Hardest</option>
+                          <option value="easiest">Easiest</option>
+                          <option value="most-liked">Most Liked</option>
+                          <option value="most-disliked">Most Disliked</option>
                         </select>
                       </div>
                     </div>
