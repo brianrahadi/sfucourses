@@ -1,22 +1,126 @@
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { Instructor, InstructorOffering } from "@types";
+import { useEffect, useState, useCallback, useRef } from "react";
+import {
+  Instructor,
+  InstructorOffering,
+  InstructorReviewData,
+  Review,
+} from "@types";
 import { getCourseAPIData } from "@utils";
 import { Hero, RedditPosts, Helmet } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { RotatingLines } from "react-loader-spinner";
 import Link from "next/link";
 import { termToIcon } from "@utils/exploreFilters";
+import { BiSolidUpvote } from "react-icons/bi";
+import { formatShortDate } from "@utils/format";
+
+interface RedditPostData {
+  title: string;
+  upvotes: number;
+  date_created: Date;
+  url: string;
+}
 
 const InstructorPage = () => {
   const router = useRouter();
   const { name } = router.query;
   const [instructor, setInstructor] = useState<Instructor | null>(null);
+  const [reviewData, setReviewData] = useState<InstructorReviewData | null>(
+    null
+  );
+  const [redditPosts, setRedditPosts] = useState<RedditPostData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [reviewLoading, setReviewLoading] = useState(true);
+  const [redditLoading, setRedditLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [reviewError, setReviewError] = useState<string | null>(null);
+  const [redditError, setRedditError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<"reviews" | "reddit">("reviews");
+  const [displayedReviews, setDisplayedReviews] = useState<Review[]>([]);
+  const [displayedRedditPosts, setDisplayedRedditPosts] = useState<
+    RedditPostData[]
+  >([]);
+  const [reviewsPage, setReviewsPage] = useState(1);
+  const [redditPage, setRedditPage] = useState(1);
+  const reviewsPerPage = 5;
+  const redditPerPage = 5;
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
+
+  // Fetch Reddit posts
+  const fetchRedditPosts = useCallback(async (query: string) => {
+    try {
+      const response = await fetch(
+        `/api/reddit?query=${encodeURIComponent(query)}`
+      );
+      if (!response.ok) {
+        throw new Error(`Failed to fetch Reddit posts: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      throw error;
+    }
+  }, []);
+
+  // Load more reviews
+  const loadMoreReviews = useCallback(() => {
+    if (!reviewData?.reviews) return;
+
+    const startIndex = (reviewsPage - 1) * reviewsPerPage;
+    const endIndex = startIndex + reviewsPerPage;
+    const newReviews = reviewData.reviews.slice(startIndex, endIndex);
+
+    setDisplayedReviews((prev) => [...prev, ...newReviews]);
+    setReviewsPage((prev) => prev + 1);
+  }, [reviewData?.reviews, reviewsPage]);
+
+  // Load more Reddit posts
+  const loadMoreRedditPosts = useCallback(() => {
+    if (!redditPosts.length) return;
+
+    const startIndex = (redditPage - 1) * redditPerPage;
+    const endIndex = startIndex + redditPerPage;
+    const newPosts = redditPosts.slice(startIndex, endIndex);
+
+    setDisplayedRedditPosts((prev) => [...prev, ...newPosts]);
+    setRedditPage((prev) => prev + 1);
+  }, [redditPosts, redditPage]);
+
+  // Intersection Observer for infinite scroll
+  useEffect(() => {
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+    }
+
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          if (activeTab === "reviews") {
+            loadMoreReviews();
+          } else {
+            loadMoreRedditPosts();
+          }
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (loadMoreRef.current) {
+      observerRef.current.observe(loadMoreRef.current);
+    }
+
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, [activeTab, loadMoreReviews, loadMoreRedditPosts]);
 
   useEffect(() => {
     if (!name || typeof name !== "string") return;
+
+    // Fetch instructor data
     setLoading(true);
     setError(null);
     getCourseAPIData(`/instructors?name=${name}`)
@@ -28,7 +132,57 @@ const InstructorPage = () => {
         setError("Could not load instructor details");
         setLoading(false);
       });
-  }, [name]);
+
+    // Fetch review data
+    setReviewLoading(true);
+    setReviewError(null);
+    const formattedName = name.replace(/\s+/g, "_");
+    fetch(`http://localhost:8080/v1/rest/reviews/instructors/${formattedName}`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Review data not available");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setReviewData(data);
+        setReviewLoading(false);
+      })
+      .catch((err) => {
+        setReviewError("Could not load review data");
+        setReviewLoading(false);
+      });
+
+    // Fetch Reddit posts
+    setRedditLoading(true);
+    setRedditError(null);
+    fetchRedditPosts(name)
+      .then((data) => {
+        setRedditPosts(data);
+        setRedditLoading(false);
+      })
+      .catch((err) => {
+        setRedditError("Could not load Reddit posts");
+        setRedditLoading(false);
+      });
+  }, [name, fetchRedditPosts]);
+
+  // Initialize displayed items when data changes
+  useEffect(() => {
+    if (reviewData?.reviews) {
+      const initialReviews = reviewData.reviews.slice(0, reviewsPerPage);
+      setDisplayedReviews(initialReviews);
+      setReviewsPage(2);
+    }
+  }, [reviewData]);
+
+  useEffect(() => {
+    if (redditPosts.length > 0) {
+      const initialPosts = redditPosts.slice(0, redditPerPage);
+      setDisplayedRedditPosts(initialPosts);
+      setRedditPage(2);
+    }
+  }, [redditPosts]);
 
   return (
     <div className="page courses-page">
@@ -54,7 +208,42 @@ const InstructorPage = () => {
           </div>
         ) : instructor ? (
           <div className="instructor-details-container">
-            <h2>{instructor.name} - Courses Taught</h2>
+            {/* Instructor Header with Review Stats */}
+            <div className="instructor-header">
+              <h1>{instructor.name}</h1>
+              {reviewData && (
+                <div className="instructor-review-summary">
+                  <div className="review-stats">
+                    <div className="stat-item">
+                      <span className="stat-value">
+                        {reviewData.overall_rating}
+                      </span>
+                      <span className="stat-label">Overall Rating</span>
+                    </div>
+                    <div className="stat-item">
+                      <span className="stat-value">
+                        {reviewData.would_take_again}%
+                      </span>
+                      <span className="stat-label">Would Take Again</span>
+                    </div>
+                    <div className="stat-item">
+                      <span className="stat-value">
+                        {reviewData.difficulty_level}
+                      </span>
+                      <span className="stat-label">Difficulty</span>
+                    </div>
+                    <div className="stat-item">
+                      <span className="stat-value">
+                        {reviewData.total_ratings}
+                      </span>
+                      <span className="stat-label">Total Reviews</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <h2>Courses Taught</h2>
             <div className="instructor-offerings-list">
               {instructor.offerings && instructor.offerings.length > 0 ? (
                 Object.entries(
@@ -97,9 +286,141 @@ const InstructorPage = () => {
                 <p>No course offerings found.</p>
               )}
             </div>
+
+            {/* Tab Section */}
+            <div className="instructor-tabs-section">
+              <div className="tab-navigation">
+                <button
+                  className={`tab-button ${
+                    activeTab === "reviews" ? "active" : ""
+                  }`}
+                  onClick={() => setActiveTab("reviews")}
+                >
+                  Student Reviews
+                </button>
+                <button
+                  className={`tab-button ${
+                    activeTab === "reddit" ? "active" : ""
+                  }`}
+                  onClick={() => setActiveTab("reddit")}
+                >
+                  r/simonfraser Posts
+                </button>
+              </div>
+
+              <div className="tab-content">
+                {activeTab === "reviews" ? (
+                  <div className="instructor-review-section">
+                    {reviewLoading ? (
+                      <div className="center loading-spinner-container">
+                        <RotatingLines visible={true} strokeColor="#24a98b" />
+                        <p>Loading reviews...</p>
+                      </div>
+                    ) : reviewError ? (
+                      <div className="center">
+                        <p className="text-muted">{reviewError}</p>
+                      </div>
+                    ) : reviewData ? (
+                      <div className="reviews-list">
+                        <h3>Recent Reviews</h3>
+                        {displayedReviews.length > 0 ? (
+                          displayedReviews.map((review, index) => (
+                            <div key={index} className="review-card">
+                              <div className="review-header">
+                                <div className="review-rating">
+                                  <span className="rating-value">
+                                    Rating: {+review.rating}/5
+                                  </span>
+                                  <span className="rating-difficulty">
+                                    Difficulty: {review.difficulty}
+                                  </span>
+                                </div>
+                                <div className="review-meta">
+                                  <span className="course-code">
+                                    {review.course_code}
+                                  </span>
+                                  <span className="review-date">
+                                    {review.date}
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="review-content">
+                                <p>{review.review_msg}</p>
+                              </div>
+                              {review.tags && review.tags.length > 0 && (
+                                <div className="review-tags">
+                                  {review.tags.map((tag, tagIndex) => (
+                                    <span key={tagIndex} className="tag">
+                                      {tag}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                              <div className="review-footer">
+                                <span className="helpful-count">
+                                  {review.helpful} helpful, {review.not_helpful}{" "}
+                                  not helpful
+                                </span>
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="no-reviews-message">
+                            <p>No reviews available for this instructor yet.</p>
+                          </div>
+                        )}
+                        <div ref={loadMoreRef} className="load-more-trigger" />
+                      </div>
+                    ) : null}
+                  </div>
+                ) : (
+                  <div className="reddit-posts-section">
+                    {redditLoading ? (
+                      <div className="center loading-spinner-container">
+                        <RotatingLines visible={true} strokeColor="#24a98b" />
+                        <p>Loading Reddit posts...</p>
+                      </div>
+                    ) : redditError ? (
+                      <div className="center">
+                        <p className="text-muted">{redditError}</p>
+                      </div>
+                    ) : displayedRedditPosts.length > 0 ? (
+                      <div className="reddit-posts">
+                        {displayedRedditPosts.map((post, index) => (
+                          <Link
+                            key={index}
+                            href={post.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="reddit-post-link"
+                          >
+                            <div className="reddit-post">
+                              <div className="upvote-container">
+                                <BiSolidUpvote style={{ fill: "#ff4500" }} />
+                                <p>{post.upvotes}</p>
+                              </div>
+                              <div>
+                                <h4>{post.title}</h4>
+                                <p>
+                                  {formatShortDate(post.date_created, true)}
+                                </p>
+                              </div>
+                            </div>
+                          </Link>
+                        ))}
+                        <div ref={loadMoreRef} className="load-more-trigger" />
+                      </div>
+                    ) : (
+                      <div className="no-reddit-message">
+                        <p>No Reddit posts found for this instructor.</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         ) : null}
-        {instructor && <RedditPosts query={`${instructor.name}`} />}
       </main>
     </div>
   );
