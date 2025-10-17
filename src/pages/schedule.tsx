@@ -174,6 +174,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
           setHasUserSelectedTerm(true);
           setSelectedTerm(termOptions[nextIndex]);
           setTimeBlocks([]);
+          setSelectedOutlinesWithSections([]);
           break;
       }
     };
