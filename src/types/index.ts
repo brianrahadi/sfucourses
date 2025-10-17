@@ -92,7 +92,7 @@ export interface TimeBlock {
 
 // Review metadata information
 export interface ReviewMetadata {
-  forCredit: string; // "For Credit"
+  for_credit: string; // "For Credit"
   attendance: string; // "Attendance"
   wouldTakeAgain: string; // "Would Take Again"
   grade: string; // "Grade"

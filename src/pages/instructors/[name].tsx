@@ -14,6 +14,15 @@ import Link from "next/link";
 import { termToIcon } from "@utils/exploreFilters";
 import { BiSolidUpvote } from "react-icons/bi";
 import { formatShortDate } from "@utils/format";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 interface RedditPostData {
   title: string;
@@ -96,6 +105,38 @@ const InstructorPage = () => {
       avgDifficulty: totalDifficulty / filteredReviews.length,
     };
   }, [getFilteredReviews]);
+
+  // Get chart data for rating and difficulty distribution
+  const getChartData = useCallback(() => {
+    if (!reviewData?.reviews) return { ratingData: [], difficultyData: [] };
+
+    const ratingCounts = [0, 0, 0, 0, 0]; // 1-5 ratings
+    const difficultyCounts = [0, 0, 0, 0, 0]; // 1-5 difficulty
+
+    reviewData.reviews.forEach((review) => {
+      const rating = Math.round(parseFloat(review.rating));
+      const difficulty = Math.round(parseFloat(review.difficulty));
+
+      if (rating >= 1 && rating <= 5) {
+        ratingCounts[rating - 1]++;
+      }
+      if (difficulty >= 1 && difficulty <= 5) {
+        difficultyCounts[difficulty - 1]++;
+      }
+    });
+
+    const ratingData = ratingCounts.map((count, index) => ({
+      rating: index + 1,
+      count,
+    }));
+
+    const difficultyData = difficultyCounts.map((count, index) => ({
+      difficulty: index + 1,
+      count,
+    }));
+
+    return { ratingData, difficultyData };
+  }, [reviewData?.reviews]);
 
   // Fetch Reddit posts
   const fetchRedditPosts = useCallback(async (query: string) => {
@@ -264,37 +305,126 @@ const InstructorPage = () => {
           <div className="instructor-details-container">
             {/* Instructor Header with Review Stats */}
             <div className="instructor-header">
-              <h1>{instructor.name}</h1>
-              {reviewData && (
-                <div className="instructor-review-summary">
-                  <div className="review-stats">
-                    <div className="stat-item">
-                      <span className="stat-value">
-                        {reviewData.overall_rating}
-                      </span>
-                      <span className="stat-label">Overall Rating</span>
+              <div className="instructor-main-section">
+                <div className="instructor-info-container">
+                  <h1>{instructor.name}</h1>
+                  {reviewData && (
+                    <div className="instructor-review-summary">
+                      <div className="review-stats">
+                        <div className="stat-item">
+                          <span className="stat-value">
+                            {reviewData.overall_rating}
+                          </span>
+                          <span className="stat-label">Overall Rating</span>
+                        </div>
+                        <div className="stat-item">
+                          <span className="stat-value">
+                            {reviewData.would_take_again}%
+                          </span>
+                          <span className="stat-label">Would Take Again</span>
+                        </div>
+                        <div className="stat-item">
+                          <span className="stat-value">
+                            {reviewData.difficulty_level}
+                          </span>
+                          <span className="stat-label">Difficulty</span>
+                        </div>
+                        <div className="stat-item">
+                          <span className="stat-value">
+                            {reviewData.total_ratings}
+                          </span>
+                          <span className="stat-label">Total Reviews</span>
+                        </div>
+                      </div>
                     </div>
-                    <div className="stat-item">
-                      <span className="stat-value">
-                        {reviewData.would_take_again}%
-                      </span>
-                      <span className="stat-label">Would Take Again</span>
+                  )}
+                </div>
+
+                {reviewData && (
+                  <div className="instructor-charts-container">
+                    <div className="chart-container">
+                      <h3>Rating Distribution</h3>
+                      <ResponsiveContainer width="100%" height={150}>
+                        <BarChart data={getChartData().ratingData}>
+                          <CartesianGrid
+                            strokeDasharray="3 3"
+                            stroke="var(--colour-neutral-800)"
+                          />
+                          <XAxis
+                            dataKey="rating"
+                            stroke="var(--colour-neutral-400)"
+                            fontSize={12}
+                          />
+                          <YAxis
+                            stroke="var(--colour-neutral-400)"
+                            fontSize={12}
+                          />
+                          <Tooltip
+                            contentStyle={{
+                              backgroundColor: "var(--colour-neutral-1100)",
+                              border: "1px solid var(--colour-neutral-800)",
+                              borderRadius: "0.5rem",
+                              color: "var(--colour-neutral-200)",
+                            }}
+                            formatter={(value: number) => [
+                              `${value} reviews`,
+                              "Count",
+                            ]}
+                            labelFormatter={(label: string) =>
+                              `Rating: ${label}`
+                            }
+                          />
+                          <Bar
+                            dataKey="count"
+                            fill="var(--colour-sosy-green-500)"
+                            radius={[2, 2, 0, 0]}
+                          />
+                        </BarChart>
+                      </ResponsiveContainer>
                     </div>
-                    <div className="stat-item">
-                      <span className="stat-value">
-                        {reviewData.difficulty_level}
-                      </span>
-                      <span className="stat-label">Difficulty</span>
-                    </div>
-                    <div className="stat-item">
-                      <span className="stat-value">
-                        {reviewData.total_ratings}
-                      </span>
-                      <span className="stat-label">Total Reviews</span>
+                    <div className="chart-container">
+                      <h3>Difficulty Distribution</h3>
+                      <ResponsiveContainer width="100%" height={150}>
+                        <BarChart data={getChartData().difficultyData}>
+                          <CartesianGrid
+                            strokeDasharray="3 3"
+                            stroke="var(--colour-neutral-800)"
+                          />
+                          <XAxis
+                            dataKey="difficulty"
+                            stroke="var(--colour-neutral-400)"
+                            fontSize={12}
+                          />
+                          <YAxis
+                            stroke="var(--colour-neutral-400)"
+                            fontSize={12}
+                          />
+                          <Tooltip
+                            contentStyle={{
+                              backgroundColor: "var(--colour-neutral-1100)",
+                              border: "1px solid var(--colour-neutral-800)",
+                              borderRadius: "0.5rem",
+                              color: "var(--colour-neutral-200)",
+                            }}
+                            formatter={(value: number) => [
+                              `${value} reviews`,
+                              "Count",
+                            ]}
+                            labelFormatter={(label: string) =>
+                              `Difficulty: ${label}`
+                            }
+                          />
+                          <Bar
+                            dataKey="count"
+                            fill="var(--colour-neutral-500)"
+                            radius={[2, 2, 0, 0]}
+                          />
+                        </BarChart>
+                      </ResponsiveContainer>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
 
             <h2>Courses Taught</h2>
@@ -422,17 +552,30 @@ const InstructorPage = () => {
                             <div key={index} className="review-card">
                               <div className="review-header">
                                 <div className="review-rating">
-                                  <span className="rating-value">
-                                    Rating: {+review.rating}/5
-                                  </span>
-                                  <span className="rating-difficulty">
-                                    Difficulty: {review.difficulty}
-                                  </span>
-                                </div>
-                                <div className="review-meta">
                                   <span className="course-code">
                                     {review.course_code}
                                   </span>
+                                  <div className="rating-line">
+                                    <span className="rating-value">
+                                      Rating: {+review.rating}/5
+                                    </span>
+                                    <span className="rating-value">
+                                      Difficulty: {+review.difficulty}/5
+                                    </span>
+                                  </div>
+                                </div>
+                                <div className="review-meta">
+                                  {/* <div className="review-metadata-tags">
+                                    <span className="metadata-tag">{review.metadata.for_credit}</span>
+                                    <span className="metadata-tag">{review.metadata.attendance}</span>
+                                    {review.metadata.grade && (
+                                      <span className="metadata-tag">Grade: {review.metadata.grade}</span>
+                                    )}
+                                    <span className="metadata-tag">{review.metadata.textbook}</span>
+                                    {review.metadata.onlineClass && (
+                                      <span className="metadata-tag">{review.metadata.onlineClass}</span>
+                                    )}
+                                  </div> */}
                                   <span className="review-date">
                                     {review.date}
                                   </span>
@@ -441,6 +584,7 @@ const InstructorPage = () => {
                               <div className="review-content">
                                 <p>{review.review_msg}</p>
                               </div>
+
                               {review.tags && review.tags.length > 0 && (
                                 <div className="review-tags">
                                   {review.tags.map((tag, tagIndex) => (
