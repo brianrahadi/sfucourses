@@ -120,7 +120,7 @@ const ReviewsAndPostsTabs: React.FC<ReviewsAndPostsTabsProps> = ({
                         onChange={(e) => onCourseFilterChange(e.target.value)}
                         className="course-filter-dropdown"
                       >
-                        <option value="all">All Courses</option>
+                        <option value="all">All Instructors</option>
                         {getCourseCodesWithCounts().map(
                           ({ courseCode, count }) => (
                             <option key={courseCode} value={courseCode}>
