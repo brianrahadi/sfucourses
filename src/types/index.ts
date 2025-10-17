@@ -104,7 +104,7 @@ export interface ReviewMetadata {
 export interface Review {
   rating: string;
   difficulty: string;
-  courseCode: string;
+  course_code: string;
   date: string;
   metadata: ReviewMetadata;
   review_msg: string;

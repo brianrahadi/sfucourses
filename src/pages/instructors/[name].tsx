@@ -43,10 +43,59 @@ const InstructorPage = () => {
   >([]);
   const [reviewsPage, setReviewsPage] = useState(1);
   const [redditPage, setRedditPage] = useState(1);
+  const [selectedCourseFilter, setSelectedCourseFilter] =
+    useState<string>("all");
   const reviewsPerPage = 5;
   const redditPerPage = 5;
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
+
+  // Get course codes with review counts
+  const getCourseCodesWithCounts = useCallback(() => {
+    if (!reviewData?.reviews) return [];
+
+    const courseCounts = reviewData.reviews.reduce((acc, review) => {
+      acc[review.course_code] = (acc[review.course_code] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    return Object.entries(courseCounts)
+      .map(([courseCode, count]) => ({ courseCode, count }))
+      .sort((a, b) => b.count - a.count);
+  }, [reviewData?.reviews]);
+
+  // Filter reviews based on selected course
+  const getFilteredReviews = useCallback(() => {
+    if (!reviewData?.reviews) return [];
+
+    if (selectedCourseFilter === "all") {
+      return reviewData.reviews;
+    }
+
+    return reviewData.reviews.filter(
+      (review) => review.course_code === selectedCourseFilter
+    );
+  }, [reviewData?.reviews, selectedCourseFilter]);
+
+  // Get average rating and difficulty for current filter
+  const getFilterStats = useCallback(() => {
+    const filteredReviews = getFilteredReviews();
+    if (filteredReviews.length === 0) return { avgRating: 0, avgDifficulty: 0 };
+
+    const totalRating = filteredReviews.reduce(
+      (sum, review) => sum + parseFloat(review.rating),
+      0
+    );
+    const totalDifficulty = filteredReviews.reduce(
+      (sum, review) => sum + parseFloat(review.difficulty),
+      0
+    );
+
+    return {
+      avgRating: totalRating / filteredReviews.length,
+      avgDifficulty: totalDifficulty / filteredReviews.length,
+    };
+  }, [getFilteredReviews]);
 
   // Fetch Reddit posts
   const fetchRedditPosts = useCallback(async (query: string) => {
@@ -65,15 +114,16 @@ const InstructorPage = () => {
 
   // Load more reviews
   const loadMoreReviews = useCallback(() => {
-    if (!reviewData?.reviews) return;
+    const filteredReviews = getFilteredReviews();
+    if (!filteredReviews.length) return;
 
     const startIndex = (reviewsPage - 1) * reviewsPerPage;
     const endIndex = startIndex + reviewsPerPage;
-    const newReviews = reviewData.reviews.slice(startIndex, endIndex);
+    const newReviews = filteredReviews.slice(startIndex, endIndex);
 
     setDisplayedReviews((prev) => [...prev, ...newReviews]);
     setReviewsPage((prev) => prev + 1);
-  }, [reviewData?.reviews, reviewsPage]);
+  }, [getFilteredReviews, reviewsPage]);
 
   // Load more Reddit posts
   const loadMoreRedditPosts = useCallback(() => {
@@ -169,12 +219,16 @@ const InstructorPage = () => {
 
   // Initialize displayed items when data changes
   useEffect(() => {
-    if (reviewData?.reviews) {
-      const initialReviews = reviewData.reviews.slice(0, reviewsPerPage);
+    const filteredReviews = getFilteredReviews();
+    if (filteredReviews.length > 0) {
+      const initialReviews = filteredReviews.slice(0, reviewsPerPage);
       setDisplayedReviews(initialReviews);
       setReviewsPage(2);
+    } else {
+      setDisplayedReviews([]);
+      setReviewsPage(1);
     }
-  }, [reviewData]);
+  }, [reviewData, selectedCourseFilter, getFilteredReviews]);
 
   useEffect(() => {
     if (redditPosts.length > 0) {
@@ -322,7 +376,47 @@ const InstructorPage = () => {
                       </div>
                     ) : reviewData ? (
                       <div className="reviews-list">
-                        <h3>Recent Reviews</h3>
+                        <div className="reviews-header">
+                          <h3>Recent Reviews</h3>
+                          <div className="filter-controls">
+                            <div className="course-filter">
+                              <select
+                                value={selectedCourseFilter}
+                                onChange={(e) =>
+                                  setSelectedCourseFilter(e.target.value)
+                                }
+                                className="course-filter-dropdown"
+                              >
+                                <option value="all">All Courses</option>
+                                {getCourseCodesWithCounts().map(
+                                  ({ courseCode, count }) => (
+                                    <option key={courseCode} value={courseCode}>
+                                      {courseCode} ({count})
+                                    </option>
+                                  )
+                                )}
+                              </select>
+                            </div>
+                            <div className="filter-stats">
+                              <div className="filter-stat-item">
+                                <span className="filter-stat-label">
+                                  Avg Rating:
+                                </span>
+                                <span className="filter-stat-value">
+                                  {getFilterStats().avgRating.toFixed(1)}/5
+                                </span>
+                              </div>
+                              <div className="filter-stat-item">
+                                <span className="filter-stat-label">
+                                  Avg Difficulty:
+                                </span>
+                                <span className="filter-stat-value">
+                                  {getFilterStats().avgDifficulty.toFixed(1)}/5
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                         {displayedReviews.length > 0 ? (
                           displayedReviews.map((review, index) => (
                             <div key={index} className="review-card">

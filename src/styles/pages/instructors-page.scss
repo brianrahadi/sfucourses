@@ -59,7 +59,7 @@
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 1rem;
 
-  // @include viewport(mobile) {
+  // @media (max-width:768px) {
   //   grid-template-columns: repeat(2, 1fr);
   //   gap: 0.75rem;
   // }
@@ -100,6 +100,97 @@
   gap: 1rem;
 }
 
+.reviews-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  gap: 1rem;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+}
+
+.filter-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    width: 100%;
+  }
+}
+
+.course-filter {
+  display: flex;
+  align-items: center;
+}
+
+.filter-stats {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+}
+
+.filter-stat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: var(--colour-neutral-1000);
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.375rem;
+  border: 1px solid var(--colour-neutral-900);
+}
+
+.filter-stat-label {
+  font-size: 0.875rem;
+  color: var(--colour-neutral-400);
+  font-weight: 500;
+}
+
+.filter-stat-value {
+  font-size: 0.875rem;
+  color: var(--colour-sosy-green-500);
+  font-weight: bold;
+}
+
+.course-filter-dropdown {
+  background: var(--colour-neutral-1100);
+  border: 1px solid var(--colour-neutral-1000);
+  border-radius: 0.375rem;
+  color: var(--colour-neutral-200);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+
+  &:hover {
+    border-color: var(--colour-neutral-800);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--colour-sosy-green-500);
+  }
+
+  option {
+    background: var(--colour-neutral-1100);
+    color: var(--colour-neutral-200);
+  }
+}
+
 .review-card {
   background: var(--colour-neutral-1100);
   border-radius: 0.5rem;
@@ -120,7 +211,7 @@
   margin-bottom: 0.75rem;
   gap: 1rem;
 
-  // @include viewport(mobile) {
+  // @media (max-width:768px) {
   //   flex-direction: column;
   //   gap: 0.5rem;
   // }
@@ -149,7 +240,7 @@
   align-items: flex-end;
   gap: 0.25rem;
 
-  // @include viewport(mobile) {
+  // @media (max-width:768px) {
   //   align-items: flex-start;
   // }
 }
