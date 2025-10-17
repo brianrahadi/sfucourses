@@ -79,7 +79,6 @@
     border-radius: 0.5rem;
     padding: 0.5rem 0.75rem;
     color: var(--colour-neutral-200);
-    font-size: 0.875rem;
     cursor: pointer;
     min-width: 150px;
 
@@ -115,13 +114,11 @@
   }
 
   .filter-stat-label {
-    font-size: 0.875rem;
     color: var(--colour-neutral-400);
     font-weight: 500;
   }
 
   .filter-stat-value {
-    font-size: 0.875rem;
     color: var(--colour-sosy-green-500);
     font-weight: bold;
   }
@@ -168,12 +165,11 @@
 .review-rating .course-code {
   font-weight: bold;
   color: var(--colour-neutral-200);
-  font-size: 1rem;
+  font-size: 1.2rem;
   margin-bottom: 0.25rem;
 }
 
 .instructor-name {
-  font-size: 0.875rem;
   color: var(--colour-neutral-400);
   font-style: italic;
 }
@@ -185,13 +181,11 @@
 }
 
 .rating-value {
-  font-size: 1rem;
   font-weight: bold;
   color: var(--colour-sosy-green-500);
 }
 
 .rating-difficulty {
-  font-size: 1rem;
   color: var(--colour-neutral-500);
   font-weight: 500;
 }
@@ -215,14 +209,12 @@
   color: var(--colour-sosy-green-300);
   padding: 0.25rem 0.5rem;
   border-radius: 0.25rem;
-  font-size: 0.75rem;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.025em;
 }
 
 .review-date {
-  font-size: 0.875rem;
   color: var(--colour-neutral-400);
 }
 
@@ -248,7 +240,7 @@
   color: var(--colour-neutral-300);
   padding: 0.25rem 0.5rem;
   border-radius: 0.25rem;
-  font-size: 0.75rem;
+  // font-size: 1rem;
   font-weight: 500;
 }
 
@@ -261,7 +253,6 @@
 }
 
 .helpful-count {
-  font-size: 0.875rem;
   color: var(--colour-neutral-400);
 }
 
@@ -311,7 +302,6 @@
   }
 
   p {
-    font-size: 0.875rem;
     color: var(--colour-neutral-400);
     margin: 0;
   }
@@ -329,7 +319,6 @@
   }
 
   p {
-    font-size: 0.875rem;
     color: var(--colour-neutral-400);
     margin: 0;
   }
