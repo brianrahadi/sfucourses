@@ -104,7 +104,7 @@ const ReviewsAndPostsTabs: React.FC<ReviewsAndPostsTabsProps> = ({
           className={`tab-button ${activeTab === "reddit" ? "active" : ""}`}
           onClick={() => setActiveTab("reddit")}
         >
-          r/simonfraser Posts
+          r/simonfraser
         </button>
       </div>
 

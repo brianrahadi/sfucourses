@@ -67,7 +67,7 @@ const InstructorPage = () => {
 
     return Object.entries(courseCounts)
       .map(([courseCode, count]) => ({ courseCode, count }))
-      .sort((a, b) => b.count - a.count);
+      .sort((a, b) => a.courseCode.localeCompare(b.courseCode));
   }, [reviewData?.reviews]);
 
   // Filter reviews based on selected course

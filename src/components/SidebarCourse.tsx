@@ -185,10 +185,12 @@ export const SidebarCourse: React.FC<SidebarCourseProps> = ({
   const getInstructorsWithCounts = useCallback(() => {
     if (!courseReviewData?.instructors) return [];
 
-    return courseReviewData.instructors.map((instructor) => ({
-      instructorName: instructor.professor_name,
-      count: instructor.review_count,
-    }));
+    return courseReviewData.instructors
+      .map((instructor) => ({
+        instructorName: instructor.professor_name,
+        count: instructor.review_count,
+      }))
+      .sort((a, b) => a.instructorName.localeCompare(b.instructorName));
   }, [courseReviewData]);
 
   // Get filtered reviews based on instructor selection
