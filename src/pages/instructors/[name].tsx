@@ -480,7 +480,7 @@ const InstructorPage = () => {
                   }`}
                   onClick={() => setActiveTab("reviews")}
                 >
-                  Student Reviews
+                  RateMyProf Reviews
                 </button>
                 <button
                   className={`tab-button ${
@@ -507,7 +507,6 @@ const InstructorPage = () => {
                     ) : reviewData ? (
                       <div className="reviews-list">
                         <div className="reviews-header">
-                          <h3>Recent Reviews</h3>
                           <div className="filter-controls">
                             <div className="course-filter">
                               <select
