@@ -21,6 +21,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { BASE_URL } from "@const";
 
 interface RedditPostData {
   title: string;
@@ -193,7 +194,7 @@ const InstructorPage = () => {
     setReviewLoading(true);
     setReviewError(null);
     const formattedName = name.replace(/\s+/g, "_");
-    fetch(`http://localhost:8080/v1/rest/reviews/instructors/${formattedName}`)
+    fetch(`${BASE_URL}/reviews/instructors/${formattedName}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Review data not available");
@@ -438,6 +439,7 @@ const InstructorPage = () => {
 
             {/* Reviews and Posts Tabs */}
             <ReviewsAndPostsTabs
+              context="instructor"
               reviewData={reviewData}
               reviewLoading={reviewLoading}
               reviewError={reviewError}

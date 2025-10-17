@@ -12,6 +12,16 @@ import {
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useState, useEffect, useRef } from "react";
 import { CourseOutline, Instructor } from "@types";
+
+interface InstructorReviewSummary {
+  URL: string;
+  Quality: string;
+  Ratings: string;
+  Name: string;
+  WouldTakeAgain: string;
+  Difficulty: string;
+  Department: string;
+}
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useExploreFilters } from "src/hooks/UseExploreFilters";
 import { useInstructorExploreFilters } from "@hooks";
@@ -31,6 +41,7 @@ import {
 import { numberWithCommas } from "@utils/format";
 import { RotatingLines } from "react-loader-spinner";
 import { SelectInstance } from "react-select";
+import { BASE_URL } from "@const";
 
 export const getStaticProps: GetStaticProps = async () => {
   const queryClient = new QueryClient();
@@ -48,6 +59,14 @@ export const getStaticProps: GetStaticProps = async () => {
     queryFn: async () => {
       const res = await getCourseAPIData("/instructors");
       return res as Instructor[];
+    },
+  });
+
+  await queryClient.prefetchQuery({
+    queryKey: ["instructorReviews"],
+    queryFn: async () => {
+      const res = await fetch(`${BASE_URL}/reviews`);
+      return res.json() as Promise<InstructorReviewSummary[]>;
     },
   });
 
@@ -78,6 +97,17 @@ const ExplorePage: React.FC = () => {
     staleTime: 60 * 60 * 1000,
   });
 
+  const { data: instructorReviewsData, isLoading: isLoadingReviews } = useQuery(
+    {
+      queryKey: ["instructorReviews"],
+      queryFn: async () => {
+        const res = await fetch(`${BASE_URL}/reviews`);
+        return res.json() as Promise<InstructorReviewSummary[]>;
+      },
+      staleTime: 60 * 60 * 1000,
+    }
+  );
+
   const courses = courseData || [];
   const [visibleCourses, setVisibleCourses] = useState<CourseOutline[]>([]);
   const [maxVisibleCoursesLength, setMaxVisibleCoursesLength] =
@@ -98,6 +128,18 @@ const ExplorePage: React.FC = () => {
 
   const courseFilters = useExploreFilters();
   const instructorFilters = useInstructorExploreFilters();
+
+  // Get review data for a specific instructor
+  const getInstructorReviewData = (
+    instructorName: string
+  ): InstructorReviewSummary | null => {
+    if (!instructorReviewsData) return null;
+    return (
+      instructorReviewsData.find(
+        (review) => review.Name.toLowerCase() === instructorName.toLowerCase()
+      ) || null
+    );
+  };
 
   // Keyboard shortcuts for explore page
   useEffect(() => {
@@ -374,6 +416,7 @@ const ExplorePage: React.FC = () => {
                   instructor={instructor}
                   query={query}
                   isLink
+                  reviewData={getInstructorReviewData(instructor.name)}
                 />
               ))}
             </InfiniteScroll>

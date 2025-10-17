@@ -111,6 +111,7 @@ export interface Review {
   helpful: string;
   not_helpful: string;
   tags: string[];
+  instructor_name?: string; // Added for course page context
 }
 
 // Instructor-level review data from RateMyProfessors

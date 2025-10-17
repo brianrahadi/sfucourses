@@ -12,7 +12,10 @@ interface RedditPostData {
   url: string;
 }
 
+type ContextType = "instructor" | "course";
+
 interface ReviewsAndPostsTabsProps {
+  context: ContextType;
   reviewData: {
     reviews: Review[];
   } | null;
@@ -29,9 +32,11 @@ interface ReviewsAndPostsTabsProps {
   getFilterStats: () => { avgRating: number; avgDifficulty: number };
   selectedCourseFilter: string;
   onCourseFilterChange: (value: string) => void;
+  getInstructorName?: (courseCode: string) => string; // Optional function to get instructor name for course code
 }
 
 const ReviewsAndPostsTabs: React.FC<ReviewsAndPostsTabsProps> = ({
+  context,
   reviewData,
   reviewLoading,
   reviewError,
@@ -46,6 +51,7 @@ const ReviewsAndPostsTabs: React.FC<ReviewsAndPostsTabsProps> = ({
   getFilterStats,
   selectedCourseFilter,
   onCourseFilterChange,
+  getInstructorName,
 }) => {
   const [activeTab, setActiveTab] = useState<"reviews" | "reddit">("reviews");
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
@@ -120,7 +126,11 @@ const ReviewsAndPostsTabs: React.FC<ReviewsAndPostsTabsProps> = ({
                         onChange={(e) => onCourseFilterChange(e.target.value)}
                         className="course-filter-dropdown"
                       >
-                        <option value="all">All Instructors</option>
+                        <option value="all">
+                          {context === "instructor"
+                            ? "All Courses"
+                            : "All Instructors"}
+                        </option>
                         {getCourseCodesWithCounts().map(
                           ({ courseCode, count }) => (
                             <option key={courseCode} value={courseCode}>
@@ -153,9 +163,13 @@ const ReviewsAndPostsTabs: React.FC<ReviewsAndPostsTabsProps> = ({
                     <div key={index} className="review-card">
                       <div className="review-header">
                         <div className="review-rating">
-                          <span className="course-code">
-                            {review.course_code}
-                          </span>
+                          <div className="course-instructor-info">
+                            <span className="course-code">
+                              {context === "course"
+                                ? review.instructor_name ?? review.course_code
+                                : review.course_code}
+                            </span>
+                          </div>
                           <div className="rating-line">
                             <span className="rating-value">
                               Rating: {+review.rating}/5

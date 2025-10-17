@@ -13,6 +13,16 @@ import { CourseOutline, Review } from "@types";
 import { useRouter } from "next/router";
 import { useCourseOfferings } from "@hooks";
 import { RotatingLines } from "react-loader-spinner";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import { BASE_URL } from "@const";
 
 interface CoursePageProps {}
 
@@ -93,7 +103,7 @@ const CoursePage: React.FC<CoursePageProps> = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8080/v1/rest/reviews/courses/${courseCodeStr}`
+        `${BASE_URL}/reviews/courses/${courseCodeStr}`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch course reviews");
@@ -154,19 +164,20 @@ const CoursePage: React.FC<CoursePageProps> = () => {
   const getFilteredReviews = useCallback(() => {
     if (!courseReviewData?.instructors) return [];
 
-    const allReviews = courseReviewData.instructors.flatMap(
-      (instructor) => instructor.reviews
+    const allReviews = courseReviewData.instructors.flatMap((instructor) =>
+      instructor.reviews.map((review) => ({
+        ...review,
+        instructor_name: instructor.professor_name,
+      }))
     );
 
     if (selectedInstructorFilter === "all") {
       return allReviews;
     }
 
-    const selectedInstructor = courseReviewData.instructors.find(
-      (instructor) => instructor.professor_name === selectedInstructorFilter
+    return allReviews.filter(
+      (review) => review.instructor_name === selectedInstructorFilter
     );
-
-    return selectedInstructor ? selectedInstructor.reviews : [];
   }, [courseReviewData, selectedInstructorFilter]);
 
   // Get filter stats for current selection
@@ -216,6 +227,57 @@ const CoursePage: React.FC<CoursePageProps> = () => {
       setRedditPage((prev) => prev + 1);
     }
   }, [redditPosts, redditPage, redditPerPage]);
+
+  // Get chart data for rating and difficulty distribution
+  const getChartData = useCallback(() => {
+    if (!courseReviewData?.instructors) {
+      return {
+        ratingData: Array.from({ length: 5 }, (_, i) => ({
+          rating: (i + 1).toString(),
+          count: 0,
+        })),
+        difficultyData: Array.from({ length: 5 }, (_, i) => ({
+          difficulty: (i + 1).toString(),
+          count: 0,
+        })),
+      };
+    }
+
+    const allReviews = courseReviewData.instructors.flatMap(
+      (instructor) => instructor.reviews
+    );
+
+    // Initialize rating distribution (1-5)
+    const ratingDistribution = Array.from({ length: 5 }, (_, i) => ({
+      rating: (i + 1).toString(),
+      count: 0,
+    }));
+
+    // Initialize difficulty distribution (1-5)
+    const difficultyDistribution = Array.from({ length: 5 }, (_, i) => ({
+      difficulty: (i + 1).toString(),
+      count: 0,
+    }));
+
+    // Count ratings and difficulties
+    allReviews.forEach((review) => {
+      const rating = Math.round(parseFloat(review.rating));
+      const difficulty = Math.round(parseFloat(review.difficulty));
+
+      if (rating >= 1 && rating <= 5) {
+        ratingDistribution[rating - 1].count++;
+      }
+
+      if (difficulty >= 1 && difficulty <= 5) {
+        difficultyDistribution[difficulty - 1].count++;
+      }
+    });
+
+    return {
+      ratingData: ratingDistribution,
+      difficultyData: difficultyDistribution,
+    };
+  }, [courseReviewData]);
 
   useEffect(() => {
     if (courseCode.dept && courseCode.number) {
@@ -354,6 +416,48 @@ const CoursePage: React.FC<CoursePageProps> = () => {
                 </p>
               </div>
             </div>
+
+            {/* Course Review Summary Stats */}
+            {courseReviewData && (
+              <div className="course-review-summary">
+                <div className="review-stats">
+                  <div className="stat-item">
+                    <span className="stat-value">
+                      {(
+                        courseReviewData.instructors.reduce(
+                          (sum, instructor) => sum + instructor.avg_rating,
+                          0
+                        ) / courseReviewData.instructors.length
+                      ).toFixed(2)}
+                    </span>
+                    <span className="stat-label">Overall Rating</span>
+                  </div>
+                  <div className="stat-item">
+                    <span className="stat-value">
+                      {(
+                        courseReviewData.instructors.reduce(
+                          (sum, instructor) => sum + instructor.avg_difficulty,
+                          0
+                        ) / courseReviewData.instructors.length
+                      ).toFixed(2)}
+                    </span>
+                    <span className="stat-label">Overall Difficulty</span>
+                  </div>
+                  <div className="stat-item">
+                    <span className="stat-value">
+                      {courseReviewData.total_reviews}
+                    </span>
+                    <span className="stat-label">Total Reviews</span>
+                  </div>
+                  <div className="stat-item">
+                    <span className="stat-value">
+                      {courseReviewData.instructors.length}
+                    </span>
+                    <span className="stat-label">Instructors</span>
+                  </div>
+                </div>
+              </div>
+            )}
             <div className="course-offerings">
               {isLoadingOfferings || isIdleOfferings ? (
                 <div className="loading-spinner-container">
@@ -369,6 +473,92 @@ const CoursePage: React.FC<CoursePageProps> = () => {
             </div>
           </div>
           <div className="prerequisites-visualization">
+            {/* Course Review Charts */}
+            {courseReviewData && (
+              <div className="course-charts-section">
+                <div className="course-charts">
+                  <div className="chart-container">
+                    <h3>Rating Distribution</h3>
+                    <ResponsiveContainer width="100%" height={150}>
+                      <BarChart data={getChartData().ratingData}>
+                        <CartesianGrid
+                          strokeDasharray="3 3"
+                          stroke="var(--colour-neutral-800)"
+                        />
+                        <XAxis
+                          dataKey="rating"
+                          stroke="var(--colour-neutral-400)"
+                          fontSize={12}
+                        />
+                        <YAxis
+                          stroke="var(--colour-neutral-400)"
+                          fontSize={12}
+                        />
+                        <Tooltip
+                          contentStyle={{
+                            backgroundColor: "var(--colour-neutral-1100)",
+                            border: "1px solid var(--colour-neutral-800)",
+                            borderRadius: "0.5rem",
+                            color: "var(--colour-neutral-200)",
+                          }}
+                          formatter={(value: number) => [
+                            `${value} reviews`,
+                            "Count",
+                          ]}
+                          labelFormatter={(label: string) => `Rating: ${label}`}
+                        />
+                        <Bar
+                          dataKey="count"
+                          fill="var(--colour-sosy-green-500)"
+                          radius={[2, 2, 0, 0]}
+                        />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                  <div className="chart-container">
+                    <h3>Difficulty Distribution</h3>
+                    <ResponsiveContainer width="100%" height={150}>
+                      <BarChart data={getChartData().difficultyData}>
+                        <CartesianGrid
+                          strokeDasharray="3 3"
+                          stroke="var(--colour-neutral-800)"
+                        />
+                        <XAxis
+                          dataKey="difficulty"
+                          stroke="var(--colour-neutral-400)"
+                          fontSize={12}
+                        />
+                        <YAxis
+                          stroke="var(--colour-neutral-400)"
+                          fontSize={12}
+                        />
+                        <Tooltip
+                          contentStyle={{
+                            backgroundColor: "var(--colour-neutral-1100)",
+                            border: "1px solid var(--colour-neutral-800)",
+                            borderRadius: "0.5rem",
+                            color: "var(--colour-neutral-200)",
+                          }}
+                          formatter={(value: number) => [
+                            `${value} reviews`,
+                            "Count",
+                          ]}
+                          labelFormatter={(label: string) =>
+                            `Difficulty: ${label}`
+                          }
+                        />
+                        <Bar
+                          dataKey="count"
+                          fill="var(--colour-neutral-500)"
+                          radius={[2, 2, 0, 0]}
+                        />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <iframe
               src={`https://prerequisites-visualization.vercel.app/sfu/courses/${course.dept.toLowerCase()}/${
                 course.number
@@ -381,6 +571,7 @@ const CoursePage: React.FC<CoursePageProps> = () => {
 
         {/* Reviews and Posts Tabs */}
         <ReviewsAndPostsTabs
+          context="course"
           reviewData={
             courseReviewData ? { reviews: getFilteredReviews() } : null
           }

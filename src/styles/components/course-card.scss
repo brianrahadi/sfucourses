@@ -125,3 +125,37 @@
     margin-top: 1rem;
   }
 }
+
+// Instructor Header with Review Badges
+.instructor-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.instructor-name-section {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.instructor-review-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.review-badge {
+  font-size: 0.75rem !important;
+  padding: 0.25rem 0.5rem !important;
+  background: var(--colour-neutral-1000) !important;
+  // border: 1px solid var(--colour-neutral-800) !important;
+  color: var(--colour-neutral-300) !important;
+
+  &:hover {
+    background: var(--colour-neutral-900) !important;
+    border-color: var(--colour-neutral-700) !important;
+  }
+}

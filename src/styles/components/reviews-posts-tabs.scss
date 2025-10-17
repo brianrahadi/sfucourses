@@ -63,6 +63,7 @@
 
     @media (max-width: 768px) {
       gap: 0.5rem;
+      flex-direction: column;
       align-items: flex-start;
     }
   }
@@ -158,11 +159,23 @@
   gap: 0.25rem;
 }
 
+.course-instructor-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
 .review-rating .course-code {
   font-weight: bold;
   color: var(--colour-neutral-200);
   font-size: 1rem;
   margin-bottom: 0.25rem;
+}
+
+.instructor-name {
+  font-size: 0.875rem;
+  color: var(--colour-neutral-400);
+  font-style: italic;
 }
 
 .rating-line {
