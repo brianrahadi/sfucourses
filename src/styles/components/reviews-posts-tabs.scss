@@ -58,7 +58,7 @@
   .filter-controls {
     display: flex;
     gap: 1rem;
-    align-items: center;
+    align-items: flex-start;
     justify-content: flex-end;
 
     @media (max-width: 768px) {
