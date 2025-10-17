@@ -277,6 +277,17 @@
   color: var(--colour-neutral-200);
   font-size: 1.2rem;
   margin-bottom: 0.25rem;
+
+  &.link {
+    text-decoration: none;
+    color: var(--colour-sosy-green-500);
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: var(--colour-sosy-green-400);
+      text-decoration: underline;
+    }
+  }
 }
 
 .instructor-name {

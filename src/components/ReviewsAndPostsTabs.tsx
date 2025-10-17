@@ -369,11 +369,25 @@ const ReviewsAndPostsTabs: React.FC<ReviewsAndPostsTabsProps> = ({
                       <div className="review-header">
                         <div className="review-rating">
                           <div className="course-instructor-info">
-                            <span className="course-code">
-                              {context === "course"
-                                ? review.instructor_name ?? review.course_code
-                                : review.course_code}
-                            </span>
+                            {context === "course" ? (
+                              <Link
+                                href={`/instructors/${encodeURIComponent(
+                                  review.instructor_name ?? ""
+                                )}`}
+                                className="course-code link"
+                              >
+                                {review.instructor_name ?? review.course_code}
+                              </Link>
+                            ) : (
+                              <Link
+                                href={`/explore/${review.course_code
+                                  .toLowerCase()
+                                  .replace(/([a-z])([0-9])/g, "$1-$2")}`}
+                                className="course-code link"
+                              >
+                                {review.course_code}
+                              </Link>
+                            )}
                           </div>
                           <div className="rating-line">
                             <span className="rating-value">
