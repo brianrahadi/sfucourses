@@ -52,6 +52,7 @@ const InstructorPage = () => {
   const [redditPage, setRedditPage] = useState(1);
   const [selectedCourseFilter, setSelectedCourseFilter] =
     useState<string>("all");
+  const [selectedSortOption, setSelectedSortOption] = useState("latest");
   const reviewsPerPage = 5;
   const redditPerPage = 5;
 
@@ -73,14 +74,58 @@ const InstructorPage = () => {
   const getFilteredReviews = useCallback(() => {
     if (!reviewData?.reviews) return [];
 
-    if (selectedCourseFilter === "all") {
-      return reviewData.reviews;
+    let filteredReviews = reviewData.reviews;
+
+    if (selectedCourseFilter !== "all") {
+      filteredReviews = reviewData.reviews.filter(
+        (review) => review.course_code === selectedCourseFilter
+      );
     }
 
-    return reviewData.reviews.filter(
-      (review) => review.course_code === selectedCourseFilter
-    );
-  }, [reviewData?.reviews, selectedCourseFilter]);
+    // Sort reviews based on selected sort option
+    switch (selectedSortOption) {
+      case "latest":
+        filteredReviews.sort((a, b) => {
+          // Parse dates and sort by latest first
+          const dateA = new Date(a.date);
+          const dateB = new Date(b.date);
+          return dateB.getTime() - dateA.getTime();
+        });
+        break;
+      case "highest":
+        filteredReviews.sort((a, b) => {
+          const ratingA = parseFloat(a.rating);
+          const ratingB = parseFloat(b.rating);
+          // Primary sort by rating (highest first)
+          if (ratingA !== ratingB) {
+            return ratingB - ratingA;
+          }
+          // Secondary sort by latest date
+          const dateA = new Date(a.date);
+          const dateB = new Date(b.date);
+          return dateB.getTime() - dateA.getTime();
+        });
+        break;
+      case "lowest":
+        filteredReviews.sort((a, b) => {
+          const ratingA = parseFloat(a.rating);
+          const ratingB = parseFloat(b.rating);
+          // Primary sort by rating (lowest first)
+          if (ratingA !== ratingB) {
+            return ratingA - ratingB;
+          }
+          // Secondary sort by latest date
+          const dateA = new Date(a.date);
+          const dateB = new Date(b.date);
+          return dateB.getTime() - dateA.getTime();
+        });
+        break;
+      default:
+        break;
+    }
+
+    return filteredReviews;
+  }, [reviewData?.reviews, selectedCourseFilter, selectedSortOption]);
 
   // Get average rating and difficulty for current filter
   const getFilterStats = useCallback(() => {
@@ -235,7 +280,12 @@ const InstructorPage = () => {
       setDisplayedReviews([]);
       setReviewsPage(1);
     }
-  }, [reviewData, selectedCourseFilter, getFilteredReviews]);
+  }, [
+    reviewData,
+    selectedCourseFilter,
+    selectedSortOption,
+    getFilteredReviews,
+  ]);
 
   useEffect(() => {
     if (redditPosts.length > 0) {
@@ -454,6 +504,8 @@ const InstructorPage = () => {
               getFilterStats={getFilterStats}
               selectedCourseFilter={selectedCourseFilter}
               onCourseFilterChange={setSelectedCourseFilter}
+              selectedSortOption={selectedSortOption}
+              onSortOptionChange={setSelectedSortOption}
             />
           </div>
         ) : null}

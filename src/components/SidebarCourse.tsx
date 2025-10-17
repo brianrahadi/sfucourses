@@ -108,6 +108,7 @@ export const SidebarCourse: React.FC<SidebarCourseProps> = ({
   const [reviewsPage, setReviewsPage] = useState(1);
   const [selectedInstructorFilter, setSelectedInstructorFilter] =
     useState("all");
+  const [selectedSortOption, setSelectedSortOption] = useState("latest");
 
   // Reddit posts state
   const [redditPosts, setRedditPosts] = useState<RedditPostData[]>([]);
@@ -201,14 +202,58 @@ export const SidebarCourse: React.FC<SidebarCourseProps> = ({
       }))
     );
 
-    if (selectedInstructorFilter === "all") {
-      return allReviews;
+    let filteredReviews = allReviews;
+
+    if (selectedInstructorFilter !== "all") {
+      filteredReviews = allReviews.filter(
+        (review) => review.instructor_name === selectedInstructorFilter
+      );
     }
 
-    return allReviews.filter(
-      (review) => review.instructor_name === selectedInstructorFilter
-    );
-  }, [courseReviewData, selectedInstructorFilter]);
+    // Sort reviews based on selected sort option
+    switch (selectedSortOption) {
+      case "latest":
+        filteredReviews.sort((a, b) => {
+          // Parse dates and sort by latest first
+          const dateA = new Date(a.date);
+          const dateB = new Date(b.date);
+          return dateB.getTime() - dateA.getTime();
+        });
+        break;
+      case "highest":
+        filteredReviews.sort((a, b) => {
+          const ratingA = parseFloat(a.rating);
+          const ratingB = parseFloat(b.rating);
+          // Primary sort by rating (highest first)
+          if (ratingA !== ratingB) {
+            return ratingB - ratingA;
+          }
+          // Secondary sort by latest date
+          const dateA = new Date(a.date);
+          const dateB = new Date(b.date);
+          return dateB.getTime() - dateA.getTime();
+        });
+        break;
+      case "lowest":
+        filteredReviews.sort((a, b) => {
+          const ratingA = parseFloat(a.rating);
+          const ratingB = parseFloat(b.rating);
+          // Primary sort by rating (lowest first)
+          if (ratingA !== ratingB) {
+            return ratingA - ratingB;
+          }
+          // Secondary sort by latest date
+          const dateA = new Date(a.date);
+          const dateB = new Date(b.date);
+          return dateB.getTime() - dateA.getTime();
+        });
+        break;
+      default:
+        break;
+    }
+
+    return filteredReviews;
+  }, [courseReviewData, selectedInstructorFilter, selectedSortOption]);
 
   // Get filter stats for current selection
   const getFilterStats = useCallback(() => {
@@ -317,7 +362,7 @@ export const SidebarCourse: React.FC<SidebarCourseProps> = ({
     }
   }, [courseOutline, fetchCourseReviews, fetchRedditPosts]);
 
-  // Update displayed reviews when filter changes
+  // Update displayed reviews when filter or sort changes
   useEffect(() => {
     if (courseReviewData) {
       const filteredReviews = getFilteredReviews();
@@ -326,6 +371,7 @@ export const SidebarCourse: React.FC<SidebarCourseProps> = ({
     }
   }, [
     selectedInstructorFilter,
+    selectedSortOption,
     courseReviewData,
     getFilteredReviews,
     reviewsPerPage,
@@ -519,6 +565,8 @@ export const SidebarCourse: React.FC<SidebarCourseProps> = ({
         getFilterStats={getFilterStats}
         selectedCourseFilter={selectedInstructorFilter}
         onCourseFilterChange={setSelectedInstructorFilter}
+        selectedSortOption={selectedSortOption}
+        onSortOptionChange={setSelectedSortOption}
       />
     </div>
   );

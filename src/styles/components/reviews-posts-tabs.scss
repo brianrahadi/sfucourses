@@ -73,23 +73,62 @@
     align-items: center;
   }
 
-  .course-filter-dropdown {
-    background: var(--colour-neutral-1100);
-    border: 1px solid var(--colour-neutral-1000);
-    border-radius: 0.5rem;
-    padding: 0.5rem 0.75rem;
-    color: var(--colour-neutral-200);
-    cursor: pointer;
-    min-width: 150px;
+  .filter-dropdowns {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    flex-wrap: wrap;
 
-    &:focus {
-      outline: none;
-      border-color: var(--colour-sosy-green-500);
+    .course-filter-dropdown {
+      background: var(--colour-neutral-1100);
+      border: 1px solid var(--colour-neutral-1000);
+      border-radius: 0.5rem;
+      padding: 0.5rem 2rem 0.5rem 0.75rem;
+      color: var(--colour-neutral-200);
+      cursor: pointer;
+      min-width: 150px;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 0.75rem center;
+      background-size: 1rem;
+
+      &:focus {
+        outline: none;
+        border-color: var(--colour-sosy-green-500);
+      }
+
+      option {
+        background: var(--colour-neutral-1100);
+        color: var(--colour-neutral-200);
+      }
     }
 
-    option {
+    .review-sorter-dropdown {
       background: var(--colour-neutral-1100);
+      border: 1px solid var(--colour-neutral-1000);
+      border-radius: 0.5rem;
+      padding: 0.5rem 2rem 0.5rem 0.75rem;
       color: var(--colour-neutral-200);
+      cursor: pointer;
+      min-width: 150px;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 0.75rem center;
+      background-size: 1rem;
+
+      &:focus {
+        outline: none;
+        border-color: var(--colour-sosy-green-500);
+      }
+
+      option {
+        background: var(--colour-neutral-1100);
+        color: var(--colour-neutral-200);
+      }
     }
   }
 
@@ -103,6 +142,7 @@
       align-items: flex-start;
     }
   }
+
   .filter-stat-item {
     display: flex;
     align-items: center;

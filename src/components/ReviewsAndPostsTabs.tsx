@@ -32,6 +32,8 @@ interface ReviewsAndPostsTabsProps {
   getFilterStats: () => { avgRating: number; avgDifficulty: number };
   selectedCourseFilter: string;
   onCourseFilterChange: (value: string) => void;
+  selectedSortOption: string;
+  onSortOptionChange: (value: string) => void;
   getInstructorName?: (courseCode: string) => string; // Optional function to get instructor name for course code
 }
 
@@ -51,6 +53,8 @@ const ReviewsAndPostsTabs: React.FC<ReviewsAndPostsTabsProps> = ({
   getFilterStats,
   selectedCourseFilter,
   onCourseFilterChange,
+  selectedSortOption,
+  onSortOptionChange,
   getInstructorName,
 }) => {
   const [activeTab, setActiveTab] = useState<"reviews" | "reddit">("reviews");
@@ -120,25 +124,38 @@ const ReviewsAndPostsTabs: React.FC<ReviewsAndPostsTabsProps> = ({
               <div className="reviews-list">
                 <div className="reviews-header">
                   <div className="filter-controls">
-                    <div className="course-filter">
-                      <select
-                        value={selectedCourseFilter}
-                        onChange={(e) => onCourseFilterChange(e.target.value)}
-                        className="course-filter-dropdown"
-                      >
-                        <option value="all">
-                          {context === "instructor"
-                            ? "All Courses"
-                            : "All Instructors"}
-                        </option>
-                        {getCourseCodesWithCounts().map(
-                          ({ courseCode, count }) => (
-                            <option key={courseCode} value={courseCode}>
-                              {courseCode} ({count})
-                            </option>
-                          )
-                        )}
-                      </select>
+                    <div className="filter-dropdowns">
+                      <div className="course-filter">
+                        <select
+                          value={selectedCourseFilter}
+                          onChange={(e) => onCourseFilterChange(e.target.value)}
+                          className="course-filter-dropdown"
+                        >
+                          <option value="all">
+                            {context === "instructor"
+                              ? "All Courses"
+                              : "All Instructors"}
+                          </option>
+                          {getCourseCodesWithCounts().map(
+                            ({ courseCode, count }) => (
+                              <option key={courseCode} value={courseCode}>
+                                {courseCode} ({count})
+                              </option>
+                            )
+                          )}
+                        </select>
+                      </div>
+                      <div className="review-sorter">
+                        <select
+                          value={selectedSortOption}
+                          onChange={(e) => onSortOptionChange(e.target.value)}
+                          className="review-sorter-dropdown"
+                        >
+                          <option value="latest">Latest Date</option>
+                          <option value="highest">Highest Rating</option>
+                          <option value="lowest">Lowest Rating</option>
+                        </select>
+                      </div>
                     </div>
                     <div className="filter-stats">
                       <div className="filter-stat-item">
