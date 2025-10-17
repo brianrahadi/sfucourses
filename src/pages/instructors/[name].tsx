@@ -366,6 +366,9 @@ const InstructorPage = () => {
               <div className="instructor-main-section">
                 <div className="instructor-info-container">
                   <h1>{instructor.name}</h1>
+                  {reviewData && reviewData.department && (
+                    <p>{reviewData.department}</p>
+                  )}
                   {reviewData && (
                     <div className="instructor-review-summary">
                       <div className="review-stats">
