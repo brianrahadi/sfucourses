@@ -428,12 +428,13 @@ const InstructorPage = () => {
                               color: "var(--colour-neutral-200)",
                             }}
                             formatter={(value: number) => [
-                              `${value} reviews`,
+                              `${value} (${(
+                                (value / +reviewData.total_ratings) *
+                                100
+                              ).toFixed(0)}%)`,
                               "Count",
                             ]}
-                            labelFormatter={(label: string) =>
-                              `Rating: ${label}`
-                            }
+                            labelFormatter={(label: string) => ``}
                           />
                           <Bar
                             dataKey="count"
@@ -468,12 +469,13 @@ const InstructorPage = () => {
                               color: "var(--colour-neutral-200)",
                             }}
                             formatter={(value: number) => [
-                              `${value} reviews`,
+                              `${value} (${(
+                                (value / +reviewData.total_ratings) *
+                                100
+                              ).toFixed(0)}%)`,
                               "Count",
                             ]}
-                            labelFormatter={(label: string) =>
-                              `Difficulty: ${label}`
-                            }
+                            labelFormatter={(label: string) => ``}
                           />
                           <Bar
                             dataKey="count"

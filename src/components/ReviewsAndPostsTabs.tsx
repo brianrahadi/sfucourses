@@ -4,6 +4,15 @@ import { RotatingLines } from "react-loader-spinner";
 import { BiSolidUpvote } from "react-icons/bi";
 import { Review } from "../types";
 import { formatShortDate } from "../utils/format";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip as RechartsTooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 interface RedditPostData {
   title: string;
@@ -60,6 +69,8 @@ const ReviewsAndPostsTabs: React.FC<ReviewsAndPostsTabsProps> = ({
   className,
 }) => {
   const [activeTab, setActiveTab] = useState<"reviews" | "reddit">("reviews");
+  const [hoveredStat, setHoveredStat] = useState<string | null>(null);
+  const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout | null>(null);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
 
@@ -92,6 +103,76 @@ const ReviewsAndPostsTabs: React.FC<ReviewsAndPostsTabsProps> = ({
       }
     };
   }, [activeTab, onLoadMoreReviews, onLoadMoreRedditPosts]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (hoverTimeout) {
+        clearTimeout(hoverTimeout);
+      }
+    };
+  }, [hoverTimeout]);
+
+  // Generate chart data for ratings and difficulty
+  const getChartData = useCallback(() => {
+    if (!reviewData?.reviews) return { ratingData: [], difficultyData: [] };
+
+    const reviews = reviewData.reviews;
+
+    // Rating distribution
+    const ratingCounts = reviews.reduce((acc, review) => {
+      const rating = Math.round(parseFloat(review.rating));
+      acc[rating] = (acc[rating] || 0) + 1;
+      return acc;
+    }, {} as Record<number, number>);
+
+    const ratingData = Array.from({ length: 5 }, (_, i) => ({
+      rating: i + 1,
+      count: ratingCounts[i + 1] || 0,
+    }));
+
+    // Difficulty distribution
+    const difficultyCounts = reviews.reduce((acc, review) => {
+      const difficulty = Math.round(parseFloat(review.difficulty));
+      acc[difficulty] = (acc[difficulty] || 0) + 1;
+      return acc;
+    }, {} as Record<number, number>);
+
+    const difficultyData = Array.from({ length: 5 }, (_, i) => ({
+      difficulty: i + 1,
+      count: difficultyCounts[i + 1] || 0,
+    }));
+
+    return { ratingData, difficultyData };
+  }, [reviewData?.reviews]);
+
+  // Helper functions for hover with delay
+  const handleMouseEnter = (statType: string) => {
+    if (hoverTimeout) {
+      clearTimeout(hoverTimeout);
+      setHoverTimeout(null);
+    }
+    setHoveredStat(statType);
+  };
+
+  const handleMouseLeave = () => {
+    const timeout = setTimeout(() => {
+      setHoveredStat(null);
+    }, 100); // Small delay to allow moving to tooltip
+    setHoverTimeout(timeout);
+  };
+
+  const handleTooltipMouseEnter = (statType: string) => {
+    if (hoverTimeout) {
+      clearTimeout(hoverTimeout);
+      setHoverTimeout(null);
+    }
+    setHoveredStat(statType);
+  };
+
+  const handleTooltipMouseLeave = () => {
+    setHoveredStat(null);
+  };
 
   return (
     <div className={`reviews-posts-tabs-section ${className || ""}`}>
@@ -163,19 +244,121 @@ const ReviewsAndPostsTabs: React.FC<ReviewsAndPostsTabsProps> = ({
                       </div>
                     </div>
                     <div className="filter-stats">
-                      <div className="filter-stat-item">
+                      <div
+                        className="filter-stat-item hoverable-stat"
+                        onMouseEnter={() => handleMouseEnter("rating")}
+                        onMouseLeave={handleMouseLeave}
+                        onClick={() =>
+                          setHoveredStat(
+                            hoveredStat === "rating" ? null : "rating"
+                          )
+                        }
+                      >
                         <span className="filter-stat-label">Avg Rating:</span>
                         <span className="filter-stat-value">
                           {getFilterStats().avgRating.toFixed(1)}/5
                         </span>
+                        {hoveredStat === "rating" && (
+                          <div
+                            className="chart-tooltip"
+                            onMouseEnter={() =>
+                              handleTooltipMouseEnter("rating")
+                            }
+                            onMouseLeave={handleTooltipMouseLeave}
+                          >
+                            <div className="chart-container">
+                              <h4>
+                                Rating Distribution ({reviewData.reviews.length}{" "}
+                                total reviews)
+                              </h4>
+                              <ResponsiveContainer width="100%" height={200}>
+                                <BarChart data={getChartData().ratingData}>
+                                  <CartesianGrid strokeDasharray="3 3" />
+                                  <XAxis dataKey="rating" />
+                                  <YAxis />
+                                  <RechartsTooltip
+                                    formatter={(value: number) => [
+                                      `${value} (${(
+                                        (value / reviewData.reviews.length) *
+                                        100
+                                      ).toFixed(0)}%)`,
+                                      "Count",
+                                    ]}
+                                    labelFormatter={(label: string) => ``}
+                                    contentStyle={{
+                                      backgroundColor:
+                                        "var(--colour-neutral-1100)",
+                                      border:
+                                        "1px solid var(--colour-neutral-900)",
+                                      borderRadius: "0.5rem",
+                                      color: "var(--colour-neutral-200)",
+                                    }}
+                                  />
+                                  <Bar dataKey="count" fill="#24a98b" />
+                                </BarChart>
+                              </ResponsiveContainer>
+                            </div>
+                          </div>
+                        )}
                       </div>
-                      <div className="filter-stat-item">
+                      <div
+                        className="filter-stat-item hoverable-stat"
+                        onMouseEnter={() => handleMouseEnter("difficulty")}
+                        onMouseLeave={handleMouseLeave}
+                        onClick={() =>
+                          setHoveredStat(
+                            hoveredStat === "difficulty" ? null : "difficulty"
+                          )
+                        }
+                      >
                         <span className="filter-stat-label">
                           Avg Difficulty:
                         </span>
                         <span className="filter-stat-value">
                           {getFilterStats().avgDifficulty.toFixed(1)}/5
                         </span>
+                        {hoveredStat === "difficulty" && (
+                          <div
+                            className="chart-tooltip"
+                            onMouseEnter={() =>
+                              handleTooltipMouseEnter("difficulty")
+                            }
+                            onMouseLeave={handleTooltipMouseLeave}
+                          >
+                            <div className="chart-container">
+                              <h4>
+                                Difficulty Distribution (
+                                {reviewData.reviews.length} total reviews)
+                              </h4>
+                              <ResponsiveContainer width="100%" height={200}>
+                                <BarChart data={getChartData().difficultyData}>
+                                  <CartesianGrid strokeDasharray="3 3" />
+                                  <XAxis dataKey="difficulty" />
+                                  <YAxis />
+                                  <RechartsTooltip
+                                    formatter={(value: number) => [
+                                      `${value} (${(
+                                        (value / reviewData.reviews.length) *
+                                        100
+                                      ).toFixed(0)}%)`,
+                                      "Count",
+                                    ]}
+                                    labelFormatter={(label: string) => ``}
+                                    contentStyle={{
+                                      backgroundColor:
+                                        "var(--colour-neutral-1100)",
+                                      border:
+                                        "1px solid var(--colour-neutral-900)",
+                                      borderRadius: "0.5rem",
+                                      color: "var(--colour-neutral-200)",
+                                    }}
+                                  />
+                                  <Bar dataKey="count" fill="#ff6b6b" />
+                                </BarChart>
+                              </ResponsiveContainer>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>

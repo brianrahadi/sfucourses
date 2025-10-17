@@ -592,10 +592,13 @@ const CoursePage: React.FC<CoursePageProps> = () => {
                             color: "var(--colour-neutral-200)",
                           }}
                           formatter={(value: number) => [
-                            `${value} reviews`,
+                            `${value} (${(
+                              (value / courseReviewData.total_reviews) *
+                              100
+                            ).toFixed(0)}%)`,
                             "Count",
                           ]}
-                          labelFormatter={(label: string) => `Rating: ${label}`}
+                          labelFormatter={(label: string) => ``}
                         />
                         <Bar
                           dataKey="count"
@@ -630,12 +633,13 @@ const CoursePage: React.FC<CoursePageProps> = () => {
                             color: "var(--colour-neutral-200)",
                           }}
                           formatter={(value: number) => [
-                            `${value} reviews`,
+                            `${value} (${(
+                              (value / courseReviewData.total_reviews) *
+                              100
+                            ).toFixed(0)}%)`,
                             "Count",
                           ]}
-                          labelFormatter={(label: string) =>
-                            `Difficulty: ${label}`
-                          }
+                          labelFormatter={(label: string) => ``}
                         />
                         <Bar
                           dataKey="count"

@@ -540,8 +540,14 @@ export const SidebarCourse: React.FC<SidebarCourseProps> = ({
                       borderRadius: "0.5rem",
                       color: "var(--colour-neutral-200)",
                     }}
-                    formatter={(value: number) => [`${value} reviews`, "Count"]}
-                    labelFormatter={(label: string) => `Rating: ${label}`}
+                    formatter={(value: number) => [
+                      `${value} (${(
+                        (value / courseReviewData.total_reviews) *
+                        100
+                      ).toFixed(0)}%)`,
+                      "Count",
+                    ]}
+                    labelFormatter={(label: string) => ``}
                   />
                   <Bar
                     dataKey="count"
@@ -572,8 +578,14 @@ export const SidebarCourse: React.FC<SidebarCourseProps> = ({
                       borderRadius: "0.5rem",
                       color: "var(--colour-neutral-200)",
                     }}
-                    formatter={(value: number) => [`${value} reviews`, "Count"]}
-                    labelFormatter={(label: string) => `Difficulty: ${label}`}
+                    formatter={(value: number) => [
+                      `${value} (${(
+                        (value / courseReviewData.total_reviews) *
+                        100
+                      ).toFixed(0)}%)`,
+                      "Count",
+                    ]}
+                    labelFormatter={(label: string) => ``}
                   />
                   <Bar
                     dataKey="count"
