@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   Instructor,
   InstructorOffering,
@@ -7,13 +7,11 @@ import {
   Review,
 } from "@types";
 import { getCourseAPIData } from "@utils";
-import { Hero, RedditPosts, Helmet } from "@components";
+import { Hero, RedditPosts, Helmet, ReviewsAndPostsTabs } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { RotatingLines } from "react-loader-spinner";
 import Link from "next/link";
 import { termToIcon } from "@utils/exploreFilters";
-import { BiSolidUpvote } from "react-icons/bi";
-import { formatShortDate } from "@utils/format";
 import {
   BarChart,
   Bar,
@@ -45,7 +43,6 @@ const InstructorPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [reviewError, setReviewError] = useState<string | null>(null);
   const [redditError, setRedditError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"reviews" | "reddit">("reviews");
   const [displayedReviews, setDisplayedReviews] = useState<Review[]>([]);
   const [displayedRedditPosts, setDisplayedRedditPosts] = useState<
     RedditPostData[]
@@ -56,8 +53,6 @@ const InstructorPage = () => {
     useState<string>("all");
   const reviewsPerPage = 5;
   const redditPerPage = 5;
-  const observerRef = useRef<IntersectionObserver | null>(null);
-  const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
   // Get course codes with review counts
   const getCourseCodesWithCounts = useCallback(() => {
@@ -177,36 +172,6 @@ const InstructorPage = () => {
     setDisplayedRedditPosts((prev) => [...prev, ...newPosts]);
     setRedditPage((prev) => prev + 1);
   }, [redditPosts, redditPage]);
-
-  // Intersection Observer for infinite scroll
-  useEffect(() => {
-    if (observerRef.current) {
-      observerRef.current.disconnect();
-    }
-
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          if (activeTab === "reviews") {
-            loadMoreReviews();
-          } else {
-            loadMoreRedditPosts();
-          }
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (loadMoreRef.current) {
-      observerRef.current.observe(loadMoreRef.current);
-    }
-
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-      }
-    };
-  }, [activeTab, loadMoreReviews, loadMoreRedditPosts]);
 
   useEffect(() => {
     if (!name || typeof name !== "string") return;
@@ -471,191 +436,23 @@ const InstructorPage = () => {
               )}
             </div>
 
-            {/* Tab Section */}
-            <div className="instructor-tabs-section">
-              <div className="tab-navigation">
-                <button
-                  className={`tab-button ${
-                    activeTab === "reviews" ? "active" : ""
-                  }`}
-                  onClick={() => setActiveTab("reviews")}
-                >
-                  RateMyProf Reviews
-                </button>
-                <button
-                  className={`tab-button ${
-                    activeTab === "reddit" ? "active" : ""
-                  }`}
-                  onClick={() => setActiveTab("reddit")}
-                >
-                  r/simonfraser Posts
-                </button>
-              </div>
-
-              <div className="tab-content">
-                {activeTab === "reviews" ? (
-                  <div className="instructor-review-section">
-                    {reviewLoading ? (
-                      <div className="center loading-spinner-container">
-                        <RotatingLines visible={true} strokeColor="#24a98b" />
-                        <p>Loading reviews...</p>
-                      </div>
-                    ) : reviewError ? (
-                      <div className="center">
-                        <p className="text-muted">{reviewError}</p>
-                      </div>
-                    ) : reviewData ? (
-                      <div className="reviews-list">
-                        <div className="reviews-header">
-                          <div className="filter-controls">
-                            <div className="course-filter">
-                              <select
-                                value={selectedCourseFilter}
-                                onChange={(e) =>
-                                  setSelectedCourseFilter(e.target.value)
-                                }
-                                className="course-filter-dropdown"
-                              >
-                                <option value="all">All Courses</option>
-                                {getCourseCodesWithCounts().map(
-                                  ({ courseCode, count }) => (
-                                    <option key={courseCode} value={courseCode}>
-                                      {courseCode} ({count})
-                                    </option>
-                                  )
-                                )}
-                              </select>
-                            </div>
-                            <div className="filter-stats">
-                              <div className="filter-stat-item">
-                                <span className="filter-stat-label">
-                                  Avg Rating:
-                                </span>
-                                <span className="filter-stat-value">
-                                  {getFilterStats().avgRating.toFixed(1)}/5
-                                </span>
-                              </div>
-                              <div className="filter-stat-item">
-                                <span className="filter-stat-label">
-                                  Avg Difficulty:
-                                </span>
-                                <span className="filter-stat-value">
-                                  {getFilterStats().avgDifficulty.toFixed(1)}/5
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        {displayedReviews.length > 0 ? (
-                          displayedReviews.map((review, index) => (
-                            <div key={index} className="review-card">
-                              <div className="review-header">
-                                <div className="review-rating">
-                                  <span className="course-code">
-                                    {review.course_code}
-                                  </span>
-                                  <div className="rating-line">
-                                    <span className="rating-value">
-                                      Rating: {+review.rating}/5
-                                    </span>
-                                    <span className="rating-value">
-                                      Difficulty: {+review.difficulty}/5
-                                    </span>
-                                  </div>
-                                </div>
-                                <div className="review-meta">
-                                  {/* <div className="review-metadata-tags">
-                                    <span className="metadata-tag">{review.metadata.for_credit}</span>
-                                    <span className="metadata-tag">{review.metadata.attendance}</span>
-                                    {review.metadata.grade && (
-                                      <span className="metadata-tag">Grade: {review.metadata.grade}</span>
-                                    )}
-                                    <span className="metadata-tag">{review.metadata.textbook}</span>
-                                    {review.metadata.onlineClass && (
-                                      <span className="metadata-tag">{review.metadata.onlineClass}</span>
-                                    )}
-                                  </div> */}
-                                  <span className="review-date">
-                                    {review.date}
-                                  </span>
-                                </div>
-                              </div>
-                              <div className="review-content">
-                                <p>{review.review_msg}</p>
-                              </div>
-
-                              {review.tags && review.tags.length > 0 && (
-                                <div className="review-tags">
-                                  {review.tags.map((tag, tagIndex) => (
-                                    <span key={tagIndex} className="tag">
-                                      {tag}
-                                    </span>
-                                  ))}
-                                </div>
-                              )}
-                              <div className="review-footer">
-                                <span className="helpful-count">
-                                  {review.helpful} helpful, {review.not_helpful}{" "}
-                                  not helpful
-                                </span>
-                              </div>
-                            </div>
-                          ))
-                        ) : (
-                          <div className="no-reviews-message">
-                            <p>No reviews available for this instructor yet.</p>
-                          </div>
-                        )}
-                        <div ref={loadMoreRef} className="load-more-trigger" />
-                      </div>
-                    ) : null}
-                  </div>
-                ) : (
-                  <div className="reddit-posts-section">
-                    {redditLoading ? (
-                      <div className="center loading-spinner-container">
-                        <RotatingLines visible={true} strokeColor="#24a98b" />
-                        <p>Loading Reddit posts...</p>
-                      </div>
-                    ) : redditError ? (
-                      <div className="center">
-                        <p className="text-muted">{redditError}</p>
-                      </div>
-                    ) : displayedRedditPosts.length > 0 ? (
-                      <div className="reddit-posts">
-                        {displayedRedditPosts.map((post, index) => (
-                          <Link
-                            key={index}
-                            href={post.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="reddit-post-link"
-                          >
-                            <div className="reddit-post">
-                              <div className="upvote-container">
-                                <BiSolidUpvote style={{ fill: "#ff4500" }} />
-                                <p>{post.upvotes}</p>
-                              </div>
-                              <div>
-                                <h4>{post.title}</h4>
-                                <p>
-                                  {formatShortDate(post.date_created, true)}
-                                </p>
-                              </div>
-                            </div>
-                          </Link>
-                        ))}
-                        <div ref={loadMoreRef} className="load-more-trigger" />
-                      </div>
-                    ) : (
-                      <div className="no-reddit-message">
-                        <p>No Reddit posts found for this instructor.</p>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
+            {/* Reviews and Posts Tabs */}
+            <ReviewsAndPostsTabs
+              reviewData={reviewData}
+              reviewLoading={reviewLoading}
+              reviewError={reviewError}
+              redditPosts={redditPosts}
+              redditLoading={redditLoading}
+              redditError={redditError}
+              displayedReviews={displayedReviews}
+              displayedRedditPosts={displayedRedditPosts}
+              onLoadMoreReviews={loadMoreReviews}
+              onLoadMoreRedditPosts={loadMoreRedditPosts}
+              getCourseCodesWithCounts={getCourseCodesWithCounts}
+              getFilterStats={getFilterStats}
+              selectedCourseFilter={selectedCourseFilter}
+              onCourseFilterChange={setSelectedCourseFilter}
+            />
           </div>
         ) : null}
       </main>

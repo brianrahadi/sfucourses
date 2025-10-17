@@ -1,0 +1,356 @@
+// Reviews and Posts Tabs Component
+.reviews-posts-tabs-section {
+  margin-top: 2rem;
+}
+
+.tab-navigation {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--colour-neutral-1000);
+}
+
+.tab-button {
+  background: none;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--colour-neutral-400);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: var(--colour-neutral-200);
+  }
+
+  &.active {
+    color: var(--colour-sosy-green-500);
+    border-bottom-color: var(--colour-sosy-green-500);
+  }
+}
+
+.tab-content {
+  min-height: 200px;
+}
+
+// Reviews Section
+.reviews-section {
+  .reviews-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .reviews-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      gap: 1rem;
+    }
+  }
+
+  .filter-controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: flex-end;
+
+    @media (max-width: 768px) {
+      gap: 0.5rem;
+      align-items: flex-start;
+    }
+  }
+
+  .course-filter {
+    display: flex;
+    align-items: center;
+  }
+
+  .course-filter-dropdown {
+    background: var(--colour-neutral-1100);
+    border: 1px solid var(--colour-neutral-1000);
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    color: var(--colour-neutral-200);
+    font-size: 0.875rem;
+    cursor: pointer;
+    min-width: 150px;
+
+    &:focus {
+      outline: none;
+      border-color: var(--colour-sosy-green-500);
+    }
+
+    option {
+      background: var(--colour-neutral-1100);
+      color: var(--colour-neutral-200);
+    }
+  }
+
+  .filter-stats {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+
+    @media (max-width: 768px) {
+      gap: 0.5rem;
+      align-items: flex-start;
+    }
+  }
+  .filter-stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: var(--colour-neutral-1000);
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.375rem;
+    border: 1px solid var(--colour-neutral-900);
+  }
+
+  .filter-stat-label {
+    font-size: 0.875rem;
+    color: var(--colour-neutral-400);
+    font-weight: 500;
+  }
+
+  .filter-stat-value {
+    font-size: 0.875rem;
+    color: var(--colour-sosy-green-500);
+    font-weight: bold;
+  }
+}
+
+// Review Card
+.review-card {
+  background: var(--colour-neutral-1100);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  border: 1px solid var(--colour-neutral-1000);
+  transition: border-color 0.2s ease;
+
+  &:hover {
+    border-color: var(--colour-neutral-900);
+  }
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  gap: 1rem;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+}
+
+.review-rating {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.review-rating .course-code {
+  font-weight: bold;
+  color: var(--colour-neutral-200);
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.rating-line {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.rating-value {
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--colour-sosy-green-500);
+}
+
+.rating-difficulty {
+  font-size: 1rem;
+  color: var(--colour-neutral-500);
+  font-weight: 500;
+}
+
+.review-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.review-metadata-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.metadata-tag {
+  background: var(--colour-sosy-green-900);
+  color: var(--colour-sosy-green-300);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.review-date {
+  font-size: 0.875rem;
+  color: var(--colour-neutral-400);
+}
+
+.review-content {
+  margin-bottom: 1rem;
+
+  p {
+    line-height: 1.6;
+    color: var(--colour-neutral-200);
+    margin: 0;
+  }
+}
+
+.review-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.tag {
+  background: var(--colour-neutral-1000);
+  color: var(--colour-neutral-300);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.review-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid var(--colour-neutral-1000);
+}
+
+.helpful-count {
+  font-size: 0.875rem;
+  color: var(--colour-neutral-400);
+}
+
+.no-reviews-message {
+  text-align: center;
+  padding: 2rem;
+  color: var(--colour-neutral-400);
+}
+
+// Reddit Posts Section
+.reddit-posts-section {
+  .reddit-posts {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+.reddit-post-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.reddit-post {
+  background: var(--colour-neutral-1100);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  border: 1px solid var(--colour-neutral-1000);
+  display: flex;
+  gap: 1rem;
+  transition: border-color 0.2s ease;
+
+  &:hover {
+    border-color: var(--colour-neutral-900);
+  }
+}
+
+.upvote-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  min-width: 40px;
+
+  svg {
+    font-size: 1.25rem;
+  }
+
+  p {
+    font-size: 0.875rem;
+    color: var(--colour-neutral-400);
+    margin: 0;
+  }
+}
+
+.reddit-post > div:last-child {
+  flex: 1;
+
+  h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--colour-neutral-100);
+    margin: 0 0 0.5rem 0;
+    line-height: 1.4;
+  }
+
+  p {
+    font-size: 0.875rem;
+    color: var(--colour-neutral-400);
+    margin: 0;
+  }
+}
+
+.no-reddit-message {
+  text-align: center;
+  padding: 2rem;
+  color: var(--colour-neutral-400);
+}
+
+// Load More Trigger
+.load-more-trigger {
+  height: 20px;
+  margin: 1rem 0;
+}
+
+// Loading and Error States
+.center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  gap: 1rem;
+}
+
+.loading-spinner-container {
+  p {
+    color: var(--colour-neutral-400);
+    margin: 0;
+  }
+}
+
+.text-muted {
+  color: var(--colour-neutral-400);
+}
