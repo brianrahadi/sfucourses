@@ -463,17 +463,16 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
             <div className="flex-row">
               <TextBadge
                 className="big explore gray-text"
-                content={`exploring 
-            ${
-              maxVisibleOutlinesWithSectionsLength
-                ? numberWithCommas(maxVisibleOutlinesWithSectionsLength)
-                : "0"
-            }
+                content={`${
+                  maxVisibleOutlinesWithSectionsLength
+                    ? numberWithCommas(maxVisibleOutlinesWithSectionsLength)
+                    : "0"
+                }
             ${
               (maxVisibleOutlinesWithSectionsLength || 0) > 1
                 ? "courses"
                 : "course"
-            }`}
+            } found`}
               />
               <ButtonGroup
                 options={termOptions}

@@ -343,16 +343,15 @@ const ExplorePage: React.FC = () => {
           <div className="courses-section__explore-header">
             <TextBadge
               className="big explore gray-text"
-              content={`exploring 
-                ${
-                  mode === "courses"
-                    ? maxVisibleCoursesLength
-                      ? numberWithCommas(maxVisibleCoursesLength)
-                      : "0"
-                    : maxVisibleInstructors
-                    ? numberWithCommas(maxVisibleInstructors)
+              content={`${
+                mode === "courses"
+                  ? maxVisibleCoursesLength
+                    ? numberWithCommas(maxVisibleCoursesLength)
                     : "0"
-                }
+                  : maxVisibleInstructors
+                  ? numberWithCommas(maxVisibleInstructors)
+                  : "0"
+              }
                 ${
                   mode === "courses"
                     ? maxVisibleCoursesLength > 1
@@ -361,7 +360,7 @@ const ExplorePage: React.FC = () => {
                     : maxVisibleInstructors > 1
                     ? "instructors"
                     : "instructor"
-                }`}
+                } found`}
             />
             <ButtonGroup
               options={["courses", "instructors"]}
