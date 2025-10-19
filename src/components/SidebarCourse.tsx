@@ -485,6 +485,7 @@ export const SidebarCourse: React.FC<SidebarCourseProps> = ({
                     0
                   ) / courseReviewData.instructors.length
                 ).toFixed(2)}
+                /5
               </span>
               <span className="stat-label">Overall Rating</span>
             </div>
@@ -496,6 +497,7 @@ export const SidebarCourse: React.FC<SidebarCourseProps> = ({
                     0
                   ) / courseReviewData.instructors.length
                 ).toFixed(2)}
+                /5
               </span>
               <span className="stat-label">Overall Difficulty</span>
             </div>

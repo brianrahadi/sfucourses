@@ -374,7 +374,7 @@ const InstructorPage = () => {
                       <div className="review-stats">
                         <div className="stat-item">
                           <span className="stat-value">
-                            {reviewData.overall_rating}
+                            {reviewData.overall_rating}/5
                           </span>
                           <span className="stat-label">Overall Rating</span>
                         </div>
@@ -386,7 +386,7 @@ const InstructorPage = () => {
                         </div>
                         <div className="stat-item">
                           <span className="stat-value">
-                            {reviewData.difficulty_level}
+                            {reviewData.difficulty_level}/5
                           </span>
                           <span className="stat-label">Difficulty</span>
                         </div>
