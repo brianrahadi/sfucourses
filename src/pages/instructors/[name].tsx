@@ -537,7 +537,7 @@ const InstructorPage = () => {
             {/* Reviews and Posts Tabs */}
             <ReviewsAndPostsTabs
               context="instructor"
-              reviewData={reviewData}
+              reviewData={reviewData ? { reviews: getFilteredReviews() } : null}
               reviewLoading={reviewLoading}
               reviewError={reviewError}
               redditPosts={redditPosts}

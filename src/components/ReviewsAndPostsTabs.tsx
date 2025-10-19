@@ -4,6 +4,7 @@ import { RotatingLines } from "react-loader-spinner";
 import { BiSolidUpvote } from "react-icons/bi";
 import { Review } from "../types";
 import { formatShortDate } from "../utils/format";
+import { TextBadge } from "./TextBadge";
 import {
   BarChart,
   Bar,
@@ -144,6 +145,25 @@ const ReviewsAndPostsTabs: React.FC<ReviewsAndPostsTabsProps> = ({
     }));
 
     return { ratingData, difficultyData };
+  }, [reviewData?.reviews]);
+
+  // Aggregate review tags and count occurrences
+  const getAggregatedTags = useCallback(() => {
+    if (!reviewData?.reviews) return [];
+
+    const tagCounts = reviewData.reviews.reduce((acc, review) => {
+      if (review.tags && review.tags.length > 0) {
+        review.tags.forEach((tag) => {
+          acc[tag] = (acc[tag] || 0) + 1;
+        });
+      }
+      return acc;
+    }, {} as Record<string, number>);
+
+    return Object.entries(tagCounts)
+      .map(([tag, count]) => ({ tag, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 10); // Limit to top 10 tags
   }, [reviewData?.reviews]);
 
   // Helper functions for hover with delay
@@ -361,6 +381,20 @@ const ReviewsAndPostsTabs: React.FC<ReviewsAndPostsTabsProps> = ({
                         )}
                       </div>
                     </div>
+                    {getAggregatedTags().length > 0 && (
+                      <div className="tag-badges-section">
+                        <div className="tag-badges-container">
+                          {getAggregatedTags().map(({ tag, count }) => (
+                            <TextBadge
+                              key={tag}
+                              content={`${tag} (${count})`}
+                              className="tag-badge"
+                              enableBgColor={false}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
                 {displayedReviews.length > 0 ? (
