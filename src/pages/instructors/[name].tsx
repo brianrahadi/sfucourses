@@ -314,7 +314,7 @@ const InstructorPage = () => {
         setReviewLoading(false);
       })
       .catch((err) => {
-        setReviewError("Could not load review data");
+        setReviewError("Review data not available");
         setReviewLoading(false);
       });
 
@@ -327,7 +327,7 @@ const InstructorPage = () => {
         setRedditLoading(false);
       })
       .catch((err) => {
-        setRedditError("Could not load Reddit posts");
+        setRedditError("Could not load Reddit posts. Fixing soon! :D");
         setRedditLoading(false);
       });
   }, [name, fetchRedditPosts, fetchInstructorReviews, router]);

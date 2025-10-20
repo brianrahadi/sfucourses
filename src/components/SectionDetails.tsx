@@ -255,7 +255,20 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                 <span className="icon-text-container instructor">
                   <BsFillPersonFill />
                   {instructorsText !== "N/A" && query ? (
-                    <Highlight text={instructorsText} query={query} />
+                    <Link
+                      href={`/instructors/${instructorsText}`}
+                      className="no-underline"
+                      target="_blank"
+                      rel="noreferrer"
+                      data-tooltip-id="new-tab-tooltip"
+                      data-tooltip-content="New tab"
+                    >
+                      <Highlight
+                        text={instructorsText}
+                        query={query}
+                        className="green-text"
+                      />
+                    </Link>
                   ) : instructorsText !== "N/A" ? (
                     <Link
                       href={`/instructors/${instructorsText}`}
