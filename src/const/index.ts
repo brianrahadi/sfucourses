@@ -5,6 +5,14 @@ export const INSTRUCTOR_RMP_NAME_MAPPING: Record<string, string> = {
   "William Sumner": "Nick Sumner",
 };
 
+export const INSTRUCTOR_REDIRECT_NAME_MAPPING: Record<string, string> =
+  Object.fromEntries(
+    Object.entries(INSTRUCTOR_RMP_NAME_MAPPING).map(([key, value]) => [
+      value,
+      key,
+    ])
+  );
+
 export const SUBJECTS = [
   "ACMA",
   "ALS",

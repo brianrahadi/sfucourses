@@ -21,7 +21,11 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { BASE_URL, INSTRUCTOR_RMP_NAME_MAPPING } from "@const";
+import {
+  BASE_URL,
+  INSTRUCTOR_RMP_NAME_MAPPING,
+  INSTRUCTOR_REDIRECT_NAME_MAPPING,
+} from "@const";
 
 interface RedditPostData {
   title: string;
@@ -221,7 +225,6 @@ const InstructorPage = () => {
     return { ratingData, difficultyData };
   }, [reviewData?.reviews]);
 
-  // Fetch instructor review data
   const fetchInstructorReviews = useCallback(async (instructorName: string) => {
     try {
       const reviewName =
@@ -282,6 +285,13 @@ const InstructorPage = () => {
   useEffect(() => {
     if (!name || typeof name !== "string") return;
 
+    // Check if name should be redirected
+    const redirectName = INSTRUCTOR_REDIRECT_NAME_MAPPING[name];
+    if (redirectName) {
+      router.replace(`/instructors/${encodeURIComponent(redirectName)}`);
+      return;
+    }
+
     // Fetch instructor data
     setLoading(true);
     setError(null);
@@ -320,7 +330,7 @@ const InstructorPage = () => {
         setRedditError("Could not load Reddit posts");
         setRedditLoading(false);
       });
-  }, [name, fetchRedditPosts, fetchInstructorReviews]);
+  }, [name, fetchRedditPosts, fetchInstructorReviews, router]);
 
   // Initialize displayed items when data changes
   useEffect(() => {
