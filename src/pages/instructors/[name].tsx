@@ -21,7 +21,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { BASE_URL } from "@const";
+import { BASE_URL, INSTRUCTOR_RMP_NAME_MAPPING } from "@const";
 
 interface RedditPostData {
   title: string;
@@ -32,7 +32,7 @@ interface RedditPostData {
 
 const InstructorPage = () => {
   const router = useRouter();
-  const { name } = router.query;
+  let { name } = router.query;
   const [instructor, setInstructor] = useState<Instructor | null>(null);
   const [reviewData, setReviewData] = useState<InstructorReviewData | null>(
     null
@@ -221,6 +221,24 @@ const InstructorPage = () => {
     return { ratingData, difficultyData };
   }, [reviewData?.reviews]);
 
+  // Fetch instructor review data
+  const fetchInstructorReviews = useCallback(async (instructorName: string) => {
+    try {
+      const reviewName =
+        INSTRUCTOR_RMP_NAME_MAPPING[instructorName] || instructorName;
+      const formattedName = reviewName.replace(/\s+/g, "_");
+      const response = await fetch(
+        `${BASE_URL}/reviews/instructors/${formattedName}`
+      );
+      if (!response.ok) {
+        throw new Error("Review data not available");
+      }
+      return await response.json();
+    } catch (error) {
+      throw error;
+    }
+  }, []);
+
   // Fetch Reddit posts
   const fetchRedditPosts = useCallback(async (query: string) => {
     try {
@@ -280,14 +298,7 @@ const InstructorPage = () => {
     // Fetch review data
     setReviewLoading(true);
     setReviewError(null);
-    const formattedName = name.replace(/\s+/g, "_");
-    fetch(`${BASE_URL}/reviews/instructors/${formattedName}`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Review data not available");
-        }
-        return response.json();
-      })
+    fetchInstructorReviews(name)
       .then((data) => {
         setReviewData(data);
         setReviewLoading(false);
@@ -309,7 +320,7 @@ const InstructorPage = () => {
         setRedditError("Could not load Reddit posts");
         setRedditLoading(false);
       });
-  }, [name, fetchRedditPosts]);
+  }, [name, fetchRedditPosts, fetchInstructorReviews]);
 
   // Initialize displayed items when data changes
   useEffect(() => {

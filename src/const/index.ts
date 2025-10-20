@@ -1,6 +1,10 @@
 export const BASE_URL = "https://api.sfucourses.com/v1/rest";
 // export const BASE_URL = "http://localhost:8080/v1/rest";
 
+export const INSTRUCTOR_RMP_NAME_MAPPING: Record<string, string> = {
+  "William Sumner": "Nick Sumner",
+};
+
 export const SUBJECTS = [
   "ACMA",
   "ALS",
