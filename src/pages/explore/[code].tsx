@@ -656,9 +656,7 @@ const CoursePage: React.FC<CoursePageProps> = () => {
             )}
 
             <iframe
-              src={`https://prerequisites-visualization.vercel.app/sfu/courses/${course.dept.toLowerCase()}/${
-                course.number
-              }`}
+              src={`https://prerequisites-visualization.vercel.app/sfu/courses/${courseCode.dept}/${courseCode.number}`}
               style={{ width: "100%", height: "600px", border: "none" }}
               title="Prerequisites Visualization"
             ></iframe>
