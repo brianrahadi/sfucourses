@@ -1,8 +1,15 @@
 import React from "react";
 import Link from "next/link";
 import { CourseOutline } from "../types";
-import { Highlight } from "@components";
+import { Highlight, TextBadge } from "@components";
 import { termToIcon } from "@utils/exploreFilters";
+
+interface CourseReviewSummary {
+  course_code: string;
+  total_reviews: number;
+  avg_rating: number;
+  avg_difficulty: number;
+}
 
 type ExploreCourseCardProps = {
   course: CourseOutline;
@@ -12,6 +19,7 @@ type ExploreCourseCardProps = {
   showInstructors?: boolean;
   showDescription?: boolean;
   isLink?: boolean;
+  reviewData?: CourseReviewSummary | null;
 };
 
 export const ExploreCourseCard: React.FC<ExploreCourseCardProps> = ({
@@ -22,6 +30,7 @@ export const ExploreCourseCard: React.FC<ExploreCourseCardProps> = ({
   showInstructors = false,
   showDescription = true,
   isLink = true,
+  reviewData,
 }) => {
   const courseDescriptionShortened =
     showDescription && course.description && course.description.length > 400
@@ -39,6 +48,25 @@ export const ExploreCourseCard: React.FC<ExploreCourseCardProps> = ({
       <div className="course-title">
         {query ? <Highlight text={header} query={query} /> : <p>{header}</p>}
       </div>
+      {reviewData && (
+        <div className="course-card__row">
+          <TextBadge
+            content={`Reviews: ${reviewData.total_reviews}`}
+            className="course-review-badge"
+            enableBgColor={false}
+          />
+          <TextBadge
+            content={`Rating: ${reviewData.avg_rating.toFixed(2)}/5`}
+            className="course-review-badge"
+            enableBgColor={false}
+          />
+          <TextBadge
+            content={`Difficulty: ${reviewData.avg_difficulty.toFixed(2)}/5`}
+            className="course-review-badge"
+            enableBgColor={false}
+          />
+        </div>
+      )}
       <div className="course-card__content">
         {showDescription &&
           (query ? (

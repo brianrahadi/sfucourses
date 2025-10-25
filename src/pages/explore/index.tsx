@@ -22,6 +22,13 @@ interface InstructorReviewSummary {
   Difficulty: string;
   Department: string;
 }
+
+interface CourseReviewSummary {
+  course_code: string;
+  total_reviews: number;
+  avg_rating: number;
+  avg_difficulty: number;
+}
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useExploreFilters } from "src/hooks/UseExploreFilters";
 import { useInstructorExploreFilters } from "@hooks";
@@ -65,8 +72,16 @@ export const getStaticProps: GetStaticProps = async () => {
   await queryClient.prefetchQuery({
     queryKey: ["instructorReviews"],
     queryFn: async () => {
-      const res = await fetch(`${BASE_URL}/reviews`);
+      const res = await fetch(`${BASE_URL}/reviews/instructors`);
       return res.json() as Promise<InstructorReviewSummary[]>;
+    },
+  });
+
+  await queryClient.prefetchQuery({
+    queryKey: ["courseReviews"],
+    queryFn: async () => {
+      const res = await fetch(`${BASE_URL}/reviews/courses`);
+      return res.json() as Promise<CourseReviewSummary[]>;
     },
   });
 
@@ -108,6 +123,16 @@ const ExplorePage: React.FC = () => {
     }
   );
 
+  const { data: courseReviewsData, isLoading: isLoadingCourseReviews } =
+    useQuery({
+      queryKey: ["courseReviews"],
+      queryFn: async () => {
+        const res = await fetch(`${BASE_URL}/reviews/courses`);
+        return res.json() as Promise<CourseReviewSummary[]>;
+      },
+      staleTime: 60 * 60 * 1000,
+    });
+
   const courses = courseData || [];
   const [visibleCourses, setVisibleCourses] = useState<CourseOutline[]>([]);
   const [maxVisibleCoursesLength, setMaxVisibleCoursesLength] =
@@ -137,6 +162,19 @@ const ExplorePage: React.FC = () => {
     return (
       instructorReviewsData.find(
         (review) => review.Name.toLowerCase() === instructorName.toLowerCase()
+      ) || null
+    );
+  };
+
+  // Get review data for a specific course
+  const getCourseReviewData = (
+    courseCode: string
+  ): CourseReviewSummary | null => {
+    if (!courseReviewsData) return null;
+    return (
+      courseReviewsData.find(
+        (review) =>
+          review.course_code.toLowerCase() === courseCode.toLowerCase()
       ) || null
     );
   };
@@ -398,6 +436,9 @@ const ExplorePage: React.FC = () => {
                   showPrereqs={courseFilters.prereqs.isShown}
                   prereqsQuery={courseFilters.prereqs.searchQuery}
                   showInstructors={true}
+                  reviewData={getCourseReviewData(
+                    `${outline.dept}${outline.number}`
+                  )}
                 />
               ))}
             </InfiniteScroll>
