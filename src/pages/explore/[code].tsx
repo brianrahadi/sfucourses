@@ -513,24 +513,32 @@ const CoursePage: React.FC<CoursePageProps> = () => {
                 <div className="review-stats">
                   <div className="stat-item">
                     <span className="stat-value">
-                      {(
-                        courseReviewData.instructors.reduce(
-                          (sum, instructor) => sum + instructor.avg_rating,
+                      {(() => {
+                        const allReviews = courseReviewData.instructors.flatMap(
+                          (instructor) => instructor.reviews
+                        );
+                        const totalRating = allReviews.reduce(
+                          (sum, review) => sum + parseFloat(review.rating),
                           0
-                        ) / courseReviewData.instructors.length
-                      ).toFixed(2)}
+                        );
+                        return (totalRating / allReviews.length).toFixed(2);
+                      })()}
                       /5
                     </span>
                     <span className="stat-label">Overall Rating</span>
                   </div>
                   <div className="stat-item">
                     <span className="stat-value">
-                      {(
-                        courseReviewData.instructors.reduce(
-                          (sum, instructor) => sum + instructor.avg_difficulty,
+                      {(() => {
+                        const allReviews = courseReviewData.instructors.flatMap(
+                          (instructor) => instructor.reviews
+                        );
+                        const totalDifficulty = allReviews.reduce(
+                          (sum, review) => sum + parseFloat(review.difficulty),
                           0
-                        ) / courseReviewData.instructors.length
-                      ).toFixed(2)}
+                        );
+                        return (totalDifficulty / allReviews.length).toFixed(2);
+                      })()}
                       /5
                     </span>
                     <span className="stat-label">Overall Difficulty</span>
