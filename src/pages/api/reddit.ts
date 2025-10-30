@@ -1,5 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
+export const config = { runtime: "nodejs" };
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -26,24 +28,35 @@ export default async function handler(
   }
 
   try {
+    const controller =
+      typeof AbortController !== "undefined" ? new AbortController() : null;
+    const timeoutId = controller
+      ? setTimeout(() => controller.abort(), 15000)
+      : null;
+    const userAgent = "web:sfucourses:1.0 (by /u/SnooCrickets3094)"; // my account
+
     const response = await fetch(
       `https://www.reddit.com/r/simonfraser/search.json?q=${encodeURIComponent(
         query
       )}&restrict_sr=on&limit=10`,
       {
         headers: {
-          "User-Agent": "SFUCourses/1.0",
+          "User-Agent": userAgent,
           Accept: "application/json",
         },
-        // Add timeout
-        signal: AbortSignal.timeout(15000),
+        signal: controller?.signal,
       }
     );
+
+    if (timeoutId) clearTimeout(timeoutId);
 
     if (!response.ok) {
       const errorText = await response.text();
       console.error(`Reddit API error: ${response.status} - ${errorText}`);
-      throw new Error(`Reddit API responded with status: ${response.status}`);
+      return res.status(response.status).json({
+        error: "Reddit API error",
+        status: response.status,
+      });
     }
 
     const data = await response.json();
@@ -58,18 +71,16 @@ export default async function handler(
     res.status(200).json(posts);
   } catch (error) {
     console.error("Error fetching Reddit posts:", error);
-
-    // Handle different types of errors
-    if (error instanceof Error) {
-      if (error.name === "AbortError") {
-        return res.status(408).json({ error: "Request timeout" });
-      }
-      if (error.message.includes("fetch")) {
-        return res.status(503).json({ error: "Network error" });
-      }
+    if (error instanceof Error && error.name === "AbortError") {
+      return res.status(408).json({ error: "Request timeout" });
     }
-
-    res.status(500).json({
+    if (
+      error instanceof Error &&
+      /fetch failed|ENOTFOUND|ECONNRESET|EAI_AGAIN/i.test(error.message)
+    ) {
+      return res.status(503).json({ error: "Network error" });
+    }
+    return res.status(500).json({
       error: "Failed to fetch Reddit posts",
       message: error instanceof Error ? error.message : "Unknown error",
     });
