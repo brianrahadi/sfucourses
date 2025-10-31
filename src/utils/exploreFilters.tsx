@@ -8,7 +8,6 @@ export const subjectOptions = SUBJECTS.map((subj) => {
 });
 export const levelOptions = ["1XX", "2XX", "3XX", "4XX", "5XX+"];
 export const termOptions = [
-  "Fall 2024",
   "Spring 2025",
   "Summer 2025",
   "Fall 2025",

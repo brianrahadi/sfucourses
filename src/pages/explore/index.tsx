@@ -10,7 +10,7 @@ import {
   ButtonGroup,
 } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { CourseOutline, Instructor } from "@types";
 
 interface InstructorReviewSummary {
@@ -30,7 +30,7 @@ interface CourseReviewSummary {
   avg_difficulty: number;
 }
 import InfiniteScroll from "react-infinite-scroll-component";
-import { useExploreFilters } from "src/hooks/UseExploreFilters";
+import { useExploreFilters, SortState } from "src/hooks/UseExploreFilters";
 import { useInstructorExploreFilters } from "@hooks";
 import { GetStaticProps } from "next";
 import { useQuery } from "@tanstack/react-query";
@@ -154,6 +154,81 @@ const ExplorePage: React.FC = () => {
   const courseFilters = useExploreFilters();
   const instructorFilters = useInstructorExploreFilters();
 
+  const colourNeutral1000 = "#323434";
+  const colourNeutral900 = "#4b4e4d";
+  const colourNeutral800 = "#646867";
+  const sortSelectStyles = {
+    control: (base: any) => ({
+      ...base,
+      backgroundColor: colourNeutral1000,
+      border: 0,
+      borderColor: colourNeutral800,
+      color: "#fff",
+      minWidth: "150px",
+      minHeight: "3rem",
+      // height: "3rem",
+    }),
+    valueContainer: (base: any) => ({
+      ...base,
+      padding: "0.5rem 0.75rem",
+      height: "100%",
+      display: "flex",
+      alignItems: "center",
+    }),
+    input: (base: any) => ({
+      ...base,
+      margin: 0,
+      padding: 0,
+      color: "#fff",
+    }),
+    menu: (base: any) => ({
+      ...base,
+      backgroundColor: colourNeutral1000,
+      color: "#fff",
+      zIndex: 9999,
+      marginTop: "0.25rem",
+    }),
+    menuList: (base: any) => ({
+      ...base,
+      padding: "0.25rem 0",
+    }),
+    option: (base: any, state: any) => ({
+      ...base,
+      backgroundColor: state.isFocused ? colourNeutral900 : colourNeutral1000,
+      cursor: "pointer",
+      padding: "0.5rem 0.75rem",
+      minHeight: "2.5rem",
+    }),
+    singleValue: (base: any) => ({
+      ...base,
+      color: "#fff",
+      margin: 0,
+      lineHeight: "normal",
+    }),
+    placeholder: (base: any) => ({
+      ...base,
+      color: "#9ca3af",
+      margin: 0,
+      lineHeight: "normal",
+    }),
+    indicatorsContainer: (base: any) => ({
+      ...base,
+      paddingRight: "0.5rem",
+      height: "100%",
+      display: "flex",
+      alignItems: "center",
+    }),
+  };
+
+  const sortOptions = [
+    { value: "reviews-asc", label: "Reviews ↑" },
+    { value: "reviews-desc", label: "Reviews ↓" },
+    { value: "rating-asc", label: "Rating ↑" },
+    { value: "rating-desc", label: "Rating ↓" },
+    { value: "difficulty-asc", label: "Difficulty ↑" },
+    { value: "difficulty-desc", label: "Difficulty ↓" },
+  ];
+
   // Get review data for a specific instructor
   const getInstructorReviewData = (
     instructorName: string
@@ -178,6 +253,16 @@ const ExplorePage: React.FC = () => {
       ) || null
     );
   };
+
+  // Create a lookup map for course review data to optimize sorting
+  const courseReviewMap = useMemo(() => {
+    if (!courseReviewsData) return new Map<string, CourseReviewSummary>();
+    const map = new Map<string, CourseReviewSummary>();
+    courseReviewsData.forEach((review) => {
+      map.set(review.course_code.toLowerCase(), review);
+    });
+    return map;
+  }, [courseReviewsData]);
 
   // Keyboard shortcuts for explore page
   useEffect(() => {
@@ -261,6 +346,41 @@ const ExplorePage: React.FC = () => {
     return filteredCourses;
   };
 
+  const sortCourses = (courses: CourseOutline[]) => {
+    const sortValue = courseFilters.sort.value;
+
+    if (!sortValue) return courses;
+
+    const [field, direction] = sortValue.split("-");
+    const isAsc = direction === "asc";
+    const sortedCourses = [...courses];
+
+    sortedCourses.sort((a, b) => {
+      const courseCodeA = `${a.dept}${a.number}`.toLowerCase();
+      const courseCodeB = `${b.dept}${b.number}`.toLowerCase();
+      const reviewA = courseReviewMap.get(courseCodeA);
+      const reviewB = courseReviewMap.get(courseCodeB);
+
+      let valueA = 0;
+      let valueB = 0;
+
+      if (field === "reviews") {
+        valueA = reviewA?.total_reviews || 0;
+        valueB = reviewB?.total_reviews || 0;
+      } else if (field === "rating") {
+        valueA = reviewA?.avg_rating || 0;
+        valueB = reviewB?.avg_rating || 0;
+      } else if (field === "difficulty") {
+        valueA = reviewA?.avg_difficulty || 0;
+        valueB = reviewB?.avg_difficulty || 0;
+      }
+
+      return isAsc ? valueA - valueB : valueB - valueA;
+    });
+
+    return sortedCourses;
+  };
+
   const filterInstructors = (instructors: Instructor[]) => {
     const filtered = [
       (instructors: Instructor[]) =>
@@ -301,10 +421,8 @@ const ExplorePage: React.FC = () => {
   const loadMoreCourses = () => {
     if (courses.length === 0) return;
     const filtered = filterCourses(courses);
-    const next = filtered.slice(
-      courseSliceIndex,
-      courseSliceIndex + CHUNK_SIZE
-    );
+    const sorted = sortCourses(filtered);
+    const next = sorted.slice(courseSliceIndex, courseSliceIndex + CHUNK_SIZE);
     setVisibleCourses((prev) => [...prev, ...next]);
     setCourseSliceIndex((prev) => prev + CHUNK_SIZE);
   };
@@ -324,8 +442,9 @@ const ExplorePage: React.FC = () => {
     if (mode !== "courses") return;
     if (courses.length === 0) return;
     const filtered = filterCourses(courses);
-    setMaxVisibleCoursesLength(filtered.length);
-    setVisibleCourses(filtered.slice(0, CHUNK_SIZE));
+    const sorted = sortCourses(filtered);
+    setMaxVisibleCoursesLength(sorted.length);
+    setVisibleCourses(sorted.slice(0, CHUNK_SIZE));
     setCourseSliceIndex(CHUNK_SIZE);
   }, [
     query,
@@ -336,8 +455,10 @@ const ExplorePage: React.FC = () => {
     courseFilters.prereqs.searchQuery,
     courseFilters.prereqs.hasNone,
     courseFilters.designations.selected,
+    courseFilters.sort.value,
     courses,
     mode,
+    courseReviewsData,
   ]);
 
   // Effect: update visible instructors when filters change
@@ -379,36 +500,50 @@ const ExplorePage: React.FC = () => {
       <main id="explore-container" className="container">
         <section className="courses-section">
           <div className="courses-section__explore-header">
-            <TextBadge
-              className="big explore gray-text"
-              content={`${
-                mode === "courses"
-                  ? maxVisibleCoursesLength
-                    ? numberWithCommas(maxVisibleCoursesLength)
-                    : "0"
-                  : maxVisibleInstructors
-                  ? numberWithCommas(maxVisibleInstructors)
-                  : "0"
-              }
-                ${
+            <div className="courses-section__explore-header__left">
+              <TextBadge
+                className="big explore gray-text"
+                content={`${
                   mode === "courses"
-                    ? maxVisibleCoursesLength > 1
-                      ? "courses"
-                      : "course"
-                    : maxVisibleInstructors > 1
-                    ? "instructors"
-                    : "instructor"
+                    ? maxVisibleCoursesLength
+                      ? numberWithCommas(maxVisibleCoursesLength)
+                      : "0"
+                    : maxVisibleInstructors
+                    ? numberWithCommas(maxVisibleInstructors)
+                    : "0"
                 } found`}
-            />
-            <ButtonGroup
-              options={["courses", "instructors"]}
-              onSelect={(value) => {
-                setMode(value as "courses" | "instructors");
-                courseFilters.onReset();
-                instructorFilters.onReset();
-              }}
-              selectedOption={mode}
-            />
+              />
+              <ButtonGroup
+                options={["courses", "instructors"]}
+                onSelect={(value) => {
+                  setMode(value as "courses" | "instructors");
+                  courseFilters.onReset();
+                  instructorFilters.onReset();
+                }}
+                selectedOption={mode}
+              />
+            </div>
+            <div className="courses-section__explore-header__right">
+              {mode === "courses" && (
+                <select
+                  className="sort-dropdown"
+                  value={courseFilters.sort.value || ""}
+                  onChange={(e) =>
+                    courseFilters.sort.setValue(
+                      (e.target.value as SortState) || null
+                    )
+                  }
+                >
+                  <option value="">Sort By</option>
+                  <option value="reviews-asc">Reviews ↑</option>
+                  <option value="reviews-desc">Reviews ↓</option>
+                  <option value="rating-asc">Rating ↑</option>
+                  <option value="rating-desc">Rating ↓</option>
+                  <option value="difficulty-asc">Difficulty ↑</option>
+                  <option value="difficulty-desc">Difficulty ↓</option>
+                </select>
+              )}
+            </div>
           </div>
           <SearchBar
             handleInputChange={setQuery}

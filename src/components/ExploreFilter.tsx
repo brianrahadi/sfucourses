@@ -2,7 +2,7 @@ import Select, { SelectInstance } from "react-select";
 import { Button } from "@components";
 import { SearchBar } from "@components";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
-import { ExploreFilters } from "src/hooks/UseExploreFilters";
+import { ExploreFilterProps } from "src/hooks/UseExploreFilters";
 import { BsSun } from "react-icons/bs";
 import { FaLeaf } from "react-icons/fa";
 import { LuFlower } from "react-icons/lu";
@@ -88,7 +88,7 @@ const FilterButton: React.FC<FilterButtonProps> = ({
   );
 };
 
-export const ExploreFilter: React.FC<ExploreFilters> = ({
+export const ExploreFilter: React.FC<ExploreFilterProps> = ({
   subjects,
   levels,
   terms,

@@ -1,6 +1,15 @@
 import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { SelectInstance } from "react-select";
 
+export type SortState =
+  | "reviews-asc"
+  | "reviews-desc"
+  | "rating-asc"
+  | "rating-desc"
+  | "difficulty-asc"
+  | "difficulty-desc"
+  | null;
+
 export interface ExploreFilters {
   subjects: {
     selected: string[];
@@ -32,9 +41,15 @@ export interface ExploreFilters {
     selected: string[];
     setSelected: Dispatch<SetStateAction<string[]>>;
   };
+  sort: {
+    value: SortState;
+    setValue: Dispatch<SetStateAction<SortState>>;
+  };
   courseSubjectSelectInputRef: React.RefObject<SelectInstance<any>>;
   onReset: () => void;
 }
+
+export type ExploreFilterProps = Omit<ExploreFilters, "sort">;
 
 export const useExploreFilters = (): ExploreFilters => {
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
@@ -54,6 +69,8 @@ export const useExploreFilters = (): ExploreFilters => {
     []
   );
 
+  const [sortValue, setSortValue] = useState<SortState>(null);
+
   const courseSubjectSelectInputRef = useRef<SelectInstance<any>>(null);
 
   const onReset = () => {
@@ -64,6 +81,9 @@ export const useExploreFilters = (): ExploreFilters => {
     setSelectedDeliveries([]);
     setPrereqSearchQuery("");
     setShowPrereqs(false);
+    setHasNoPrereq(false);
+    setSelectedDesignations([]);
+    setSortValue(null);
   };
 
   return {
@@ -96,6 +116,10 @@ export const useExploreFilters = (): ExploreFilters => {
     designations: {
       selected: selectedDesignations,
       setSelected: setSelectedDesignations,
+    },
+    sort: {
+      value: sortValue,
+      setValue: setSortValue,
     },
     courseSubjectSelectInputRef,
     onReset,
