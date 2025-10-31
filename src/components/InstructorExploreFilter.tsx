@@ -2,7 +2,7 @@ import Select, { SelectInstance } from "react-select";
 import { Button } from "@components";
 import { Dispatch, SetStateAction, useRef } from "react";
 import { RiResetLeftFill } from "react-icons/ri";
-import { InstructorExploreFilters } from "@hooks";
+import { InstructorExploreFilterProps } from "@hooks";
 import { subjectOptions, termOptions, termToIcon } from "@utils/exploreFilters";
 const colourNeutral1000 = "#323434";
 const colourNeutral900 = "#4b4e4d";
@@ -76,10 +76,9 @@ const FilterButton: React.FC<FilterButtonProps> = ({
   );
 };
 
-export const InstructorExploreFilter: React.FC<InstructorExploreFilters> = ({
-  subjects,
-  terms,
-}) => {
+export const InstructorExploreFilter: React.FC<
+  InstructorExploreFilterProps
+> = ({ subjects, terms, reviews }) => {
   const selectInputRef = useRef<SelectInstance<any>>(null);
 
   return (
@@ -131,6 +130,46 @@ export const InstructorExploreFilter: React.FC<InstructorExploreFilters> = ({
               />
             );
           })}
+        </div>
+      </section>
+      <section className="explore-filter__section">
+        <p>
+          <b>Reviews</b>
+        </p>
+        <div className="explore-filter__slider-container">
+          {(() => {
+            const reviewValues = [0, 1, 5, 10, 20, 50, 75, 100, 200, 300, 500];
+            const currentIndex =
+              reviews.minReviews === 0
+                ? 0
+                : reviewValues.indexOf(reviews.minReviews) !== -1
+                ? reviewValues.indexOf(reviews.minReviews)
+                : 0;
+            return (
+              <>
+                <input
+                  type="range"
+                  min="0"
+                  max="10"
+                  step="1"
+                  value={currentIndex}
+                  onChange={(e) => {
+                    const index = Number(e.target.value);
+                    reviews.setMinReviews(reviewValues[index]);
+                  }}
+                  className="explore-filter__slider"
+                />
+                <div className="explore-filter__slider-labels">
+                  <span>
+                    {reviews.minReviews === 0
+                      ? "All"
+                      : `≥${reviews.minReviews}`}
+                  </span>
+                  <span>500+</span>
+                </div>
+              </>
+            );
+          })()}
         </div>
       </section>
     </div>

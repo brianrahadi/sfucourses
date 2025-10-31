@@ -31,7 +31,7 @@ interface CourseReviewSummary {
 }
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useExploreFilters, SortState } from "src/hooks/UseExploreFilters";
-import { useInstructorExploreFilters } from "@hooks";
+import { useInstructorExploreFilters, InstructorSortState } from "@hooks";
 import { GetStaticProps } from "next";
 import { useQuery } from "@tanstack/react-query";
 import { dehydrate, QueryClient } from "@tanstack/react-query";
@@ -221,15 +221,6 @@ const ExplorePage: React.FC = () => {
     }),
   };
 
-  const sortOptions = [
-    { value: "reviews-asc", label: "Reviews ↑" },
-    { value: "reviews-desc", label: "Reviews ↓" },
-    { value: "rating-asc", label: "Rating ↑" },
-    { value: "rating-desc", label: "Rating ↓" },
-    { value: "difficulty-asc", label: "Difficulty ↑" },
-    { value: "difficulty-desc", label: "Difficulty ↓" },
-  ];
-
   // Get review data for a specific instructor
   const getInstructorReviewData = (
     instructorName: string
@@ -264,6 +255,17 @@ const ExplorePage: React.FC = () => {
     });
     return map;
   }, [courseReviewsData]);
+
+  // Create a lookup map for instructor review data to optimize sorting
+  const instructorReviewMap = useMemo(() => {
+    if (!instructorReviewsData)
+      return new Map<string, InstructorReviewSummary>();
+    const map = new Map<string, InstructorReviewSummary>();
+    instructorReviewsData.forEach((review) => {
+      map.set(review.Name.toLowerCase(), review);
+    });
+    return map;
+  }, [instructorReviewsData]);
 
   // Keyboard shortcuts for explore page
   useEffect(() => {
@@ -409,6 +411,18 @@ const ExplorePage: React.FC = () => {
             )
           : instructors,
       (instructors: Instructor[]) =>
+        instructorFilters.reviews.minReviews > 0
+          ? instructors.filter((instructor) => {
+              const reviewData = instructorReviewMap.get(
+                instructor.name.toLowerCase()
+              );
+              const totalReviews = reviewData
+                ? parseInt(reviewData.Ratings) || 0
+                : 0;
+              return totalReviews >= instructorFilters.reviews.minReviews;
+            })
+          : instructors,
+      (instructors: Instructor[]) =>
         query
           ? instructors.filter(
               (instructor) =>
@@ -424,6 +438,50 @@ const ExplorePage: React.FC = () => {
     return filtered;
   };
 
+  const sortInstructors = (instructors: Instructor[]) => {
+    const sortValue = instructorFilters.sort.value;
+
+    if (!sortValue) return instructors;
+
+    // Split from the right to handle field names with hyphens (e.g., "would-take-again")
+    const lastDashIndex = sortValue.lastIndexOf("-");
+    const field = sortValue.substring(0, lastDashIndex);
+    const direction = sortValue.substring(lastDashIndex + 1);
+    const isAsc = direction === "asc";
+    const sortedInstructors = [...instructors];
+
+    sortedInstructors.sort((a, b) => {
+      const reviewA = instructorReviewMap.get(a.name.toLowerCase());
+      const reviewB = instructorReviewMap.get(b.name.toLowerCase());
+
+      let valueA = 0;
+      let valueB = 0;
+
+      if (field === "quality") {
+        valueA = reviewA ? parseFloat(reviewA.Quality) || 0 : 0;
+        valueB = reviewB ? parseFloat(reviewB.Quality) || 0 : 0;
+      } else if (field === "difficulty") {
+        valueA = reviewA ? parseFloat(reviewA.Difficulty) || 0 : 0;
+        valueB = reviewB ? parseFloat(reviewB.Difficulty) || 0 : 0;
+      } else if (field === "would-take-again") {
+        const wouldTakeAgainA = reviewA?.WouldTakeAgain || "0";
+        const wouldTakeAgainB = reviewB?.WouldTakeAgain || "0";
+        // Remove % and trim whitespace, handle "N/A" or empty strings
+        const cleanedA = wouldTakeAgainA.replace(/%/g, "").trim();
+        const cleanedB = wouldTakeAgainB.replace(/%/g, "").trim();
+        valueA = cleanedA && cleanedA !== "N/A" ? parseFloat(cleanedA) || 0 : 0;
+        valueB = cleanedB && cleanedB !== "N/A" ? parseFloat(cleanedB) || 0 : 0;
+      } else if (field === "reviews") {
+        valueA = reviewA ? parseInt(reviewA.Ratings) || 0 : 0;
+        valueB = reviewB ? parseInt(reviewB.Ratings) || 0 : 0;
+      }
+
+      return isAsc ? valueA - valueB : valueB - valueA;
+    });
+
+    return sortedInstructors;
+  };
+
   // Handlers for loading more
   const loadMoreCourses = () => {
     if (courses.length === 0) return;
@@ -436,7 +494,8 @@ const ExplorePage: React.FC = () => {
   const loadMoreInstructors = () => {
     if (instructors.length === 0) return;
     const filtered = filterInstructors(instructors);
-    const next = filtered.slice(
+    const sorted = sortInstructors(filtered);
+    const next = sorted.slice(
       instructorSliceIndex,
       instructorSliceIndex + CHUNK_SIZE
     );
@@ -474,15 +533,19 @@ const ExplorePage: React.FC = () => {
     if (mode !== "instructors") return;
     if (instructors.length === 0) return;
     const filtered = filterInstructors(instructors);
-    setMaxVisibleInstructors(filtered.length);
-    setVisibleInstructors(filtered.slice(0, CHUNK_SIZE));
+    const sorted = sortInstructors(filtered);
+    setMaxVisibleInstructors(sorted.length);
+    setVisibleInstructors(sorted.slice(0, CHUNK_SIZE));
     setInstructorSliceIndex(CHUNK_SIZE);
   }, [
     query,
     instructorFilters.subjects.selected,
     instructorFilters.terms.selected,
+    instructorFilters.reviews.minReviews,
+    instructorFilters.sort.value,
     instructors,
     mode,
+    instructorReviewsData,
   ]);
 
   // Loading state
@@ -549,6 +612,31 @@ const ExplorePage: React.FC = () => {
                   <option value="rating-desc">Rating ↓</option>
                   <option value="difficulty-asc">Difficulty ↑</option>
                   <option value="difficulty-desc">Difficulty ↓</option>
+                </select>
+              )}
+              {mode === "instructors" && (
+                <select
+                  className="sort-dropdown"
+                  value={instructorFilters.sort.value || ""}
+                  onChange={(e) =>
+                    instructorFilters.sort.setValue(
+                      (e.target.value as InstructorSortState) || null
+                    )
+                  }
+                >
+                  <option value="">Sort By</option>
+                  <option value="quality-asc">Quality ↑</option>
+                  <option value="quality-desc">Quality ↓</option>
+                  <option value="difficulty-asc">Difficulty ↑</option>
+                  <option value="difficulty-desc">Difficulty ↓</option>
+                  <option value="would-take-again-asc">
+                    Would Take Again ↑
+                  </option>
+                  <option value="would-take-again-desc">
+                    Would Take Again ↓
+                  </option>
+                  <option value="reviews-asc">Reviews ↑</option>
+                  <option value="reviews-desc">Reviews ↓</option>
                 </select>
               )}
             </div>
@@ -624,6 +712,7 @@ const ExplorePage: React.FC = () => {
             <InstructorExploreFilter
               subjects={instructorFilters.subjects}
               terms={instructorFilters.terms}
+              reviews={instructorFilters.reviews}
               instructorSubjectSelectInputRef={
                 instructorFilters.instructorSubjectSelectInputRef
               }

@@ -6,3 +6,4 @@ export { useCoursesData } from "./UseCoursesData";
 export { useCourseOffering } from "./useCourseOffering";
 export { useInstructorExploreFilters } from "./useInstructorExploreFilters";
 export type { InstructorExploreFilters } from "./useInstructorExploreFilters";
+export type { InstructorSortState } from "./useInstructorExploreFilters";

@@ -36,29 +36,28 @@ export const InstructorCard: React.FC<InstructorCardProps> = ({
           ) : (
             <p>{instructor.name}</p>
           )}
-
-          {/* Instructor Review Info as TextBadges */}
-          {reviewData && (
-            <div className="instructor-review-badges">
-              <TextBadge
-                className="review-badge"
-                content={`Quality: ${reviewData.Quality}/5`}
-              />
-              <TextBadge
-                className="review-badge"
-                content={`Difficulty: ${reviewData.Difficulty}/5`}
-              />
-              <TextBadge
-                className="review-badge"
-                content={`Would Take Again: ${reviewData.WouldTakeAgain}`}
-              />
-              <TextBadge
-                className="review-badge"
-                content={`Ratings: ${reviewData.Ratings}`}
-              />
-            </div>
-          )}
         </div>
+        {/* Instructor Review Info as TextBadges */}
+        {reviewData && (
+          <div className="instructor-review-badges">
+            <TextBadge
+              className="review-badge"
+              content={`Quality: ${reviewData.Quality}/5`}
+            />
+            <TextBadge
+              className="review-badge"
+              content={`Difficulty: ${reviewData.Difficulty}/5`}
+            />
+            <TextBadge
+              className="review-badge"
+              content={`Would Take Again: ${reviewData.WouldTakeAgain}`}
+            />
+            <TextBadge
+              className="review-badge"
+              content={`Reviews: ${reviewData.Ratings}`}
+            />
+          </div>
+        )}
       </div>
 
       <div className="course-card__row">
