@@ -41,6 +41,10 @@ export interface ExploreFilters {
     selected: string[];
     setSelected: Dispatch<SetStateAction<string[]>>;
   };
+  reviews: {
+    minReviews: number;
+    setMinReviews: Dispatch<SetStateAction<number>>;
+  };
   sort: {
     value: SortState;
     setValue: Dispatch<SetStateAction<SortState>>;
@@ -69,6 +73,8 @@ export const useExploreFilters = (): ExploreFilters => {
     []
   );
 
+  const [minReviews, setMinReviews] = useState<number>(0);
+
   const [sortValue, setSortValue] = useState<SortState>(null);
 
   const courseSubjectSelectInputRef = useRef<SelectInstance<any>>(null);
@@ -83,6 +89,7 @@ export const useExploreFilters = (): ExploreFilters => {
     setShowPrereqs(false);
     setHasNoPrereq(false);
     setSelectedDesignations([]);
+    setMinReviews(0);
     setSortValue(null);
   };
 
@@ -116,6 +123,10 @@ export const useExploreFilters = (): ExploreFilters => {
     designations: {
       selected: selectedDesignations,
       setSelected: setSelectedDesignations,
+    },
+    reviews: {
+      minReviews,
+      setMinReviews,
     },
     sort: {
       value: sortValue,

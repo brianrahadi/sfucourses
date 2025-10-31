@@ -189,6 +189,23 @@ export const filterCoursesByDesignations = (
   });
 };
 
+export const filterCoursesByReviews = (
+  courses: CourseOutline[],
+  minReviews: number,
+  courseReviewMap: Map<string, { total_reviews: number }>
+): CourseOutline[] => {
+  if (minReviews === 0) {
+    return courses;
+  }
+
+  return courses.filter((course) => {
+    const courseCode = `${course.dept}${course.number}`.toLowerCase();
+    const reviewData = courseReviewMap.get(courseCode);
+    const totalReviews = reviewData?.total_reviews || 0;
+    return totalReviews >= minReviews;
+  });
+};
+
 export const filterCoursesByCampus = (
   courses: CourseOutlineWithSectionDetails[],
   campusFilters: string[]

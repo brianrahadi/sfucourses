@@ -95,6 +95,7 @@ export const ExploreFilter: React.FC<ExploreFilterProps> = ({
   prereqs,
   designations,
   deliveries,
+  reviews,
   onReset,
   courseSubjectSelectInputRef,
 }) => {
@@ -231,6 +232,46 @@ export const ExploreFilter: React.FC<ExploreFilterProps> = ({
               />
             );
           })}
+        </div>
+      </section>
+      <section className="explore-filter__section">
+        <p>
+          <b>Reviews</b>
+        </p>
+        <div className="explore-filter__slider-container">
+          {(() => {
+            const reviewValues = [0, 1, 5, 10, 20, 50, 75, 100, 200, 300, 500];
+            const currentIndex =
+              reviews.minReviews === 0
+                ? 0
+                : reviewValues.indexOf(reviews.minReviews) !== -1
+                ? reviewValues.indexOf(reviews.minReviews)
+                : 0;
+            return (
+              <>
+                <input
+                  type="range"
+                  min="0"
+                  max="10"
+                  step="1"
+                  value={currentIndex}
+                  onChange={(e) => {
+                    const index = Number(e.target.value);
+                    reviews.setMinReviews(reviewValues[index]);
+                  }}
+                  className="explore-filter__slider"
+                />
+                <div className="explore-filter__slider-labels">
+                  <span>
+                    {reviews.minReviews === 0
+                      ? "All"
+                      : `≥${reviews.minReviews}`}
+                  </span>
+                  <span>500+</span>
+                </div>
+              </>
+            );
+          })()}
         </div>
       </section>
     </div>

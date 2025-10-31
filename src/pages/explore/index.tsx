@@ -44,6 +44,7 @@ import {
   filterCoursesByDeliveries,
   filterCoursesByPrereqs,
   filterCoursesByDesignations,
+  filterCoursesByReviews,
 } from "@utils/courseFilters";
 import { numberWithCommas } from "@utils/format";
 import { RotatingLines } from "react-loader-spinner";
@@ -341,6 +342,12 @@ const ExplorePage: React.FC = () => {
           courseFilters.prereqs.searchQuery,
           courseFilters.prereqs.hasNone
         ),
+      (courses: CourseOutline[]) =>
+        filterCoursesByReviews(
+          courses,
+          courseFilters.reviews.minReviews,
+          courseReviewMap
+        ),
       (courses: CourseOutline[]) => filterCoursesByQuery(courses, query),
     ].reduce((filtered, filterFunc) => filterFunc(filtered), courses);
     return filteredCourses;
@@ -455,6 +462,7 @@ const ExplorePage: React.FC = () => {
     courseFilters.prereqs.searchQuery,
     courseFilters.prereqs.hasNone,
     courseFilters.designations.selected,
+    courseFilters.reviews.minReviews,
     courseFilters.sort.value,
     courses,
     mode,
@@ -606,6 +614,7 @@ const ExplorePage: React.FC = () => {
               prereqs={courseFilters.prereqs}
               designations={courseFilters.designations}
               deliveries={courseFilters.deliveries}
+              reviews={courseFilters.reviews}
               courseSubjectSelectInputRef={
                 courseFilters.courseSubjectSelectInputRef
               }
