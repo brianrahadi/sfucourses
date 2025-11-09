@@ -1,8 +1,9 @@
 import React from "react";
 import Link from "next/link";
 import { CourseOutline } from "../types";
-import { Highlight, TextBadge } from "@components";
+import { Highlight } from "@components";
 import { termToIcon } from "@utils/exploreFilters";
+import { FaStar, FaBrain, FaComment } from "react-icons/fa";
 
 interface CourseReviewSummary {
   course_code: string;
@@ -19,7 +20,7 @@ type ExploreCourseCardProps = {
   showInstructors?: boolean;
   showDescription?: boolean;
   isLink?: boolean;
-  reviewData?: CourseReviewSummary | null;
+  reviewData?: CourseReviewSummary;
 };
 
 export const ExploreCourseCard: React.FC<ExploreCourseCardProps> = ({
@@ -46,27 +47,26 @@ export const ExploreCourseCard: React.FC<ExploreCourseCardProps> = ({
   const CardContent = () => (
     <>
       <div className="course-title">
-        {query ? <Highlight text={header} query={query} /> : <p>{header}</p>}
-      </div>
-      {reviewData && (
-        <div className="course-card__row">
-          <TextBadge
-            content={`Reviews: ${reviewData.total_reviews}`}
-            className="course-review-badge"
-            enableBgColor={false}
-          />
-          <TextBadge
-            content={`Rating: ${reviewData.avg_rating.toFixed(2)}/5`}
-            className="course-review-badge"
-            enableBgColor={false}
-          />
-          <TextBadge
-            content={`Difficulty: ${reviewData.avg_difficulty.toFixed(2)}/5`}
-            className="course-review-badge"
-            enableBgColor={false}
-          />
+        <div className="course-title-content">
+          {query ? <Highlight text={header} query={query} /> : <p>{header}</p>}
+          {reviewData && (
+            <div className="course-review-stats">
+              <span className="course-review-stat">
+                <FaStar className="course-review-icon course-review-icon--star" />
+                {reviewData.avg_rating.toFixed(1)}
+              </span>
+              <span className="course-review-stat">
+                <FaBrain className="course-review-icon course-review-icon--brain" />
+                {reviewData.avg_difficulty.toFixed(1)}
+              </span>
+              <span className="course-review-stat">
+                <FaComment className="course-review-icon course-review-icon--comment" />
+                {reviewData.total_reviews}
+              </span>
+            </div>
+          )}
         </div>
-      )}
+      </div>
       <div className="course-card__content">
         {showDescription &&
           (query ? (

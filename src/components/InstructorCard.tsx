@@ -1,8 +1,9 @@
 import React from "react";
 import { Instructor } from "@types";
-import { Highlight, TextBadge } from "@components";
+import { Highlight } from "@components";
 import Link from "next/link";
 import { termToIcon } from "@utils/exploreFilters";
+import { FaStar, FaBrain, FaComment, FaCheckCircle } from "react-icons/fa";
 
 interface InstructorReviewSummary {
   URL: string;
@@ -30,34 +31,36 @@ export const InstructorCard: React.FC<InstructorCardProps> = ({
   const InstructorCardContent = () => (
     <>
       <div className="course-title dark instructor-header">
-        <div className="instructor-name-section">
-          {query ? (
-            <Highlight text={instructor.name} query={query} />
-          ) : (
-            <p>{instructor.name}</p>
+        <div className="course-title-content">
+          <div className="instructor-name-section">
+            {query ? (
+              <Highlight text={instructor.name} query={query} />
+            ) : (
+              <p>{instructor.name}</p>
+            )}
+          </div>
+          {/* Instructor Review Info */}
+          {reviewData && (
+            <div className="course-review-stats">
+              <span className="course-review-stat">
+                <FaStar className="course-review-icon course-review-icon--star" />
+                {reviewData.Quality}
+              </span>
+              <span className="course-review-stat">
+                <FaBrain className="course-review-icon course-review-icon--brain" />
+                {reviewData.Difficulty}
+              </span>
+              <span className="course-review-stat">
+                <FaCheckCircle className="course-review-icon course-review-icon--check" />
+                {reviewData.WouldTakeAgain}
+              </span>
+              <span className="course-review-stat">
+                <FaComment className="course-review-icon course-review-icon--comment" />
+                {reviewData.Ratings}
+              </span>
+            </div>
           )}
         </div>
-        {/* Instructor Review Info as TextBadges */}
-        {reviewData && (
-          <div className="instructor-review-badges">
-            <TextBadge
-              className="review-badge"
-              content={`Quality: ${reviewData.Quality}/5`}
-            />
-            <TextBadge
-              className="review-badge"
-              content={`Difficulty: ${reviewData.Difficulty}/5`}
-            />
-            <TextBadge
-              className="review-badge"
-              content={`Would Take Again: ${reviewData.WouldTakeAgain}`}
-            />
-            <TextBadge
-              className="review-badge"
-              content={`Reviews: ${reviewData.Ratings}`}
-            />
-          </div>
-        )}
       </div>
 
       <div className="course-card__row">

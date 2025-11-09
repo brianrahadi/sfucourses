@@ -27,6 +27,13 @@
   .course-title {
     margin-bottom: 0.5rem;
     font-weight: bold;
+
+    .course-title-content {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
   }
 
   .course-terms {
@@ -49,6 +56,40 @@
     flex-wrap: wrap;
     max-width: 100%;
     gap: 0.5rem;
+  }
+
+  .course-review-stats {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .course-review-stat {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: var(--colour-neutral-300);
+    font-weight: 500;
+  }
+
+  .course-review-icon {
+    font-size: 1.25rem;
+
+    &--star {
+      fill: #f59e0b; // amber
+    }
+
+    &--brain {
+      fill: #ec4899; // pink - brain color
+    }
+
+    &--comment {
+      fill: skyblue;
+    }
+
+    &--check {
+      fill: var(--colour-sosy-green-500); // green for "would take again"
+    }
   }
 
   &.instructor-card {
