@@ -236,13 +236,13 @@ const ExplorePage: React.FC = () => {
   // Get review data for a specific course
   const getCourseReviewData = (
     courseCode: string
-  ): CourseReviewSummary | null => {
-    if (!courseReviewsData) return null;
+  ): CourseReviewSummary | undefined => {
+    if (!courseReviewsData) return undefined;
     return (
       courseReviewsData.find(
         (review) =>
           review.course_code.toLowerCase() === courseCode.toLowerCase()
-      ) || null
+      ) || undefined
     );
   };
 
