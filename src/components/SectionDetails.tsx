@@ -6,7 +6,7 @@ import {
 } from "@types";
 import { generateBaseOutlinePath, onlyUnique } from "@utils";
 import Link from "next/link";
-import { Dispatch, SetStateAction, useState, useRef } from "react";
+import { Dispatch, SetStateAction, useState, useRef, useMemo } from "react";
 import { BsFillPersonFill } from "react-icons/bs";
 import { CiCalendar, CiClock1 } from "react-icons/ci";
 import { FaTimeline } from "react-icons/fa6";
@@ -17,8 +17,21 @@ import {
   IoChevronUp,
   IoChevronDown,
 } from "react-icons/io5";
+import { FaStar, FaBrain, FaComment, FaCheckCircle } from "react-icons/fa";
 import { formatShortDate } from "@utils/format";
 import { Tooltip } from "react-tooltip";
+import { useQuery } from "@tanstack/react-query";
+import { BASE_URL } from "@const";
+
+interface InstructorReviewSummary {
+  URL: string;
+  Quality: string;
+  Ratings: string;
+  Name: string;
+  WouldTakeAgain: string;
+  Difficulty: string;
+  Department: string;
+}
 
 interface SectionDetailsProps {
   offering: CourseWithSectionDetails;
@@ -65,6 +78,27 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
   onToggleShowLabTut,
 }) => {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const { data: instructorReviewsData } = useQuery({
+    queryKey: ["instructorReviews"],
+    queryFn: async () => {
+      const res = await fetch(`${BASE_URL}/reviews/instructors`);
+      return res.json() as Promise<InstructorReviewSummary[]>;
+    },
+    staleTime: 60 * 60 * 1000,
+  });
+
+  const getInstructorReviewData = (
+    instructorName: string
+  ): InstructorReviewSummary | null => {
+    if (!instructorReviewsData) return null;
+    return (
+      instructorReviewsData.find(
+        (review) => review.Name.toLowerCase() === instructorName.toLowerCase()
+      ) || null
+    );
+  };
+
   const processedSections = processSectionDetails(offering.sections).filter(
     (section) => section.schedules && section.schedules.length > 0
   );
@@ -94,6 +128,39 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
     ? processedSections
     : initialShownSections.slice(0, 2);
 
+  const instructorTooltips = useMemo(() => {
+    const tooltips = new Map<string, InstructorReviewSummary>();
+    if (!instructorReviewsData) return tooltips;
+
+    shownSections.forEach((section) => {
+      const instructorsText =
+        section.instructors.length > 0
+          ? section.instructors
+              .map((i) => i.name)
+              .filter(onlyUnique)
+              .join(", ")
+          : "N/A";
+      const firstInstructorName =
+        instructorsText !== "N/A" ? instructorsText.split(", ")[0] : null;
+
+      if (firstInstructorName) {
+        const instructorReviewData =
+          instructorReviewsData.find(
+            (review) =>
+              review.Name.toLowerCase() === firstInstructorName.toLowerCase()
+          ) || null;
+
+        if (instructorReviewData) {
+          const instructorTooltipId = `instructor-tooltip-${
+            section.classNumber
+          }-${firstInstructorName.replace(/\s+/g, "-")}`;
+          tooltips.set(instructorTooltipId, instructorReviewData);
+        }
+      }
+    });
+    return tooltips;
+  }, [shownSections, instructorReviewsData]);
+
   return (
     <div
       key={"s" + offering.term + offering.dept + offering.number}
@@ -121,6 +188,16 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                 .filter(onlyUnique)
                 .join(", ")
             : "N/A";
+
+        const firstInstructorName =
+          instructorsText !== "N/A" ? instructorsText.split(", ")[0] : null;
+        const instructorReviewData = firstInstructorName
+          ? getInstructorReviewData(firstInstructorName)
+          : null;
+
+        const instructorTooltipId = `instructor-tooltip-${
+          section.classNumber
+        }-${firstInstructorName?.replace(/\s+/g, "-") || "na"}`;
 
         const handleAddSection = () => {
           if (!setOfferings) return;
@@ -260,8 +337,14 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                       className="no-underline"
                       target="_blank"
                       rel="noreferrer"
-                      data-tooltip-id="new-tab-tooltip"
-                      data-tooltip-content="New tab"
+                      data-tooltip-id={
+                        instructorReviewData
+                          ? instructorTooltipId
+                          : "new-tab-tooltip"
+                      }
+                      data-tooltip-content={
+                        instructorReviewData ? undefined : "New tab"
+                      }
                     >
                       <Highlight
                         text={instructorsText}
@@ -275,8 +358,14 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
                       className="no-underline"
                       target="_blank"
                       rel="noreferrer"
-                      data-tooltip-id="new-tab-tooltip"
-                      data-tooltip-content="New tab"
+                      data-tooltip-id={
+                        instructorReviewData
+                          ? instructorTooltipId
+                          : "new-tab-tooltip"
+                      }
+                      data-tooltip-content={
+                        instructorReviewData ? undefined : "New tab"
+                      }
                     >
                       {instructorsText}
                     </Link>
@@ -367,6 +456,53 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
         </button>
       )}
       <Tooltip id="new-tab-tooltip" place="top" />
+      {Array.from(instructorTooltips.entries()).map(
+        ([tooltipId, reviewData]) => (
+          <Tooltip key={tooltipId} id={tooltipId} place="top">
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "0.5rem",
+                padding: "0.25rem",
+              }}
+            >
+              <div
+                style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+              >
+                <FaStar
+                  style={{ fill: "#f59e0b", width: "1rem", height: "1rem" }}
+                />
+                <span>{reviewData.Quality}</span>
+              </div>
+              <div
+                style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+              >
+                <FaBrain
+                  style={{ fill: "#ec4899", width: "1rem", height: "1rem" }}
+                />
+                <span>{reviewData.Difficulty}</span>
+              </div>
+              <div
+                style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+              >
+                <FaCheckCircle
+                  style={{ fill: "#10b981", width: "1rem", height: "1rem" }}
+                />
+                <span>{reviewData.WouldTakeAgain}</span>
+              </div>
+              <div
+                style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+              >
+                <FaComment
+                  style={{ fill: "#0ea5e9", width: "1rem", height: "1rem" }}
+                />
+                <span>{reviewData.Ratings}</span>
+              </div>
+            </div>
+          </Tooltip>
+        )
+      )}
     </div>
   );
 };

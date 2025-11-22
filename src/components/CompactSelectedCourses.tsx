@@ -1,10 +1,23 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { CourseWithSectionDetails } from "@types";
 import { IoRemoveCircle } from "react-icons/io5";
 import { BsFillPersonFill } from "react-icons/bs";
 import { MdPlace } from "react-icons/md";
+import { FaStar, FaBrain, FaComment, FaCheckCircle } from "react-icons/fa";
 import Link from "next/link";
 import { Tooltip } from "react-tooltip";
+import { useQuery } from "@tanstack/react-query";
+import { BASE_URL } from "@const";
+
+interface InstructorReviewSummary {
+  URL: string;
+  Quality: string;
+  Ratings: string;
+  Name: string;
+  WouldTakeAgain: string;
+  Difficulty: string;
+  Department: string;
+}
 
 interface CompactSelectedCoursesProps {
   selectedCourses: CourseWithSectionDetails[];
@@ -20,6 +33,44 @@ export const CompactSelectedCourses: React.FC<CompactSelectedCoursesProps> = ({
   onRemoveCourse,
   term,
 }) => {
+  const { data: instructorReviewsData } = useQuery({
+    queryKey: ["instructorReviews"],
+    queryFn: async () => {
+      const res = await fetch(`${BASE_URL}/reviews/instructors`);
+      return res.json() as Promise<InstructorReviewSummary[]>;
+    },
+    staleTime: 60 * 60 * 1000,
+  });
+
+  const instructorTooltips = useMemo(() => {
+    const tooltips = new Map<string, InstructorReviewSummary>();
+    if (!instructorReviewsData) return tooltips;
+
+    selectedCourses.forEach((course) => {
+      course.sections.forEach((section) => {
+        if (section.instructors.length > 0) {
+          const instructorName = section.instructors[0].name;
+          const instructorReviewData =
+            instructorReviewsData.find(
+              (review) =>
+                review.Name.toLowerCase() === instructorName.toLowerCase()
+            ) || null;
+
+          if (instructorReviewData) {
+            const instructorTooltipId = `instructor-tooltip-compact-${
+              course.dept
+            }-${course.number}-${section.classNumber}-${instructorName.replace(
+              /\s+/g,
+              "-"
+            )}`;
+            tooltips.set(instructorTooltipId, instructorReviewData);
+          }
+        }
+      });
+    });
+    return tooltips;
+  }, [selectedCourses, instructorReviewsData]);
+
   return (
     <div className="selected-courses">
       <h3 className="section-title">
@@ -70,20 +121,42 @@ export const CompactSelectedCourses: React.FC<CompactSelectedCoursesProps> = ({
                     <div className="section-details">
                       <span className="instructor">
                         <BsFillPersonFill />
-                        {section.instructors.length > 0 ? (
-                          <Link
-                            href={`/instructors/${section.instructors[0]?.name}`}
-                            className="no-underline"
-                            target="_blank"
-                            rel="noreferrer"
-                            data-tooltip-id="new-tab-tooltip"
-                            data-tooltip-content="New tab"
-                          >
-                            {section.instructors[0].name}
-                          </Link>
-                        ) : (
-                          "N/A"
-                        )}
+                        {section.instructors.length > 0
+                          ? (() => {
+                              const instructorName =
+                                section.instructors[0].name;
+                              const instructorReviewData =
+                                instructorReviewsData?.find(
+                                  (review) =>
+                                    review.Name.toLowerCase() ===
+                                    instructorName.toLowerCase()
+                                );
+                              const instructorTooltipId = `instructor-tooltip-compact-${
+                                course.dept
+                              }-${course.number}-${
+                                section.classNumber
+                              }-${instructorName.replace(/\s+/g, "-")}`;
+
+                              return (
+                                <Link
+                                  href={`/instructors/${instructorName}`}
+                                  className="no-underline"
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  data-tooltip-id={
+                                    instructorReviewData
+                                      ? instructorTooltipId
+                                      : "new-tab-tooltip"
+                                  }
+                                  data-tooltip-content={
+                                    instructorReviewData ? undefined : "New tab"
+                                  }
+                                >
+                                  {instructorName}
+                                </Link>
+                              );
+                            })()
+                          : "N/A"}
                       </span>
                       <span className="location">
                         <MdPlace />
@@ -110,6 +183,53 @@ export const CompactSelectedCourses: React.FC<CompactSelectedCoursesProps> = ({
         )}
       </div>
       <Tooltip id="new-tab-tooltip" place="top" />
+      {Array.from(instructorTooltips.entries()).map(
+        ([tooltipId, reviewData]) => (
+          <Tooltip key={tooltipId} id={tooltipId} place="top">
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "0.5rem",
+                padding: "0.25rem",
+              }}
+            >
+              <div
+                style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+              >
+                <FaStar
+                  style={{ fill: "#f59e0b", width: "1rem", height: "1rem" }}
+                />
+                <span>{reviewData.Quality}</span>
+              </div>
+              <div
+                style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+              >
+                <FaBrain
+                  style={{ fill: "#ec4899", width: "1rem", height: "1rem" }}
+                />
+                <span>{reviewData.Difficulty}</span>
+              </div>
+              <div
+                style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+              >
+                <FaCheckCircle
+                  style={{ fill: "#10b981", width: "1rem", height: "1rem" }}
+                />
+                <span>{reviewData.WouldTakeAgain}</span>
+              </div>
+              <div
+                style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+              >
+                <FaComment
+                  style={{ fill: "#0ea5e9", width: "1rem", height: "1rem" }}
+                />
+                <span>{reviewData.Ratings}</span>
+              </div>
+            </div>
+          </Tooltip>
+        )
+      )}
     </div>
   );
 };
