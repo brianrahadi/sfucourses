@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { CourseWithSectionDetails } from "@types";
 import { TextBadge } from "./TextBadge";
 import {
@@ -13,8 +13,21 @@ import {
   MdBrightness3,
   MdDirectionsCar,
 } from "react-icons/md";
+import { FaStar, FaBrain } from "react-icons/fa";
 import { Tooltip } from "react-tooltip";
 import { IoIosInformationCircleOutline } from "react-icons/io";
+import { useQuery } from "@tanstack/react-query";
+import { BASE_URL } from "@const";
+
+interface InstructorReviewSummary {
+  URL: string;
+  Quality: string;
+  Ratings: string;
+  Name: string;
+  WouldTakeAgain: string;
+  Difficulty: string;
+  Department: string;
+}
 
 interface ScheduleInsightsProps {
   coursesWithSections: CourseWithSectionDetails[];
@@ -73,7 +86,15 @@ const InsightRow = ({
   </div>
 );
 
-const InsightsList = ({ insights }: { insights: ScheduleInsights }) => (
+const InsightsList = ({
+  insights,
+  avgInstructorRating,
+  avgInstructorDifficulty,
+}: {
+  insights: ScheduleInsights;
+  avgInstructorRating: number | null;
+  avgInstructorDifficulty: number | null;
+}) => (
   <div className="insights-list">
     <InsightRow
       icon={MdBarChart}
@@ -107,12 +128,89 @@ const InsightsList = ({ insights }: { insights: ScheduleInsights }) => (
       tooltipId="commute-tooltip"
       tooltipContent="Commute factor calculation:<br/>• 1 campus = 2x (home→campus→home)<br/>• 2+ campuses = number of campuses + 1<br/>• Lower is better"
     />
+    {avgInstructorRating !== null && (
+      <InsightRow
+        icon={FaStar}
+        text="Avg instructor rating"
+        value={avgInstructorRating.toFixed(1)}
+        tooltipId="rating-tooltip"
+        tooltipContent="Average instructor rating from RateMyProfessors<br/>• Based on all instructors in selected courses<br/>• Scale: 1.0 - 5.0"
+      />
+    )}
+    {avgInstructorDifficulty !== null && (
+      <InsightRow
+        icon={FaBrain}
+        text="Avg instructor difficulty"
+        value={avgInstructorDifficulty.toFixed(1)}
+        tooltipId="difficulty-tooltip"
+        tooltipContent="Average instructor difficulty from RateMyProfessors<br/>• Based on all instructors in selected courses<br/>• Scale: 1.0 (easy) - 5.0 (hard)"
+      />
+    )}
   </div>
 );
 
 export const ScheduleInsights: React.FC<ScheduleInsightsProps> = ({
   coursesWithSections,
 }) => {
+  const { data: instructorReviewsData } = useQuery({
+    queryKey: ["instructorReviews"],
+    queryFn: async () => {
+      const res = await fetch(`${BASE_URL}/reviews/instructors`);
+      return res.json() as Promise<InstructorReviewSummary[]>;
+    },
+    staleTime: 60 * 60 * 1000,
+  });
+
+  const { avgInstructorRating, avgInstructorDifficulty } = useMemo(() => {
+    if (!instructorReviewsData || coursesWithSections.length === 0) {
+      return { avgInstructorRating: null, avgInstructorDifficulty: null };
+    }
+
+    const instructorNames = new Set<string>();
+    coursesWithSections.forEach((course) => {
+      course.sections.forEach((section) => {
+        section.instructors.forEach((instructor) => {
+          instructorNames.add(instructor.name);
+        });
+      });
+    });
+
+    const instructorRatings: number[] = [];
+    const instructorDifficulties: number[] = [];
+
+    instructorNames.forEach((name) => {
+      const reviewData = instructorReviewsData.find(
+        (review) => review.Name.toLowerCase() === name.toLowerCase()
+      );
+      if (reviewData) {
+        const rating = parseFloat(reviewData.Quality);
+        const difficulty = parseFloat(reviewData.Difficulty);
+        if (!isNaN(rating)) {
+          instructorRatings.push(rating);
+        }
+        if (!isNaN(difficulty)) {
+          instructorDifficulties.push(difficulty);
+        }
+      }
+    });
+
+    const avgRating =
+      instructorRatings.length > 0
+        ? instructorRatings.reduce((sum, r) => sum + r, 0) /
+          instructorRatings.length
+        : null;
+    const avgDifficulty =
+      instructorDifficulties.length > 0
+        ? instructorDifficulties.reduce((sum, d) => sum + d, 0) /
+          instructorDifficulties.length
+        : null;
+
+    return {
+      avgInstructorRating: avgRating,
+      avgInstructorDifficulty: avgDifficulty,
+    };
+  }, [coursesWithSections, instructorReviewsData]);
+
   if (coursesWithSections.length === 0) {
     return null;
   }
@@ -153,7 +251,11 @@ export const ScheduleInsights: React.FC<ScheduleInsightsProps> = ({
           />
         </div>
       </div>
-      <InsightsList insights={insights} />
+      <InsightsList
+        insights={insights}
+        avgInstructorRating={avgInstructorRating}
+        avgInstructorDifficulty={avgInstructorDifficulty}
+      />
       <CustomTooltip id="quality-tooltip" content={insights.qualityReasoning} />
       <CustomTooltip
         id="commute-tooltip"
@@ -166,6 +268,14 @@ export const ScheduleInsights: React.FC<ScheduleInsightsProps> = ({
       <CustomTooltip
         id="time-blocking-tooltip"
         content="Tap start and end time to create a time block. Tap an existing block to remove it."
+      />
+      <CustomTooltip
+        id="rating-tooltip"
+        content="Average instructor rating from RateMyProfessors<br/>• Based on all instructors in selected courses<br/>• Scale: 1.0 - 5.0"
+      />
+      <CustomTooltip
+        id="difficulty-tooltip"
+        content="Average instructor difficulty from RateMyProfessors<br/>• Based on all instructors in selected courses<br/>• Scale: 1.0 (easy) - 5.0 (hard)"
       />
     </div>
   );
