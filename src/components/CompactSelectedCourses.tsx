@@ -186,44 +186,21 @@ export const CompactSelectedCourses: React.FC<CompactSelectedCoursesProps> = ({
       {Array.from(instructorTooltips.entries()).map(
         ([tooltipId, reviewData]) => (
           <Tooltip key={tooltipId} id={tooltipId} place="top">
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: "0.5rem",
-                padding: "0.25rem",
-              }}
-            >
-              <div
-                style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
-              >
-                <FaStar
-                  style={{ fill: "#f59e0b", width: "1rem", height: "1rem" }}
-                />
+            <div className="instructor-stats-tooltip">
+              <div className="instructor-stats-tooltip__stat">
+                <FaStar className="instructor-stats-tooltip__icon instructor-stats-tooltip__icon--star" />
                 <span>{reviewData.Quality}</span>
               </div>
-              <div
-                style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
-              >
-                <FaBrain
-                  style={{ fill: "#ec4899", width: "1rem", height: "1rem" }}
-                />
+              <div className="instructor-stats-tooltip__stat">
+                <FaBrain className="instructor-stats-tooltip__icon instructor-stats-tooltip__icon--brain" />
                 <span>{reviewData.Difficulty}</span>
               </div>
-              <div
-                style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
-              >
-                <FaCheckCircle
-                  style={{ fill: "#10b981", width: "1rem", height: "1rem" }}
-                />
+              <div className="instructor-stats-tooltip__stat">
+                <FaCheckCircle className="instructor-stats-tooltip__icon instructor-stats-tooltip__icon--check" />
                 <span>{reviewData.WouldTakeAgain}</span>
               </div>
-              <div
-                style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
-              >
-                <FaComment
-                  style={{ fill: "#0ea5e9", width: "1rem", height: "1rem" }}
-                />
+              <div className="instructor-stats-tooltip__stat">
+                <FaComment className="instructor-stats-tooltip__icon instructor-stats-tooltip__icon--comment" />
                 <span>{reviewData.Ratings}</span>
               </div>
             </div>
