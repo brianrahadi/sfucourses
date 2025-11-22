@@ -31,4 +31,5 @@ export { InstructorCard } from "./InstructorCard";
 export { InstructorExploreFilter } from "./InstructorExploreFilter";
 export { FilterDialog } from "./FilterDialog";
 export { HelpDialog } from "./HelpDialog";
+export { ScheduleInsights } from "./ScheduleInsights";
 export { default as ReviewsAndPostsTabs } from "./ReviewsAndPostsTabs";
