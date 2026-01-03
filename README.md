@@ -18,9 +18,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <!-- <a href="https://github.com/brianrahadi/sfucourses">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
-  </a> -->
+
 
 <h3 align="center">sfucourses</h3>
 
