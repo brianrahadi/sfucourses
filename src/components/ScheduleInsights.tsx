@@ -3,7 +3,7 @@ import { CourseWithSectionDetails } from "@types";
 import { TextBadge } from "./TextBadge";
 import {
   calculateScheduleInsights,
-  ScheduleInsights,
+  ScheduleInsights as ScheduleInsightsData,
 } from "@utils/scheduleCalculation";
 import {
   MdBarChart,
@@ -91,7 +91,7 @@ const InsightsList = ({
   avgInstructorRating,
   avgInstructorDifficulty,
 }: {
-  insights: ScheduleInsights;
+  insights: ScheduleInsightsData;
   avgInstructorRating: number | null;
   avgInstructorDifficulty: number | null;
 }) => (
