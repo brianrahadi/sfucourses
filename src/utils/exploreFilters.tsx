@@ -12,6 +12,7 @@ export const termOptions = [
   "Summer 2025",
   "Fall 2025",
   "Spring 2026",
+  "Summer 2026",
 ];
 export const deliveryOptions = ["In Person", "Online"];
 export const designationOptions = ["W", "Q", "B-Sci", "B-Hum", "B-Soc"];
