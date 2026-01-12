@@ -211,31 +211,38 @@ export const filterCoursesByCampus = (
   campusFilters: string[]
 ): CourseOutlineWithSectionDetails[] => {
   if (!campusFilters || campusFilters.length === 0) {
-    return courses; // Return all courses if no campus is selected
+    return courses;
   }
 
-  return courses.filter((course) =>
-    course.sections.some((section) => {
-      // Check for online courses
-      if (campusFilters.includes("Online")) {
-        const isOnline =
-          section.deliveryMethod === "Online" ||
-          section.schedules.some(
-            (schedule) =>
-              schedule.campus?.toLowerCase() === "online" ||
-              (!schedule.campus && section.deliveryMethod === "Online")
-          );
-        if (isOnline) return true;
-      }
+  return courses
+    .map((course) => {
+      const filteredSections = course.sections.filter((section) => {
+        // Check for online courses
+        if (campusFilters.includes("Online")) {
+          const isOnline =
+            section.deliveryMethod === "Online" ||
+            section.schedules.some(
+              (schedule) =>
+                schedule.campus?.toLowerCase() === "online" ||
+                (!schedule.campus && section.deliveryMethod === "Online")
+            );
+          if (isOnline) return true;
+        }
 
-      // Check for physical campuses
-      return section.schedules.some((schedule) =>
-        campusFilters.some(
-          (campus) => campus !== "Online" && schedule.campus?.includes(campus)
-        )
-      );
+        // Check for physical campuses
+        return section.schedules.some((schedule) =>
+          campusFilters.some(
+            (campus) => campus !== "Online" && schedule.campus?.includes(campus)
+          )
+        );
+      });
+
+      return {
+        ...course,
+        sections: filteredSections,
+      };
     })
-  );
+    .filter((course) => course.sections.length > 0);
 };
 
 export const filterCoursesByDays = (
@@ -246,34 +253,40 @@ export const filterCoursesByDays = (
     return courses;
   }
 
-  return courses.filter((course) =>
-    course.sections.some((section) =>
-      section.schedules.some((schedule) => {
-        if (!schedule.days) return false;
+  const dayMap: { [key: string]: string } = {
+    Mo: "M",
+    Tu: "T",
+    We: "W",
+    Th: "Th",
+    Fr: "F",
+    Sa: "S",
+    Su: "Su",
+  };
 
-        // Convert day abbreviations to match schedule format
-        const dayMap: { [key: string]: string } = {
-          Mo: "M",
-          Tu: "T",
-          We: "W",
-          Th: "Th",
-          Fr: "F",
-          Sa: "S",
-          Su: "Su",
-        };
+  return courses
+    .map((course) => {
+      const filteredSections = course.sections.filter((section) =>
+        section.schedules.some((schedule) => {
+          if (!schedule.days) return false;
 
-        const scheduleDays = schedule.days.split("");
-        return selectedDays.some((day) => {
-          const mappedDay = dayMap[day];
-          return (
-            scheduleDays.includes(mappedDay) ||
-            (day === "Th" && schedule.days.includes("Th")) ||
-            (day === "Su" && schedule.days.includes("Su"))
-          );
-        });
-      })
-    )
-  );
+          const scheduleDays = schedule.days.split("");
+          return selectedDays.some((day) => {
+            const mappedDay = dayMap[day];
+            return (
+              scheduleDays.includes(mappedDay) ||
+              (day === "Th" && schedule.days.includes("Th")) ||
+              (day === "Su" && schedule.days.includes("Su"))
+            );
+          });
+        })
+      );
+
+      return {
+        ...course,
+        sections: filteredSections,
+      };
+    })
+    .filter((course) => course.sections.length > 0);
 };
 
 export const filterCoursesByTime = (
@@ -287,16 +300,13 @@ export const filterCoursesByTime = (
   const parseTimeInput = (timeInput: string): number | null => {
     if (!timeInput.trim()) return null;
 
-    // Handle formats like "8", "08", "8:30", "08:30", "14:15"
     const timeStr = timeInput.trim();
 
-    // If it's just a number (like "8" or "14"), assume it's hours
     if (/^\d{1,2}$/.test(timeStr)) {
       const hour = parseInt(timeStr);
       return hour >= 0 && hour <= 23 ? hour * 60 : null;
     }
 
-    // If it's in HH:MM format
     if (/^\d{1,2}:\d{2}$/.test(timeStr)) {
       const [hours, minutes] = timeStr.split(":").map(Number);
       if (hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59) {
@@ -315,24 +325,29 @@ export const filterCoursesByTime = (
   const filterStart = parseTimeInput(timeFilter.start);
   const filterEnd = parseTimeInput(timeFilter.end);
 
-  return courses.filter((course) =>
-    course.sections.some((section) =>
-      section.schedules.some((schedule) => {
-        if (!schedule.startTime || !schedule.endTime) return false;
+  return courses
+    .map((course) => {
+      const filteredSections = course.sections.filter((section) =>
+        section.schedules.some((schedule) => {
+          if (!schedule.startTime || !schedule.endTime) return false;
 
-        const courseStart = timeToMinutes(schedule.startTime);
-        const courseEnd = timeToMinutes(schedule.endTime);
+          const courseStart = timeToMinutes(schedule.startTime);
+          const courseEnd = timeToMinutes(schedule.endTime);
 
-        // Course must start after filter start time (if specified)
-        // and end before filter end time (if specified)
-        const startsAfterFilter =
-          filterStart === null || courseStart >= filterStart;
-        const endsBeforeFilter = filterEnd === null || courseEnd <= filterEnd;
+          const startsAfterFilter =
+            filterStart === null || courseStart >= filterStart;
+          const endsBeforeFilter = filterEnd === null || courseEnd <= filterEnd;
 
-        return startsAfterFilter && endsBeforeFilter;
-      })
-    )
-  );
+          return startsAfterFilter && endsBeforeFilter;
+        })
+      );
+
+      return {
+        ...course,
+        sections: filteredSections,
+      };
+    })
+    .filter((course) => course.sections.length > 0);
 };
 
 export const filterCoursesBySubjectsWithSections = (
