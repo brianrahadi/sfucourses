@@ -1,7 +1,14 @@
 // pages/_app.tsx - Corrected version
 
 import React, { FC, useEffect } from "react";
-import { HeaderNav, Footer, Helmet, HelpDialog } from "@components";
+import {
+  HeaderNav,
+  Footer,
+  Helmet,
+  HelpDialog,
+  FeedbackForm,
+} from "@components";
+
 import { useRouter } from "next/router";
 import "../styles/main.scss";
 import type { AppProps } from "next/app";
@@ -13,6 +20,8 @@ import {
   HydrationBoundary,
 } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
+
+import { FormspreeProvider } from "@formspree/react";
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
@@ -84,14 +93,17 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }: AppProps) => {
   return (
     <QueryClientProvider client={queryClient}>
       <HydrationBoundary state={pageProps.dehydratedState}>
-        <Helmet pageTitle={router.pathname} />
-        <HeaderNav />
-        <Component {...pageProps} key={router.asPath} />
-        <Footer />
-        <Toaster />
-        <Analytics />
-        <SpeedInsights />
-        <HelpDialog />
+        <FormspreeProvider project="2913445847263870687">
+          <Helmet pageTitle={router.pathname} />
+          <HeaderNav />
+          <Component {...pageProps} key={router.asPath} />
+          <Footer />
+          <Toaster />
+          <Analytics />
+          <SpeedInsights />
+          <HelpDialog />
+          <FeedbackForm />
+        </FormspreeProvider>
       </HydrationBoundary>
     </QueryClientProvider>
   );

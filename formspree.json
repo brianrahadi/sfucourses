@@ -1,0 +1,23 @@
+{
+  "forms": {
+    "contact": {
+      "name": "Feedback Form",
+      "fields": {
+        "email": {
+          "type": "email",
+          "required": false
+        },
+        "message": {
+          "type": "text",
+          "required": true
+        }
+      },
+      "actions": [
+        {
+          "type": "email",
+          "to": "brian.rahadi@gmail.com"
+        }
+      ]
+    }
+  }
+}
