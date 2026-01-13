@@ -8,7 +8,7 @@ export const FeedbackForm: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   // Replace "feedback" with the actual form key/id from your Formspree project
   // Ensure that 'feedback' matches the form key in your Formspree dashboard
-  const [state, handleSubmit] = useForm("contact");
+  const [state, handleSubmit, reset] = useForm("contact");
 
   useEffect(() => {
     if (state.succeeded) {
@@ -16,6 +16,11 @@ export const FeedbackForm: React.FC = () => {
       setIsOpen(false);
     }
   }, [state.succeeded]);
+
+  const handleReset = () => {
+    reset();
+    setIsOpen(true);
+  };
 
   return (
     <>
@@ -45,11 +50,19 @@ export const FeedbackForm: React.FC = () => {
 
         <div className="feedback-content">
           {state.succeeded ? (
-            <div style={{ padding: "1rem", textAlign: "center" }}>
+            <div
+              style={{
+                padding: "1rem",
+                textAlign: "center",
+                display: "flex",
+                flexDirection: "column",
+                gap: "1rem",
+              }}
+            >
               <p>Thanks for your feedback!</p>
               <Button
-                label="Close"
-                onClick={() => setIsOpen(false)}
+                label="Send another feedback"
+                onClick={handleReset}
                 className="submit-btn"
               />
             </div>
