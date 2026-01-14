@@ -3,6 +3,7 @@ import { CourseWithSectionDetails } from "@types";
 import pako from "pako";
 import { BASE_URL } from "@const";
 import { addParameterToUrl } from "./url";
+export * from "./reviewUtils";
 
 // by default always gzip
 async function decompressGzip(response: Response): Promise<any> {

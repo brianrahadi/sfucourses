@@ -3,8 +3,13 @@ import {
   CourseWithSectionDetails,
   SectionDetail,
   SectionSchedule,
+  InstructorReviewSummary,
 } from "@types";
-import { generateBaseOutlinePath, onlyUnique } from "@utils";
+import {
+  generateBaseOutlinePath,
+  onlyUnique,
+  getInstructorReviewData,
+} from "@utils";
 import Link from "next/link";
 import { Dispatch, SetStateAction, useState, useRef, useMemo } from "react";
 import { BsFillPersonFill } from "react-icons/bs";
@@ -22,16 +27,6 @@ import { formatShortDate } from "@utils/format";
 import { Tooltip } from "react-tooltip";
 import { useQuery } from "@tanstack/react-query";
 import { BASE_URL } from "@const";
-
-interface InstructorReviewSummary {
-  URL: string;
-  Quality: string;
-  Ratings: string;
-  Name: string;
-  WouldTakeAgain: string;
-  Difficulty: string;
-  Department: string;
-}
 
 interface SectionDetailsProps {
   offering: CourseWithSectionDetails;
@@ -88,17 +83,6 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
     staleTime: 60 * 60 * 1000,
   });
 
-  const getInstructorReviewData = (
-    instructorName: string
-  ): InstructorReviewSummary | null => {
-    if (!instructorReviewsData) return null;
-    return (
-      instructorReviewsData.find(
-        (review) => review.Name.toLowerCase() === instructorName.toLowerCase()
-      ) || null
-    );
-  };
-
   const processedSections = processSectionDetails(offering.sections).filter(
     (section) => section.schedules && section.schedules.length > 0
   );
@@ -144,11 +128,10 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
         instructorsText !== "N/A" ? instructorsText.split(", ")[0] : null;
 
       if (firstInstructorName) {
-        const instructorReviewData =
-          instructorReviewsData.find(
-            (review) =>
-              review.Name.toLowerCase() === firstInstructorName.toLowerCase()
-          ) || null;
+        const instructorReviewData = getInstructorReviewData(
+          firstInstructorName,
+          instructorReviewsData
+        );
 
         if (instructorReviewData) {
           const instructorTooltipId = `instructor-tooltip-${
@@ -192,7 +175,7 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
         const firstInstructorName =
           instructorsText !== "N/A" ? instructorsText.split(", ")[0] : null;
         const instructorReviewData = firstInstructorName
-          ? getInstructorReviewData(firstInstructorName)
+          ? getInstructorReviewData(firstInstructorName, instructorReviewsData)
           : null;
 
         const instructorTooltipId = `instructor-tooltip-${

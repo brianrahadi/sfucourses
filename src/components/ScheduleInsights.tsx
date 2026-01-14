@@ -183,7 +183,7 @@ export const ScheduleInsights: React.FC<ScheduleInsightsProps> = ({
         (review) => review.Name.toLowerCase() === name.toLowerCase()
       );
 
-      if (!reviewData && INSTRUCTOR_RMP_NAME_MAPPING[name]) {
+      if (INSTRUCTOR_RMP_NAME_MAPPING[name]) {
         const mappedName = INSTRUCTOR_RMP_NAME_MAPPING[name];
         reviewData = instructorReviewsData.find(
           (review) => review.Name.toLowerCase() === mappedName.toLowerCase()

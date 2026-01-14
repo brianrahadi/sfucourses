@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
-import { CourseWithSectionDetails } from "@types";
+import { CourseWithSectionDetails, InstructorReviewSummary } from "@types";
+import { getInstructorReviewData } from "@utils";
 import { IoRemoveCircle } from "react-icons/io5";
 import { BsFillPersonFill } from "react-icons/bs";
 import { MdPlace } from "react-icons/md";
@@ -8,16 +9,6 @@ import Link from "next/link";
 import { Tooltip } from "react-tooltip";
 import { useQuery } from "@tanstack/react-query";
 import { BASE_URL } from "@const";
-
-interface InstructorReviewSummary {
-  URL: string;
-  Quality: string;
-  Ratings: string;
-  Name: string;
-  WouldTakeAgain: string;
-  Difficulty: string;
-  Department: string;
-}
 
 interface CompactSelectedCoursesProps {
   selectedCourses: CourseWithSectionDetails[];
@@ -50,11 +41,10 @@ export const CompactSelectedCourses: React.FC<CompactSelectedCoursesProps> = ({
       course.sections.forEach((section) => {
         if (section.instructors.length > 0) {
           const instructorName = section.instructors[0].name;
-          const instructorReviewData =
-            instructorReviewsData.find(
-              (review) =>
-                review.Name.toLowerCase() === instructorName.toLowerCase()
-            ) || null;
+          const instructorReviewData = getInstructorReviewData(
+            instructorName,
+            instructorReviewsData
+          );
 
           if (instructorReviewData) {
             const instructorTooltipId = `instructor-tooltip-compact-${
@@ -126,10 +116,9 @@ export const CompactSelectedCourses: React.FC<CompactSelectedCoursesProps> = ({
                               const instructorName =
                                 section.instructors[0].name;
                               const instructorReviewData =
-                                instructorReviewsData?.find(
-                                  (review) =>
-                                    review.Name.toLowerCase() ===
-                                    instructorName.toLowerCase()
+                                getInstructorReviewData(
+                                  instructorName,
+                                  instructorReviewsData
                                 );
                               const instructorTooltipId = `instructor-tooltip-compact-${
                                 course.dept

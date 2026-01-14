@@ -155,3 +155,13 @@ export interface ProfessorSummary {
   wouldTakeAgain: string;
   url: string;
 }
+
+export interface InstructorReviewSummary {
+  URL: string;
+  Quality: string;
+  Ratings: string;
+  Name: string;
+  WouldTakeAgain: string;
+  Difficulty: string;
+  Department: string;
+}
