@@ -3,6 +3,8 @@ export const BASE_URL = "https://api.sfucourses.com/v1/rest";
 
 export const INSTRUCTOR_RMP_NAME_MAPPING: Record<string, string> = {
   "William Sumner": "Nick Sumner",
+  "Gregory Baker": "Greg Baker",
+  "Ouldooz Baghban Karimi": "Ouldooz Karimi",
 };
 
 export const INSTRUCTOR_REDIRECT_NAME_MAPPING: Record<string, string> =

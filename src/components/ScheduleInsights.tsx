@@ -17,7 +17,7 @@ import { FaStar, FaBrain } from "react-icons/fa";
 import { Tooltip } from "react-tooltip";
 import { IoIosInformationCircleOutline } from "react-icons/io";
 import { useQuery } from "@tanstack/react-query";
-import { BASE_URL } from "@const";
+import { BASE_URL, INSTRUCTOR_RMP_NAME_MAPPING } from "@const";
 
 interface InstructorReviewSummary {
   URL: string;
@@ -179,9 +179,17 @@ export const ScheduleInsights: React.FC<ScheduleInsightsProps> = ({
     const instructorDifficulties: number[] = [];
 
     instructorNames.forEach((name) => {
-      const reviewData = instructorReviewsData.find(
+      let reviewData = instructorReviewsData.find(
         (review) => review.Name.toLowerCase() === name.toLowerCase()
       );
+
+      if (!reviewData && INSTRUCTOR_RMP_NAME_MAPPING[name]) {
+        const mappedName = INSTRUCTOR_RMP_NAME_MAPPING[name];
+        reviewData = instructorReviewsData.find(
+          (review) => review.Name.toLowerCase() === mappedName.toLowerCase()
+        );
+      }
+
       if (reviewData) {
         const rating = parseFloat(reviewData.Quality);
         const difficulty = parseFloat(reviewData.Difficulty);
