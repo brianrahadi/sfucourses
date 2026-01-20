@@ -11,7 +11,14 @@ import {
   getInstructorReviewData,
 } from "@utils";
 import Link from "next/link";
-import { Dispatch, SetStateAction, useState, useRef, useMemo } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useState,
+  useRef,
+  useMemo,
+  Fragment,
+} from "react";
 import { BsFillPersonFill } from "react-icons/bs";
 import { CiCalendar, CiClock1 } from "react-icons/ci";
 import { FaTimeline } from "react-icons/fa6";
@@ -117,29 +124,24 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
     if (!instructorReviewsData) return tooltips;
 
     shownSections.forEach((section) => {
-      const instructorsText =
+      const uniqueInstructors =
         section.instructors.length > 0
-          ? section.instructors
-              .map((i) => i.name)
-              .filter(onlyUnique)
-              .join(", ")
-          : "N/A";
-      const firstInstructorName =
-        instructorsText !== "N/A" ? instructorsText.split(", ")[0] : null;
+          ? section.instructors.map((i) => i.name).filter(onlyUnique)
+          : [];
 
-      if (firstInstructorName) {
+      uniqueInstructors.forEach((instructorName) => {
         const instructorReviewData = getInstructorReviewData(
-          firstInstructorName,
+          instructorName,
           instructorReviewsData
         );
 
         if (instructorReviewData) {
           const instructorTooltipId = `instructor-tooltip-${
             section.classNumber
-          }-${firstInstructorName.replace(/\s+/g, "-")}`;
+          }-${instructorName.replace(/\s+/g, "-")}`;
           tooltips.set(instructorTooltipId, instructorReviewData);
         }
-      }
+      });
     });
     return tooltips;
   }, [shownSections, instructorReviewsData]);
@@ -164,23 +166,10 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
           (item) => item.classNumber === section.classNumber
         );
 
-        const instructorsText =
+        const uniqueInstructors =
           section.instructors.length > 0
-            ? section.instructors
-                .map((i) => i.name)
-                .filter(onlyUnique)
-                .join(", ")
-            : "N/A";
-
-        const firstInstructorName =
-          instructorsText !== "N/A" ? instructorsText.split(", ")[0] : null;
-        const instructorReviewData = firstInstructorName
-          ? getInstructorReviewData(firstInstructorName, instructorReviewsData)
-          : null;
-
-        const instructorTooltipId = `instructor-tooltip-${
-          section.classNumber
-        }-${firstInstructorName?.replace(/\s+/g, "-") || "na"}`;
+            ? section.instructors.map((i) => i.name).filter(onlyUnique)
+            : [];
 
         const handleAddSection = () => {
           if (!setOfferings) return;
@@ -313,48 +302,48 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
               </div>
               <div className="section-header__second">
                 <span className="icon-text-container instructor">
-                  <BsFillPersonFill />
-                  {instructorsText !== "N/A" && query ? (
-                    <Link
-                      href={`/instructors/${instructorsText}`}
-                      className="no-underline"
-                      target="_blank"
-                      rel="noreferrer"
-                      data-tooltip-id={
-                        instructorReviewData
-                          ? instructorTooltipId
-                          : "new-tab-tooltip"
-                      }
-                      data-tooltip-content={
-                        instructorReviewData ? undefined : "New tab"
-                      }
-                    >
-                      <Highlight
-                        text={instructorsText}
-                        query={query}
-                        className="green-text"
-                      />
-                    </Link>
-                  ) : instructorsText !== "N/A" ? (
-                    <Link
-                      href={`/instructors/${instructorsText}`}
-                      className="no-underline"
-                      target="_blank"
-                      rel="noreferrer"
-                      data-tooltip-id={
-                        instructorReviewData
-                          ? instructorTooltipId
-                          : "new-tab-tooltip"
-                      }
-                      data-tooltip-content={
-                        instructorReviewData ? undefined : "New tab"
-                      }
-                    >
-                      {instructorsText}
-                    </Link>
-                  ) : (
-                    "N/A"
-                  )}
+                  <BsFillPersonFill className="person-fill-icon" />
+                  {uniqueInstructors.length > 0
+                    ? uniqueInstructors.map((instructorName, i) => {
+                        const instructorReviewData = getInstructorReviewData(
+                          instructorName,
+                          instructorReviewsData
+                        );
+                        const instructorTooltipId = `instructor-tooltip-${
+                          section.classNumber
+                        }-${instructorName.replace(/\s+/g, "-")}`;
+
+                        return (
+                          <Fragment key={instructorName}>
+                            {i > 0 && ", "}
+                            <Link
+                              href={`/instructors/${instructorName}`}
+                              className="no-underline"
+                              target="_blank"
+                              rel="noreferrer"
+                              data-tooltip-id={
+                                instructorReviewData
+                                  ? instructorTooltipId
+                                  : "new-tab-tooltip"
+                              }
+                              data-tooltip-content={
+                                instructorReviewData ? undefined : "New tab"
+                              }
+                            >
+                              {query ? (
+                                <Highlight
+                                  text={instructorName}
+                                  query={query}
+                                  className="green-text"
+                                />
+                              ) : (
+                                instructorName
+                              )}
+                            </Link>
+                          </Fragment>
+                        );
+                      })
+                    : "N/A"}
                 </span>
                 <span className="icon-text-container">
                   <MdPlace />

@@ -18,23 +18,23 @@ $tablet-min-width: 768px;
 $desktop-min-width: 1025px;
 
 @mixin viewport($media) {
-  @if $media == mobile {
+  @if $media ==mobile {
     @media only screen and (max-width: $tablet-min-width - 1) {
       @content;
     }
-  } @else if $media == mobile-tablet {
+  } @else if $media ==mobile-tablet {
     @media only screen and (max-width: $desktop-min-width - 1) {
       @content;
     }
-  } @else if $media == tablet {
+  } @else if $media ==tablet {
     @media only screen and (min-width: $tablet-min-width) and (max-width: $desktop-min-width - 1) {
       @content;
     }
-  } @else if $media == tablet-desktop {
+  } @else if $media ==tablet-desktop {
     @media only screen and (min-width: $tablet-min-width) {
       @content;
     }
-  } @else if $media == desktop {
+  } @else if $media ==desktop {
     @media only screen and (min-width: $desktop-min-width) {
       @content;
     }
@@ -115,13 +115,18 @@ $desktop-min-width: 1025px;
 }
 
 .icon-text-container {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 0.25rem;
 
   &.instructor {
+    display: inline;
     overflow: hidden;
-    // font-size: 0.9rem;
+
+    .person-fill-icon {
+      margin-right: 0.25rem;
+      transform: translateY(10%);
+    }
   }
 }
 
