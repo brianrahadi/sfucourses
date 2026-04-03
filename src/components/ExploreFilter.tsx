@@ -1,11 +1,7 @@
 import Select, { SelectInstance } from "react-select";
 import { Button } from "@components";
 import { SearchBar } from "@components";
-import { Dispatch, SetStateAction, useRef, useState } from "react";
-import { ExploreFilterProps } from "src/hooks/UseExploreFilters";
-import { BsSun } from "react-icons/bs";
-import { FaLeaf } from "react-icons/fa";
-import { LuFlower } from "react-icons/lu";
+import { useRef } from "react";
 import { RiResetLeftFill } from "react-icons/ri";
 import {
   deliveryOptions,
@@ -15,6 +11,7 @@ import {
   termToIcon,
 } from "@utils/exploreFilters";
 import { subjectOptions } from "@utils/exploreFilters";
+import { useExploreStore } from "src/store/useExploreStore";
 
 const colourNeutral1000 = "#323434";
 const colourNeutral900 = "#4b4e4d";
@@ -60,45 +57,92 @@ interface FilterButtonProps {
   icon?: JSX.Element;
   value: string;
   isSelected: boolean;
-  setSelected: Dispatch<SetStateAction<string[]>>;
+  onToggle: (value: string) => void;
 }
 
 const FilterButton: React.FC<FilterButtonProps> = ({
   icon,
   value,
   isSelected,
-  setSelected,
+  onToggle,
 }) => {
-  const onClick = () => {
-    if (isSelected) {
-      setSelected((selections) =>
-        selections.filter((selection) => selection !== value)
-      );
-    } else {
-      setSelected((selections) => selections.concat(value));
-    }
-  };
   return (
     <Button
       label={value}
-      onClick={onClick}
+      onClick={() => onToggle(value)}
       type={isSelected ? "primary" : "secondary"}
       icon={icon}
     />
   );
 };
 
-export const ExploreFilter: React.FC<ExploreFilterProps> = ({
-  subjects,
-  levels,
-  terms,
-  prereqs,
-  designations,
-  deliveries,
-  reviews,
-  onReset,
-  courseSubjectSelectInputRef,
-}) => {
+export const ExploreFilter: React.FC = () => {
+  const courseSubjectSelectInputRef = useRef<SelectInstance<any>>(null);
+
+  const courseSubjects = useExploreStore((state) => state.courseSubjects);
+  const setCourseSubjects = useExploreStore((state) => state.setCourseSubjects);
+  const courseLevels = useExploreStore((state) => state.courseLevels);
+  const setCourseLevels = useExploreStore((state) => state.setCourseLevels);
+  const courseTerms = useExploreStore((state) => state.courseTerms);
+  const setCourseTerms = useExploreStore((state) => state.setCourseTerms);
+  const courseDeliveries = useExploreStore((state) => state.courseDeliveries);
+  const setCourseDeliveries = useExploreStore(
+    (state) => state.setCourseDeliveries
+  );
+
+  const coursePrereqSearchQuery = useExploreStore(
+    (state) => state.coursePrereqSearchQuery
+  );
+  const setCoursePrereqSearchQuery = useExploreStore(
+    (state) => state.setCoursePrereqSearchQuery
+  );
+  const searchSelected = useExploreStore((state) => state.searchSelected);
+  const setSearchSelected = useExploreStore((state) => state.setSearchSelected);
+  const coursePrereqIsShown = useExploreStore(
+    (state) => state.coursePrereqIsShown
+  );
+  const setCoursePrereqIsShown = useExploreStore(
+    (state) => state.setCoursePrereqIsShown
+  );
+  const coursePrereqHasNone = useExploreStore(
+    (state) => state.coursePrereqHasNone
+  );
+  const setCoursePrereqHasNone = useExploreStore(
+    (state) => state.setCoursePrereqHasNone
+  );
+
+  const courseDesignations = useExploreStore(
+    (state) => state.courseDesignations
+  );
+  const setCourseDesignations = useExploreStore(
+    (state) => state.setCourseDesignations
+  );
+  const courseMinReviews = useExploreStore((state) => state.courseMinReviews);
+  const setCourseMinReviews = useExploreStore(
+    (state) => state.setCourseMinReviews
+  );
+
+  const resetCourseFilters = useExploreStore(
+    (state) => state.resetCourseFilters
+  );
+
+  const onReset = () => {
+    courseSubjectSelectInputRef.current?.clearValue();
+    resetCourseFilters();
+  };
+
+  const toggleArrayItem = (
+    array: string[],
+    item: string,
+    setter: (val: string[]) => void
+  ) => {
+    if (array.includes(item)) {
+      setter(array.filter((v) => v !== item));
+    } else {
+      setter([...array, item]);
+    }
+  };
+
   return (
     <div className="explore-filter">
       <section className="explore-filter__section">
@@ -119,12 +163,16 @@ export const ExploreFilter: React.FC<ExploreFilterProps> = ({
           isMulti={true}
           closeMenuOnSelect={false}
           styles={customStyles}
+          value={subjectOptions.filter(
+            (option: { value: string; label: string }) =>
+              courseSubjects.includes(option.value)
+          )}
           onChange={(e) => {
             const selectedSubjects = [];
             for (const subject of e.values()) {
               selectedSubjects.push(subject.value);
             }
-            subjects.setSelected(selectedSubjects);
+            setCourseSubjects(selectedSubjects);
           }}
         />
       </section>
@@ -138,8 +186,10 @@ export const ExploreFilter: React.FC<ExploreFilterProps> = ({
               <FilterButton
                 key={level}
                 value={level}
-                isSelected={levels.selected.includes(level)}
-                setSelected={levels.setSelected}
+                isSelected={courseLevels.includes(level)}
+                onToggle={(val) =>
+                  toggleArrayItem(courseLevels, val, setCourseLevels)
+                }
               />
             );
           })}
@@ -155,8 +205,10 @@ export const ExploreFilter: React.FC<ExploreFilterProps> = ({
               <FilterButton
                 key={term}
                 value={term}
-                isSelected={terms.selected.includes(term)}
-                setSelected={terms.setSelected}
+                isSelected={courseTerms.includes(term)}
+                onToggle={(val) =>
+                  toggleArrayItem(courseTerms, val, setCourseTerms)
+                }
                 icon={termToIcon(term.split(" ")[0])}
               />
             );
@@ -173,8 +225,10 @@ export const ExploreFilter: React.FC<ExploreFilterProps> = ({
               <FilterButton
                 key={delivery}
                 value={delivery}
-                isSelected={deliveries.selected.includes(delivery)}
-                setSelected={deliveries.setSelected}
+                isSelected={courseDeliveries.includes(delivery)}
+                onToggle={(val) =>
+                  toggleArrayItem(courseDeliveries, val, setCourseDeliveries)
+                }
               />
             );
           })}
@@ -187,23 +241,23 @@ export const ExploreFilter: React.FC<ExploreFilterProps> = ({
         <SearchBar
           placeholder="prerequisites"
           className="secondary"
-          handleInputChange={prereqs.setSearchQuery}
-          searchSelected={prereqs.isSearchSelected}
-          setSearchSelected={prereqs.setSearchSelected}
-          value={prereqs.searchQuery}
-          disabled={prereqs.hasNone}
+          handleInputChange={setCoursePrereqSearchQuery}
+          searchSelected={searchSelected}
+          setSearchSelected={setSearchSelected}
+          value={coursePrereqSearchQuery}
+          disabled={coursePrereqHasNone}
           disabledPlaceholder="no prerequisite"
         />
         <div className="explore-filter__section__row">
           <input
             className="checkbox"
             type="checkbox"
-            name="no-prereq"
-            id=""
-            checked={prereqs.isShown}
-            onChange={() => prereqs.setIsShown(!prereqs.isShown)}
+            name="show-prereq"
+            id="show-prereq"
+            checked={coursePrereqIsShown}
+            onChange={() => setCoursePrereqIsShown(!coursePrereqIsShown)}
           />
-          <label htmlFor="">Show prerequisites</label>
+          <label htmlFor="show-prereq">Show prerequisites</label>
         </div>
         <div className="explore-filter__section__row">
           <input
@@ -211,8 +265,8 @@ export const ExploreFilter: React.FC<ExploreFilterProps> = ({
             type="checkbox"
             name="no-prereq"
             id="no-prereq"
-            checked={prereqs.hasNone}
-            onChange={() => prereqs.setHasNone(!prereqs.hasNone)}
+            checked={coursePrereqHasNone}
+            onChange={() => setCoursePrereqHasNone(!coursePrereqHasNone)}
           />
           <label htmlFor="no-prereq">No prerequisite</label>
         </div>
@@ -227,8 +281,14 @@ export const ExploreFilter: React.FC<ExploreFilterProps> = ({
               <FilterButton
                 key={designation}
                 value={designation}
-                isSelected={designations.selected.includes(designation)}
-                setSelected={designations.setSelected}
+                isSelected={courseDesignations.includes(designation)}
+                onToggle={(val) =>
+                  toggleArrayItem(
+                    courseDesignations,
+                    val,
+                    setCourseDesignations
+                  )
+                }
               />
             );
           })}
@@ -242,10 +302,10 @@ export const ExploreFilter: React.FC<ExploreFilterProps> = ({
           {(() => {
             const reviewValues = [0, 1, 5, 10, 20, 50, 75, 100, 200, 300, 500];
             const currentIndex =
-              reviews.minReviews === 0
+              courseMinReviews === 0
                 ? 0
-                : reviewValues.indexOf(reviews.minReviews) !== -1
-                ? reviewValues.indexOf(reviews.minReviews)
+                : reviewValues.indexOf(courseMinReviews) !== -1
+                ? reviewValues.indexOf(courseMinReviews)
                 : 0;
             return (
               <>
@@ -257,15 +317,13 @@ export const ExploreFilter: React.FC<ExploreFilterProps> = ({
                   value={currentIndex}
                   onChange={(e) => {
                     const index = Number(e.target.value);
-                    reviews.setMinReviews(reviewValues[index]);
+                    setCourseMinReviews(reviewValues[index]);
                   }}
                   className="explore-filter__slider"
                 />
                 <div className="explore-filter__slider-labels">
                   <span>
-                    {reviews.minReviews === 0
-                      ? "All"
-                      : `≥${reviews.minReviews}`}
+                    {courseMinReviews === 0 ? "All" : `≥${courseMinReviews}`}
                   </span>
                   <span>500+</span>
                 </div>

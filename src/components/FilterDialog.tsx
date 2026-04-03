@@ -3,6 +3,7 @@ import { Button, ButtonGroup } from "@components";
 import { MdTune } from "react-icons/md";
 import { SUBJECTS } from "@const";
 import Select, { SelectInstance } from "react-select";
+import { useScheduleStore } from "src/store/useScheduleStore";
 
 const colourNeutral1000 = "#323434";
 const colourNeutral900 = "#4b4e4d";
@@ -44,37 +45,25 @@ const customStyles = {
   }),
 };
 
-interface FilterDialogProps {
-  campusFilter: string[];
-  setCampusFilter: (campus: string[]) => void;
-  filterConflicts: boolean;
-  setFilterConflicts: (filter: boolean) => void;
-  daysFilter: string[];
-  setDaysFilter: (days: string[]) => void;
-  timeFilter: { start: string; end: string };
-  setTimeFilter: (time: { start: string; end: string }) => void;
-  subjectFilter: string[];
-  setSubjectFilter: (subjects: string[]) => void;
-  levelFilter: string[];
-  setLevelFilter: (levels: string[]) => void;
-}
-
-export const FilterDialog: React.FC<FilterDialogProps> = ({
-  campusFilter,
-  setCampusFilter,
-  filterConflicts,
-  setFilterConflicts,
-  daysFilter,
-  setDaysFilter,
-  timeFilter,
-  setTimeFilter,
-  subjectFilter,
-  setSubjectFilter,
-  levelFilter,
-  setLevelFilter,
-}) => {
+export const FilterDialog: React.FC = () => {
   const [showDialog, setShowDialog] = useState(false);
   const subjectSelectRef = useRef<SelectInstance<any>>(null);
+
+  const filterConflicts = useScheduleStore((state) => state.filterConflicts);
+  const setFilterConflicts = useScheduleStore(
+    (state) => state.setFilterConflicts
+  );
+  const campusFilter = useScheduleStore((state) => state.campusFilter);
+  const setCampusFilter = useScheduleStore((state) => state.setCampusFilter);
+  const daysFilter = useScheduleStore((state) => state.daysFilter);
+  const setDaysFilter = useScheduleStore((state) => state.setDaysFilter);
+  const timeFilter = useScheduleStore((state) => state.timeFilter);
+  const setTimeFilter = useScheduleStore((state) => state.setTimeFilter);
+  const subjectFilter = useScheduleStore((state) => state.subjectFilter);
+  const setSubjectFilter = useScheduleStore((state) => state.setSubjectFilter);
+  const levelFilter = useScheduleStore((state) => state.levelFilter);
+  const setLevelFilter = useScheduleStore((state) => state.setLevelFilter);
+  const resetFiltersStore = useScheduleStore((state) => state.clearAllFilters);
 
   const campusOptions = ["Burnaby", "Surrey", "Vancouver", "Online"];
   const dayOptions = ["Mo", "Tu", "We", "Th", "Fr"];
@@ -106,12 +95,7 @@ export const FilterDialog: React.FC<FilterDialogProps> = ({
   };
 
   const resetAllFilters = () => {
-    setCampusFilter([]);
-    setFilterConflicts(false);
-    setDaysFilter([]);
-    setTimeFilter({ start: "", end: "" });
-    setSubjectFilter([]);
-    setLevelFilter([]);
+    resetFiltersStore();
     subjectSelectRef.current?.clearValue();
   };
 

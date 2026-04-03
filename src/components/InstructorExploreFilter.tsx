@@ -1,9 +1,10 @@
 import Select, { SelectInstance } from "react-select";
 import { Button } from "@components";
-import { Dispatch, SetStateAction, useRef } from "react";
+import { useRef } from "react";
 import { RiResetLeftFill } from "react-icons/ri";
-import { InstructorExploreFilterProps } from "@hooks";
 import { subjectOptions, termOptions, termToIcon } from "@utils/exploreFilters";
+import { useExploreStore } from "src/store/useExploreStore";
+
 const colourNeutral1000 = "#323434";
 const colourNeutral900 = "#4b4e4d";
 const colourNeutral800 = "#646867";
@@ -48,38 +49,59 @@ interface FilterButtonProps {
   icon?: JSX.Element;
   value: string;
   isSelected: boolean;
-  setSelected: Dispatch<SetStateAction<string[]>>;
+  onToggle: (value: string) => void;
 }
 
 const FilterButton: React.FC<FilterButtonProps> = ({
   icon,
   value,
   isSelected,
-  setSelected,
+  onToggle,
 }) => {
-  const onClick = () => {
-    if (isSelected) {
-      setSelected((selections) =>
-        selections.filter((selection) => selection !== value)
-      );
-    } else {
-      setSelected((selections) => selections.concat(value));
-    }
-  };
   return (
     <Button
       label={value}
-      onClick={onClick}
+      onClick={() => onToggle(value)}
       type={isSelected ? "primary" : "secondary"}
       icon={icon}
     />
   );
 };
 
-export const InstructorExploreFilter: React.FC<
-  InstructorExploreFilterProps
-> = ({ subjects, terms, reviews }) => {
+export const InstructorExploreFilter: React.FC = () => {
   const selectInputRef = useRef<SelectInstance<any>>(null);
+
+  const instructorSubjects = useExploreStore(
+    (state) => state.instructorSubjects
+  );
+  const setInstructorSubjects = useExploreStore(
+    (state) => state.setInstructorSubjects
+  );
+  const instructorTerms = useExploreStore((state) => state.instructorTerms);
+  const setInstructorTerms = useExploreStore(
+    (state) => state.setInstructorTerms
+  );
+  const instructorMinReviews = useExploreStore(
+    (state) => state.instructorMinReviews
+  );
+  const setInstructorMinReviews = useExploreStore(
+    (state) => state.setInstructorMinReviews
+  );
+  const resetInstructorFilters = useExploreStore(
+    (state) => state.resetInstructorFilters
+  );
+
+  const toggleArrayItem = (
+    array: string[],
+    item: string,
+    setter: (val: string[]) => void
+  ) => {
+    if (array.includes(item)) {
+      setter(array.filter((v) => v !== item));
+    } else {
+      setter([...array, item]);
+    }
+  };
 
   return (
     <div className="explore-filter">
@@ -93,8 +115,7 @@ export const InstructorExploreFilter: React.FC<
             label={<RiResetLeftFill />}
             onClick={() => {
               selectInputRef?.current?.clearValue();
-              subjects.setSelected([]);
-              terms.setSelected([]);
+              resetInstructorFilters();
             }}
           />
         </div>
@@ -105,12 +126,16 @@ export const InstructorExploreFilter: React.FC<
           isMulti={true}
           closeMenuOnSelect={false}
           styles={customStyles}
+          value={subjectOptions.filter(
+            (option: { value: string; label: string }) =>
+              instructorSubjects.includes(option.value)
+          )}
           onChange={(e) => {
             const selectedSubjects = [];
             for (const subject of e.values()) {
               selectedSubjects.push(subject.value);
             }
-            subjects.setSelected(selectedSubjects);
+            setInstructorSubjects(selectedSubjects);
           }}
         />
       </section>
@@ -124,8 +149,10 @@ export const InstructorExploreFilter: React.FC<
               <FilterButton
                 key={term}
                 value={term}
-                isSelected={terms.selected.includes(term)}
-                setSelected={terms.setSelected}
+                isSelected={instructorTerms.includes(term)}
+                onToggle={(val) =>
+                  toggleArrayItem(instructorTerms, val, setInstructorTerms)
+                }
                 icon={termToIcon(term.split(" ")[0])}
               />
             );
@@ -140,10 +167,10 @@ export const InstructorExploreFilter: React.FC<
           {(() => {
             const reviewValues = [0, 1, 5, 10, 20, 50, 75, 100, 200, 300, 500];
             const currentIndex =
-              reviews.minReviews === 0
+              instructorMinReviews === 0
                 ? 0
-                : reviewValues.indexOf(reviews.minReviews) !== -1
-                ? reviewValues.indexOf(reviews.minReviews)
+                : reviewValues.indexOf(instructorMinReviews) !== -1
+                ? reviewValues.indexOf(instructorMinReviews)
                 : 0;
             return (
               <>
@@ -155,15 +182,15 @@ export const InstructorExploreFilter: React.FC<
                   value={currentIndex}
                   onChange={(e) => {
                     const index = Number(e.target.value);
-                    reviews.setMinReviews(reviewValues[index]);
+                    setInstructorMinReviews(reviewValues[index]);
                   }}
                   className="explore-filter__slider"
                 />
                 <div className="explore-filter__slider-labels">
                   <span>
-                    {reviews.minReviews === 0
+                    {instructorMinReviews === 0
                       ? "All"
-                      : `≥${reviews.minReviews}`}
+                      : `≥${instructorMinReviews}`}
                   </span>
                   <span>500+</span>
                 </div>

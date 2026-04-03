@@ -10,7 +10,7 @@ import {
   ButtonGroup,
 } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { CourseOutline, Instructor } from "@types";
 
 interface InstructorReviewSummary {
@@ -30,8 +30,8 @@ interface CourseReviewSummary {
   avg_difficulty: number;
 }
 import InfiniteScroll from "react-infinite-scroll-component";
-import { useExploreFilters, SortState } from "src/hooks/UseExploreFilters";
-import { useInstructorExploreFilters, InstructorSortState } from "@hooks";
+import { SortState } from "src/hooks/UseExploreFilters";
+import { InstructorSortState } from "src/hooks/useInstructorExploreFilters";
 import { GetStaticProps } from "next";
 import { useQuery } from "@tanstack/react-query";
 import { dehydrate, QueryClient } from "@tanstack/react-query";
@@ -48,8 +48,8 @@ import {
 } from "@utils/courseFilters";
 import { numberWithCommas } from "@utils/format";
 import { RotatingLines } from "react-loader-spinner";
-import { SelectInstance } from "react-select";
 import { BASE_URL } from "@const";
+import { useExploreStore } from "src/store/useExploreStore";
 
 export const getStaticProps: GetStaticProps = async () => {
   const queryClient = new QueryClient();
@@ -94,8 +94,10 @@ export const getStaticProps: GetStaticProps = async () => {
   };
 };
 
+const CHUNK_SIZE = 20;
+
 const ExplorePage: React.FC = () => {
-  // Course data and logic
+  // Queries
   const { data: courseData, isLoading: isLoadingCourses } = useQuery({
     queryKey: ["allCourses"],
     queryFn: async () => {
@@ -135,93 +137,72 @@ const ExplorePage: React.FC = () => {
     });
 
   const courses = courseData || [];
-  const [visibleCourses, setVisibleCourses] = useState<CourseOutline[]>([]);
-  const [maxVisibleCoursesLength, setMaxVisibleCoursesLength] =
-    useState<number>(0);
-  const [courseSliceIndex, setCourseSliceIndex] = useState(20);
   const instructors = instructorData || [];
-  const [visibleInstructors, setVisibleInstructors] = useState<Instructor[]>(
-    []
+
+  // Store Connections
+  const mode = useExploreStore((state) => state.mode);
+  const setMode = useExploreStore((state) => state.setMode);
+  const query = useExploreStore((state) => state.query);
+  const setQuery = useExploreStore((state) => state.setQuery);
+  const searchSelected = useExploreStore((state) => state.searchSelected);
+  const setSearchSelected = useExploreStore((state) => state.setSearchSelected);
+
+  const courseSliceIndex = useExploreStore((state) => state.courseSliceIndex);
+  const setCourseSliceIndex = useExploreStore(
+    (state) => state.setCourseSliceIndex
   );
-  const [maxVisibleInstructors, setMaxVisibleInstructors] = useState<number>(0);
-  const [instructorSliceIndex, setInstructorSliceIndex] = useState(20);
+  const instructorSliceIndex = useExploreStore(
+    (state) => state.instructorSliceIndex
+  );
+  const setInstructorSliceIndex = useExploreStore(
+    (state) => state.setInstructorSliceIndex
+  );
 
-  // Shared state
-  const [query, setQuery] = useState<string>("");
-  const [searchSelected, setSearchSelected] = useState<boolean>(false);
-  const [mode, setMode] = useState<"courses" | "instructors">("courses");
-  const CHUNK_SIZE = 20;
+  // Course Filter Store Bindings
+  const courseSubjects = useExploreStore((state) => state.courseSubjects);
+  const courseLevels = useExploreStore((state) => state.courseLevels);
+  const courseTerms = useExploreStore((state) => state.courseTerms);
+  const courseDeliveries = useExploreStore((state) => state.courseDeliveries);
+  const coursePrereqSearchQuery = useExploreStore(
+    (state) => state.coursePrereqSearchQuery
+  );
+  const coursePrereqIsShown = useExploreStore(
+    (state) => state.coursePrereqIsShown
+  );
+  const coursePrereqHasNone = useExploreStore(
+    (state) => state.coursePrereqHasNone
+  );
+  const courseDesignations = useExploreStore(
+    (state) => state.courseDesignations
+  );
+  const courseMinReviews = useExploreStore((state) => state.courseMinReviews);
+  const courseSortValue = useExploreStore((state) => state.courseSortValue);
+  const setCourseSortValue = useExploreStore(
+    (state) => state.setCourseSortValue
+  );
+  const resetCourseFilters = useExploreStore(
+    (state) => state.resetCourseFilters
+  );
 
-  const courseFilters = useExploreFilters();
-  const instructorFilters = useInstructorExploreFilters();
+  // Instructor Filter Store Bindings
+  const instructorSubjects = useExploreStore(
+    (state) => state.instructorSubjects
+  );
+  const instructorTerms = useExploreStore((state) => state.instructorTerms);
+  const instructorMinReviews = useExploreStore(
+    (state) => state.instructorMinReviews
+  );
+  const instructorSortValue = useExploreStore(
+    (state) => state.instructorSortValue
+  );
+  const setInstructorSortValue = useExploreStore(
+    (state) => state.setInstructorSortValue
+  );
+  const resetInstructorFilters = useExploreStore(
+    (state) => state.resetInstructorFilters
+  );
 
-  const colourNeutral1000 = "#323434";
-  const colourNeutral900 = "#4b4e4d";
-  const colourNeutral800 = "#646867";
-  const sortSelectStyles = {
-    control: (base: any) => ({
-      ...base,
-      backgroundColor: colourNeutral1000,
-      border: 0,
-      borderColor: colourNeutral800,
-      color: "#fff",
-      minWidth: "150px",
-      minHeight: "3rem",
-      // height: "3rem",
-    }),
-    valueContainer: (base: any) => ({
-      ...base,
-      padding: "0.5rem 0.75rem",
-      height: "100%",
-      display: "flex",
-      alignItems: "center",
-    }),
-    input: (base: any) => ({
-      ...base,
-      margin: 0,
-      padding: 0,
-      color: "#fff",
-    }),
-    menu: (base: any) => ({
-      ...base,
-      backgroundColor: colourNeutral1000,
-      color: "#fff",
-      zIndex: 9999,
-      marginTop: "0.25rem",
-    }),
-    menuList: (base: any) => ({
-      ...base,
-      padding: "0.25rem 0",
-    }),
-    option: (base: any, state: any) => ({
-      ...base,
-      backgroundColor: state.isFocused ? colourNeutral900 : colourNeutral1000,
-      cursor: "pointer",
-      padding: "0.5rem 0.75rem",
-      minHeight: "2.5rem",
-    }),
-    singleValue: (base: any) => ({
-      ...base,
-      color: "#fff",
-      margin: 0,
-      lineHeight: "normal",
-    }),
-    placeholder: (base: any) => ({
-      ...base,
-      color: "#9ca3af",
-      margin: 0,
-      lineHeight: "normal",
-    }),
-    indicatorsContainer: (base: any) => ({
-      ...base,
-      paddingRight: "0.5rem",
-      height: "100%",
-      display: "flex",
-      alignItems: "center",
-    }),
-  };
-
-  // Get review data for a specific instructor
+  // Helper Methods
   const getInstructorReviewData = (
     instructorName: string
   ): InstructorReviewSummary | null => {
@@ -233,7 +214,6 @@ const ExplorePage: React.FC = () => {
     );
   };
 
-  // Get review data for a specific course
   const getCourseReviewData = (
     courseCode: string
   ): CourseReviewSummary | undefined => {
@@ -246,7 +226,6 @@ const ExplorePage: React.FC = () => {
     );
   };
 
-  // Create a lookup map for course review data to optimize sorting
   const courseReviewMap = useMemo(() => {
     if (!courseReviewsData) return new Map<string, CourseReviewSummary>();
     const map = new Map<string, CourseReviewSummary>();
@@ -256,7 +235,6 @@ const ExplorePage: React.FC = () => {
     return map;
   }, [courseReviewsData]);
 
-  // Create a lookup map for instructor review data to optimize sorting
   const instructorReviewMap = useMemo(() => {
     if (!instructorReviewsData)
       return new Map<string, InstructorReviewSummary>();
@@ -267,10 +245,9 @@ const ExplorePage: React.FC = () => {
     return map;
   }, [instructorReviewsData]);
 
-  // Keyboard shortcuts for explore page
+  // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Skip if user is typing in an input field
       if (
         e.target instanceof HTMLInputElement ||
         e.target instanceof HTMLTextAreaElement
@@ -281,7 +258,6 @@ const ExplorePage: React.FC = () => {
       switch (e.key.toLowerCase()) {
         case "s":
           e.preventDefault();
-          // Focus on search bar
           const searchInput = document.querySelector(
             'input[placeholder*="course"]'
           ) as HTMLInputElement;
@@ -291,78 +267,61 @@ const ExplorePage: React.FC = () => {
           break;
         case "c":
           e.preventDefault();
-          // Switch to courses mode
           if (mode !== "courses") {
             setMode("courses");
-            courseFilters.onReset();
-            instructorFilters.onReset();
+            resetCourseFilters();
+            resetInstructorFilters();
           }
           break;
         case "i":
           e.preventDefault();
-          // Switch to instructors mode
           if (mode !== "instructors") {
             setMode("instructors");
-            courseFilters.onReset();
-            instructorFilters.onReset();
+            resetCourseFilters();
+            resetInstructorFilters();
           }
           break;
         case "r":
           e.preventDefault();
-          // Reset all filters
-          courseFilters.onReset();
-          instructorFilters.onReset();
+          resetCourseFilters();
+          resetInstructorFilters();
           break;
       }
     };
 
     document.addEventListener("keydown", handleKeyDown);
-
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [mode, courseFilters, instructorFilters]);
+  }, [mode, resetCourseFilters, resetInstructorFilters, setMode]);
 
-  const filterCourses = (courses: CourseOutline[]) => {
-    const filteredCourses = [
-      (courses: CourseOutline[]) =>
-        filterCourseBySubjects(courses, courseFilters.subjects.selected),
-      (courses: CourseOutline[]) =>
-        filterCoursesByLevels(courses, courseFilters.levels.selected),
-      (courses: CourseOutline[]) =>
-        filterCoursesByOfferedTerms(courses, courseFilters.terms.selected),
-      (courses: CourseOutline[]) =>
-        filterCoursesByDeliveries(courses, courseFilters.deliveries.selected),
-      (courses: CourseOutline[]) =>
-        filterCoursesByDesignations(
-          courses,
-          courseFilters.designations.selected
-        ),
-      (courses: CourseOutline[]) =>
-        filterCoursesByPrereqs(
-          courses,
-          courseFilters.prereqs.searchQuery,
-          courseFilters.prereqs.hasNone
-        ),
-      (courses: CourseOutline[]) =>
-        filterCoursesByReviews(
-          courses,
-          courseFilters.reviews.minReviews,
-          courseReviewMap
-        ),
-      (courses: CourseOutline[]) => filterCoursesByQuery(courses, query),
-    ].reduce((filtered, filterFunc) => filterFunc(filtered), courses);
-    return filteredCourses;
-  };
+  // Derived State (filtering) using useMemo directly returning filtered+sorted list
+  const filteredAndSortedCourses = useMemo(() => {
+    if (courses.length === 0) return [];
 
-  const sortCourses = (courses: CourseOutline[]) => {
-    const sortValue = courseFilters.sort.value;
+    let filtered = courses;
+    filtered = filterCourseBySubjects(filtered, courseSubjects);
+    filtered = filterCoursesByLevels(filtered, courseLevels);
+    filtered = filterCoursesByOfferedTerms(filtered, courseTerms);
+    filtered = filterCoursesByDeliveries(filtered, courseDeliveries);
+    filtered = filterCoursesByDesignations(filtered, courseDesignations);
+    filtered = filterCoursesByPrereqs(
+      filtered,
+      coursePrereqSearchQuery,
+      coursePrereqHasNone
+    );
+    filtered = filterCoursesByReviews(
+      filtered,
+      courseMinReviews,
+      courseReviewMap
+    );
+    filtered = filterCoursesByQuery(filtered, query);
 
-    if (!sortValue) return courses;
+    if (!courseSortValue) return filtered;
 
-    const [field, direction] = sortValue.split("-");
+    const [field, direction] = courseSortValue.split("-");
     const isAsc = direction === "asc";
-    const sortedCourses = [...courses];
+    const sortedCourses = [...filtered];
 
     sortedCourses.sort((a, b) => {
       const courseCodeA = `${a.dept}${a.number}`.toLowerCase();
@@ -388,67 +347,70 @@ const ExplorePage: React.FC = () => {
     });
 
     return sortedCourses;
-  };
+  }, [
+    courses,
+    courseSubjects,
+    courseLevels,
+    courseTerms,
+    courseDeliveries,
+    courseDesignations,
+    coursePrereqSearchQuery,
+    coursePrereqHasNone,
+    courseMinReviews,
+    courseReviewMap,
+    query,
+    courseSortValue,
+  ]);
 
-  const filterInstructors = (instructors: Instructor[]) => {
-    const filtered = [
-      (instructors: Instructor[]) =>
-        instructorFilters.subjects.selected.length > 0
-          ? instructors.filter((instructor) =>
-              instructor.offerings.some((offering) =>
-                instructorFilters.subjects.selected.includes(offering.dept)
-              )
-            )
-          : instructors,
-      (instructors: Instructor[]) =>
-        instructorFilters.terms.selected.length > 0
-          ? instructors.filter((instructor) =>
-              instructor.offerings.some((offering) =>
-                instructorFilters.terms.selected.some((term) =>
-                  offering.term.toLowerCase().includes(term.toLowerCase())
-                )
-              )
-            )
-          : instructors,
-      (instructors: Instructor[]) =>
-        instructorFilters.reviews.minReviews > 0
-          ? instructors.filter((instructor) => {
-              const reviewData = instructorReviewMap.get(
-                instructor.name.toLowerCase()
-              );
-              const totalReviews = reviewData
-                ? parseInt(reviewData.Ratings) || 0
-                : 0;
-              return totalReviews >= instructorFilters.reviews.minReviews;
-            })
-          : instructors,
-      (instructors: Instructor[]) =>
-        query
-          ? instructors.filter(
-              (instructor) =>
-                instructor.name.toLowerCase().includes(query.toLowerCase()) ||
-                instructor.offerings.some((offering) =>
-                  `${offering.dept} ${offering.number}`
-                    .toLowerCase()
-                    .includes(query.toLowerCase())
-                )
-            )
-          : instructors,
-    ].reduce((filtered, filterFunc) => filterFunc(filtered), instructors);
-    return filtered;
-  };
+  const filteredAndSortedInstructors = useMemo(() => {
+    if (instructors.length === 0) return [];
 
-  const sortInstructors = (instructors: Instructor[]) => {
-    const sortValue = instructorFilters.sort.value;
+    let filtered = instructors;
 
-    if (!sortValue) return instructors;
+    if (instructorSubjects.length > 0) {
+      filtered = filtered.filter((instructor) =>
+        instructor.offerings.some((offering) =>
+          instructorSubjects.includes(offering.dept)
+        )
+      );
+    }
+    if (instructorTerms.length > 0) {
+      filtered = filtered.filter((instructor) =>
+        instructor.offerings.some((offering) =>
+          instructorTerms.some((term) =>
+            offering.term.toLowerCase().includes(term.toLowerCase())
+          )
+        )
+      );
+    }
+    if (instructorMinReviews > 0) {
+      filtered = filtered.filter((instructor) => {
+        const reviewData = instructorReviewMap.get(
+          instructor.name.toLowerCase()
+        );
+        const totalReviews = reviewData ? parseInt(reviewData.Ratings) || 0 : 0;
+        return totalReviews >= instructorMinReviews;
+      });
+    }
+    if (query) {
+      filtered = filtered.filter(
+        (instructor) =>
+          instructor.name.toLowerCase().includes(query.toLowerCase()) ||
+          instructor.offerings.some((offering) =>
+            `${offering.dept} ${offering.number}`
+              .toLowerCase()
+              .includes(query.toLowerCase())
+          )
+      );
+    }
 
-    // Split from the right to handle field names with hyphens (e.g., "would-take-again")
-    const lastDashIndex = sortValue.lastIndexOf("-");
-    const field = sortValue.substring(0, lastDashIndex);
-    const direction = sortValue.substring(lastDashIndex + 1);
+    if (!instructorSortValue) return filtered;
+
+    const lastDashIndex = instructorSortValue.lastIndexOf("-");
+    const field = instructorSortValue.substring(0, lastDashIndex);
+    const direction = instructorSortValue.substring(lastDashIndex + 1);
     const isAsc = direction === "asc";
-    const sortedInstructors = [...instructors];
+    const sortedInstructors = [...filtered];
 
     sortedInstructors.sort((a, b) => {
       const reviewA = instructorReviewMap.get(a.name.toLowerCase());
@@ -466,7 +428,6 @@ const ExplorePage: React.FC = () => {
       } else if (field === "would-take-again") {
         const wouldTakeAgainA = reviewA?.WouldTakeAgain || "0";
         const wouldTakeAgainB = reviewB?.WouldTakeAgain || "0";
-        // Remove % and trim whitespace, handle "N/A" or empty strings
         const cleanedA = wouldTakeAgainA.replace(/%/g, "").trim();
         const cleanedB = wouldTakeAgainB.replace(/%/g, "").trim();
         valueA = cleanedA && cleanedA !== "N/A" ? parseFloat(cleanedA) || 0 : 0;
@@ -480,75 +441,34 @@ const ExplorePage: React.FC = () => {
     });
 
     return sortedInstructors;
-  };
+  }, [
+    instructors,
+    instructorSubjects,
+    instructorTerms,
+    instructorMinReviews,
+    instructorReviewMap,
+    query,
+    instructorSortValue,
+  ]);
 
-  // Handlers for loading more
+  const visibleCourses = useMemo(() => {
+    return filteredAndSortedCourses.slice(0, courseSliceIndex);
+  }, [filteredAndSortedCourses, courseSliceIndex]);
+
+  const visibleInstructors = useMemo(() => {
+    return filteredAndSortedInstructors.slice(0, instructorSliceIndex);
+  }, [filteredAndSortedInstructors, instructorSliceIndex]);
+
+  const maxVisibleCoursesLength = filteredAndSortedCourses.length;
+  const maxVisibleInstructors = filteredAndSortedInstructors.length;
+
   const loadMoreCourses = () => {
-    if (courses.length === 0) return;
-    const filtered = filterCourses(courses);
-    const sorted = sortCourses(filtered);
-    const next = sorted.slice(courseSliceIndex, courseSliceIndex + CHUNK_SIZE);
-    setVisibleCourses((prev) => [...prev, ...next]);
     setCourseSliceIndex((prev) => prev + CHUNK_SIZE);
   };
   const loadMoreInstructors = () => {
-    if (instructors.length === 0) return;
-    const filtered = filterInstructors(instructors);
-    const sorted = sortInstructors(filtered);
-    const next = sorted.slice(
-      instructorSliceIndex,
-      instructorSliceIndex + CHUNK_SIZE
-    );
-    setVisibleInstructors((prev) => [...prev, ...next]);
     setInstructorSliceIndex((prev) => prev + CHUNK_SIZE);
   };
 
-  // Effect: update visible courses when filters change
-  useEffect(() => {
-    if (mode !== "courses") return;
-    if (courses.length === 0) return;
-    const filtered = filterCourses(courses);
-    const sorted = sortCourses(filtered);
-    setMaxVisibleCoursesLength(sorted.length);
-    setVisibleCourses(sorted.slice(0, CHUNK_SIZE));
-    setCourseSliceIndex(CHUNK_SIZE);
-  }, [
-    query,
-    courseFilters.subjects.selected,
-    courseFilters.levels.selected,
-    courseFilters.terms.selected,
-    courseFilters.deliveries.selected,
-    courseFilters.prereqs.searchQuery,
-    courseFilters.prereqs.hasNone,
-    courseFilters.designations.selected,
-    courseFilters.reviews.minReviews,
-    courseFilters.sort.value,
-    courses,
-    mode,
-    courseReviewsData,
-  ]);
-
-  // Effect: update visible instructors when filters change
-  useEffect(() => {
-    if (mode !== "instructors") return;
-    if (instructors.length === 0) return;
-    const filtered = filterInstructors(instructors);
-    const sorted = sortInstructors(filtered);
-    setMaxVisibleInstructors(sorted.length);
-    setVisibleInstructors(sorted.slice(0, CHUNK_SIZE));
-    setInstructorSliceIndex(CHUNK_SIZE);
-  }, [
-    query,
-    instructorFilters.subjects.selected,
-    instructorFilters.terms.selected,
-    instructorFilters.reviews.minReviews,
-    instructorFilters.sort.value,
-    instructors,
-    mode,
-    instructorReviewsData,
-  ]);
-
-  // Loading state
   if (
     (mode === "courses" && isLoadingCourses && courses.length === 0) ||
     (mode === "instructors" && isLoadingInstructors && instructors.length === 0)
@@ -588,8 +508,8 @@ const ExplorePage: React.FC = () => {
                 options={["courses", "instructors"]}
                 onSelect={(value) => {
                   setMode(value as "courses" | "instructors");
-                  courseFilters.onReset();
-                  instructorFilters.onReset();
+                  resetCourseFilters();
+                  resetInstructorFilters();
                 }}
                 selectedOption={mode}
               />
@@ -598,11 +518,9 @@ const ExplorePage: React.FC = () => {
               {mode === "courses" && (
                 <select
                   className="sort-dropdown"
-                  value={courseFilters.sort.value || ""}
+                  value={courseSortValue || ""}
                   onChange={(e) =>
-                    courseFilters.sort.setValue(
-                      (e.target.value as SortState) || null
-                    )
+                    setCourseSortValue((e.target.value as SortState) || null)
                   }
                 >
                   <option value="">Sort By</option>
@@ -617,9 +535,9 @@ const ExplorePage: React.FC = () => {
               {mode === "instructors" && (
                 <select
                   className="sort-dropdown"
-                  value={instructorFilters.sort.value || ""}
+                  value={instructorSortValue || ""}
                   onChange={(e) =>
-                    instructorFilters.sort.setValue(
+                    setInstructorSortValue(
                       (e.target.value as InstructorSortState) || null
                     )
                   }
@@ -664,8 +582,8 @@ const ExplorePage: React.FC = () => {
                   key={outline.dept + outline.number}
                   course={outline}
                   query={query}
-                  showPrereqs={courseFilters.prereqs.isShown}
-                  prereqsQuery={courseFilters.prereqs.searchQuery}
+                  showPrereqs={coursePrereqIsShown}
+                  prereqsQuery={coursePrereqSearchQuery}
                   showInstructors={true}
                   reviewData={getCourseReviewData(
                     `${outline.dept}${outline.number}`
@@ -694,31 +612,7 @@ const ExplorePage: React.FC = () => {
           )}
         </section>
         <section className="filter-section">
-          {mode === "courses" ? (
-            <ExploreFilter
-              subjects={courseFilters.subjects}
-              levels={courseFilters.levels}
-              terms={courseFilters.terms}
-              prereqs={courseFilters.prereqs}
-              designations={courseFilters.designations}
-              deliveries={courseFilters.deliveries}
-              reviews={courseFilters.reviews}
-              courseSubjectSelectInputRef={
-                courseFilters.courseSubjectSelectInputRef
-              }
-              onReset={courseFilters.onReset}
-            />
-          ) : (
-            <InstructorExploreFilter
-              subjects={instructorFilters.subjects}
-              terms={instructorFilters.terms}
-              reviews={instructorFilters.reviews}
-              instructorSubjectSelectInputRef={
-                instructorFilters.instructorSubjectSelectInputRef
-              }
-              onReset={instructorFilters.onReset}
-            />
-          )}
+          {mode === "courses" ? <ExploreFilter /> : <InstructorExploreFilter />}
         </section>
       </main>
     </div>

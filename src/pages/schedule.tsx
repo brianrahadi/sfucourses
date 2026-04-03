@@ -15,7 +15,7 @@ import {
   ResetFilterButton,
 } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import {
   getCourseAPIData,
   getCurrentAndNextTerm,
@@ -50,6 +50,7 @@ import {
   updateTimeBlocksInUrl,
 } from "@utils/timeBlocks";
 import toast from "react-hot-toast";
+import { useScheduleStore } from "src/store/useScheduleStore";
 
 interface SchedulePageProps {
   initialSections?: CourseOutlineWithSectionDetails[];
@@ -80,37 +81,68 @@ export const getStaticProps: GetStaticProps<SchedulePageProps> = async () => {
   }
 };
 
+const CHUNK_SIZE = 20;
+
 const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   const [outlinesWithSections, setOutlinesWithSections] = useState<
     CourseOutlineWithSectionDetails[] | undefined
   >(initialSections || undefined);
-  const [visibleOutlinesWithSections, setVisibleOutlinesWithSections] =
-    useState<CourseOutlineWithSectionDetails[] | undefined>([]);
-  const [
-    maxVisibleOutlinesWithSectionsLength,
-    setMaxVisibleOutlinesWithSectionsLength,
-  ] = useState<number | undefined>();
-  const [selectedOutlinesWithSections, setSelectedOutlinesWithSections] =
-    useState<CourseWithSectionDetails[]>([]);
-  const [sliceIndex, setSliceIndex] = useState(20);
-  const [query, setQuery] = useState<string>("");
-  const termOptions = getCurrentAndNextTerm(); // Memoize termOptions
-  const [searchSelected, setSearchSelected] = useState<boolean>(false);
-  const [selectedTerm, setSelectedTerm] = useState(termOptions[1]);
+
+  const query = useScheduleStore((state) => state.query);
+  const setQuery = useScheduleStore((state) => state.setQuery);
+  const searchSelected = useScheduleStore((state) => state.searchSelected);
+  const setSearchSelected = useScheduleStore(
+    (state) => state.setSearchSelected
+  );
+  const selectedTerm = useScheduleStore((state) => state.selectedTerm);
+  const setSelectedTerm = useScheduleStore((state) => state.setSelectedTerm);
+
+  const filterConflicts = useScheduleStore((state) => state.filterConflicts);
+  const campusFilter = useScheduleStore((state) => state.campusFilter);
+  const daysFilter = useScheduleStore((state) => state.daysFilter);
+  const timeFilter = useScheduleStore((state) => state.timeFilter);
+  const subjectFilter = useScheduleStore((state) => state.subjectFilter);
+  const levelFilter = useScheduleStore((state) => state.levelFilter);
+  const clearAllFilters = useScheduleStore((state) => state.clearAllFilters);
+
+  const selectedOutlinesWithSections = useScheduleStore(
+    (state) => state.selectedOutlinesWithSections
+  );
+  const setSelectedOutlinesWithSections = useScheduleStore(
+    (state) => state.setSelectedOutlinesWithSections
+  );
+  const timeBlocks = useScheduleStore((state) => state.timeBlocks);
+  const setTimeBlocks = useScheduleStore((state) => state.setTimeBlocks);
+
+  const sliceIndex = useScheduleStore((state) => state.sliceIndex);
+  const setSliceIndex = useScheduleStore((state) => state.setSliceIndex);
+
+  const termOptions = useMemo(() => getCurrentAndNextTerm(), []);
+  const [currentTerm, nextTerm] = termOptions;
+
   const termChangeSource = useRef("initial"); // button or url
   const [hasUserSelectedTerm, setHasUserSelectedTerm] = useState(false);
-  const [filterConflicts, setFilterConflicts] = useState(false);
-  const [campusFilter, setCampusFilter] = useState<string[]>([]);
-  const [daysFilter, setDaysFilter] = useState<string[]>([]);
-  const [timeFilter, setTimeFilter] = useState<{ start: string; end: string }>({
-    start: "",
-    end: "",
-  });
-  const [subjectFilter, setSubjectFilter] = useState<string[]>([]);
-  const [levelFilter, setLevelFilter] = useState<string[]>([]);
-  const [currentTerm, nextTerm] = getCurrentAndNextTerm();
 
-  // Check if any filters are applied
+  const [previewCourse, setPreviewCourse] =
+    useState<CourseWithSectionDetails | null>(null);
+  const [hoveredCourse, setHoveredCourse] = useState<
+    CourseOutline | CourseOutlineWithSectionDetails | null
+  >(null);
+  const [pinnedCourse, setPinnedCourse] = useState<
+    CourseOutline | CourseOutlineWithSectionDetails | null
+  >(null);
+  const [courseDetails, setCourseDetails] =
+    useState<CourseWithSectionDetails | null>(null);
+
+  const searchParams = useSearchParams();
+
+  // Initialize selectedTerm if empty
+  useEffect(() => {
+    if (!selectedTerm && termOptions.length > 1) {
+      setSelectedTerm(termOptions[1]);
+    }
+  }, [selectedTerm, termOptions, setSelectedTerm]);
+
   const hasFiltersApplied =
     filterConflicts ||
     campusFilter.length > 0 ||
@@ -120,20 +152,8 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
     subjectFilter.length > 0 ||
     levelFilter.length > 0;
 
-  // Clear all filters function
-  const clearAllFilters = () => {
-    setFilterConflicts(false);
-    setCampusFilter([]);
-    setDaysFilter([]);
-    setTimeFilter({ start: "", end: "" });
-    setSubjectFilter([]);
-    setLevelFilter([]);
-  };
-
-  // Keyboard shortcuts for schedule page
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Skip if user is typing in an input field
       if (
         e.target instanceof HTMLInputElement ||
         e.target instanceof HTMLTextAreaElement
@@ -168,6 +188,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
           break;
         case "t":
           e.preventDefault();
+          if (!selectedTerm) return;
           const currentIndex = termOptions.indexOf(selectedTerm);
           const nextIndex = (currentIndex + 1) % termOptions.length;
           termChangeSource.current = "keyboard";
@@ -178,38 +199,25 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
           break;
       }
     };
-
     document.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [hasFiltersApplied, clearAllFilters]);
-  const [previewCourse, setPreviewCourse] =
-    useState<CourseWithSectionDetails | null>(null);
-  const [hoveredCourse, setHoveredCourse] = useState<
-    CourseOutline | CourseOutlineWithSectionDetails | null
-  >(null);
-  const [pinnedCourse, setPinnedCourse] = useState<
-    CourseOutline | CourseOutlineWithSectionDetails | null
-  >(null);
-  const [courseDetails, setCourseDetails] =
-    useState<CourseWithSectionDetails | null>(null);
-
-  const [timeBlocks, setTimeBlocks] = useState<TimeBlock[]>([]);
-
-  const searchParams = useSearchParams();
-
-  const CHUNK_SIZE = 20;
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [
+    hasFiltersApplied,
+    clearAllFilters,
+    selectedTerm,
+    termOptions,
+    setTimeBlocks,
+    setSelectedOutlinesWithSections,
+    setSelectedTerm,
+  ]);
 
   useEffect(() => {
     const urlTimeBlocks = getTimeBlocksFromUrl();
     if (urlTimeBlocks.length > 0) {
       setTimeBlocks(urlTimeBlocks);
-      // Show notification to user
       toast.success(`Loaded ${urlTimeBlocks.length} time block(s) from URL`);
     }
-  }, []);
+  }, [setTimeBlocks]);
 
   useEffect(() => {
     updateTimeBlocksInUrl(timeBlocks);
@@ -227,41 +235,51 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
     ) {
       const key = searchParams.get("term") as string;
       const newTerm = termMap.get(key) as string;
-      if (newTerm !== selectedTerm) {
+      if (selectedTerm && newTerm !== selectedTerm) {
         setTimeBlocks([]);
       }
       setSelectedTerm(newTerm);
     }
-  }, [searchParams]);
+  }, [
+    searchParams,
+    currentTerm,
+    nextTerm,
+    selectedTerm,
+    setTimeBlocks,
+    setSelectedTerm,
+  ]);
 
   useEffect(() => {
-    if (!outlinesWithSections) return;
+    if (!outlinesWithSections || !selectedTerm) return;
 
     const reverseTermMap = new Map<string, string>();
     reverseTermMap.set(currentTerm, toShortenedTerm(currentTerm));
     reverseTermMap.set(nextTerm, toShortenedTerm(nextTerm));
     insertUrlParam("term", reverseTermMap.get(selectedTerm) as string);
 
-    if (termChangeSource.current === "initial") {
-      return;
-    }
-
+    if (termChangeSource.current === "initial") return;
     if (termChangeSource.current === "button") {
       setSelectedOutlinesWithSections([]);
       return;
     }
+
     if (searchParams.has("courses")) {
       const sectionCodes = (searchParams.get("courses") as string).split("-");
-
       const filteredOutlines = outlinesWithSections.filter(
         (outline) => outline.term === selectedTerm
       );
-
       setSelectedOutlinesWithSections(
         filterCoursesByClassNumbers(filteredOutlines, sectionCodes)
       );
     }
-  }, [searchParams, outlinesWithSections, selectedTerm]);
+  }, [
+    searchParams,
+    outlinesWithSections,
+    selectedTerm,
+    currentTerm,
+    nextTerm,
+    setSelectedOutlinesWithSections,
+  ]);
 
   useEffect(() => {
     if (selectedOutlinesWithSections.length === 0) {
@@ -274,120 +292,70 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
     insertUrlParam("courses", sectionCodes);
   }, [selectedOutlinesWithSections]);
 
-  const loadMore = () => {
-    if (!outlinesWithSections) {
-      return;
+  useEffect(() => {
+    if (!outlinesWithSections && selectedTerm) {
+      loadCourseAPIData(
+        `/sections?term=${toTermCode(selectedTerm)}`,
+        (res: any) => {
+          setOutlinesWithSections((prev) => (prev ? [...prev, ...res] : res));
+        }
+      );
     }
+  }, [outlinesWithSections, selectedTerm]);
 
-    const filteredCourses = filterCourses(outlinesWithSections);
-    const nextCourses = filteredCourses.slice(
-      sliceIndex,
-      sliceIndex + CHUNK_SIZE
-    );
-    setVisibleOutlinesWithSections((prev) => [...(prev || []), ...nextCourses]);
-    setSliceIndex((prev) => prev + CHUNK_SIZE);
-  };
+  // Derived state avoiding multiple useEffects
+  const filteredCourses = useMemo(() => {
+    if (!outlinesWithSections || !selectedTerm) return [];
 
-  const onFilterChange = () => {
-    if (!outlinesWithSections) {
-      return;
-    }
+    let result = outlinesWithSections;
+    result = filterCoursesByTerm(result, selectedTerm);
+    result = filterCoursesByQuery(result, query);
+    result = filterCoursesBySubjectsWithSections(result, subjectFilter);
+    result = filterCoursesByLevelsWithSections(result, levelFilter);
+    result = filterCoursesByCampus(result, campusFilter);
+    result = filterCoursesByDays(result, daysFilter);
+    result = filterCoursesByTime(result, timeFilter);
 
-    let filteredCourses = filterCourses(outlinesWithSections);
-
-    // Apply conflict filter if enabled
     if (filterConflicts) {
-      // First filter against selected courses if there are any
       if (selectedOutlinesWithSections.length > 0) {
-        filteredCourses = filterConflictingCoursesWithOutlines(
-          filteredCourses,
+        result = filterConflictingCoursesWithOutlines(
+          result,
           selectedOutlinesWithSections
         );
       }
-
-      // Then filter against time blocks if there are any
       if (timeBlocks.length > 0) {
         const timeBlocksAsCourses = timeBlocks.map(timeBlockToCourseFormat);
-        filteredCourses = filterConflictingCoursesWithOutlines(
-          filteredCourses,
+        result = filterConflictingCoursesWithOutlines(
+          result,
           timeBlocksAsCourses
         );
       }
     }
 
-    const slicedCourses = filteredCourses.slice(0, sliceIndex);
-
-    setMaxVisibleOutlinesWithSectionsLength(filteredCourses.length);
-    setVisibleOutlinesWithSections(slicedCourses);
-    setSliceIndex(CHUNK_SIZE);
-  };
-
-  const filterCourses = (courses: CourseOutlineWithSectionDetails[]) => {
-    const filteredCourses = [
-      (courses: CourseOutlineWithSectionDetails[]) =>
-        filterCoursesByTerm(courses, selectedTerm),
-      (courses: CourseOutlineWithSectionDetails[]) =>
-        filterCoursesByQuery(courses, query),
-      (courses: CourseOutlineWithSectionDetails[]) =>
-        filterCoursesBySubjectsWithSections(courses, subjectFilter),
-      (courses: CourseOutlineWithSectionDetails[]) =>
-        filterCoursesByLevelsWithSections(courses, levelFilter),
-      (courses: CourseOutlineWithSectionDetails[]) =>
-        filterCoursesByCampus(courses, campusFilter),
-      (courses: CourseOutlineWithSectionDetails[]) =>
-        filterCoursesByDays(courses, daysFilter),
-      (courses: CourseOutlineWithSectionDetails[]) =>
-        filterCoursesByTime(courses, timeFilter),
-    ].reduce((filtered, filterFunc) => filterFunc(filtered), courses);
-    return filteredCourses;
-  };
-
-  // Re-run filter when any filtering criteria changes or when selected courses change
-  useEffect(onFilterChange, [
-    query,
+    return result;
+  }, [
+    outlinesWithSections,
     selectedTerm,
-    filterConflicts,
+    query,
+    subjectFilter,
+    levelFilter,
     campusFilter,
     daysFilter,
     timeFilter,
-    subjectFilter,
-    levelFilter,
+    filterConflicts,
     selectedOutlinesWithSections,
-    timeBlocks, // Add timeBlocks as a dependency to re-filter when blocks change
+    timeBlocks,
   ]);
 
-  useEffect(() => {
-    if (!outlinesWithSections) {
-      loadCourseAPIData(
-        `/sections?term=${toTermCode(selectedTerm)}`,
-        (res: any) => {
-          setOutlinesWithSections((prev) => {
-            if (prev) {
-              return [...prev, ...res];
-            }
-            return res;
-          });
-        }
-      );
+  const visibleOutlinesWithSections = useMemo(() => {
+    return filteredCourses.slice(0, sliceIndex);
+  }, [filteredCourses, sliceIndex]);
 
-      loadCourseAPIData(
-        `/sections?term=${toTermCode(selectedTerm)}`,
-        (res: any) => {
-          setOutlinesWithSections((prev) => {
-            if (prev) {
-              return [...prev, ...res];
-            }
-            return res;
-          });
-        }
-      );
-    }
-    if (outlinesWithSections) {
-      setVisibleOutlinesWithSections(outlinesWithSections.slice(0, CHUNK_SIZE));
-      setMaxVisibleOutlinesWithSectionsLength(outlinesWithSections.length);
-      onFilterChange();
-    }
-  }, [outlinesWithSections]);
+  const maxVisibleOutlinesWithSectionsLength = filteredCourses.length;
+
+  const loadMore = () => {
+    setSliceIndex((prev) => prev + CHUNK_SIZE);
+  };
 
   const InfiniteScrollCourses = (
     visibleOutlinesWithSections: CourseOutlineWithSectionDetails[],
@@ -399,7 +367,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
         dataLength={visibleOutlinesWithSections.length}
         hasMore={
           visibleOutlinesWithSections.length <
-          (maxVisibleOutlinesWithSectionsLength || 0)
+          maxVisibleOutlinesWithSectionsLength
         }
         loader={<p>Loading...</p>}
         next={loadMore}
@@ -441,20 +409,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
         <section className="courses-section">
           <div className="courses-section__header">
             <div className="term-filter-row">
-              <FilterDialog
-                campusFilter={campusFilter}
-                setCampusFilter={setCampusFilter}
-                filterConflicts={filterConflicts}
-                setFilterConflicts={setFilterConflicts}
-                daysFilter={daysFilter}
-                setDaysFilter={setDaysFilter}
-                timeFilter={timeFilter}
-                setTimeFilter={setTimeFilter}
-                subjectFilter={subjectFilter}
-                setSubjectFilter={setSubjectFilter}
-                levelFilter={levelFilter}
-                setLevelFilter={setLevelFilter}
-              />
+              <FilterDialog />
               <ResetFilterButton
                 hasFiltersApplied={hasFiltersApplied}
                 onResetFilters={clearAllFilters}
@@ -463,22 +418,20 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
             <div className="flex-row">
               <TextBadge
                 className="big explore gray-text"
-                content={`${
+                content={`${numberWithCommas(
                   maxVisibleOutlinesWithSectionsLength
-                    ? numberWithCommas(maxVisibleOutlinesWithSectionsLength)
-                    : "0"
-                }
-            ${
-              (maxVisibleOutlinesWithSectionsLength || 0) > 1
-                ? "courses"
-                : "course"
-            } found`}
+                )} ${
+                  maxVisibleOutlinesWithSectionsLength > 1 ||
+                  maxVisibleOutlinesWithSectionsLength === 0
+                    ? "courses"
+                    : "course"
+                } found`}
               />
               <ButtonGroup
                 options={termOptions}
                 onSelect={(value) => {
                   termChangeSource.current = "button";
-                  setHasUserSelectedTerm(true); // Mark that user has manually selected a term
+                  setHasUserSelectedTerm(true);
                   setSelectedTerm(value);
                   setTimeBlocks([]);
                 }}
@@ -511,13 +464,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
         </section>
         <section className="schedule-section">
           <div className="schedule-section__header">
-            <ScheduleManager
-              coursesWithSections={selectedOutlinesWithSections}
-              setCoursesWithSections={setSelectedOutlinesWithSections}
-              timeBlocks={timeBlocks}
-              setTimeBlocks={setTimeBlocks}
-              selectedTerm={selectedTerm}
-            />
+            <ScheduleManager selectedTerm={selectedTerm} />
             <div className="flex-row">
               <CopyLinkButton
                 hasSelectedCourses={selectedOutlinesWithSections.length > 0}

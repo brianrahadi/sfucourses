@@ -44,7 +44,8 @@
     "react-loader-spinner": "^6.1.6",
     "react-select": "^5.9.0",
     "react-tooltip": "^5.29.1",
-    "recharts": "^3.3.0"
+    "recharts": "^3.3.0",
+    "zustand": "^5.0.12"
   },
   "devDependencies": {
     "@types/node": "20.9.0",

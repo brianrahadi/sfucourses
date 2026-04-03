@@ -4,14 +4,9 @@ import { Button } from "./Button";
 import { FaSave, FaFolderOpen } from "react-icons/fa";
 import { IoMdStar, IoMdStarOutline } from "react-icons/io";
 import toast from "react-hot-toast";
+import { useScheduleStore } from "src/store/useScheduleStore";
 
 interface ScheduleManagerProps {
-  coursesWithSections: CourseWithSectionDetails[];
-  setCoursesWithSections: React.Dispatch<
-    React.SetStateAction<CourseWithSectionDetails[]>
-  >;
-  timeBlocks: TimeBlock[];
-  setTimeBlocks: React.Dispatch<React.SetStateAction<TimeBlock[]>>;
   selectedTerm: string;
 }
 
@@ -26,10 +21,6 @@ interface SavedSchedule {
 }
 
 export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
-  coursesWithSections,
-  setCoursesWithSections,
-  timeBlocks,
-  setTimeBlocks,
   selectedTerm,
 }) => {
   const [showSaveDialog, setShowSaveDialog] = useState(false);
@@ -38,6 +29,15 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
   const [savedSchedules, setSavedSchedules] = useState<SavedSchedule[]>([]);
   const previousTermRef = useRef(selectedTerm);
 
+  const coursesWithSections = useScheduleStore(
+    (state) => state.selectedOutlinesWithSections
+  );
+  const setCoursesWithSections = useScheduleStore(
+    (state) => state.setSelectedOutlinesWithSections
+  );
+  const timeBlocks = useScheduleStore((state) => state.timeBlocks);
+  const setTimeBlocks = useScheduleStore((state) => state.setTimeBlocks);
+
   useEffect(() => {
     const loadedSchedules = localStorage.getItem("savedSchedules");
     if (loadedSchedules) {
@@ -45,7 +45,7 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
         const parsedSchedules = JSON.parse(loadedSchedules);
         const updatedSchedules = parsedSchedules.map((schedule: any) => ({
           ...schedule,
-          timeBlocks: schedule.timeBlocks || [], // Add empty timeBlocks array if it doesn't exist
+          timeBlocks: schedule.timeBlocks || [],
         }));
         setSavedSchedules(updatedSchedules);
       } catch (error) {
@@ -56,7 +56,6 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
   }, []);
 
   useEffect(() => {
-    // Only load default schedule if the term has changed and coursesWithSections is not for the new term
     if (
       previousTermRef.current !== selectedTerm &&
       (coursesWithSections.length === 0 ||
@@ -65,23 +64,21 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
       loadDefaultScheduleForTerm(selectedTerm);
       previousTermRef.current = selectedTerm;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTerm, coursesWithSections, savedSchedules]);
 
-  // Save schedules to localStorage when they change
   useEffect(() => {
     if (savedSchedules.length > 0) {
       localStorage.setItem("savedSchedules", JSON.stringify(savedSchedules));
     }
   }, [savedSchedules]);
 
-  // Function to load the default schedule for a specific term
   const loadDefaultScheduleForTerm = (term: string) => {
     const defaultSchedule = savedSchedules.find(
       (schedule) => schedule.isDefault && schedule.term === term
     );
 
     if (defaultSchedule) {
-      // tried without setTimeout but didn't work, RIP CLEAN CODE
       setTimeout(() => {
         setCoursesWithSections(defaultSchedule.courses);
         setTimeBlocks(defaultSchedule.timeBlocks || []);
@@ -103,7 +100,6 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
       return;
     }
 
-    // Filter schedules by current term to check limit
     const currentTermSchedules = savedSchedules.filter(
       (s) => s.term === selectedTerm
     );
@@ -112,28 +108,25 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
       id: Date.now(),
       name: scheduleName,
       courses: coursesWithSections,
-      timeBlocks: timeBlocks, // Save time blocks with the schedule
+      timeBlocks: timeBlocks,
       term: selectedTerm,
-      isDefault: currentTermSchedules.length === 0, // First saved schedule for a term becomes default
+      isDefault: currentTermSchedules.length === 0,
       timestamp: Date.now(),
     };
 
-    // Check if a schedule with the same name already exists for this term
     const existingIndex = savedSchedules.findIndex(
       (s) => s.term === selectedTerm && s.name === scheduleName
     );
 
     if (existingIndex !== -1) {
-      // Update existing schedule
       const updatedSchedules = [...savedSchedules];
       updatedSchedules[existingIndex] = {
         ...newSchedule,
-        isDefault: updatedSchedules[existingIndex].isDefault, // Preserve default status
+        isDefault: updatedSchedules[existingIndex].isDefault,
       };
       setSavedSchedules(updatedSchedules);
       toast.success(`Schedule "${scheduleName}" updated`);
     } else {
-      // Add new schedule
       setSavedSchedules([...savedSchedules, newSchedule]);
       toast.success(`Schedule "${scheduleName}" saved`);
     }
@@ -144,7 +137,6 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
 
   const handleLoadSchedule = (schedule: SavedSchedule) => {
     setCoursesWithSections(schedule.courses);
-    // Also load the time blocks
     setTimeBlocks(schedule.timeBlocks || []);
     setShowLoadDialog(false);
     toast.success(`Schedule "${schedule.name}" loaded`);
@@ -154,7 +146,6 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
     const scheduleToDelete = savedSchedules.find((s) => s.id === id);
     const updatedSchedules = savedSchedules.filter((s) => s.id !== id);
 
-    // If we're deleting the default schedule, make the most recent one for that term the default
     if (scheduleToDelete?.isDefault && updatedSchedules.length > 0) {
       const termSchedules = updatedSchedules.filter(
         (s) => s.term === scheduleToDelete.term
@@ -181,7 +172,6 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
 
     const updatedSchedules = savedSchedules.map((schedule) => ({
       ...schedule,
-      // Only update default status for schedules in the same term
       isDefault:
         schedule.term === scheduleToSetDefault.term
           ? schedule.id === id
@@ -192,12 +182,10 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
     toast.success("Default schedule set");
   };
 
-  // Filter schedules by the currently selected term
   const filteredSchedules = savedSchedules.filter(
     (s) => s.term === selectedTerm
   );
 
-  // Get a summary of the schedule contents
   const getScheduleSummary = (schedule: SavedSchedule) => {
     const courseCount = schedule.courses.length;
     const blockCount = schedule.timeBlocks?.length || 0;
@@ -217,27 +205,6 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
 
   return (
     <div className="schedule-manager">
-      {/* Weekly Schedule with preview support */}
-      {/* <WeeklySchedule
-        coursesWithSections={coursesWithSections}
-        setCoursesWithSections={setCoursesWithSections}
-        timeBlocks={timeBlocks}
-        setTimeBlocks={setTimeBlocks}
-        previewCourse={previewCourse}
-      /> */}
-      {/* Section details for each selected course */}
-      {/* <div className="selected-courses-section-details">
-        {coursesWithSections.map((course) => (
-          <SectionDetails
-            key={course.dept + course.number}
-            offering={course}
-            setOfferings={{ fn: setCoursesWithSections, type: "REMOVE" }}
-            type="SELECTED_COURSES"
-            onPreviewStart={setPreviewCourse}
-            onPreviewEnd={() => setPreviewCourse(null)}
-          />
-        ))}
-      </div> */}
       <div className="schedule-manager-buttons">
         <button
           onClick={() => setShowSaveDialog(true)}
@@ -257,7 +224,6 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
         </button>
       </div>
 
-      {/* Save Dialog */}
       {showSaveDialog && (
         <div className="schedule-dialog">
           <div className="schedule-dialog-content">
@@ -304,7 +270,6 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
         </div>
       )}
 
-      {/* Load Dialog */}
       {showLoadDialog && (
         <div className="schedule-dialog">
           <div className="schedule-dialog-content">
