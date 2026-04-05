@@ -3,7 +3,6 @@ import dynamic from "next/dynamic";
 import Head from "next/head";
 import fs from "fs";
 import path from "path";
-import Papa from "papaparse";
 import React, {
   useState,
   useEffect,
@@ -30,6 +29,7 @@ interface GraphLink {
   source: string;
   target: string;
   value: number;
+  type?: "prerequisite" | "corequisite";
 }
 
 interface GraphPageProps {
@@ -38,39 +38,79 @@ interface GraphPageProps {
 }
 
 export const getStaticProps: GetStaticProps<GraphPageProps> = async () => {
-  const nodesPath = path.join(process.cwd(), "public/courses/nodes.csv");
-  const linksPath = path.join(process.cwd(), "public/courses/links.csv");
+  const coursesPath = path.join(process.cwd(), "public/courses/courses.json");
+  const coursesRaw = fs.readFileSync(coursesPath, "utf-8");
+  const courses = JSON.parse(coursesRaw);
 
-  const nodesCsv = fs.readFileSync(nodesPath, "utf-8");
-  const linksCsv = fs.readFileSync(linksPath, "utf-8");
+  const nodesMap = new Map<string, GraphNode>();
+  const rawLinks: GraphLink[] = [];
 
-  const parsedNodes = Papa.parse(nodesCsv, {
-    header: true,
-    skipEmptyLines: true,
+  courses.forEach((c: any) => {
+    const id = `${c.dept} ${c.number}`;
+    if (!nodesMap.has(id)) {
+      nodesMap.set(id, {
+        id,
+        title: id,
+        group: c.dept,
+        size: 5,
+        depth: 1,
+      });
+    }
+
+    c.prerequisites?.forEach((prereq: string) => {
+      rawLinks.push({
+        source: prereq,
+        target: id,
+        value: 1,
+        type: "prerequisite",
+      });
+      if (!nodesMap.has(prereq)) {
+        const pDept = prereq.split(" ")[0] || "UNKNOWN";
+        nodesMap.set(prereq, {
+          id: prereq,
+          title: prereq,
+          group: pDept,
+          size: 5,
+          depth: 1,
+        });
+      }
+    });
+
+    c.corequisites?.forEach((coreq: string) => {
+      rawLinks.push({
+        source: id,
+        target: coreq,
+        value: 1,
+        type: "corequisite",
+      });
+      rawLinks.push({
+        source: coreq,
+        target: id,
+        value: 1,
+        type: "corequisite",
+      });
+      if (!nodesMap.has(coreq)) {
+        const pDept = coreq.split(" ")[0] || "UNKNOWN";
+        nodesMap.set(coreq, {
+          id: coreq,
+          title: coreq,
+          group: pDept,
+          size: 5,
+          depth: 1,
+        });
+      }
+    });
   });
-  const parsedLinks = Papa.parse(linksCsv, {
-    header: true,
-    skipEmptyLines: true,
+
+  const uniqueLinksMap = new Map<string, GraphLink>();
+  rawLinks.forEach((l) => {
+    uniqueLinksMap.set(`${l.source}-${l.target}-${l.type}`, l);
   });
-
-  const nodes = parsedNodes.data.map((r: any) => ({
-    id: r.id,
-    title: r.title,
-    group: r.group,
-    size: parseFloat(r.size) || 1,
-    depth: parseFloat(r.depth) || 1,
-  }));
-
-  const links = parsedLinks.data.map((r: any) => ({
-    source: r.source,
-    target: r.target,
-    value: parseFloat(r.value) || 1,
-  }));
 
   return {
     props: {
-      nodes,
-      links,
+      nodes: Array.from(nodesMap.values()),
+      links: Array.from(uniqueLinksMap.values()),
     },
   };
 };
@@ -99,26 +139,8 @@ const pastelColors = [
 ];
 
 const GraphPage: React.FC<GraphPageProps> = ({ nodes, links }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-
-  useEffect(() => {
-    const updateDimensions = () => {
-      if (containerRef.current) {
-        setDimensions({
-          width: containerRef.current.clientWidth,
-          height: containerRef.current.clientHeight,
-        });
-      }
-    };
-
-    window.addEventListener("resize", updateDimensions);
-    updateDimensions();
-
-    return () => window.removeEventListener("resize", updateDimensions);
-  }, []);
 
   const handleNodeClick = useCallback((node: any) => {
     setSelectedNodeId(node.id);
@@ -178,39 +200,11 @@ const GraphPage: React.FC<GraphPageProps> = ({ nodes, links }) => {
   }, [nodes, links, searchQuery]);
 
   return (
-    <div
-      className="page graph-page"
-      style={{ height: "100vh", padding: 0, margin: 0, overflow: "hidden" }}
-    >
-      <Head>
-        <title>Curriculum Graph - SFU Courses</title>
-      </Head>
-
-      <main
-        id="schedule-container"
-        className="container"
-        style={{
-          margin: 0,
-          padding: 0,
-          width: "100%",
-          maxWidth: "100%",
-          height: "100%",
-          display: "flex",
-        }}
-      >
+    <div className="page graph-page">
+      <main id="schedule-container" className="container">
         {/* Left Sidebar Native Layout (Mirrors courses-section in schedule) */}
         {selectedCourseOutline && (
-          <section
-            className="courses-section"
-            style={{
-              width: "400px",
-              minWidth: "400px",
-              height: "100%",
-              overflowY: "auto",
-              borderRight: "1px solid var(--colour-neutral-800)",
-              backgroundColor: "var(--colour-background)",
-            }}
-          >
+          <section className="courses-section">
             <SidebarCourse
               course={selectedCourseOutline}
               onClose={closeSidebar}
@@ -219,60 +213,35 @@ const GraphPage: React.FC<GraphPageProps> = ({ nodes, links }) => {
         )}
 
         {/* Right Layout (Mirrors schedule-section but holds graph) */}
-        <section
-          className="schedule-section"
-          style={{
-            flexGrow: 1,
-            position: "relative",
-            height: "100%",
-            backgroundColor: "#1e1e1e",
-            overflow: "hidden",
-          }}
-          ref={containerRef}
-        >
+        <section className="schedule-section">
           {/* Floating Search Bar */}
-          <div
-            style={{
-              position: "absolute",
-              bottom: "20px",
-              right: "20px",
-              zIndex: 10,
-            }}
-          >
+          <div className="search-filter-container">
             <input
               type="text"
               placeholder="Filter courses... (e.g. CMPT)"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              style={{
-                padding: "12px 16px",
-                borderRadius: "8px",
-                border: "1px solid var(--colour-neutral-800)",
-                backgroundColor: "var(--colour-neutral-1000)",
-                color: "white",
-                fontSize: "14px",
-                width: "300px",
-                outline: "none",
-                boxShadow: "0 4px 6px rgba(0, 0, 0, 0.3)",
-              }}
             />
           </div>
 
-          {dimensions.width > 0 && dimensions.height > 0 && (
-            <ForceGraph2D
-              width={dimensions.width}
-              height={dimensions.height}
-              graphData={graphData}
-              nodeLabel="id"
-              nodeColor={(node: any) => groupColors.get(node.group) || "#fff"}
-              nodeVal={(node: any) => node.size * 2}
-              linkWidth={1}
-              linkColor={() => "rgba(255,255,255,0.2)"}
-              linkDirectionalArrowLength={3.5}
-              linkDirectionalArrowRelPos={1}
-              onNodeClick={handleNodeClick}
-            />
-          )}
+          <ForceGraph2D
+            graphData={graphData}
+            nodeLabel="id"
+            nodeColor={(node: any) => groupColors.get(node.group) || "#fff"}
+            nodeVal={(node: any) => node.size * 2}
+            linkWidth={(link: any) => (link.type === "corequisite" ? 1.5 : 1.2)}
+            linkColor={(link: any) =>
+              link.type === "corequisite"
+                ? "rgba(255, 165, 0, 0.6)"
+                : "rgba(100, 200, 255, 0.5)"
+            }
+            linkDirectionalArrowLength={6}
+            linkDirectionalArrowRelPos={1}
+            linkCurvature={(link: any) =>
+              link.type === "corequisite" ? 0.3 : 0
+            }
+            onNodeClick={handleNodeClick}
+          />
         </section>
       </main>
     </div>

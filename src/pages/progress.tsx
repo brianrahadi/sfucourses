@@ -38,6 +38,16 @@ const ProgressPage = () => {
   const [courseInput, setCourseInput] = useState("");
   const [selectedCourseTerm, setSelectedCourseTerm] = useState(currentTerm);
 
+  const [dragHoverTarget, setDragHoverTarget] = useState<string | null>(null);
+  const [draggedItemData, setDraggedItemData] = useState<{
+    id: string;
+    title: string;
+    credits: number;
+    term?: string;
+    accentColor: "green" | "blue" | "grey";
+    sourceSection: string;
+  } | null>(null);
+
   const [outlineOptions, setOutlineOptions] = useState<OutlineOption[]>([]);
 
   useEffect(() => {
@@ -126,6 +136,105 @@ const ProgressPage = () => {
       return "courses to take";
     }
     return null;
+  };
+
+  const handleDragStart = (
+    e: React.DragEvent<HTMLDivElement>,
+    sourceSection: string,
+    courseId: string,
+    courseTerm: string | undefined,
+    credits: number,
+    accentColor: "green" | "blue" | "grey"
+  ) => {
+    const data = {
+      sourceSection,
+      courseId,
+      courseTerm,
+      title: getCourseTitle(courseId),
+      credits,
+      accentColor,
+    };
+    e.dataTransfer.setData("application/json", JSON.stringify(data));
+    setDraggedItemData({
+      id: courseId,
+      title: getCourseTitle(courseId),
+      credits,
+      term: courseTerm,
+      accentColor,
+      sourceSection,
+    });
+  };
+
+  const handleDragOver = (
+    e: React.DragEvent<HTMLDivElement>,
+    targetSection: string
+  ) => {
+    e.preventDefault();
+    if (dragHoverTarget !== targetSection) {
+      setDragHoverTarget(targetSection);
+    }
+  };
+
+  const handleDragEnd = () => {
+    setDragHoverTarget(null);
+    setDraggedItemData(null);
+  };
+
+  const handleDrop = (
+    e: React.DragEvent<HTMLDivElement>,
+    targetSection: string
+  ) => {
+    e.preventDefault();
+    setDragHoverTarget(null);
+    setDraggedItemData(null);
+    const dataStr = e.dataTransfer.getData("application/json");
+    if (!dataStr) return;
+
+    try {
+      const data = JSON.parse(dataStr);
+      const { sourceSection, courseId, courseTerm } = data;
+
+      if (sourceSection === targetSection) return;
+
+      const match = getCourseMatch(courseId);
+      const credits = match ? match.units : 3;
+
+      if (sourceSection === "completed") {
+        removeCompletedCourse(courseId, courseTerm);
+      } else {
+        removeWishlistCourse(courseId);
+      }
+
+      if (targetSection === "completed") {
+        addCompletedCourse({
+          id: courseId,
+          term:
+            courseTerm && courseTerm !== "Undecided" ? courseTerm : currentTerm,
+          credits,
+        });
+      } else if (targetSection === "in-progress") {
+        addWishlistCourse({
+          id: courseId,
+          credits,
+          termPlanned: currentTerm,
+        });
+      } else if (targetSection === "next-term") {
+        addWishlistCourse({
+          id: courseId,
+          credits,
+          termPlanned: nextTerm,
+        });
+      } else if (targetSection === "undecided") {
+        addWishlistCourse({
+          id: courseId,
+          credits,
+          termPlanned: undefined,
+        });
+      }
+      toast.success(`Moved ${courseId}`);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const handleAddCompleted = () => {
@@ -286,7 +395,7 @@ const ProgressPage = () => {
         <div className="catalog-dashboard">
           <div className="db-header">
             <div className="db-user-info">
-              <h1>You</h1>
+              {/* <h1>You</h1> */}
               {/* <p>BSc Computer Science · Student ID: 20210482 · Year 3</p> */}
             </div>
           </div>
@@ -329,8 +438,16 @@ const ProgressPage = () => {
                   + Add course
                 </button>
               </div>
-              <div className="course-stack">
-                {inProgressCourses.length === 0 ? (
+              <div
+                className="course-stack"
+                onDragOver={(e) => handleDragOver(e, "in-progress")}
+                onDrop={(e) => handleDrop(e, "in-progress")}
+                style={{ minHeight: "100px" }}
+              >
+                {inProgressCourses.length === 0 &&
+                (!dragHoverTarget ||
+                  dragHoverTarget !== "in-progress" ||
+                  draggedItemData?.sourceSection === "in-progress") ? (
                   <p
                     style={{
                       fontSize: "14px",
@@ -349,8 +466,33 @@ const ProgressPage = () => {
                     term={currentTerm}
                     onRemove={() => removeWishlistCourse(c.id)}
                     accentColor="blue"
+                    draggable
+                    onDragStart={(e) =>
+                      handleDragStart(
+                        e,
+                        "in-progress",
+                        c.id,
+                        currentTerm,
+                        c.credits || 3,
+                        "blue"
+                      )
+                    }
+                    onDragEnd={handleDragEnd}
                   />
                 ))}
+                {dragHoverTarget === "in-progress" &&
+                  draggedItemData &&
+                  draggedItemData.sourceSection !== "in-progress" && (
+                    <CatalogCourseCard
+                      id={draggedItemData.id}
+                      title={draggedItemData.title}
+                      credits={draggedItemData.credits}
+                      term={currentTerm}
+                      onRemove={() => {}}
+                      accentColor="blue"
+                      isSkeleton
+                    />
+                  )}
               </div>
             </div>
 
@@ -389,8 +531,16 @@ const ProgressPage = () => {
               >
                 Next Term ({nextTerm})
               </h3>
-              <div className="course-list-grid">
-                {nextTermCoursesToTake.length === 0 ? (
+              <div
+                className="course-list-grid"
+                onDragOver={(e) => handleDragOver(e, "next-term")}
+                onDrop={(e) => handleDrop(e, "next-term")}
+                style={{ minHeight: "80px" }}
+              >
+                {nextTermCoursesToTake.length === 0 &&
+                (!dragHoverTarget ||
+                  dragHoverTarget !== "next-term" ||
+                  draggedItemData?.sourceSection === "next-term") ? (
                   <p
                     style={{
                       fontSize: "14px",
@@ -409,8 +559,33 @@ const ProgressPage = () => {
                     term={c.termPlanned}
                     onRemove={() => removeWishlistCourse(c.id)}
                     accentColor="grey"
+                    draggable
+                    onDragStart={(e) =>
+                      handleDragStart(
+                        e,
+                        "next-term",
+                        c.id,
+                        c.termPlanned,
+                        c.credits || 3,
+                        "grey"
+                      )
+                    }
+                    onDragEnd={handleDragEnd}
                   />
                 ))}
+                {dragHoverTarget === "next-term" &&
+                  draggedItemData &&
+                  draggedItemData.sourceSection !== "next-term" && (
+                    <CatalogCourseCard
+                      id={draggedItemData.id}
+                      title={draggedItemData.title}
+                      credits={draggedItemData.credits}
+                      term={nextTerm}
+                      onRemove={() => {}}
+                      accentColor="grey"
+                      isSkeleton
+                    />
+                  )}
               </div>
 
               <h3
@@ -423,8 +598,16 @@ const ProgressPage = () => {
               >
                 Future & Undecided
               </h3>
-              <div className="course-list-grid">
-                {undecidedCoursesToTake.length === 0 ? (
+              <div
+                className="course-list-grid"
+                onDragOver={(e) => handleDragOver(e, "undecided")}
+                onDrop={(e) => handleDrop(e, "undecided")}
+                style={{ minHeight: "80px" }}
+              >
+                {undecidedCoursesToTake.length === 0 &&
+                (!dragHoverTarget ||
+                  dragHoverTarget !== "undecided" ||
+                  draggedItemData?.sourceSection === "undecided") ? (
                   <p
                     style={{
                       fontSize: "14px",
@@ -443,8 +626,33 @@ const ProgressPage = () => {
                     term={c.termPlanned || "Undecided"}
                     onRemove={() => removeWishlistCourse(c.id)}
                     accentColor="grey"
+                    draggable
+                    onDragStart={(e) =>
+                      handleDragStart(
+                        e,
+                        "undecided",
+                        c.id,
+                        c.termPlanned,
+                        c.credits || 3,
+                        "grey"
+                      )
+                    }
+                    onDragEnd={handleDragEnd}
                   />
                 ))}
+                {dragHoverTarget === "undecided" &&
+                  draggedItemData &&
+                  draggedItemData.sourceSection !== "undecided" && (
+                    <CatalogCourseCard
+                      id={draggedItemData.id}
+                      title={draggedItemData.title}
+                      credits={draggedItemData.credits}
+                      term={"Undecided"}
+                      onRemove={() => {}}
+                      accentColor="grey"
+                      isSkeleton
+                    />
+                  )}
               </div>
 
               <div
@@ -520,7 +728,12 @@ const ProgressPage = () => {
               </div>
             </div>
 
-            <div className="completed-grid">
+            <div
+              className="completed-grid"
+              onDragOver={(e) => handleDragOver(e, "completed")}
+              onDrop={(e) => handleDrop(e, "completed")}
+              style={{ minHeight: "100px" }}
+            >
               {sortedCompletedCourses.map((c) => (
                 <CatalogCourseCard
                   key={`${c.id}-${c.term}`}
@@ -530,8 +743,38 @@ const ProgressPage = () => {
                   term={c.term}
                   onRemove={() => removeCompletedCourse(c.id, c.term)}
                   accentColor="green"
+                  draggable
+                  onDragStart={(e) =>
+                    handleDragStart(
+                      e,
+                      "completed",
+                      c.id,
+                      c.term,
+                      Number(c.credits) || 3,
+                      "green"
+                    )
+                  }
+                  onDragEnd={handleDragEnd}
                 />
               ))}
+              {dragHoverTarget === "completed" &&
+                draggedItemData &&
+                draggedItemData.sourceSection !== "completed" && (
+                  <CatalogCourseCard
+                    id={draggedItemData.id}
+                    title={draggedItemData.title}
+                    credits={draggedItemData.credits}
+                    term={
+                      draggedItemData.term &&
+                      draggedItemData.term !== "Undecided"
+                        ? draggedItemData.term
+                        : currentTerm
+                    }
+                    onRemove={() => {}}
+                    accentColor="green"
+                    isSkeleton
+                  />
+                )}
             </div>
 
             {completedCourses.length === 0 && (

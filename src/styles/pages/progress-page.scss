@@ -170,6 +170,19 @@
     display: flex;
     flex-direction: column;
 
+    &.draggable {
+      cursor: grab;
+      &:active {
+        cursor: grabbing;
+      }
+    }
+
+    &.skeleton {
+      opacity: 0.5;
+      border-style: dashed;
+      pointer-events: none;
+    }
+
     &.green {
       border-top: 3px solid var(--colour-sosy-green-500);
     }
