@@ -201,7 +201,7 @@ const GraphPage: React.FC<GraphPageProps> = ({ nodes, links }) => {
 
   return (
     <div className="page graph-page">
-      <main id="schedule-container" className="container">
+      <main className="container">
         {/* Left Sidebar Native Layout (Mirrors courses-section in schedule) */}
         {selectedCourseOutline && (
           <section className="courses-section">
@@ -213,7 +213,7 @@ const GraphPage: React.FC<GraphPageProps> = ({ nodes, links }) => {
         )}
 
         {/* Right Layout (Mirrors schedule-section but holds graph) */}
-        <section className="schedule-section">
+        <section>
           {/* Floating Search Bar */}
           <div className="search-filter-container">
             <input
@@ -227,6 +227,9 @@ const GraphPage: React.FC<GraphPageProps> = ({ nodes, links }) => {
           <ForceGraph2D
             graphData={graphData}
             nodeLabel="id"
+            // Use bottom-up DAG only when filtered, otherwise use default force layout
+            dagMode={searchQuery.trim() ? "bu" : undefined}
+            dagLevelDistance={searchQuery.trim() ? 40 : undefined}
             nodeColor={(node: any) => groupColors.get(node.group) || "#fff"}
             nodeVal={(node: any) => node.size * 2}
             linkWidth={(link: any) => (link.type === "corequisite" ? 1.5 : 1.2)}
