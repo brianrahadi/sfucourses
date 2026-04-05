@@ -50,6 +50,12 @@ const ProgressPage = () => {
 
   const [outlineOptions, setOutlineOptions] = useState<OutlineOption[]>([]);
 
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   useEffect(() => {
     fetch("https://api.sfucourses.com/v1/rest/outlines?short=true")
       .then((res) => res.json())
@@ -388,17 +394,19 @@ const ProgressPage = () => {
     return sorted;
   }, [completedCourses, completedSort]);
 
+  if (!mounted) return null;
+
   return (
     <div className="page progress-page">
-      <Hero title="Progress" backgroundImage={HeroImage.src} />
+      <Hero title="progress" backgroundImage={HeroImage.src} />
       <main className="container">
         <div className="catalog-dashboard">
-          <div className="db-header">
+          {/* <div className="db-header">
             <div className="db-user-info">
-              {/* <h1>You</h1> */}
-              {/* <p>BSc Computer Science · Student ID: 20210482 · Year 3</p> */}
+              <h1>You</h1>
+              <p>BSc Computer Science · Student ID: 20210482 · Year 3</p>
             </div>
-          </div>
+          </div> */}
 
           <div className="db-progress-section">
             <div className="progress-header">
@@ -435,7 +443,7 @@ const ProgressPage = () => {
                   className="add-btn"
                   onClick={() => setIsInProgressOpen(true)}
                 >
-                  + Add course
+                  + Add
                 </button>
               </div>
               <div
@@ -517,7 +525,7 @@ const ProgressPage = () => {
                     setIsWishlistOpen(true);
                   }}
                 >
-                  + Add course
+                  + Add
                 </button>
               </div>
 
@@ -723,7 +731,7 @@ const ProgressPage = () => {
                   className="add-btn"
                   onClick={() => setIsAddCompletedOpen(true)}
                 >
-                  + Add course
+                  + Add
                 </button>
               </div>
             </div>
@@ -843,7 +851,7 @@ const ProgressPage = () => {
           value={selectedCourseTerm}
           onChange={(e) => setSelectedCourseTerm(e.target.value)}
         >
-          <option value="Undecided">Undecided / I don't know</option>
+          <option value="Undecided">Undecided / I don&apos;t know</option>
           {chronologicalTerms.map((t: string) => (
             <option key={t} value={t}>
               {t}

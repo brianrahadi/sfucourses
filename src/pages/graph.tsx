@@ -10,8 +10,10 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import { SidebarCourse } from "@components";
+import { SidebarCourse, ExploreFilter } from "@components";
+import { useExploreStore } from "src/store/useExploreStore";
 import { CourseOutline } from "@types";
+import { MdFilterList, MdClose } from "react-icons/md";
 
 const ForceGraph2D = dynamic(() => import("react-force-graph-2d"), {
   ssr: false,
@@ -140,7 +142,15 @@ const pastelColors = [
 
 const GraphPage: React.FC<GraphPageProps> = ({ nodes, links }) => {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [isFilterOpen, setIsFilterOpen] = useState(true);
+  const courseSubjects = useExploreStore((state) => state.courseSubjects);
+  const courseLevels = useExploreStore((state) => state.courseLevels);
+
+  useEffect(() => {
+    if (window.innerWidth <= 768) {
+      setIsFilterOpen(false);
+    }
+  }, []);
 
   const handleNodeClick = useCallback((node: any) => {
     setSelectedNodeId(node.id);
@@ -174,17 +184,36 @@ const GraphPage: React.FC<GraphPageProps> = ({ nodes, links }) => {
   }, [nodes]);
 
   const graphData = useMemo(() => {
-    if (!searchQuery.trim()) {
+    if (courseSubjects.length === 0 && courseLevels.length === 0) {
       return { nodes: nodes, links: links };
     }
 
-    const query = searchQuery.toLowerCase().trim();
-    const filteredNodes = nodes.filter(
-      (n) =>
-        n.id.toLowerCase().includes(query) ||
-        n.group.toLowerCase().includes(query) ||
-        (n.title && n.title.toLowerCase().includes(query))
-    );
+    const filteredNodes = nodes.filter((n) => {
+      const idLower = n.id.toLowerCase();
+      const parts = idLower.split(" ");
+      const subject = parts[0];
+      const number = parts[1] || "";
+
+      let matchesSubject = true;
+      if (courseSubjects.length > 0) {
+        matchesSubject = courseSubjects
+          .map((s) => s.toLowerCase())
+          .includes(subject);
+      }
+
+      let matchesLevel = true;
+      if (courseLevels.length > 0 && number) {
+        const match = number.match(/^(\d)/);
+        if (match) {
+          const lvl = match[1] + "00";
+          matchesLevel = courseLevels.includes(lvl);
+        } else {
+          matchesLevel = false;
+        }
+      }
+
+      return matchesSubject && matchesLevel;
+    });
 
     const filteredNodeIds = new Set(filteredNodes.map((n) => n.id));
 
@@ -197,7 +226,9 @@ const GraphPage: React.FC<GraphPageProps> = ({ nodes, links }) => {
     });
 
     return { nodes: filteredNodes, links: filteredLinks };
-  }, [nodes, links, searchQuery]);
+  }, [nodes, links, courseSubjects, courseLevels]);
+
+  const hasFilters = courseSubjects.length > 0 || courseLevels.length > 0;
 
   return (
     <div className="page graph-page">
@@ -214,22 +245,31 @@ const GraphPage: React.FC<GraphPageProps> = ({ nodes, links }) => {
 
         {/* Right Layout (Mirrors schedule-section but holds graph) */}
         <section>
-          {/* Floating Search Bar */}
-          <div className="search-filter-container">
-            <input
-              type="text"
-              placeholder="Filter courses... (e.g. CMPT)"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+          {/* Floating Filter Menu */}
+          <div
+            className={`search-filter-container ${
+              isFilterOpen ? "" : "closed"
+            }`}
+          >
+            <ExploreFilter simplified onClose={() => setIsFilterOpen(false)} />
           </div>
+
+          {!isFilterOpen && (
+            <button
+              className="filter-half-circle"
+              onClick={() => setIsFilterOpen(true)}
+              aria-label="Open Filters"
+            >
+              <MdFilterList size={24} />
+            </button>
+          )}
 
           <ForceGraph2D
             graphData={graphData}
             nodeLabel="id"
             // Use bottom-up DAG only when filtered, otherwise use default force layout
-            dagMode={searchQuery.trim() ? "bu" : undefined}
-            dagLevelDistance={searchQuery.trim() ? 40 : undefined}
+            dagMode={hasFilters ? "bu" : undefined}
+            dagLevelDistance={hasFilters ? 40 : undefined}
             nodeColor={(node: any) => groupColors.get(node.group) || "#fff"}
             nodeVal={(node: any) => node.size * 2}
             linkWidth={(link: any) => (link.type === "corequisite" ? 1.5 : 1.2)}

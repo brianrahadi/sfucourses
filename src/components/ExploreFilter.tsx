@@ -3,6 +3,7 @@ import { Button } from "@components";
 import { SearchBar } from "@components";
 import { useRef } from "react";
 import { RiResetLeftFill } from "react-icons/ri";
+import { MdClose } from "react-icons/md";
 import {
   deliveryOptions,
   levelOptions,
@@ -76,7 +77,10 @@ const FilterButton: React.FC<FilterButtonProps> = ({
   );
 };
 
-export const ExploreFilter: React.FC = () => {
+export const ExploreFilter: React.FC<{
+  simplified?: boolean;
+  onClose?: () => void;
+}> = ({ simplified = false, onClose }) => {
   const courseSubjectSelectInputRef = useRef<SelectInstance<any>>(null);
 
   const courseSubjects = useExploreStore((state) => state.courseSubjects);
@@ -150,11 +154,20 @@ export const ExploreFilter: React.FC = () => {
           <p>
             <b>Subjects</b>
           </p>
-          <Button
-            className="explore-filter__reset secondary"
-            label={<RiResetLeftFill />}
-            onClick={onReset}
-          />
+          <div style={{ display: "flex", gap: "4px" }}>
+            <Button
+              className="explore-filter__reset secondary"
+              label={<RiResetLeftFill />}
+              onClick={onReset}
+            />
+            {onClose && (
+              <Button
+                className="explore-filter__reset secondary"
+                label={<MdClose />}
+                onClick={onClose}
+              />
+            )}
+          </div>
         </div>
         <Select
           ref={courseSubjectSelectInputRef}
@@ -195,143 +208,155 @@ export const ExploreFilter: React.FC = () => {
           })}
         </div>
       </section>
-      <section className="explore-filter__section">
-        <p>
-          <b>Terms</b>
-        </p>
-        <div className="explore-filter__section__row">
-          {termOptions.map((term) => {
-            return (
-              <FilterButton
-                key={term}
-                value={term}
-                isSelected={courseTerms.includes(term)}
-                onToggle={(val) =>
-                  toggleArrayItem(courseTerms, val, setCourseTerms)
-                }
-                icon={termToIcon(term.split(" ")[0])}
-              />
-            );
-          })}
-        </div>
-      </section>
-      <section className="explore-filter__section">
-        <p>
-          <b>Delivery Method</b>
-        </p>
-        <div className="explore-filter__section__row">
-          {deliveryOptions.map((delivery) => {
-            return (
-              <FilterButton
-                key={delivery}
-                value={delivery}
-                isSelected={courseDeliveries.includes(delivery)}
-                onToggle={(val) =>
-                  toggleArrayItem(courseDeliveries, val, setCourseDeliveries)
-                }
-              />
-            );
-          })}
-        </div>
-      </section>
-      <section className="explore-filter__section">
-        <p>
-          <b>Requirements</b>
-        </p>
-        <SearchBar
-          placeholder="prerequisites"
-          className="secondary"
-          handleInputChange={setCoursePrereqSearchQuery}
-          searchSelected={searchSelected}
-          setSearchSelected={setSearchSelected}
-          value={coursePrereqSearchQuery}
-          disabled={coursePrereqHasNone}
-          disabledPlaceholder="no prerequisite"
-        />
-        <div className="explore-filter__section__row">
-          <input
-            className="checkbox"
-            type="checkbox"
-            name="show-prereq"
-            id="show-prereq"
-            checked={coursePrereqIsShown}
-            onChange={() => setCoursePrereqIsShown(!coursePrereqIsShown)}
-          />
-          <label htmlFor="show-prereq">Show prerequisites</label>
-        </div>
-        <div className="explore-filter__section__row">
-          <input
-            className="checkbox"
-            type="checkbox"
-            name="no-prereq"
-            id="no-prereq"
-            checked={coursePrereqHasNone}
-            onChange={() => setCoursePrereqHasNone(!coursePrereqHasNone)}
-          />
-          <label htmlFor="no-prereq">No prerequisite</label>
-        </div>
-      </section>
-      <section className="explore-filter__section">
-        <p>
-          <b>Designations</b>
-        </p>
-        <div className="explore-filter__section__row">
-          {designationOptions.map((designation) => {
-            return (
-              <FilterButton
-                key={designation}
-                value={designation}
-                isSelected={courseDesignations.includes(designation)}
-                onToggle={(val) =>
-                  toggleArrayItem(
-                    courseDesignations,
-                    val,
-                    setCourseDesignations
-                  )
-                }
-              />
-            );
-          })}
-        </div>
-      </section>
-      <section className="explore-filter__section">
-        <p>
-          <b>Reviews</b>
-        </p>
-        <div className="explore-filter__slider-container">
-          {(() => {
-            const reviewValues = [0, 1, 5, 10, 20, 50, 75, 100, 200, 300, 500];
-            const currentIndex =
-              courseMinReviews === 0
-                ? 0
-                : reviewValues.indexOf(courseMinReviews) !== -1
-                ? reviewValues.indexOf(courseMinReviews)
-                : 0;
-            return (
-              <>
-                <input
-                  type="range"
-                  min="0"
-                  max="10"
-                  step="1"
-                  value={currentIndex}
-                  onChange={(e) => {
-                    const index = Number(e.target.value);
-                    setCourseMinReviews(reviewValues[index]);
-                  }}
-                  className="explore-filter__slider"
+      {!simplified && (
+        <section className="explore-filter__section">
+          <p>
+            <b>Terms</b>
+          </p>
+          <div className="explore-filter__section__row">
+            {termOptions.map((term) => {
+              return (
+                <FilterButton
+                  key={term}
+                  value={term}
+                  isSelected={courseTerms.includes(term)}
+                  onToggle={(val) =>
+                    toggleArrayItem(courseTerms, val, setCourseTerms)
+                  }
+                  icon={termToIcon(term.split(" ")[0])}
                 />
-                <div className="explore-filter__slider-labels">
-                  <span>
-                    {courseMinReviews === 0 ? "All" : `≥${courseMinReviews}`}
-                  </span>
-                  <span>500+</span>
-                </div>
-              </>
-            );
-          })()}
-        </div>
-      </section>
+              );
+            })}
+          </div>
+        </section>
+      )}
+      {!simplified && (
+        <section className="explore-filter__section">
+          <p>
+            <b>Delivery Method</b>
+          </p>
+          <div className="explore-filter__section__row">
+            {deliveryOptions.map((delivery) => {
+              return (
+                <FilterButton
+                  key={delivery}
+                  value={delivery}
+                  isSelected={courseDeliveries.includes(delivery)}
+                  onToggle={(val) =>
+                    toggleArrayItem(courseDeliveries, val, setCourseDeliveries)
+                  }
+                />
+              );
+            })}
+          </div>
+        </section>
+      )}
+      {!simplified && (
+        <section className="explore-filter__section">
+          <p>
+            <b>Requirements</b>
+          </p>
+          <SearchBar
+            placeholder="prerequisites"
+            className="secondary"
+            handleInputChange={setCoursePrereqSearchQuery}
+            searchSelected={searchSelected}
+            setSearchSelected={setSearchSelected}
+            value={coursePrereqSearchQuery}
+            disabled={coursePrereqHasNone}
+            disabledPlaceholder="no prerequisite"
+          />
+          <div className="explore-filter__section__row">
+            <input
+              className="checkbox"
+              type="checkbox"
+              name="show-prereq"
+              id="show-prereq"
+              checked={coursePrereqIsShown}
+              onChange={() => setCoursePrereqIsShown(!coursePrereqIsShown)}
+            />
+            <label htmlFor="show-prereq">Show prerequisites</label>
+          </div>
+          <div className="explore-filter__section__row">
+            <input
+              className="checkbox"
+              type="checkbox"
+              name="no-prereq"
+              id="no-prereq"
+              checked={coursePrereqHasNone}
+              onChange={() => setCoursePrereqHasNone(!coursePrereqHasNone)}
+            />
+            <label htmlFor="no-prereq">No prerequisite</label>
+          </div>
+        </section>
+      )}
+      {!simplified && (
+        <section className="explore-filter__section">
+          <p>
+            <b>Designations</b>
+          </p>
+          <div className="explore-filter__section__row">
+            {designationOptions.map((designation) => {
+              return (
+                <FilterButton
+                  key={designation}
+                  value={designation}
+                  isSelected={courseDesignations.includes(designation)}
+                  onToggle={(val) =>
+                    toggleArrayItem(
+                      courseDesignations,
+                      val,
+                      setCourseDesignations
+                    )
+                  }
+                />
+              );
+            })}
+          </div>
+        </section>
+      )}
+      {!simplified && (
+        <section className="explore-filter__section">
+          <p>
+            <b>Reviews</b>
+          </p>
+          <div className="explore-filter__slider-container">
+            {(() => {
+              const reviewValues = [
+                0, 1, 5, 10, 20, 50, 75, 100, 200, 300, 500,
+              ];
+              const currentIndex =
+                courseMinReviews === 0
+                  ? 0
+                  : reviewValues.indexOf(courseMinReviews) !== -1
+                  ? reviewValues.indexOf(courseMinReviews)
+                  : 0;
+              return (
+                <>
+                  <input
+                    type="range"
+                    min="0"
+                    max="10"
+                    step="1"
+                    value={currentIndex}
+                    onChange={(e) => {
+                      const index = Number(e.target.value);
+                      setCourseMinReviews(reviewValues[index]);
+                    }}
+                    className="explore-filter__slider"
+                  />
+                  <div className="explore-filter__slider-labels">
+                    <span>
+                      {courseMinReviews === 0 ? "All" : `≥${courseMinReviews}`}
+                    </span>
+                    <span>500+</span>
+                  </div>
+                </>
+              );
+            })()}
+          </div>
+        </section>
+      )}
     </div>
   );
 };

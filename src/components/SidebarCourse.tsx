@@ -124,11 +124,7 @@ export const SidebarCourse: React.FC<SidebarCourseProps> = ({
 
   // Fetch course review data
   const fetchCourseReviews = useCallback(async () => {
-    if (!courseOutline) return;
-
-    const courseCodeStr = `${courseOutline.dept.toUpperCase()}${
-      courseOutline.number
-    }`;
+    const courseCodeStr = `${course.dept.toUpperCase()}${course.number}`;
     setReviewLoading(true);
     setReviewError(null);
 
@@ -152,13 +148,11 @@ export const SidebarCourse: React.FC<SidebarCourseProps> = ({
     } finally {
       setReviewLoading(false);
     }
-  }, [courseOutline, reviewsPerPage]);
+  }, [course.dept, course.number, reviewsPerPage]);
 
   // Fetch Reddit posts
   const fetchRedditPosts = useCallback(async () => {
-    if (!courseOutline) return;
-
-    const query = `${courseOutline.dept.toLowerCase()} ${courseOutline.number}`;
+    const query = `${course.dept.toLowerCase()} ${course.number}`;
     setRedditLoading(true);
     setRedditError(null);
 
@@ -179,7 +173,7 @@ export const SidebarCourse: React.FC<SidebarCourseProps> = ({
     } finally {
       setRedditLoading(false);
     }
-  }, [courseOutline, redditPerPage]);
+  }, [course.dept, course.number, redditPerPage]);
 
   // Get instructors with review counts
   const getInstructorsWithCounts = useCallback(() => {
@@ -398,13 +392,11 @@ export const SidebarCourse: React.FC<SidebarCourseProps> = ({
     };
   }, [courseReviewData]);
 
-  // Fetch course reviews and Reddit posts when course outline is available
+  // Fetch course reviews and Reddit posts immediately
   useEffect(() => {
-    if (courseOutline) {
-      fetchCourseReviews();
-      fetchRedditPosts();
-    }
-  }, [courseOutline, fetchCourseReviews, fetchRedditPosts]);
+    fetchCourseReviews();
+    fetchRedditPosts();
+  }, [fetchCourseReviews, fetchRedditPosts]);
 
   // Update displayed reviews when filter or sort changes
   useEffect(() => {
@@ -434,43 +426,36 @@ export const SidebarCourse: React.FC<SidebarCourseProps> = ({
     );
   }
 
-  if (!courseOutline) {
-    return (
-      <div className="course-details-inline">
-        <div className="back-arrow" onClick={onClose}>
-          <IoArrowBackOutline className="back-arrow-icon" />
-        </div>
-        <div className="course-info">
-          <p>Course information not available</p>
-        </div>
-      </div>
-    );
-  }
   return (
     <div className="course-details-inline">
       <div className="back-arrow" onClick={onClose}>
         <IoArrowBackOutline className="back-arrow-icon" />
       </div>
       <Link
-        href={`/explore/${courseOutline.dept.toLowerCase()}-${
-          courseOutline.number
-        }`}
+        href={`/explore/${course.dept.toLowerCase()}-${course.number}`}
         target="_blank"
         rel="noreferrer"
         className="course-info-header"
       >
-        {courseOutline.dept} {courseOutline.number} ({courseOutline.units})
+        {course.dept.toUpperCase()} {course.number}{" "}
+        {courseOutline?.units ? `(${courseOutline.units})` : ""}
       </Link>
       <div className="course-info">
-        <h3>{courseOutline.title}</h3>
-        <p>{courseOutline.description}</p>
-        {courseOutline.notes && <p>{courseOutline.notes}</p>}
-        <p>
-          Prerequisites:{" "}
-          {courseOutline.prerequisites !== ""
-            ? courseOutline.prerequisites
-            : "None"}
-        </p>
+        {courseOutline ? (
+          <>
+            <h3>{courseOutline.title}</h3>
+            <p>{courseOutline.description}</p>
+            {courseOutline.notes && <p>{courseOutline.notes}</p>}
+            <p>
+              Prerequisites:{" "}
+              {courseOutline.prerequisites !== ""
+                ? courseOutline.prerequisites
+                : "None"}
+            </p>
+          </>
+        ) : (
+          <p>Course outline not available for this term.</p>
+        )}
       </div>
 
       {/* Course Review Summary Stats */}
