@@ -237,6 +237,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
       const newTerm = termMap.get(key) as string;
       if (selectedTerm && newTerm !== selectedTerm) {
         setTimeBlocks([]);
+        setSelectedOutlinesWithSections([]);
       }
       setSelectedTerm(newTerm);
     }
@@ -247,6 +248,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
     selectedTerm,
     setTimeBlocks,
     setSelectedTerm,
+    setSelectedOutlinesWithSections,
   ]);
 
   useEffect(() => {
@@ -434,6 +436,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
                   setHasUserSelectedTerm(true);
                   setSelectedTerm(value);
                   setTimeBlocks([]);
+                  setSelectedOutlinesWithSections([]);
                 }}
                 selectedOption={selectedTerm}
               />
