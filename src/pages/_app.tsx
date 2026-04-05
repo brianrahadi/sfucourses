@@ -68,7 +68,6 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }: AppProps) => {
           "0": "/",
           "1": "/explore",
           "2": "/schedule",
-          "3": "/faq",
         };
 
         const route = routes[e.key as keyof typeof routes];

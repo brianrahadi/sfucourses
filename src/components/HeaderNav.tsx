@@ -2,14 +2,7 @@ import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import { GlobalSearch } from "./GlobalSearch";
-import {
-  Home,
-  Search,
-  Calendar,
-  HelpCircle,
-  Database,
-  Users,
-} from "react-feather";
+import { Home, Search, Calendar, Users, Activity, Book } from "react-feather";
 
 export const HeaderNav: React.FC = () => {
   const router = useRouter();
@@ -110,16 +103,11 @@ export const HeaderNav: React.FC = () => {
             <Link href="/schedule" className="page-link" prefetch={false}>
               schedule
             </Link>
-            <Link href="/faq" className="page-link" prefetch={false}>
-              faq
+            <Link href="/graph" className="page-link" prefetch={false}>
+              graph
             </Link>
-            <Link
-              href="https://api.sfucourses.com"
-              className="page-link"
-              target="_blank"
-              rel="noreferrer"
-            >
-              api
+            <Link href="/progress" className="page-link" prefetch={false}>
+              progress
             </Link>
           </nav>
         </div>
@@ -153,20 +141,22 @@ export const HeaderNav: React.FC = () => {
           <span>Schedule</span>
         </Link>
         <Link
-          href="/faq"
-          className={`mobile-nav-item ${isActivePath("/faq") ? "active" : ""}`}
+          href="/graph"
+          className={`mobile-nav-item ${
+            isActivePath("/graph") ? "active" : ""
+          }`}
         >
-          <HelpCircle size={20} />
-          <span>FAQ</span>
+          <Activity size={20} />
+          <span>Graph</span>
         </Link>
         <Link
-          href="https://api.sfucourses.com"
-          className="mobile-nav-item"
-          target="_blank"
-          rel="noreferrer"
+          href="/progress"
+          className={`mobile-nav-item ${
+            isActivePath("/progress") ? "active" : ""
+          }`}
         >
-          <Database size={20} />
-          <span>API</span>
+          <Book size={20} />
+          <span>Progress</span>
         </Link>
       </div>
     </>

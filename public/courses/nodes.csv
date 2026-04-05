@@ -1,0 +1,1976 @@
+id,title,group,size,depth
+ACMA 101,Introduction to Insurance,ACMA,1.8,1
+MATH 150,Calculus I with Review,MATH,3,1
+MATH 151,Calculus I,MATH,3,1
+MATH 154,Mathematics for the Life Sciences I,MATH,3,1
+MATH 157,Calculus I for the Social Sciences,MATH,2.8,1
+ACMA 201,Interest Theory and Applications,ACMA,1.8,1
+MATH 152,Calculus II,MATH,2.8,1
+MATH 155,Mathematics for the Life Sciences II,MATH,2.6,1
+MATH 158,Calculus II for the Social Sciences,MATH,2.4,2
+ACMA 231,Tools for Data-Driven Decision Making,ACMA,1.6,1
+HS BC Mathematics 12,HS BC Mathematics 12,HS,1.6,0
+ACMA 301,Long-Term Actuarial Mathematics I,ACMA,1.8,1
+ACMA 210,ACMA 210,ACMA,1.6,0
+STAT 285,Intermediate Probability and Statistics,STAT,2.2,2
+ACMA 321,Fundamentals of Short-Term Insurance,ACMA,1.4,2
+STAT 330,Introduction to Mathematical Statistics,STAT,2,3
+ACMA 337,Job Practicum II,ACMA,1.6,1
+ACMA 336,ACMA 336,ACMA,1.6,0
+ACMA 340,Financial Economics for Actuaries,ACMA,1.4,1
+ACMA 360W,Actuarial Communication,ACMA,1,1
+ACMA 320,ACMA 320,ACMA,1.6,0
+ACMA 401,Long-Term Actuarial Mathematics II,ACMA,1,1
+ACMA 421,Advanced Models for Short-Term Insurance,ACMA,1,3
+STAT 350,Linear Models in Applied Statistics,STAT,2.6,3
+ACMA 436,Job Practicum III,ACMA,1.6,2
+ACMA 437,Job Practicum IV,ACMA,1.6,3
+ACMA 438,Job Practicum V,ACMA,1,4
+ACMA 455,Loss Models II,ACMA,1,1
+ACMA 355,ACMA 355,ACMA,1.4,0
+ARCH 101,Reconstructing the Human Past,ARCH,2.8,0
+ARCH 271,Interpreting the Past: An Introduction to Archaeological Theory,ARCH,1,1
+ARCH 201,ARCH 201,ARCH,2.8,0
+ARCH 272W,Archaeology of the Old World,ARCH,1.8,1
+ARCH 100,ARCH 100,ARCH,2.4,0
+ARCH 273,Archaeology of the New World,ARCH,2,1
+EVSC 100,Introduction to Environmental Science,EVSC,2.6,0
+GEOG 100,GEOG 100,GEOG,3,0
+REM 100,REM 100,REM,2.6,0
+ARCH 282,Material Culture Analysis,ARCH,2.2,1
+ARCH 285,Archaeological Science,ARCH,1.4,0
+ARCH 286,Cultural Heritage Management,ARCH,1.4,1
+ARCH 312,Greek Art and Archaeology,ARCH,1,1
+HS 100,HS 100,HS,1.6,0
+HS 231,HS 231,HS,1.6,0
+HS 232,HS 232,HS,1.6,0
+HS 277,HS 277,HS,1.4,0
+HIST 277,HIST 277,HIST,1.4,0
+ARCH 313,Roman Art and Archaeology,ARCH,1,1
+HS/HIST 277,HS/HIST 277,HS/HIST,1.4,0
+ARCH 321,Special Topics: Select Regions in World Archaeology I,ARCH,1,2
+ARCH 322,Special Topics in Biological Anthropology I,ARCH,1,1
+ARCH 131,ARCH 131,ARCH,2,0
+ARCH 323,Special Topics in Biological Anthropology II,ARCH,1,1
+ARCH 329,Special Topics in Environmental Archaeology,ARCH,1,1
+ARCH 340,Zooarchaeology,ARCH,1,1
+ARCH 344,Primate Behaviour,ARCH,1,1
+ARCH 349,Management of Archaeological Collections,ARCH,1,1
+ARCH 350,Practicum I,ARCH,1.6,0
+ARCH 351,Practicum II,ARCH,1.6,1
+ARCH 363,Landscape Archaeology,ARCH,1,1
+ARCH 365,Archaeological Perspectives on Human Ecology,ARCH,1,1
+ARCH 374,Research Design in Archaeology,ARCH,1,1
+ARCH 373,Human Osteology,ARCH,1.6,1
+ARCH 376,Quantitative Methods in Archaeology,ARCH,1,1
+GEOG 251,GEOG 251,GEOG,2.4,0
+PSYC 210,PSYC 210,PSYC,2.2,0
+STAT 101,STAT 101,STAT,1.4,0
+STAT 201,STAT 201,STAT,2.8,0
+STAT 203,STAT 203,STAT,2.8,0
+STAT 205,STAT 205,STAT,2.6,0
+ARCH 378,Pacific Northwest North America,ARCH,1,2
+ARCH 382,Lithic Technology,ARCH,1,1
+ARCH 372,ARCH 372,ARCH,2.2,0
+ARCH 383,Ancient and Forensic DNA,ARCH,1.4,0
+ARCH 386,Archaeological Resource Management,ARCH,1,1
+ARCH 434,Archaeological Field Methods,ARCH,1,1
+ARCH 435,Field Work Practicum,ARCH,1,1
+ARCH 436,Biological Anthropology Field Practicum,ARCH,1,2
+ARCH 433,Background to Field Work,ARCH,1,1
+ARCH 450,Practicum III,ARCH,1.6,2
+ARCH 451,Practicum IV,ARCH,1.4,3
+ARCH 471W,Archaeological Theory,ARCH,1,2
+ARCH 479,Directed Readings,ARCH,1,1
+ARCH 480,Directed Laboratory/Library/Field Research,ARCH,1,1
+ARCH 483,Ancient and Forensic DNA Lab Project,ARCH,1,1
+BISC 101,General Biology,BISC,2.8,1
+HS Biology 12,HS Biology 12,HS,1.6,0
+BISC 100,BISC 100,BISC,2,0
+BISC 113,Biology in Everyday Life,BISC,1.8,0
+BPK 105,BPK 105,BPK,2.2,0
+HSCI 100,Human Biology,HSCI,2.4,0
+HS Chemistry 12,HS Chemistry 12,HS,1.4,0
+CHEM 111,CHEM 111,CHEM,2,0
+BISC 202,Genetics,BISC,2.4,2
+BISC 102,General Biology,BISC,2.8,1
+BISC 204,Ecology,BISC,2.8,2
+BISC 205,Principles of Physiology,BISC,2.2,2
+PHYS 101,PHYS 101,PHYS,2.2,0
+BISC 300,Evolution,BISC,1.4,3
+BISC 302W,Genetic Analysis,BISC,1.6,3
+MBB 222,MBB 222,MBB,2.6,0
+BISC 303,Microbiology,BISC,2.2,1
+MBB 231,Cellular Biology and Biochemistry,MBB,2.8,2
+BISC 305,Animal Physiology,BISC,1.8,1
+BPK 205,BPK 205,BPK,2.4,0
+BISC 306,Invertebrate Biology,BISC,1.4,2
+GEOG 215,The Biosphere,GEOG,2.6,1
+BISC 308,Environmental Toxicology: An Ecological Perspective,BISC,1,2
+BISC 309,Conservation Biology,BISC,1,3
+BISC 313,Environmental Toxicology: A Mechanistic Perspective,BISC,2,2
+BISC 316,Vertebrate Biology,BISC,1.4,2
+BISC 317,Insect Biology,BISC,1,2
+BISC 318,Parasitology,BISC,1,2
+HSCI 212,Perspectives on Infectious and Immunological Diseases,HSCI,1.6,1
+BISC 327,Algal Biology,BISC,1,2
+BISC 328,Fungal Biology and Ecology,BISC,1.4,2
+BISC 333,Developmental Biology,BISC,1.8,3
+BISC 337,Plant Biology,BISC,1.4,2
+BISC 341,Practicum I,BISC,1.4,0
+BISC 342,Practicum II,BISC,1.4,1
+BISC 357,Genetic Engineering,BISC,2,3
+BISC 360W,Techniques in Ecology and Evolution,BISC,1,3
+BISC 366,Plant Physiology,BISC,1.4,3
+BISC 405,Neurobiology,BISC,1,1
+BPK 306,BPK 306,BPK,2.2,0
+HSCI 321,Human Pathophysiology,HSCI,1.8,1
+BISC 406,Marine Biology and Oceanography,BISC,1,3
+BISC 407,Population Dynamics,BISC,1,1
+BISC 412,Aquatic Ecology,BISC,1,2
+BISC 413,Fisheries Ecology,BISC,1,3
+BISC 414,Limnology,BISC,1,1
+BISC 420,Community Ecology,BISC,1,1
+BISC 423,Developmental Neurobiology,BISC,1,3
+BISC 424,Applied Genomics,BISC,1,3
+MBB 331,Molecular Biology,MBB,2.8,3
+BISC 425,Sensory Biology,BISC,1,1
+BISC 428,Cell Anatomy,BISC,1,2
+BISC 430,Microbe-Plant Interactions,BISC,1,2
+BISC 433,Environmental Microbiology,BISC,1,2
+BISC 440W,Biodiversity,BISC,1,4
+BISC 441,Evolution of Health and Disease,BISC,1,3
+BISC 443,Practicum III,BISC,1.4,2
+BISC 444,Practicum IV,BISC,1.4,3
+BISC 445,Environmental Physiology of Animals,BISC,1,3
+BISC 446,Practicum V,BISC,1,4
+BISC 457,Plant Molecular Biology and Biotechnology,BISC,1,3
+BISC 633,Environmental Microbiology,BISC,1,2
+BISC 650,Environmental Risk Assessment,BISC,1,3
+BISC 651,Toxicity Tests I: Ecological Effects Based Tests,BISC,1,3
+BISC 652,ET Tests II: Mammalian Toxicity Tests,BISC,1,3
+BISC 654,Food and Drug Toxicology,BISC,1,3
+BISC 854,Ecotoxicology,BISC,1,2
+BISC 312,BISC 312,BISC,1.4,0
+CHEM 102,CHEM 102,CHEM,1.6,0
+CHEM 103,CHEM 103,CHEM,1.4,0
+BISC 855,Biochemical Toxicology,BISC,1,3
+BPK 180W,Introduction to Ergonomics,BPK,1.4,1
+HS Grade 12 Biology,HS Grade 12 Biology,HS,1.6,0
+HS Grade 12 Physics,HS Grade 12 Physics,HS,1.6,0
+HS Grade 12 Math,HS Grade 12 Math,HS,1.4,0
+BPK 207,Sensorimotor Control and Learning,BPK,1.6,1
+BPK 142,Introduction to Biomedical Physiology and Kinesiology,BPK,2.2,1
+BPK 241,Sports Injuries - Prevention and Rehabilitation,BPK,1.4,1
+BPK 301,Biomechanics Laboratory,BPK,1,1
+PHYS 102,Physics for the Life Sciences II,PHYS,2.6,2
+PHYS 121,"Optics, Electricity and Magnetism",PHYS,2.6,2
+PHYS 126,"Electricity, Magnetism and Light",PHYS,2.6,3
+PHYS 141,"Studio Physics - Optics, Electricity and Magnetism",PHYS,2.8,2
+BPK 201,Biomechanics,BPK,2,2
+BPK 303,Assessment of Movement and Function,BPK,1.6,2
+BPK 304W,Inquiry and Measurement in Biomedical Physiology and Kinesiology,BPK,2,1
+BPK 310,Exercise/Work Physiology,BPK,1.4,1
+MBB 201,MBB 201,MBB,1.6,0
+BPK 311,Applied Human Nutrition,BPK,1,1
+BPK 110,BPK 110,BPK,1.8,0
+BPK 312,Nutrition for Fitness and Sport,BPK,1,1
+BPK 325,Basic Human Anatomy,BPK,1.4,1
+BPK 340,Active Health: Behavior and Promotion,BPK,1.4,1
+PSYC 201,PSYC 201,PSYC,3,0
+BPK 352,Practicum II,BPK,1.6,1
+BPK 351,BPK 351,BPK,1.4,0
+BPK 375,Human Growth and Development,BPK,1,1
+BPK 381,Psychology of Work,BPK,1.4,1
+BPK 401,Muscle Biomechanics,BPK,1,1
+BPK 208,BPK 208,BPK,1.4,0
+BPK 407,Human Physiology Laboratory,BPK,1,2
+BPK 305,BPK 305,BPK,2.2,0
+BPK 408W,Cellular Physiology Laboratory,BPK,1,2
+BPK 409,Wearable Technology and Human Physiology,BPK,1,2
+BPK 412,Molecular Cardiac Physiology,BPK,1,1
+MBB 308,Molecular Biology Laboratory,MBB,2.4,1
+BPK 415,Neural Control of Movement,BPK,1,1
+BPK 417,"Obesity, Adipocyte Function and Weight Management",BPK,1,2
+BPK 432,Physiological Basis of Temperature Regulation,BPK,1,1
+BPK 444,Cardiac Disease: Pathophysiology and Assessment,BPK,1,1
+BPK 446,Neurological Disorders,BPK,1,1
+BPK 447,Neuroplasticity,BPK,1,1
+BPK 451,Practicum III,BPK,1.4,2
+BPK 451W,Practicum III,BPK,1,2
+BPK 452,Practicum IV,BPK,1.4,3
+BPK 453,Practicum V,BPK,1,4
+BPK 457,Behavioural Neuroscience Undergraduate Honours Thesis Proposal,BPK,1.4,1
+PSYC 301,Intermediate Research Methods and Data Analysis,PSYC,2,1
+BPK 481,Musculoskeletal Disorders,BPK,1.4,3
+BPK 326,BPK 326,BPK,2,0
+BUS 207,Managerial Economics,BUS,1.8,1
+ECON 103,ECON 103,ECON,2.6,0
+ECON 113,Introduction to Microeconomics,ECON,2.4,0
+ECON 105,ECON 105,ECON,2.4,0
+ECON 115,Introduction to Macroeconomics,ECON,2.2,0
+BUS 237,Introduction to Business Technology Management,BUS,1.8,0
+BUS 238,Introduction to Entrepreneurship and Innovation,BUS,1.4,0
+BUS 240,Introduction to Innovation,BUS,1.4,0
+BUS 251,Financial Accounting I,BUS,1.6,0
+BUS 254,Managerial Accounting I,BUS,1.8,1
+BUS 272,Behaviour in Organizations,BUS,1.8,0
+BUS 307,Business Applications of Game Theory,BUS,1,1
+ECON 201,Microeconomic Theory I: Competitive Behavior,ECON,2.6,1
+BUS 313,Corporate Finance,BUS,1.4,1
+BUS 312,BUS 312,BUS,2,0
+BUS 314,Resourcing New Ventures,BUS,1,1
+BUS 320,Financial Accounting:  Assets,BUS,1.6,1
+BUS 321,Financial Accounting: Equities,BUS,1.8,2
+BUS 322,Intermediate Managerial Accounting,BUS,1.4,2
+BUS 331,Corporate Taxation,BUS,1,1
+BUS 330,Income Taxation for Individuals,BUS,1.4,2
+BUS 329,BUS 329,BUS,1.4,0
+BUS 336,Data Analytics and Visualization,BUS,1.8,1
+BUS 232,Business Statistics,BUS,2.4,2
+ECON 233,ECON 233,ECON,2.4,0
+STAT 270,STAT 270,STAT,2.8,0
+STAT 271,Probability and Statistics for Computing Science,STAT,2.2,2
+BUS 343,Introduction to Marketing,BUS,2.2,0
+BUS 362,Business Process Analysis,BUS,1.8,1
+BUS 371,Critical Thinking Through Business Case Analysis,BUS,1,1
+BUS 217W,BUS 217W,BUS,1.4,0
+BUS 393,Commercial Law,BUS,1.4,0
+BUS 410,Financial Institutions,BUS,1,1
+BUS 315,BUS 315,BUS,2.2,0
+BUS 360W,BUS 360W,BUS,3,0
+BUS 411,Fixed Income Security Analysis and Valuation,BUS,1,1
+BUS 413,Corporate Finance,BUS,1,1
+BUS 414,Real Estate Investments,BUS,1,1
+BUS 418,International Financial Management,BUS,1,1
+BUS 316,BUS 316,BUS,1.4,0
+BUS 419,Derivative Securities,BUS,1,1
+BUS 420,Advanced Accounting,BUS,1,3
+BUS 421,Accounting Theory,BUS,1,3
+BUS 424,Advanced Managerial Accounting,BUS,1,3
+BUS 426,Auditing and Assurance: Concepts and Methods,BUS,1,3
+BUS 430,Cross-Cultural Management,BUS,1,1
+BUS 431,Business with East Asian Countries,BUS,1,1
+BUS 432,International Human Resource Management,BUS,1,1
+BUS 381,BUS 381,BUS,2.2,0
+BUS 434,Foreign Market Entry,BUS,1,1
+BUS 435,Management of International Firms,BUS,1,1
+BUS 440,Simulation in Management Decision-making,BUS,1.4,1
+BUS 441,Web Analytics,BUS,1.4,1
+BUS 444,Business to Business Marketing,BUS,1,1
+BUS 447,Global Marketing Management,BUS,1,1
+BUS 448,Integrated Marketing Communications,BUS,1,1
+BUS 347,BUS 347,BUS,1.8,0
+BUS 464,Business Data Management,BUS,1.4,2
+BUS 466,Web-Enabled Business and Emerging Technologies,BUS,1,2
+BUS 468,Managing Information Technology for Business Value,BUS,1,2
+BUS 471,Strategic Decision Making,BUS,1,1
+BUS 478,Strategy,BUS,1,1
+ECON 301,ECON 301,ECON,1.6,0
+BUS 374,BUS 374,BUS,1.8,0
+BUS 479,Strategy Analysis Practicum,BUS,1,1
+BUS 481,Recruitment and Selection,BUS,1,1
+BUS 482,Performance Management,BUS,1,1
+BUS 483,Introduction to Employment Law For Business,BUS,1,1
+BUS 484,Employment Systems,BUS,1,1
+BUS 485,Negotiations and Conflict Management,BUS,1,1
+BUS 488,Group Dynamics and Teamwork,BUS,1,1
+BUS 498,Directed Studies,BUS,1,1
+BUS 510,Financial and Managerial Accounting,BUS,1.4,0
+BUS 555,Managerial Finance,BUS,1,1
+BUS 694,Brave Conversations for Building Trust and Collaboration I,BUS,1.4,0
+BUS 695,Brave Conversations for Building Trust and Collaboration II,BUS,1,1
+BUS 708,Financial Management,BUS,1,1
+BUS 705,Financial/Managerial Accounting,BUS,1.4,0
+BUS 730,Indigenous Business Environments in Community,BUS,1,1
+BUS 741,BUS 741,BUS,1.4,0
+BUS 795,Financing the New Venture,BUS,1,1
+BUS 792,BUS 792,BUS,1.6,0
+BUS 796,Business Plan I,BUS,1.4,1
+BUS 790,BUS 790,BUS,1.6,0
+BUS 791,BUS 791,BUS,1.6,0
+BUS 802,Corporate Finance,BUS,1,1
+BUS 803,BUS 803,BUS,1.6,0
+BUS 806,BUS 806,BUS,1.6,0
+BUS 827,BUS 827,BUS,1.6,0
+BUS 810,Fixed Income Analysis,BUS,1,1
+BUS 841,Predictive Analytics for Business,BUS,1,1
+BUS 831,BUS 831,BUS,1.4,0
+BUS 842,Advanced Accounting Data Analytics,BUS,1,1
+BUS 832,BUS 832,BUS,1.4,0
+BUS 846,Advanced Applied Project II,BUS,1,1
+BUS 845,BUS 845,BUS,1.4,0
+BUS 880,Student Investment Advisory Service Practicum,BUS,1,1
+BUS 881,BUS 881,BUS,1.4,0
+BUS 890,Business Econometrics I,BUS,1.4,0
+BUS 891,Theory of Financial Markets,BUS,1.6,0
+BUS 965,Business Econometrics II,BUS,1,1
+BUS 967,Asset Pricing,BUS,1,1
+BUS 968,Corporate Finance Theories and Methods,BUS,1,1
+BUS 970,Quantitative Methods and Analysis,BUS,1.4,1
+BUS 971,Qualitative Methods and Analysis,BUS,1.4,2
+CA 117,Modern Art History,CA,2,0
+CA 118,Contemporary Art History,CA,2,0
+CA 124,Improvisation Tools and Scores,CA,2,0
+CA 130,Fundamentals of Film,CA,1.6,0
+CA 131,Filmmaking I,CA,2.4,1
+FPA 130,FPA 130,FPA,1.4,0
+CA 137,The History and Aesthetics of Cinema II,CA,1.8,0
+CA 144,Sound Fundamentals II,CA,2,1
+CA 143,Sound Fundamentals I,CA,1.8,2
+CA 146,Creative Sound Studio II,CA,2.4,2
+CA 145,Creative Sound Studio I,CA,2,1
+CA 150,Introduction to Acting,CA,1.4,0
+CA 151,Live Acts I,CA,1.4,0
+CA 152,Live Acts II,CA,2,1
+CA 161,Introductory Studio in Visual Art II,CA,2.2,1
+CA 160,CA 160,CA,2.4,0
+FPA 160,FPA 160,FPA,2.2,0
+CA 170,Production Lab I,CA,1.8,0
+CA 175,Transforming Objects,CA,1.4,0
+CA 210W,"Art and Visual Culture: Materials, Forms, Histories",CA,2,1
+CA 220,Dance Training and Movement Systems III,CA,1.8,1
+CA 122,Dance Training and Movement Systems I,CA,1.8,1
+CA 123,Dance Training and Movement Systems II,CA,2.4,1
+CA 129,CA 129,CA,1.6,0
+CA 221,Dance Training and Movement Systems IV,CA,2,1
+FPA 220,FPA 220,FPA,1.4,0
+CA 228W,Dance Aesthetics,CA,1.4,0
+CA 230,Filmmaking II,CA,1.6,2
+CA 233,The Techniques of Film,CA,1.6,3
+CA 231,Filmmaking III,CA,2.2,1
+FPA 230,FPA 230,FPA,1.4,0
+FPA 233,FPA 233,FPA,1.4,0
+CA 232,Film Sound,CA,1,1
+FPA 131,FPA 131,FPA,1.4,0
+CA 240,Soundbox I,CA,1.4,2
+CA 140,CA 140,CA,2,0
+CA 241,Creative Coding Lab,CA,1.4,1
+CA 242,Creative Ensemble Lab I,CA,1,1
+CA 243,Gamelan I,CA,1.4,0
+CA 246,Creative Sound Studio IV,CA,1.8,1
+CA 245,Creative Sound Studio III,CA,1.8,3
+CA 251,Live Acts III,CA,1.6,1
+CA 171,CA 171,CA,2.2,0
+CA 252,Live Acts IV,CA,1.8,1
+CA 253,Co-Lab,CA,1.4,1
+CA 254,Body I,CA,1,1
+CA 255,Body II,CA,1,1
+CA 256,Environments I,CA,1.4,1
+CA 260,Studio in Visual Art I,CA,1.4,2
+CA 168,CA 168,CA,1.8,0
+CA 261,Studio in Visual Art II,CA,2,1
+FPA 260,FPA 260,FPA,1.4,0
+CA 263,Methods and Concepts: Painting-based Practices,CA,1,1
+CA 265,Methods and Concepts: Photo-based Practices,CA,1,1
+CA 270,Production Lab III,CA,2,1
+CA 271,Production Ensemble II,CA,2,1
+FPA 170,FPA 170,FPA,1.4,0
+CA 275,Space and Materials I,CA,1,1
+CA 285,Interdisciplinary Studio - Composition/Collaboration,CA,2.2,1
+CA 304,Professional Practices in the Contemporary Arts,CA,2,0
+CA 320,Dance Training and Movement Systems V,CA,1.6,2
+CA 321,Dance Training and Movement Systems VI,CA,1.4,1
+FPA 320,FPA 320,FPA,1.4,0
+CA 322,Intermediate Ballet I,CA,1.8,1
+CA 324,Approaches to Composition,CA,1.8,2
+CA 330,Filmmaking IV,CA,1,2
+CA 332,Film Production Seminar,CA,1,1
+FPA 231,FPA 231,FPA,1.8,0
+CA 333,Film Forms,CA,1,2
+CA 334,Film Forms,CA,1,2
+CA 340,Creative Ensemble Lab II,CA,1,1
+CA 343,Gamelan II,CA,1,1
+CA 344,Thinking and Writing About Sound,CA,1,1
+CA 345,Creative Sound Studio V,CA,1.4,2
+CA 346,Creative Sound Studio VI,CA,1.4,3
+CA 347,Creative Electronics Lab II,CA,1,1
+CA 247,Creative Electronics Lab I,CA,1.4,1
+CA 349,Selected Topics in Music II,CA,1,1
+FPA 245,FPA 245,FPA,1.4,0
+CA 354,Social I,CA,1.4,2
+CA 355,Social II,CA,1.4,3
+CA 356,Environments II,CA,1.4,2
+CA 357W,Context II,CA,1.6,1
+CA 257W,CA 257W,CA,1.4,0
+CA 360,Studio in Visual Art III,CA,1.6,2
+CA 167,CA 167,CA,1.8,0
+CA 210,CA 210,CA,2,0
+CA 366,Seminar in Visual Art I,CA,1.8,3
+CA 361,Studio in Visual Art IV,CA,1.6,1
+FPA 360,FPA 360,FPA,1.4,0
+CA 367,Seminar in Visual Art II,CA,1.6,2
+CA 362,Methods and Concepts: Drawing-based Practices,CA,1,1
+CA 363,Methods and Concepts: Painting Practices,CA,1,1
+CA 365,Methods and Concepts: Photo-based Practices,CA,1,1
+CA 370,Production Lab V,CA,1.6,2
+CA 376,STT-Video Projection for Performance and Installation II,CA,1,1
+CA 276,STT-Video Projection for Performance and Installation,CA,1.4,1
+CA 390,Filmmaking IV,CA,1.4,1
+CA 406,Practicum in Contemporary Arts II,CA,1,1
+CA 407,Internship in Contemporary Arts II,CA,1,1
+CA 420,Dance Training and Movement Systems VII,CA,1.4,2
+CA 421,Choreographic Lab,CA,1.4,3
+FPA 124,FPA 124,FPA,1.4,0
+CA 326,CA 326,CA,1.4,0
+CA 327,Repertory II,CA,1.4,2
+CA 424,Making/Artistic Research,CA,1,3
+CA 425,Intensive Studies in Performance: Senior Projects,CA,1,3
+CA 427,Advanced Ballet I,CA,1.4,1
+CA 323,Intermediate Ballet II,CA,1.4,1
+CA 430,Filmmaking VI,CA,1.4,1
+CA 331,CA 331,CA,1.4,0
+CA 432,Filmmaking VII,CA,1,1
+FPA 430,FPA 430,FPA,1.4,0
+CA 440,Soundbox II,CA,1,3
+CA 445,Senior Project I,CA,1.4,4
+CA 446,Senior Project II,CA,1,5
+CA 449,Installation/Sound Art Lab,CA,1,2
+CA 450,Performance as Research II,CA,1,1
+CA 350,Performance as Research I,CA,1.4,2
+CA 451,Creative Research,CA,1.4,4
+CA 452,Capstone Projects,CA,1,5
+CA 460,Studio in Visual Art V,CA,1.4,2
+CA 461,Studio in Visual Art VI,CA,1,1
+FPA 460,FPA 460,FPA,1.4,0
+CA 470,Production Lab VII,CA,1,1
+CA 371,Production Ensemble IV,CA,1.6,1
+CA 811,Interdisciplinary Graduate Seminar I,CA,1.6,0
+CA 812,Interdisciplinary Graduate Seminar II,CA,1,1
+FPA 811,FPA 811,FPA,1.6,0
+CA 813,Interdisciplinary Graduate Studio,CA,1,1
+CA 822,Research Colloquium in Contemporary Arts,CA,1,1
+CA 821,CA 821,CA,1.4,0
+CA 823,New Approaches in Visual Art and Culture,CA,1.4,0
+CA 824,CA 824,CA,1.4,0
+CA 825,New Approaches in Digital Art Studies,CA,1.4,0
+CA 826,New Approaches in Performance Studies,CA,1.4,0
+CA 828,CA 828,CA,1.4,0
+CA 891,Professional Practices Seminar II,CA,1,1
+CA 890,CA 890,CA,1.4,0
+CA 895,PhD Thesis Prospectus,CA,1.4,1
+CA 892,CA 892,CA,1.4,0
+CA 899,PhD Thesis,CA,1,2
+CHEM 120,General Chemistry I,CHEM,2.2,1
+CHEM 12,CHEM 12,CHEM,1.6,0
+CHEM 110,CHEM 110,CHEM,1.8,0
+CHEM 121,General Chemistry and Laboratory I,CHEM,2.6,1
+CHEM 109,CHEM 109,CHEM,1.6,0
+CHEM 115,Introductory Chemistry Laboratory,CHEM,1.4,1
+CHEM 122,General Chemistry II,CHEM,2.6,2
+CHEM 126,General Chemistry Laboratory II,CHEM,2,3
+CHEM 180,The Chemistry of Life,CHEM,1,2
+CHEM 210,Introduction to Analytical Chemistry,CHEM,1.6,3
+CHEM 216,Introduction to Analytical Chemistry Laboratory,CHEM,1.4,4
+CHEM 236W,Inorganic Chemistry Laboratory,CHEM,1.4,4
+CHEM 230,CHEM 230,CHEM,1.8,0
+CHEM 266,Physical Chemistry Laboratory I,CHEM,1.4,1
+CHEM 260,CHEM 260,CHEM,2.2,0
+CHEM 280,Organic Chemistry I,CHEM,1.4,3
+CHEM 282,Organic Chemistry II,CHEM,2.2,1
+CHEM 281,Organic Chemistry and Laboratory I,CHEM,2,3
+CHEM 283,Organic Chemistry IIb,CHEM,2,1
+CHEM 284,Organic Chemistry IIb,CHEM,1.4,2
+CHEM 286,Organic Chemistry Laboratory II,CHEM,1.4,2
+CHEM 307,Practicum II,CHEM,1,1
+CHEM 306,CHEM 306,CHEM,1.4,0
+CHEM 316,Introductory Instrumental Analysis,CHEM,1.8,5
+CHEM 317,Analytical Environmental Chemistry,CHEM,1,6
+CHEM 332,The Chemistry of Transition Metals,CHEM,2,1
+CHEM 236,CHEM 236,CHEM,1.4,0
+CHEM 336,Advanced Inorganic Chemistry Laboratory,CHEM,1.4,5
+CHEM 366W,Physical Chemistry Laboratory II,CHEM,1,2
+CHEM 360,Thermodynamics and Chemical Kinetics,CHEM,2,1
+CHEM 371,Chemistry of the Aqueous Environment,CHEM,1,2
+CHEM 372,Chemistry of the Atmospheric Environment,CHEM,1,3
+CHEM 381,Intermediate Organic Chemistry,CHEM,1,1
+CHEM 380,Chemical and Instrumental Methods of Identification of Organic Compounds,CHEM,2,3
+CHEM 391,Industrial Chemistry,CHEM,1,2
+CHEM 396,Experiential Undergraduate Research,CHEM,1,1
+CHEM 366,CHEM 366,CHEM,1.4,0
+NUSC 341,Introduction to Radiochemistry,NUSC,1.8,2
+CHEM 408,Practicum V,CHEM,1,1
+CHEM 407,Practicum IV,CHEM,1.4,1
+CHEM 419,Special Topics in Analytical Chemistry,CHEM,1,6
+CHEM 432,Organometallic Chemistry,CHEM,1,2
+CHEM 439,Special Topics in Inorganic Chemistry,CHEM,1,2
+CHEM 440,Solid State Materials Chemistry,CHEM,1,1
+CHEM 340,CHEM 340,CHEM,1.4,0
+CHEM 442,Polymeric Materials Chemistry,CHEM,1,2
+CHEM 452,Bio-organic Chemistry,CHEM,1,1
+CHEM 459,Special Topics in Organic Chemistry,CHEM,1,1
+CHEM 462,Molecular Spectroscopy,CHEM,1,1
+CHEM 364,CHEM 364,CHEM,1.8,0
+PHYS 385,Quantum II,PHYS,2,1
+CHEM 483,Undergraduate Research II,CHEM,1,1
+CHEM 481,CHEM 481,CHEM,1.4,0
+CHIN 330,Intermediate Chinese for Business I,CHIN,1.4,1
+CHIN 291,CHIN 291,CHIN,1.6,0
+CHIN 390,Advanced Chinese Reading,CHIN,1.4,1
+CMNS 202,Design and Method in Qualitative Communication Research,CMNS,1,1
+CMNS 110,CMNS 110,CMNS,1.6,0
+CMNS 221,Media and Popular Cultures,CMNS,1,1
+CMNS 130,CMNS 130,CMNS,1.6,0
+CMNS 395,Communication Practicum I,CMNS,1.4,0
+CMNS 396,Communication Practicum II,CMNS,1.4,1
+CMNS 461,Field Placement in Dialogue,CMNS,1,1
+CMNS 460,CMNS 460,CMNS,1.4,0
+CMNS 494,Communication Practicum III,CMNS,1.4,2
+CMNS 495,Communication Practicum IV,CMNS,1.4,3
+CMNS 496,Communication Practicum V,CMNS,1,4
+CMNS 498,Honours Research Project,CMNS,1,1
+CMNS 497,Honours Research Proposal,CMNS,1.4,0
+CMNS 893,MA Project,CMNS,1,1
+CMNS 801,CMNS 801,CMNS,1.6,0
+CMNS 800,CMNS 800,CMNS,1.6,0
+CMNS 802,CMNS 802,CMNS,1.6,0
+CMNS 804,CMNS 804,CMNS,1.6,0
+CMNS 896,MA Extended Essays,CMNS,1,1
+CMPT 105W,Social Issues and Communication Strategies in Computing Science,CMPT,1.4,0
+CMPT 130,Introduction to Computer Programming I,CMPT,2.4,1
+HS BC Math 12,HS BC Math 12,HS,1.8,0
+MATH 100,MATH 100,MATH,2.4,0
+CMPT 135,Introduction to Computer Programming II,CMPT,2.2,2
+CMPT 201,Systems Programming,CMPT,2.2,1
+CMPT 125,Introduction to Computing Science and Programming II,CMPT,2.4,1
+MACM 101,Discrete Mathematics I,MACM,2.8,1
+CMPT 210,Probability and Computing,CMPT,2.2,1
+MATH 240,Algebra I: Linear Algebra,MATH,2.8,1
+MATH 232,Applied Linear Algebra,MATH,3,1
+CMPT 213,Object Oriented Design in Java,CMPT,1,1
+CMPT 225,Data Structures and Programming,CMPT,2.8,1
+CMPT 129,CMPT 129,CMPT,1.6,0
+ENSC 251,Software Design and Analysis for Engineers,ENSC,2.2,1
+ENSC 252,Fundamentals of Digital Logic & Design,ENSC,2.2,1
+CMPT 263,Introduction to Human-Centered Computing,CMPT,1.4,1
+CMPT 272,Web I - Client-side Development,CMPT,1.4,1
+CMPT 120,Introduction to Computing Science and Programming I,CMPT,2.2,0
+CMPT 128,CMPT 128,CMPT,2,0
+CMPT 300,Operating Systems I,CMPT,2.2,2
+CMPT 295,Introduction to Computer Systems,CMPT,2.2,2
+ENSC 254,Introduction to Computer Organization,ENSC,2,2
+CMPT 303,Operating Systems,CMPT,1,2
+ENSC 351,Embedded and Real Time System Software,ENSC,2,2
+CMPT 305,Computer Simulation and Modelling,CMPT,1,2
+CMPT 308,Computability and Complexity,CMPT,1,1
+MACM 201,Discrete Mathematics II,MACM,2.2,1
+CMPT 318,Special Topics in Computing Science,CMPT,1,2
+CMPT 353,Computational Data Science,CMPT,1,2
+ENSC 280,ENSC 280,ENSC,1.8,0
+MSE 210,Engineering Measurement and Data Analysis,MSE,1.6,2
+SEE 241,"Measurement, Analysis and Forecasting",SEE,1.4,1
+CMPT 354,Database Systems I,CMPT,1.8,2
+CMPT 361,Introduction to Visual Computing,CMPT,2,2
+CMPT 362,Mobile Applications Programming and Design,CMPT,1,2
+CMPT 363,User Interface Design,CMPT,1,2
+CMPT 365,Multimedia Systems,CMPT,1,2
+CMPT 372,Web II - Server-side Development,CMPT,1,2
+CMPT 373,Software Development Methods,CMPT,1,1
+CMPT 276,CMPT 276,CMPT,2.2,0
+CMPT 275,CMPT 275,CMPT,2.2,0
+CMPT 376W,Professional Responsibility and Technical Writing,CMPT,1,1
+CMPT 379,Principles of Compiler Design,CMPT,1,2
+ENSC 215,ENSC 215,ENSC,1.8,0
+CMPT 383,Comparative Programming Languages,CMPT,1.4,2
+CMPT 384,Symbolic Computing,CMPT,1,2
+CMPT 403,System Security and Privacy,CMPT,1,2
+CMPT 405,Design and Analysis of Computing Algorithms,CMPT,1.4,1
+CMPT 307,Data Structures and Algorithms,CMPT,2,2
+CMPT 409,Special Topics in Theoretical Computing Science,CMPT,1,1
+CMPT 410,Machine Learning,CMPT,1.4,1
+CMPT 310,Introduction to Artificial Intelligence,CMPT,1.4,3
+MACM 316,Numerical Analysis I,MACM,2,2
+CMPT 412,Computer Vision,CMPT,1,3
+CMPT 417,Intelligent Systems,CMPT,1,2
+CMPT 420,Deep Learning,CMPT,1,1
+CMPT 419,CMPT 419,CMPT,1.4,0
+CMPT 427,Practicum II,CMPT,1.4,1
+CMPT 426,CMPT 426,CMPT,1.4,0
+CMPT 428,Practicum III,CMPT,1.4,2
+CMPT 429,Practicum IV,CMPT,1.4,3
+CMPT 430,Practicum V,CMPT,1,4
+CMPT 431,Distributed Systems,CMPT,1,2
+CMPT 371,Data Communications and Networking,CMPT,1.8,2
+CMPT 441,Computational Biology,CMPT,1,1
+CMPT 450,Computer Architecture,CMPT,1,1
+CMPT 459,Special Topics in Database Systems,CMPT,1,3
+CMPT 461,Computational Photography and Image Manipulation,CMPT,1,3
+CMPT 469,Special Topics in Computer Graphics,CMPT,1,3
+CMPT 471,Networking II,CMPT,1,3
+CMPT 473,"Software Testing, Reliability and Security",CMPT,1,1
+CMPT 474,Web Systems Architecture,CMPT,1,1
+CMPT 475,Requirements Engineering,CMPT,1,1
+CMPT 476,Introduction to Quantum Algorithms,CMPT,1.4,1
+CMPT 477,Introduction to Formal Verification,CMPT,1,1
+CMPT 478,Current Topics in Quantum Computing,CMPT,1,1
+PHYS 416,PHYS 416,PHYS,1.4,0
+CMPT 479,Special Topics in Computing Systems,CMPT,1,2
+CMPT 489,Special Topics in Programming Languages,CMPT,1,3
+CMPT 493,Digital Media Practicum,CMPT,1,1
+CMPT 627,Graduate Co-op II,CMPT,1.4,1
+CMPT 626,CMPT 626,CMPT,1.4,0
+CMPT 628,Graduate Co-op III,CMPT,1,2
+CMPT 713,Natural Language Processing,CMPT,1.4,0
+CMPT 722,Rendering and Visual Computing for Artificial Intelligence,CMPT,1,3
+CMPT 726,CMPT 726,CMPT,1.6,0
+CMPT 733,Big Data Lab II,CMPT,1,1
+CMPT 732,Big Data Lab I,CMPT,1.4,0
+CMPT 743,Visual Computing Lab II,CMPT,1,1
+CMPT 742,Visual Computing Lab I,CMPT,1.4,0
+CMPT 783,Cybersecurity Lab II,CMPT,1,1
+CMPT 782,Cybersecurity Lab I,CMPT,1.4,0
+CMPT 839,Advanced Natural Language Processing and Understanding,CMPT,1,1
+CMPT 413,Computational Linguistics,CMPT,1.4,0
+CMPT 728,CMPT 728,CMPT,1.4,0
+COGS 100,Exploring the Mind,COGS,2,0
+COGS 200,Foundations in Cognitive Science,COGS,1.6,1
+COGS 315,Formal Methods,COGS,1,1
+PHIL 110,PHIL 110,PHIL,2,0
+PHIL 210,PHIL 210,PHIL,2,0
+PHIL 310,"Logic, Proofs and Set Theory",PHIL,1.8,1
+PHIL 314,Topics in Logic,PHIL,2,1
+BUEC 232,BUEC 232,BUEC,1.6,0
+CRIM 210,"Law, Youth and Young Offenders",CRIM,1,1
+CRIM 101,CRIM 101,CRIM,3,0
+CRIM 131,CRIM 131,CRIM,2,0
+CRIM 230,Criminal Law,CRIM,1.6,1
+CRIM 135,CRIM 135,CRIM,2,0
+CRIM 241,Introduction to Corrections,CRIM,1,1
+CRIM 251,Introduction to Policing,CRIM,1.6,1
+CRIM 300W,Current Theories and Perspectives in Criminology,CRIM,1,1
+CRIM 302,Critical Approaches to Crime and Deviance,CRIM,1,1
+CRIM 311,Social Inequalities and the Criminal Justice System,CRIM,1,1
+CRIM 314,"Mental Disorder, Criminality and the Law",CRIM,1,1
+CRIM 316,Sexual Offenders and Sexual Offences,CRIM,1,1
+CRIM 103,Psychological Explanations of Criminal and Deviant Behavior,CRIM,1.6,0
+CRIM 317,"Sex, Work, and the Law",CRIM,1,1
+CRIM 318,Special Topics in Criminology,CRIM,1,1
+CRIM 319,Special Topics in Criminology,CRIM,1,1
+CRIM 326,Criminological Analysis of Homicide,CRIM,1,1
+CRIM 330,Criminal Procedure and Evidence,CRIM,1,2
+CRIM 331,Advanced Criminal Law,CRIM,1,2
+CRIM 332,Sociology of Law,CRIM,1,1
+CRIM 335,Human Rights and Civil Liberties,CRIM,1,1
+CRIM 338,Philosophy of Law,CRIM,1,1
+CRIM 340,Criminal Justice Policy Making and Policy Analysis,CRIM,1,1
+CRIM 220,Research Methods in Criminology,CRIM,2,0
+CRIM 343,Correctional Practice,CRIM,1,1
+CRIM 346,Current Issues in Corrections,CRIM,1,1
+CRIM 350,Techniques of Crime Prevention,CRIM,1,1
+CRIM 351,Police Accountability and Ethics,CRIM,1,2
+CRIM 352,Environmental Criminology: Theory and Practice,CRIM,1,1
+CRIM 357,Forensic Anatomy,CRIM,1.4,1
+CRIM 380,Introduction to Cybercrime,CRIM,1,1
+CRIM 410,Decision-making in Criminal Justice,CRIM,1,1
+CRIM 416,Current Issues in Criminology and Criminal Justice,CRIM,1,1
+CRIM 417,Current Issues in Criminology and Criminal Justice,CRIM,1,1
+CRIM 418,Current Issues in Criminology and Criminal Justice,CRIM,1,1
+CRIM 419,Aboriginal/Indigenous Justice,CRIM,1,1
+FNST 101,FNST 101,FNST,2.6,0
+FNST 201,FNST 201,FNST,2,0
+CRIM 433,Communities and Crime,CRIM,1,1
+CRIM 441,Preventing Crime and Antisocial Behaviour: Designing & Evaluating Programs,CRIM,1,1
+CRIM 451,Advanced Techniques in Forensic Science,CRIM,1,1
+CRIM 452,Skeletal Pathology and Criminalistics,CRIM,1,1
+CRIM 453,Policing Illegal Drug Markets,CRIM,1,1
+CRIM 454,Criminal Profiling,CRIM,1,1
+CRIM 458,Community Policing,CRIM,1,2
+CRIM 460,Applied Crime Prevention,CRIM,1,1
+CRIM 485,Professional Development - Criminal Justice Practice,CRIM,1.6,0
+CRIM 499,Honours Thesis II,CRIM,1,1
+CRIM 490,Honours Thesis I,CRIM,1.4,0
+CRIM 491,Current Theory and Research in Criminology: Advanced Topics,CRIM,1.4,0
+CRIM 801,Criminological Theory II,CRIM,1,1
+CRIM 800,CRIM 800,CRIM,1.4,0
+CRIM 863,Research Methods IV: Advanced Quantitative Methods,CRIM,1,1
+CRIM 861,CRIM 861,CRIM,1.4,0
+CRIM 864,Research Methods V: Advanced Qualitative Methods,CRIM,1,1
+CRIM 862,CRIM 862,CRIM,1.4,0
+CRIM 865,Research Methods VI: The Theory and Practice of Program Evaluation,CRIM,1,1
+CRIM 860,CRIM 860,CRIM,1.4,0
+CRIM 890,PhD Thesis Prospectus,CRIM,1,1
+CRIM 897,CRIM 897,CRIM,1.4,0
+DIAL 393,Semester In (Dialogue Component),DIAL,1.4,1
+DIAL 394,Semester In (Seminar Component),DIAL,1.4,2
+DMED 521,Projects II,DMED,1.4,1
+DMED 520,DMED 520,DMED,1.4,0
+DMED 522,Projects III,DMED,1,2
+DMED 531,Internship Continuation,DMED,1,1
+DMED 530,DMED 530,DMED,1.4,0
+EASC 201,Stratigraphy and Sedimentation,EASC,2.2,1
+EASC 101,EASC 101,EASC,2.4,0
+EASC 202,Introduction to Mineralogy,EASC,1.6,2
+EASC 204,Structural Geology I,EASC,2,1
+PHYS 120,PHYS 120,PHYS,2.4,0
+PHYS 125,Mechanics and Special Relativity,PHYS,2.2,2
+PHYS 140,Studio Physics - Mechanics and Modern Physics,PHYS,2.6,2
+EASC 205,Introduction to Petrology,EASC,2,3
+PHYS 133,Physics Laboratory II,PHYS,1.8,3
+EASC 206,Field Geology I,EASC,1.8,1
+EASC 210,Evolving Earth,EASC,1.6,1
+EASC 207,Introduction to Applied Geophysics,EASC,1.4,1
+EASC 208,Introduction to Geochemistry,EASC,1.6,4
+EASC 209W,Environmental Geoscience,EASC,1.8,1
+EASC 301,Igneous Petrology,EASC,1.6,5
+EASC 302,Sedimentary Petrology,EASC,1.6,4
+EASC 304,Hydrogeology,EASC,2,1
+EASC 306,Field Geology II,EASC,1,4
+EASC 308,Field Geology III,EASC,1.4,2
+EASC 309,Global Tectonics,EASC,1,4
+EASC 311,Metamorphic Petrology,EASC,1,6
+EASC 313,Introduction to Soil and Rock Engineering,EASC,1.6,2
+EASC 401,Mineral Deposits,EASC,1,6
+EASC 402,Sedimentology,EASC,1,5
+EASC 403,Quaternary Geology,EASC,1,3
+GEOG 213,Introduction to Geomorphology,GEOG,2,1
+EASC 413,Engineering Geology and Resource Geotechnics,EASC,1,3
+EASC 420,Energy Geosystems,EASC,1,2
+EASC 312,EASC 312,EASC,1.4,0
+EASC 499,Honours Thesis,EASC,1,1
+EASC 498,EASC 498,EASC,1.4,0
+EASC 629,Advanced Engineering Geology,EASC,1,3
+ECO 641,First Nations & Social Perspectives of Ecological Restoration,ECO,1,1
+ECO 622,ECO 622,ECO,1.4,0
+ECOR 911O,ECOR 911O,ECOR,1.4,0
+ECON 260,Environmental Economics,ECON,1,1
+ECON 280,Introduction to Labor Economics,ECON,1,1
+ECON 290,Microeconomic Policy,ECON,1,1
+ECON 291,Macroeconomic Policy,ECON,1,1
+ECON 302,Microeconomic Theory II: Strategic Behavior,ECON,2.4,2
+ECON 325,Industrial Organization,ECON,1,2
+ECON 335,Cause and Effect in Economic Data,ECON,1,1
+ECON 333,ECON 333,ECON,2.8,0
+ECON 345,International Finance,ECON,1.4,1
+ECON 355W,Economic Development,ECON,1,1
+ECON 362,Economics of Natural Resources,ECON,1,1
+ECON 381,Labor Economics,ECON,1,2
+ECON 392,Public Economics: Role of Government,ECON,1,2
+ECON 393,Public Economics: Taxation,ECON,1,2
+ECON 410,Seminar in Monetary Theory,ECON,1,2
+ECON 305,ECON 305,ECON,2.2,0
+ECON 425,Industrial Organization: Imperfect Competition,ECON,1,3
+ECON 434,Seminar in Applied Market Design,ECON,1,3
+BUEC 333,BUEC 333,BUEC,2.2,0
+ECON 437,Seminar in Urban Economics,ECON,1,1
+ECON 446,Seminar in International Finance,ECON,1,2
+ECON 448W,Seminar in the Economics of Crime,ECON,1,3
+ECON 453,Seminar in the Economics of Education,ECON,1,2
+ECON 455W,Topics in Economic Development,ECON,1,1
+ECON 460,Seminar in Environmental Economics,ECON,1,3
+ECON 480,Seminar in the Economics of Labor Market Policy,ECON,1,1
+ECON 494,Honours Research Proposal,ECON,1.4,3
+ECON 499W,Honours Research Project,ECON,1,4
+ECON 750,Co-op I,ECON,1.4,1
+ECON 802,Microeconomics,ECON,2,1
+ECON 807,Macroeconomic Theory and Policy,ECON,2,1
+ECON 808,Macroeconomic Theory I,ECON,2,2
+ECON 835,Econometrics,ECON,2,1
+ECON 836,Applied Econometrics,ECON,1.6,2
+ECON 751,Co-op II,ECON,1.4,2
+ECON 331,Introduction to Mathematical Economics,ECON,2,2
+ECON 803,Microeconomic Theory I,ECON,1.4,2
+ECON 798,ECON 798,ECON,1.6,0
+ECON 809,Macroeconomic Theory II,ECON,1.4,1
+ECON 815,Financial Economics,ECON,1.4,1
+ECON 818,Advanced Topics in Finance,ECON,1,2
+ECON 831,Mathematical Economics,ECON,1,1
+ECON 435,Econometric Methods,ECON,1.4,2
+ECON 838,Econometric Theory II,ECON,1.4,1
+ECON 837,Econometric Theory I,ECON,1.6,2
+ECON 899,MA Research Paper,ECON,1,2
+ECON 984,Comprehensive Examination in Econometrics,ECON,1,2
+ECON 985,Comprehensive Examination in Microeconomic Theory,ECON,1,3
+ECON 804,ECON 804,ECON,1.4,0
+ECON 986,Comprehensive Examination in Macroeconomic Theory,ECON,1,2
+EDUC 222,Research Methods in Educational Psychology,EDUC,1,1
+EDUC 220,EDUC 220,EDUC,2.2,0
+EDUC 320,Instructional Psychology,EDUC,1,1
+EDUC 322,The Social Lives of School Children,EDUC,1,1
+PSYC 250,Introduction to Developmental Psychology,PSYC,2.2,1
+EDUC 323,Introduction to Counselling Theories,EDUC,1,1
+EDUC 325,Assessment for Classroom Teaching,EDUC,1,1
+EDUC 327,"Self, Psychology and Education",EDUC,1,1
+EDUC 352W,Building on Reflective Practice,EDUC,1,1
+EDUC 252,Introduction to Reflective Practice,EDUC,1.4,0
+EDUC 400,Foundations of Education and Schooling,EDUC,1.4,0
+EDUC 403,Studies in Teaching and Learning,EDUC,2.6,1
+EDUC 402,EDUC 402,EDUC,2.6,0
+EDUC 408,Professional Growth Portfolio: Building a Framework for Current Practices,EDUC,1.4,2
+EDUC 407,Professional Growth Portfolio: Developing a Solid Foundation,EDUC,1.6,1
+EDUC 409,Professional Growth Portfolio: Capstone Project,EDUC,1,3
+EDUC 405,Teaching Semester,EDUC,1.4,1
+EDUC 410,Linguistic and Professional Identities of Bi/plurilingual Teachers of French,EDUC,1,1
+EDUC 466,Early Childhood Education: Curriculum and Instruction,EDUC,1,1
+EDUC 464,EDUC 464,EDUC,1.4,0
+EDUC 800,Supervised Counselling Clinic II,EDUC,1.4,1
+EDUC 799,Supervised Counselling Clinic I,EDUC,1.4,2
+EDUC 801,Counselling Practicum I,EDUC,1.4,2
+HIST 332,Politics and Culture in Modern Germany,HIST,1.4,0
+HIST 354,Imperialism and Modernity in the Middle East,HIST,1.6,0
+HIST 355,The Arab Middle East in the Twentieth Century,HIST,1.6,0
+HIST 402,Renaissance Italy,HIST,1,1
+HIST 220,HIST 220,HIST,1.4,0
+HIST 223,HIST 223,HIST,1.4,0
+HUM 219,HUM 219,HUM,1.4,0
+HIST 305,HIST 305,HIST,1.4,0
+HIST 311,HIST 311,HIST,1.4,0
+HIST 312W,HIST 312W,HIST,1.4,0
+HIST 465,The Palestinian-Israeli Conflict,HIST,1,1
+HIST 151,HIST 151,HIST,1.6,0
+HIST 249,HIST 249,HIST,1.6,0
+HIST 350,HIST 350,HIST,1.6,0
+HSCI 204,Perspectives on Human Health and the Environment,HSCI,1,1
+HSCI 130,HSCI 130,HSCI,2.2,0
+HSCI 206,The Economics of Health and Health Care,HSCI,1,1
+HSCI 207,Research Methods in Health Sciences,HSCI,1.4,1
+HSCI 211,"Perspectives on Cancer, Cardiovascular, and Metabolic Diseases",HSCI,1,1
+HSCI 214,Perspectives on Mental Health and Illness,HSCI,1.4,1
+HSCI 216,"Ecological Determinants of Human Growth, Development and Health",HSCI,1,1
+HSCI 230,Evaluating Epidemiological Research,HSCI,2.4,1
+HSCI 323,Principles of Pharmacology and Toxicology,HSCI,2,2
+HSCI 324,Human Population Genetics and Evolution,HSCI,1.4,3
+HSCI 326,Introduction to the Immune System,HSCI,2.4,1
+HSCI 333,"Red, Hot, and True: A Semester of Blood",HSCI,1,1
+HSCI 338,Virology,HSCI,2,2
+HSCI 341,Fundamental Epidemiological Concepts and Approaches,HSCI,1,2
+HSCI 402,"Substance Use, Addiction and Public Health",HSCI,1,2
+HSCI 408,"Plagues, Pollutants and Poverty: The Origins and Evolution of Public Health",HSCI,1,1
+HSCI 330,HSCI 330,HSCI,2.2,0
+HSCI 410,Exploratory Data Analysis,HSCI,1,1
+STAT 302,Analysis of Experimental and Observational Data,STAT,2.6,1
+STAT 305,Introduction to Biostatistical Methods for Health Sciences,STAT,2.6,1
+HSCI 412,Health  Communication,HSCI,1,1
+HSCI 312,HSCI 312,HSCI,1.4,0
+HSCI 424,Strategic Applications of GIS in Health,HSCI,1,1
+HSCI 432,Seminar in Epidemiology,HSCI,1,1
+HSCI 440,Cell Pathophysiology Laboratory,HSCI,1,3
+MBB 309W,Biochemistry Laboratory,MBB,2.4,3
+HSCI 441,Virology Laboratory,HSCI,1,3
+MBB 309,MBB 309,MBB,1.4,0
+HSCI 442,Immunology Laboratory,HSCI,1,1
+MBB 326,Introduction to the Immune System,MBB,2.4,3
+HSCI 474,Seminar in Neuropharmacology,HSCI,1,3
+HSCI 475,Seminar in Molecular Mechanisms of Epigenetics,HSCI,1,4
+HSCI 482,Senior Seminar in Infectious Diseases,HSCI,1,1
+HSCI 491,Independent Research,HSCI,1.4,1
+HSCI 490,HSCI 490,HSCI,1.8,0
+HSCI 492,Honours Research Thesis,HSCI,1,1
+HSCI 493,Extended Independent Research,HSCI,1.4,1
+HSCI 494,Independent Laboratory Research,HSCI,1.4,1
+HSCI 775,Seminar in Molecular Mechanisms of Epigenetics,HSCI,1,1
+HSCI 778,Seminar in Molecular Epidemiology of Infectious Diseases,HSCI,1,1
+BISC 330,BISC 330,BISC,1.4,0
+HSCI 804,Biostatistics for Population Health Practice II,HSCI,1,1
+HSCI 801,HSCI 801,HSCI,1.8,0
+HSCI 805,Intermediate Epidemiologic Methods,HSCI,1,1
+HSCI 802,HSCI 802,HSCI,2,0
+HSCI 846,Environmental Health Exposure Assessment and Analysis,HSCI,1,1
+HSCI 845,HSCI 845,HSCI,1.4,0
+HSCI 849,Regression Modeling for Public Health,HSCI,1,1
+HSCI 855,Health Promotion in Practice,HSCI,1,1
+HSCI 901,Core Concepts and Practice for Public Health II,HSCI,1.8,1
+HSCI 880,Practicum,HSCI,1.4,1
+HSCI 803,HSCI 803,HSCI,1.4,0
+HSCI 885,Special Topics in Experiential Health Learning: Global and Local,HSCI,1,1
+HSCI 821,HSCI 821,HSCI,1.4,0
+HSCI 897,MPH Project,HSCI,1,2
+HSCI 900,HSCI 900,HSCI,1.4,0
+HSCI 903,Interdisciplinary Seminar in Health Sciences II,HSCI,1,1
+HSCI 902,HSCI 902,HSCI,1.4,0
+HUM 110,The Greek World,HUM,1.6,0
+HUM 162,Latin II,HUM,1,1
+HUM 161,HUM 161,HUM,1.4,0
+HUM 231,Daily Life in Ancient Greece and Rome,HUM,1.6,0
+HUM 232,The Religions of Ancient Greece and Rome,HUM,1.6,0
+HUM 277,History of Greek Civilization,HUM,1.6,0
+HUM 313,Roman Art and Archaeology,HUM,1,1
+HUM 314,Greek Art and Archaeology,HUM,1,1
+HUM 480,Advanced Topics in the Humanities,HUM,1,1
+HUM 101,HUM 101,HUM,1.4,0
+IAT 106,Spatial Thinking and Communicating,IAT,1.6,0
+IAT 202,New Media Images,IAT,1.4,1
+IAT 100,IAT 100,IAT,1.4,0
+IAT 206W,Media Across Cultures,IAT,1.4,1
+IAT 103W,IAT 103W,IAT,1.4,0
+IAT 222,Interactive Arts,IAT,1.4,0
+IAT 233,Spatial Design,IAT,1,1
+IAT 102,IAT 102,IAT,2,0
+IAT 235,Information Design,IAT,1.6,1
+IAT 265,Multimedia Programming for Art and Design,IAT,2.2,1
+IAT 167,IAT 167,IAT,1.6,0
+MATH 130,Geometry for Computer Graphics,MATH,1.8,1
+IAT 267,Introduction to Technological Systems,IAT,1.8,1
+IAT 272,Co-op Practicum II,IAT,1.4,1
+IAT 271,IAT 271,IAT,1.4,0
+WKTM 100,WKTM 100,WKTM,1.4,0
+IAT 309W,Writing Methods for Research,IAT,1.4,2
+IAT 312,Foundations of Game Design,IAT,1.4,2
+IAT 313,Narrative and New Media,IAT,1.4,0
+IAT 334,Interface Design,IAT,1.4,2
+IAT 336,Materials in Practice,IAT,1,1
+IAT 339,Web Design and Development,IAT,1,2
+IAT 344,Moving Images,IAT,1.4,2
+IAT 351,Advanced Human-Computer Interaction,IAT,1,1
+IAT 201,IAT 201,IAT,1.6,0
+IAT 355,Introduction to Visual Analytics,IAT,1.4,2
+IAT 359,Mobile Computing,IAT,1,2
+IAT 360,"Exploring Artificial Intelligence: Its Use, Concepts, and Impact",IAT,1.6,2
+IAT 373,Co-op Practicum III,IAT,1.4,1
+WKTM 200,WKTM 200,WKTM,1.4,0
+IAT 374,Co-op Practicum IV,IAT,1.4,1
+WKTM 300,WKTM 300,WKTM,1.4,0
+IAT 375,Co-op Practicum V,IAT,1,1
+WKTM 400,WKTM 400,WKTM,1.4,0
+IAT 432,Design Evaluation,IAT,1,3
+IAT 443,Senior Project in Creative Media,IAT,1,3
+IAT 340,Sound Design,IAT,1.4,0
+IAT 445,Immersive Environments,IAT,1,1
+IAT 343,Animation,IAT,1.4,1
+IAT 460,Generative AI and Computational Creativity,IAT,1,3
+IAT 461,Data Science for Human-Centered Systems,IAT,1,3
+IAT 802,Quantitative Research Methods and Design,IAT,1.4,0
+IAT 848,"Mediated, Virtual, and Augmented Reality",IAT,1,1
+IAT 806,IAT 806,IAT,1.4,0
+IAT 801,IAT 801,IAT,1.4,0
+IAT 804,Foundations of Research Design for Human-Centred Design of Interactive Technologies,IAT,1.4,0
+IAT 834,IAT 834,IAT,1.4,0
+IAT 895,Master  of Arts Graduation Project,IAT,1,1
+SIAT 803,SIAT 803,SIAT,1.6,0
+SIAT 804,SIAT 804,SIAT,1.6,0
+SIAT 806,SIAT 806,SIAT,1.6,0
+IAT 896,Master of Science Graduation Project,IAT,1,1
+INDG 101,Introduction to Indigenous Studies,INDG,2.6,0
+INDG 201W,Indigenous Peoples' Perspectives on History,INDG,2.4,0
+INDG 250,Introduction to Indigenous Policy,INDG,1.4,1
+INDG 332,Indigenous Ethnobotany,INDG,1,1
+INDG 201,INDG 201,INDG,1.6,0
+INDG 333,Indigenous Ethnozoology,INDG,1,1
+INDG 403,Indigenous Knowledge in the Modern World,INDG,1,1
+FNST 201W,FNST 201W,FNST,2.4,0
+INLG 133,Introduction to Indigenous Language I,INLG,1.6,0
+INLG 134,Introduction to INLG II,INLG,1,1
+FNLG 133,FNLG 133,FNLG,1.6,0
+INLG 358,Indigenous Language Immersion III,INLG,1.4,1
+INLG 258,INLG 258,INLG,1.4,0
+FNLG 258,FNLG 258,FNLG,1.4,0
+INLG 458,Indigenous Language Immersion IV,INLG,1,1
+FNLG 358,FNLG 358,FNLG,1.4,0
+IS 300,Research Methods in International Studies,IS,1,1
+IS 101,IS 101,IS,1.4,0
+IS 490,Honours Seminar,IS,1.4,0
+IS 499,Honours Essay,IS,1,1
+ITAL 300,Advanced Italian: Language and Culture,ITAL,1.4,1
+ITAL 201,ITAL 201,ITAL,1.4,0
+ITAL 400,"Topics in Italian Literature: Contemporary Prose, Poetry and Theatre",ITAL,1,2
+JAPN 210,Japanese IV,JAPN,1,1
+JAPN 200,Japanese III,JAPN,1.4,1
+JAPN 300,Intermediate Japanese I,JAPN,1.4,1
+JAPN 201,JAPN 201,JAPN,1.4,0
+JAPN 301,Intermediate Japanese II,JAPN,1,2
+LBST 202,Labour Research for Social Change: Methods and Approaches,LBST,1,1
+LBST 100,LBST 100,LBST,2,0
+LBST 101,LBST 101,LBST,2,0
+LBST 203,Work and Health,LBST,1,1
+LBST 301W,"Labour, Social Media, and the News",LBST,1,1
+LBST 328,Labour Geographies,LBST,1,1
+GEOG 221,Economic Worlds,GEOG,1.4,1
+LING 250,Computational Text Analysis,LING,1.4,0
+LING 282W,Writing for Linguistics,LING,2,1
+LING 220,LING 220,LING,2.2,0
+LING 301W,Linguistic Argumentation,LING,1,2
+LING 309W,Sociolinguistics,LING,1,2
+LING 315,Psychology of Language,LING,1,1
+LING 321,Phonology,LING,1,1
+LING 322,Syntax,LING,1,2
+LING 323,Morphology,LING,1,1
+LING 324,Semantics,LING,1,1
+LING 330,Phonetics,LING,1.4,2
+LING 350,First Language Acquisition,LING,1,1
+LING 360,Introduction to Applied Linguistics,LING,1.4,1
+LING 362,Introduction to Teaching English as a Second Language to Adults,LING,1.4,2
+LING 363,Practicum in Teaching English as a Practice Second Language to Adults,LING,1,3
+LING 401,Topics in Phonetics,LING,1,3
+LING 450,Computational Linguistics,LING,1,1
+SDA 250,Computational Text Analysis,SDA,1.4,0
+LING 491,Directed Research,LING,1,1
+MACM 204,Computing with Calculus,MACM,1.4,1
+CMPT 102,CMPT 102,CMPT,2,0
+CMPT 126,CMPT 126,CMPT,2,0
+MACM 401,Introduction to Computer Algebra,MACM,1,1
+MATH 340,Algebra II: Rings and Fields,MATH,2.2,1
+MATH 342,Elementary Number Theory,MATH,1.8,2
+MACM 416,Numerical Analysis II,MACM,1,1
+MATH 260,Introduction to Ordinary Differential Equations,MATH,2.8,2
+MATH 310,MATH 310,MATH,2.8,0
+MACM 442,Cryptography,MACM,1,2
+MATH 332,MATH 332,MATH,2,0
+HS Pre-Calculus 12,HS Pre-Calculus 12,HS,2.2,0
+MATH 110,MATH 110,MATH,1.8,0
+MATH 208W,Introduction to Operations Research,MATH,1.4,2
+MATH 242,Introduction to Analysis I,MATH,2,2
+MATH 252,Vector Calculus,MATH,2,1
+MATH 251,MATH 251,MATH,2.8,0
+MATH 254,Vector and Complex Analysis for Applied Sciences,MATH,2,1
+MATH 301,Mathematical Journeys I,MATH,1,2
+MATH 302,Mathematical Journeys II,MATH,1,2
+MATH 308,Linear Optimization,MATH,1.8,2
+MATH 309,Continuous Optimization,MATH,1,1
+MATH 320,Introduction to Analysis II,MATH,1.8,3
+MATH 322,Complex Variables,MATH,1.6,1
+MATH 337,Job Practicum II,MATH,1.4,1
+MATH 336,MATH 336,MATH,1.4,0
+MATH 341,Algebra III: Groups,MATH,1,1
+MATH 345,Introduction to Graph Theory,MATH,1.4,2
+MATH 348,Stochastic Modelling and Simulation,MATH,1.6,1
+MATH 402W,Operations Research Clinic,MATH,1,3
+MATH 408,Discrete Optimization,MATH,1,3
+MATH 419,Linear Analysis,MATH,1,1
+MATH 314,Introduction to Fourier Methods and Partial Differential Equations,MATH,2,1
+PHYS 384,Methods of Theoretical Physics I,PHYS,2.2,2
+MATH 425,Real Analysis,MATH,1,4
+MATH 426,Probability,MATH,1,3
+STAT 380,Introduction to Stochastic Processes,STAT,1.6,3
+MATH 436,Job Practicum III,MATH,1.4,2
+MATH 437,Job Practicum IV,MATH,1.4,3
+MATH 440,Galois Theory,MATH,1,1
+MATH 441,Commutative Algebra and Algebraic Geometry,MATH,1,2
+MATH 443,Combinatorial Theory,MATH,1,2
+MATH 343,Applied Discrete Mathematics,MATH,1.6,2
+MATH 447,Coding Theory,MATH,1,1
+MATH 448,Network Flows,MATH,1,3
+MATH 450,Introduction to Topology,MATH,1,3
+MATH 467,Dynamical Systems,MATH,1,1
+MATH 468,Topics in Biomathematics,MATH,1,1
+MATH 360,Introduction to Biomathematics,MATH,1.6,3
+MATH 469,Topics in Graphs and Trees in Biomathematics,MATH,1,1
+MATH 475,Mathematical Topics in Data Science,MATH,1,1
+MATH 486,Job Practicum V,MATH,1,4
+MATH 499W,Honours Research Project,MATH,1.4,1
+MATH 498,Communication and Research Skills in the Mathematical Sciences,MATH,1.4,2
+MBB 321,Intermediary Metabolism,MBB,1.4,3
+MBB 322,Molecular Physiology,MBB,2.2,3
+MBB 323,Introduction to Physical Biochemistry,MBB,1.4,2
+MBB 324,Protein Biochemistry,MBB,1,1
+MBB 328,Introduction to Microbial Pathogenesis,MBB,1.4,3
+MBB 342,Introductory Genomics and Bioinformatics,MBB,1.8,3
+MBB 110,MBB 110,MBB,1.4,0
+MBB 402,Cell Signalling in Development and Disease,MBB,1,4
+MBB 421,Nucleic Acids and Biotechnology,MBB,1,1
+MBB 427,Immune Responses in Health and Disease,MBB,1,1
+MBB 426,MBB 426,MBB,1.8,0
+HSCI 426,HSCI 426,HSCI,1.8,0
+MBB 429,RNA-mediated Gene Regulation,MBB,1,1
+MBB 430,Mechanisms of Secretory Transport,MBB,1,4
+MBB 438,Human Molecular Genetics,MBB,1,1
+MBB 443,Protein Biogenesis and Degradation,MBB,1,4
+MBB 445,Infectious Disease Mechanisms,MBB,1,4
+MBB 448,Cancer Immunology,MBB,1,4
+MBB 462,Human Genomics,MBB,1,4
+MBB 463,Forensic Genomics,MBB,1,1
+MBB 481,Directed Research - Honours Thesis,MBB,1.6,4
+MBB 482,Directed Research - Honours Research Performance,MBB,1.6,5
+MBB 483,Directed Research - Honours Thesis Defense,MBB,1.6,6
+MBB 491,Directed Research I,MBB,1.4,2
+MBB 492,Directed Research II,MBB,1,4
+MBB 659,Special Topics in Bioinformatics,MBB,1,1
+MBB 441,MBB 441,MBB,1.4,0
+MBB 741,Bioinformatics,MBB,1.4,4
+CMPT 341,CMPT 341,CMPT,1.4,0
+CMPT 881,CMPT 881,CMPT,1.4,0
+MBB 727,Immune Responses in Health and Disease,MBB,1,1
+MBB 730,Mechanisms of Secretory Transport,MBB,1,4
+BISC 331,BISC 331,BISC,2,0
+MSE 100,Engineering Graphics and Design,MSE,1.4,0
+MSE 102,"Applied Science, Technology and Society",MSE,1.6,0
+MSE 110,Mechatronics Design I,MSE,1.4,0
+MSE 112,Mechatronic Design Studio I,MSE,1,2
+MSE 152,Digital Computing Fundamentals,MSE,1,2
+MSE 220,Engineering Materials,MSE,1.4,2
+MSE 221,Statics and Strength of Materials,MSE,1.8,2
+MSE 222,Kinematics and Dynamics of Rigid Bodies and Mechanisms,MSE,2,2
+MSE 223,Introduction to Fluid Mechanics,MSE,1.6,1
+MSE 224,Strength of Materials,MSE,1,2
+MSE 103,MSE 103,MSE,2,0
+MSE 251,Electronic Circuits,MSE,2.2,1
+MSE 250,Electric Circuits,MSE,2.2,2
+ENSC 220,Electric Circuits I,ENSC,2.2,2
+SEE 230,Electric Circuits,SEE,2,1
+MSE 280,Linear Systems,MSE,2.4,1
+MSE 281,Modelling of Mechatronic Systems,MSE,1.4,1
+MSE 300,The Business of Engineering I,MSE,1.4,0
+MSE 310,Sensors and Actuators,MSE,1.6,3
+MSE 311,Introduction to Microelectromechanical Systems,MSE,1,1
+ENSC 282,ENSC 282,ENSC,1.8,0
+ENSC 226,ENSC 226,ENSC,1.8,0
+MSE 312,Mechatronics Design II,MSE,1,1
+ENSC 182,ENSC 182,ENSC,1.4,0
+MSE 320,Machine Design,MSE,1.6,1
+ENSC 382,ENSC 382,ENSC,1.6,0
+MSE 381,Feedback Control Systems,MSE,2.2,1
+ENSC 383,Feedback Control Systems,ENSC,2.2,2
+ENSC 104,ENSC 104,ENSC,1.4,0
+ENSC 231,ENSC 231,ENSC,1.4,0
+ENSC 281,ENSC 281,ENSC,1.8,0
+MSE 321,Engineering Thermodynamics and Heat Transfer,MSE,1.6,2
+MSE 352,Digital Logic and Microcontrollers,MSE,1.8,2
+MSE 380,Systems Modeling and Simulation,MSE,1.4,1
+SEE 221,Statics and Mechanics of Materials,SEE,2,2
+ENSC 380,Linear Systems,ENSC,2.6,3
+SEE 341,Signals and Systems,SEE,1.8,3
+MSE 393,Industrial Internship II,MSE,1.6,1
+MSE 293,MSE 293,MSE,1.6,0
+MSE 294,MSE 294,MSE,1.6,0
+MSE 394,Special Internship II,MSE,1.6,1
+MSE 402,"Engineering Ethics, Law, and Professional Practice",MSE,1,1
+ENSC 100,ENSC 100,ENSC,1.8,0
+ENSC 106,ENSC 106,ENSC,1.8,0
+CMPT 106,CMPT 106,CMPT,1.8,0
+MSE 413,Machine Learning in Mechatronics,MSE,1,3
+MSE 421,Advanced Vibration,MSE,1,2
+MSE 422,Fuel Cell Systems,MSE,1,1
+ENSC 283,ENSC 283,ENSC,1.4,0
+ENSC 388,ENSC 388,ENSC,1.4,0
+MSE 450,Real-Time and Embedded Control Systems,MSE,1,3
+MSE 460,Precision AgriTech Engineering,MSE,1,4
+MSE 360,MSE 360,MSE,1.4,0
+MSE 480,Manufacturing Systems,MSE,1,1
+ENSC 387,Introduction to Electro-Mechanical Sensors and Actuators,ENSC,1.4,2
+MSE 481,Industrial Control Systems,MSE,1,1
+MSE 483,Modern Control Systems,MSE,1,1
+MSE 493,Industrial Internship III,MSE,1,2
+MSE 494,Special Internship III,MSE,1,2
+MSE 499,Mechatronic Systems Engineering  Undergraduate Thesis,MSE,1,1
+MSE 498,Mechatronic Systems Engineering Thesis Proposal,MSE,1.4,0
+MSE 899,PhD Thesis,MSE,1,1
+MSE 890,PhD Qualifying Examination,MSE,1.4,0
+MSE 924,Smart Factory II,MSE,1,1
+MSE 923,Smart Factory I,MSE,1.4,0
+NUSC 342,Introduction to Nuclear Science,NUSC,1.4,1
+NUSC 346,Radiochemistry Laboratory,NUSC,1,1
+PHIL 100W,Knowledge and Reality,PHIL,2,0
+PHIL 120W,Moral and Legal Problems,PHIL,2.2,0
+PHIL 144,Introduction to Philosophy of Science,PHIL,1.8,0
+PHIL 150,Great Works in the History of Philosophy,PHIL,2,0
+PHIL 201,Epistemology,PHIL,1.6,1
+PHIL 100,PHIL 100,PHIL,2,0
+PHIL 120,PHIL 120,PHIL,2.2,0
+PHIL 121,PHIL 121,PHIL,2.2,0
+PHIL 151,PHIL 151,PHIL,2,0
+PHIL 300,Introduction to Philosophy,PHIL,2,0
+PHIL 203,Metaphysics,PHIL,1.6,1
+PHIL 221,Ethical Theory,PHIL,2,1
+PHIL 270,"Data, Ethics and Society",PHIL,2,0
+PHIL 302,Topics in Epistemology and Metaphysics,PHIL,1,2
+PHIL 315,Formal Methods,PHIL,1.8,1
+PHIL 320,Social and Political Philosophy,PHIL,1,1
+PHIL 220,PHIL 220,PHIL,2,0
+SDA 270,"Data, Ethics and Society",SDA,2,0
+ENV 320W,ENV 320W,ENV,2,0
+REM 320W,REM 320W,REM,2,0
+PHIL 321,Topics in Moral Philosophy,PHIL,1,1
+PHIL 322,History of Ethics,PHIL,1,1
+PHIL 326,Topics in Law and Philosophy,PHIL,1,1
+PHIL 329,Law and Justice,PHIL,1,1
+PHIL 345W,Philosophy of Mathematics,PHIL,1,1
+PHYS 132,Physics Laboratory I,PHYS,1.4,1
+PHYS 211,Intermediate Mechanics,PHYS,1.6,1
+PHYS 255,Vibrations and Waves,PHYS,2.2,1
+PHYS 234,Physics Laboratory IV,PHYS,1.4,1
+PHYS 233,Physics Laboratory III,PHYS,1.8,1
+PHYS 285,Quantum I,PHYS,1.8,1
+PHYS 326,Electronics and Instrumentation,PHYS,1,2
+PHYS 332W,Advanced Physics Laboratory I,PHYS,1,1
+PHYS 347,Introduction to Biological Physics,PHYS,1.4,3
+PHYS 365,Semiconductor Device Physics,PHYS,1.6,2
+PHYS 321,Intermediate Electricity and Magnetism,PHYS,1.8,3
+ENSC 320,Electric Circuits II,ENSC,1.8,2
+PHYS 390,Introduction to Cosmology and Astrophysics,PHYS,1,2
+PHYS 415,Quantum III,PHYS,1.6,2
+PHYS 437,Practicum V,PHYS,1,1
+PHYS 436,PHYS 436,PHYS,1.4,0
+PHYS 455,Modern Optics,PHYS,1,2
+PHYS 465,Solid State Physics,PHYS,1.6,1
+PHYS 484,Nonlinear Physics,PHYS,1,3
+PHYS 490,General Relativity and Gravitation,PHYS,1,3
+PHYS 313,Special Relativity,PHYS,1.6,2
+PHYS 812,Introduction to Quantum Field Theory,PHYS,1,1
+PHYS 810,Advanced Quantum Mechanics,PHYS,1.4,3
+PHYS 813,Advanced Mechanics,PHYS,1,3
+PHYS 833,Biological Physics Laboratory,PHYS,1,1
+PHYS 231,PHYS 231,PHYS,1.6,0
+PHYS 344,PHYS 344,PHYS,1.6,0
+PHYS 841,Statistical Mechanics,PHYS,1,1
+PHYS 445,Statistical Physics,PHYS,1.4,1
+PLAN 100,Introduction to Planning,PLAN,2.4,0
+PLAN 300,Planning Methods and Analysis,PLAN,1.6,1
+PLAN 200,PLAN 200,PLAN,2.4,0
+PLAN 302,Planning Internship I,PLAN,1.6,1
+PLAN 319,PLAN 319,PLAN,1.4,0
+REM 319,REM 319,REM,1.4,0
+PLAN 400,Policy Analysis for Social and Environmental Change,PLAN,1,1
+PLAN 402,Planning Internship II,PLAN,1,2
+PLAN 404,Indigenous Planning and Stewardship,PLAN,1,1
+REM 207,REM 207,REM,1.6,0
+PLAN 406,Community Planning and Development,PLAN,1,1
+PLAN 408,Environmental Planning,PLAN,1,1
+PLAN 443,"Public Engagement, Mediation and Conflict Resolution in Planning",PLAN,1,1
+PLCY 300,Applied Public Policy Analysis,PLCY,1.6,0
+PLCY 400,Public Policy Capstone Seminar,PLCY,1,1
+PLCY 401,STT-Advanced Topics in Public Policy,PLCY,1,1
+PLCY 200,Introduction to Public Policy,PLCY,1.4,0
+PLCY 807,Introduction to Policy Analysis and Issues II,PLCY,1.4,1
+PLCY 800,PLCY 800,PLCY,1.4,0
+MPP 800,MPP 800,MPP,1.4,0
+PLCY 835,Extended Policy Analysis,PLCY,1,2
+PLCY 802,PLCY 802,PLCY,1.4,0
+PLCY 804,PLCY 804,PLCY,1.4,0
+PLCY 806,PLCY 806,PLCY,1.6,0
+POL 100,Introduction to Politics and Government,POL,1.8,0
+POL 141,International Relations,POL,1.4,0
+POL 200W,Investigating Politics: An Introduction to Political Analysis,POL,1.4,0
+POL 201,Introductory Quantitative Methods in Political Science,POL,2,1
+POL 210,Introduction to Political Philosophy,POL,1.6,1
+POL 221,Introduction to Canadian Government,POL,1,1
+POL 151,POL 151,POL,1.6,0
+POL 222,Introduction to Canadian Politics,POL,1,1
+POL 315,Intermediate Quantitative Methods,POL,1,2
+POL 316,"Sex, Love, and Politics",POL,1,2
+POL 348,"Theories of War, Peace and Conflict Resolution",POL,1,1
+POL 390,Data Visualization and Political Analysis,POL,1,1
+POL 411,Normative Political Theory,POL,1,1
+POL 312,POL 312,POL,1.4,0
+POL 313,POL 313,POL,1.4,0
+POL 804,Topics in Advanced Political Research Design and Methodology,POL,1,1
+POL 800,POL 800,POL,1.4,0
+PSYC 102,Introduction to Psychology II,PSYC,2,0
+PSYC 201W,Introduction to Research Methods in Psychology,PSYC,2,1
+PSYC 100,PSYC 100,PSYC,1.8,0
+PSYC 221,Introduction to Cognitive Psychology,PSYC,1.8,1
+PSYC 241,Introduction to Psychological Disorders and Neurodiversity,PSYC,1.8,1
+PSYC 260,Introduction to Social Psychology,PSYC,2.2,1
+PSYC 268,Introduction to Law and Psychology,PSYC,1.6,1
+PSYC 280,Introduction to Biological Psychology,PSYC,2.2,1
+PSYC 300W,Critical Analysis of Issues in Psychology,PSYC,1,2
+PSYC 303,Perception,PSYC,1,1
+PSYC 335,PSYC 335,PSYC,1.4,0
+PSYC 308,History and Systems of Modern Psychology,PSYC,1,1
+PSYC 325,Learning and Memory,PSYC,1,2
+PSYC 330,Attention,PSYC,1,2
+PSYC 352,Culture and Cognition,PSYC,1,2
+PSYC 354,Development of Children's Thinking,PSYC,1,2
+PSYC 355,Adolescent Development,PSYC,1,2
+PSYC 356,Developmental Psychopathology,PSYC,1,2
+PSYC 357,Adulthood and Aging,PSYC,1,2
+PSYC 358,Language and Social Interaction,PSYC,1,2
+PSYC 359,Developmental Disabilities,PSYC,1,2
+PSYC 361,Individual Differences in Social Psychology,PSYC,1,2
+PSYC 362,Close Relationships,PSYC,1.4,2
+PSYC 363,Intergroup Relations,PSYC,1,2
+PSYC 364,The Science of Happiness,PSYC,1,2
+PSYC 365,Health Psychology,PSYC,1,1
+PSYC 366,Psychology and Environmental Sustainability,PSYC,1,2
+PSYC 367,Psychological Perspectives on Human Sexuality,PSYC,1,3
+PSYC 370,Introduction to Theories of Personality,PSYC,1,1
+PSYC 371,Intervention: Process and Outcome,PSYC,1,2
+PSYC 376,Selected Topics in Experimental Psychology and Law,PSYC,1,2
+PSYC 379,Clinical Forensic Psychology,PSYC,1,2
+PSYC 381,Behavioural Endocrinology,PSYC,1,2
+PSYC 382,Cognitive Neuroscience,PSYC,1,2
+PSYC 383,Psychopharmacology,PSYC,1,2
+PSYC 386,Laboratory in Human Electrophysiology,PSYC,1,2
+PSYC 388,Biological Rhythms and Sleep,PSYC,1,2
+PSYC 393,Research Engagement,PSYC,1,1
+PSYC 410,Research Design I,PSYC,1,2
+PSYC 411,Research Design II,PSYC,1,2
+PSYC 457,Behavioural Neuroscience Undergraduate Honours Thesis Proposal,PSYC,1.4,2
+PSYC 459,Behavioural Neuroscience Undergraduate Honours Thesis,PSYC,1,3
+PSYC 490,Honours Project,PSYC,1.4,2
+PSYC 300,PSYC 300,PSYC,1.4,0
+PSYC 493,Directed Studies,PSYC,1,1
+PSYC 494,Directed Studies,PSYC,1,1
+PSYC 495,Directed Studies,PSYC,1,1
+PSYC 499,Honours Project,PSYC,1,3
+PSYC 807E,Advanced Topics in Intervention: Cognitive-Behaviour Therapy,PSYC,1,1
+PSYC 820B,Psychological Assessment II,PSYC,2.2,1
+PSYC 821B,Practicum in Psychological Assessment II,PSYC,2,2
+PSYC 822,Psychological Intervention I,PSYC,1.8,0
+PSYC 823,Psychological Intervention II,PSYC,1.8,0
+PSYC 824,Research Issues in Psychology,PSYC,1.6,0
+PSYC 815,Mental Health Law and Policy,PSYC,1.4,1
+PSYC 790,PSYC 790,PSYC,2.2,0
+PSYC 820A,Psychological Assessment I,PSYC,1.8,0
+PSYC 830,Seminar in Child Evaluation and Treatment Formulation,PSYC,1.4,1
+PSYC 820,PSYC 820,PSYC,1.6,0
+PSYC 831,Practicum in Child Evaluation and Treatment Formulation,PSYC,1,2
+PSYC 836,Forensic Assessment,PSYC,1.4,2
+PSYC 880,Junior Practicum,PSYC,1,1
+PSYC 744,PSYC 744,PSYC,1.4,0
+PSYC 910,PSYC 910,PSYC,1.4,0
+PSYC 911,PSYC 911,PSYC,1.4,0
+PSYC 890,Practicum in Clinical Forensic Psychology,PSYC,1,3
+PSYC 791,PSYC 791,PSYC,2,0
+PSYC 892,Research/Policy Practicum in Law and Psychology,PSYC,1,1
+PSYC 897,Research Project/Law & Psyc/Forensic Psyc,PSYC,1,1
+PSYC 990,Seminar in Law and Psychology,PSYC,1,1
+PUB 231,Graphic Design Fundamentals,PUB,1.8,1
+PUB 131,PUB 131,PUB,1.4,0
+PUB 331,Graphic Design in Transition: Print and Digital Books,PUB,1.4,2
+PUB 332,Graphic Design in Transition: Print and Digital Periodicals,PUB,1.4,2
+PUB 431,Publication Design Project,PUB,1,3
+PUB 438,Design Awareness in Publishing Processes and Products,PUB,1,2
+PUB 891,Professional Practices Seminar II,PUB,1.8,1
+PUB 890,PUB 890,PUB,2,0
+PUB 899,Publishing Internship,PUB,1,2
+PUB 600,Topics in Publishing Management,PUB,1.8,0
+PUB 800,PUB 800,PUB,1.8,0
+PUB 801,PUB 801,PUB,1.8,0
+PUB 802,PUB 802,PUB,1.8,0
+PUB 900,Self-Directed Publishing Report,PUB,1,2
+PUB 901,Publishing Research Project,PUB,1,2
+REM 200,Introduction to Resource and Environmental Management in Canada,REM,1.4,1
+GEOG 111,GEOG 111,GEOG,2.6,0
+REM 202W,Technical Communication for Environmental Professionals and Planners,REM,1,1
+REM 221,Systems Thinking and the Environment,REM,1.4,1
+REM 225,Quantitative Toolkit for Social-Ecological Systems,REM,1.4,0
+REM 356W,Environmental Policy,REM,1,1
+REM 407,Indigenous Governance and Resource Relationships,REM,1,1
+INDG any,INDG any,INDG,1.4,0
+REM 412,Environmental Modeling,REM,1,1
+REM 211,REM 211,REM,1.8,0
+REM 445,Environmental Risk Assessment,REM,1,2
+REM 446,Environmental and Social Impact Assessment,REM,1,1
+REM 471,Forest Ecosystems and Management,REM,1,1
+REM 612,Simulation Modelling in Natural Resource Management,REM,1,1
+REM 611,REM 611,REM,1.4,0
+RISK 101,Introduction to Insurance,RISK,1.6,0
+RISK 231,Tools for Data-Driven Decision Making,RISK,1.6,1
+RISK 311,Fundamentals of Long-Term Actuarial Mathematics,RISK,1.4,2
+RISK 102,RISK 102,RISK,1.6,0
+RISK 201,RISK 201,RISK,1.4,0
+RISK 337,Job Practicum II,RISK,1.4,1
+RISK 336,RISK 336,RISK,1.4,0
+RISK 412,Advanced Models and Methods for Long-Term Insurance,RISK,1,2
+RISK 441,RISK 441,RISK,1.4,0
+RISK 437,Job Practicum IV,RISK,1.4,1
+RISK 436,Job Practicum III,RISK,1.4,2
+SA 201W,Anthropology and Contemporary Life (A),SA,3,0
+SA 250,Introduction to Sociological Theory (S),SA,1.4,1
+SA 150,SA 150,SA,3,0
+SA 255,Introduction to Social Research (SA),SA,1.4,1
+SA 101,SA 101,SA,3,0
+SA 257,Demystifying Quantitative Research: Critical Perspectives from Sociology and Anthropology (SA),SA,1,1
+SA 301,Contemporary Ethnography (A),SA,1,1
+SA 301W,Contemporary Ethnography (A),SA,1,1
+SA 304,Social Control (S),SA,1,1
+SA 317,Sociology of Art Forms (S),SA,1,1
+SA 318,Technologies of Health and Expectation (A),SA,1,1
+SA 322,Religion and Society (A),SA,1,1
+SA 325,Political Sociology (S),SA,1,1
+SA 326,"Food, Ecology and Social Thought (S)",SA,1,1
+SA 327,Sociology of Knowledge (S),SA,1,1
+SA 331,Politics of the Family (S),SA,1,1
+SA 335,Gender Relations and Social Issues (S),SA,1,1
+SA 340,Social Issues and Social Policy Analysis (SA),SA,1,1
+SA 345,"Race, Immigration and the Canadian State (S)",SA,1,1
+SA 350,Classical Sociological Thought (S),SA,1.4,2
+SA 351,"Crisis, Critique, and Marx's Capital (S)",SA,1,1
+SA 352,"Games, Sports, and Practices (S)",SA,1,1
+SA 353,Sociology of Sport (S),SA,1,1
+SA 355,Quantitative Methods (S),SA,1,2
+SA 356W,Ethnography and Qualitative Methods (SA),SA,1,1
+SA 359,Special Topics in Anthropology (A),SA,1,1
+SA 360,Special Topics in Sociology and Anthropology (SA),SA,1,1
+SA 362,"The Commodification of Everything: Colonialism, Capitalism, and Sustainability (S)",SA,1,1
+SA 363,"Racial Capitalism, Settler Colonialism, and Uneven Development (S)",SA,1,1
+SA 364,Urban Communities and Cultures (A),SA,1,1
+SA 365,Selected Regional Areas (A),SA,1,1
+SA 366,Special Topics in Sociology (S),SA,1,1
+SA 368,"Language, Ideology, and Power (A)",SA,1,1
+SA 375,Labour and the Arts of Living (A),SA,1,1
+SA 388,Indigenous Social Movements Across the Globe (A),SA,1,1
+SA 418,Global Health: Humanitarian Encounters (A),SA,1,1
+SA 442,Applying the Sociological Imagination (S),SA,1,1
+SA 443,Ethnographic Sensibility in Action (A),SA,1,1
+SA 450,Advanced Sociological Theory (S),SA,1,3
+SD 281,Introduction to Sustainability,SD,1.8,0
+SD 381,Building Sustainable Communities,SD,1,1
+SD 401,Sustainable Development Studio,SD,1,1
+SD 481,Global Sustainability Governance and Action,SD,1,1
+SEE 100,Engineering Graphics and Software for Design,SEE,1.6,0
+SEE 111,Integrated Energy Solution I,SEE,1.4,1
+SEE 110,SEE 110,SEE,1.6,0
+SEE 222,Engineering Materials for Energy Systems,SEE,1.8,2
+SEE 224,Thermodynamics for Energy Engineering,SEE,1.8,1
+SEE 225,Fluid Mechanics,SEE,1.4,1
+SEE 231,Electronic Devices and Systems,SEE,2,2
+SEE 242,Computational Methods for Engineers,SEE,1.6,2
+SEE 251,Electric Machines and Energy Conversion,SEE,2,3
+SEE 310,Integrated Energy Solution II,SEE,1.4,4
+SEE 324,Heat and Mass Transfer for Energy Engineering,SEE,1.8,2
+SEE 325,Mechanical Design and Finite Element Analysis,SEE,1,3
+SEE 331,Power Electronics,SEE,1.6,4
+SEE 332,Power Systems Analysis and Design,SEE,1,5
+SEE 333,Network and Communication Systems,SEE,1,1
+SEE 342,Feedback Control Systems,SEE,1,4
+SEE 352,Applied Thermodynamics and Energy Conversion,SEE,1,3
+SEE 354,Energy Storage,SEE,1,5
+SEE 390,Industrial Internship II,SEE,1.6,1
+SEE 290,SEE 290,SEE,1.6,0
+SEE 294,SEE 294,SEE,1.6,0
+SEE 394,Special Internship II,SEE,1.6,1
+SEE 460,Additive Manufacturing and Sustainable Design,SEE,1,3
+SEE 463,Embedded Computer Systems,SEE,1,3
+SEE 466,Renewable Energy Systems and Distributed Generation,SEE,1,4
+SEE 490,Industrial Internship III,SEE,1,2
+SEE 494,Special Internship III,SEE,1,2
+SEE 498,Sustainable Energy Engineering Undergraduate Honours Thesis Proposal,SEE,1.4,0
+SEE 499,Sustainable Energy Engineering Undergraduate Honours Thesis,SEE,1,1
+SEE 820,Materials Design for Energy Systems,SEE,1,1
+SEE 896,SEE 896,SEE,2.2,0
+SEE 897,SEE 897,SEE,2.4,0
+SEE 850,Energy Storage Systems,SEE,1,1
+SEE 890,PhD Qualifying Exam,SEE,1.4,1
+SEE 891,Directed Studies,SEE,1,1
+SEE 893,Special Topics I,SEE,1,1
+SEE 894,Special Topics II,SEE,1,1
+SEE 895,Special Topics III,SEE,1,1
+SEE 898,MASc Thesis,SEE,1,1
+SPAN 100,Introductory Spanish I,SPAN,1.4,0
+SPAN 200,Intermediate Spanish I,SPAN,1.4,1
+SPAN 110,Introductory Spanish II,SPAN,1.4,1
+SPAN 103,SPAN 103,SPAN,1.4,0
+SPAN 301,Advanced Spanish Grammar and Writing,SPAN,1,1
+SPAN 202,SPAN 202,SPAN,1.6,0
+STAT 260,Introductory R for Data Science,STAT,2.4,1
+STAT 261,Laboratory for Introductory R for Data Science,STAT,1,2
+STAT 300W,Statistics Communication,STAT,1,1
+STAT 337,Job Practicum II,STAT,1.4,1
+STAT 336,STAT 336,STAT,1.4,0
+STAT 342,Introduction to Statistical Computing and Exploratory Data Analysis - SAS,STAT,1,1
+STAT 403,Intermediate Sampling and Experimental Design,STAT,1,2
+STAT 410,Statistical Analysis of Sample Surveys,STAT,1,4
+STAT 430,Statistical Design and Analysis of Experiments,STAT,1,4
+STAT 436,Job Practicum III,STAT,1.4,2
+STAT 437,Job Practicum IV,STAT,1.4,3
+STAT 438,Job Practicum V,STAT,1,4
+STAT 445,Applied Multivariate Analysis,STAT,1,2
+STAT 450,Statistical Theory,STAT,2,4
+STAT 460,Bayesian Statistics,STAT,1,4
+STAT 475,Applied Discrete Data Analysis,STAT,1,2
+STAT 485,Applied Time Series Analysis,STAT,1,2
+STAT 645,Applied Multivariate Analysis,STAT,1,1
+STAT 604,STAT 604,STAT,1.6,0
+STAT 605,STAT 605,STAT,1.6,0
+STAT 652,Statistical Learning and Prediction,STAT,1,1
+STAT 830,Statistical Theory I,STAT,2,5
+STAT 831,Statistical Theory II,STAT,1,6
+STAT 840,Statistical Genetics and Genomics,STAT,1,5
+STAT 850,Linear Models and Applications,STAT,1.4,4
+STAT 851,Generalized Linear Models and Discrete Data Analysis,STAT,1,6
+STAT 852,Modern Methods in Applied Statistics,STAT,1,6
+STAT 853,Applications of Statistical Computing,STAT,1.4,6
+STAT 854,Biometrics: Methods in Biomedical Studies,STAT,1,5
+STAT 856,Longitudinal Data Analysis,STAT,1,5
+BISC 212,Biological Research,BISC,1,2
+BISC 410,Behavioural Ecology,BISC,1,2
+BISC 447,Stem Cells - Current Trends,BISC,1,4
+HS Grade 12 Anatomy and Physiology,HS Grade 12 Anatomy and Physiology,HS,1.4,0
+HS Grade 12 Chemistry,HS Grade 12 Chemistry,HS,1.4,0
+BPK 143,BPK 143,BPK,1.6,0
+BPK 482,Ergonomics and Rehabilitation,BPK,1,4
+BPK 499,Undergraduate Honours Thesis Reporting,BPK,1,1
+BPK 491,BPK 491,BPK,1.4,0
+BPK 495,BPK 495,BPK,1.4,0
+BUS 373,Operations and Supply Chain Management,BUS,1,1
+BUS 417,Equity Security Analysis,BUS,1,1
+BUS 437,Decision Analysis in Business,BUS,1.4,1
+BUS 445,Customer Analytics,BUS,1.4,1
+BUS 455,Product & Brand Management,BUS,1,2
+BUS 345,Marketing Research,BUS,1.6,1
+BUS 446,"Marketing Strategy in Sports, Entertainment and Other Creative Industries",BUS,1,1
+BUS 797,Business Plan II,BUS,1,2
+BUS 793,BUS 793,BUS,1.4,0
+CA 262,Methods and Concepts: Drawing-based Practices,CA,1,1
+CA 264,Methods and Concepts: Sculptural Practices,CA,1,1
+CA 269,Methods and Concepts: Selected Topics,CA,1,1
+CA 174,CA 174,CA,1.4,0
+CA 306,Practicum in Contemporary Arts I,CA,1,1
+CA 307,Internship in Contemporary Arts I,CA,1,1
+CA 314,"Readings in the History of Art, Performance and Cinema",CA,1,1
+FPA 117,FPA 117,FPA,1.4,0
+FPA 167,FPA 167,FPA,1.4,0
+CA 186,CA 186,CA,1.6,0
+CA 329,Selected Topics in Dance II,CA,1,1
+FPA 221,FPA 221,FPA,1.4,0
+FPA 322,FPA 322,FPA,1.4,0
+FPA 366,FPA 366,FPA,1.4,0
+CA 369,Methods and Concepts: Selected Topics,CA,1,1
+CA 364,Methods and Concepts: Sculptural Practices,CA,1,1
+CA 374,Stage Lighting,CA,1,1
+FPA 270,FPA 270,FPA,1.8,0
+CA 393,Filmmaking V,CA,1,1
+FPA 390,FPA 390,FPA,1.4,0
+CA 471,Production Ensemble VI,CA,1,1
+FPA 370,FPA 370,FPA,1.4,0
+FPA 371,FPA 371,FPA,1.4,0
+CHEM 125,General Chemistry Laboratory I,CHEM,1.4,2
+HS 12,HS 12,HS,1.4,0
+CHEM 285,Organic Chemistry Laboratory I,CHEM,1,4
+CHEM 406,CHEM 406,CHEM,1.4,0
+CHIN 200,Mandarin Chinese III,CHIN,1,1
+CHIN 110,Mandarin Chinese II,CHIN,1.4,1
+CHIN 101,CHIN 101,CHIN,1.4,0
+CHIN 460,Text and Screen: Chinese Fiction and Film,CHIN,1,2
+CA 375,Stage Design,CA,1,1
+CA 428,Advanced Ballet II,CA,1,1
+FPA 427,FPA 427,FPA,1.4,0
+CMPT 340,Biomedical Computing,CMPT,1,1
+CMPT 404,Cryptography and Cryptographic Protocols,CMPT,1,2
+CMPT 433,Embedded Systems,CMPT,1,2
+CMPT 454,Database Systems II,CMPT,1,3
+COGS 491,Honours Project II,COGS,1,1
+COGS 490,COGS 490,COGS,1.4,0
+CRIM 321,Qualitative Research Methods in Criminology,CRIM,1.6,1
+CRIM 120,CRIM 120,CRIM,1.6,0
+CRIM 320,Quantitative Research Methods in Criminology,CRIM,1.6,2
+CRIM 358,Forensic Entomology,CRIM,1,1
+CRIM 429,Indigenous Peoples and International Law,CRIM,1,1
+CRIM 486,Field Placement - Agency - Part-Time,CRIM,1.4,2
+CRIM 488,Field Placement - Academic - Part-Time,CRIM,1.4,3
+COGS 310,Consciousness,COGS,1,2
+EASC 405,"Water, Environment, and Climate Change",EASC,1,1
+GEOG 311,Hydrology,GEOG,1.4,2
+ECON 402,Advanced Microeconomic Theory,ECON,1,3
+ECON 403,Advanced Macroeconomic Theory,ECON,1,3
+ECON 498,Directed Studies,ECON,1,2
+EASC 613,Groundwater Modelling,EASC,1,2
+ECON 436,Seminar in Economics and Social Network Analysis,ECON,1,1
+ECON 752,Co-op III,ECON,1,3
+ECON 832,Computational Methods in Economics,ECON,1,2
+EDUC 493,Directed Studies in Environmental Education,EDUC,1,1
+EDUC 452,EDUC 452,EDUC,1.4,0
+EDUC 802,Counselling Practicum II,EDUC,1,3
+HIST 373,"Conquest in North America, 1500-1900",HIST,1,1
+HIST 101,HIST 101,HIST,1.4,0
+HIST 104,HIST 104,HIST,1.4,0
+HIST 212,The United States to 1877,HIST,1.4,0
+HIST 467,Modern Egypt,HIST,1,1
+HSCI 351,Co-op Practicum II,HSCI,1.4,1
+HSCI 350,Co-op Practicum I,HSCI,1.4,0
+HSCI 403,Health and the Built Environment,HSCI,1,1
+HSCI 416,Health Services Research,HSCI,1,2
+HSCI 307,HSCI 307,HSCI,1.4,0
+HSCI 427,Immune Responses in Health and Disease,HSCI,1,2
+HSCI 431,The Global HIV/AIDS Epidemic,HSCI,1,1
+HSCI 451,Co-op Practicum IV,HSCI,1.4,1
+HSCI 450,Co-op Practicum III,HSCI,1.4,2
+HSCI 476,Seminar in Molecular Basis of Drug Action and Environmental Exposure,HSCI,1,3
+HSCI 478,Seminar in Molecular Epidemiology of Infectious Diseases,HSCI,1,1
+HSCI 484,Senior Seminar in Population Health Research,HSCI,1,2
+HSCI 496,Special Topics in Experiential Health Learning: Global and Local,HSCI,1,1
+HSCI 160,HSCI 160,HSCI,1.4,0
+HSCI 727,Immune System II: Immune Responses in Health and Disease,HSCI,1,1
+IAT 238,Foundations for Designing Interactions,IAT,1,1
+IAT 320,Body Interface,IAT,1,2
+IAT 410,Advanced Game Design,IAT,1,3
+INDG 232,Introduction to Ethnoecology in Indigenous Studies,INDG,1,1
+INDG 310,Indigenous Film,INDG,1,1
+INDG 325,History of Aboriginal Peoples of North America to 1850,INDG,1,1
+INDG 326,History of Aboriginal Peoples of North America Since 1850,INDG,1,1
+INDG 401,Indigenous Peoples and Public Policy,INDG,1,1
+FNST 250,FNST 250,FNST,1.4,0
+INDG 402W,Discourses of Indigenous Peoples,INDG,1,1
+INDG 419,Aboriginal/Indigenous Justice,INDG,1,1
+INDG 429,Indigenous Peoples and International Law,INDG,1,1
+INLG 335,Topics in Indigenous Language I,INLG,1,1
+INLG 130,INLG 130,INLG,1.4,0
+FNLG 130,FNLG 130,FNLG,1.4,0
+INLG 233,INLG 233,INLG,1.4,0
+FNLG 233,FNLG 233,FNLG,1.4,0
+ITAL 110,Introductory Italian II,ITAL,1.4,1
+ITAL 100,ITAL 100,ITAL,1.4,0
+ITAL 200,Intermediate Italian I,ITAL,1.4,1
+ITAL 101,ITAL 101,ITAL,1.4,0
+ITAL 210,Intermediate Italian II,ITAL,1,2
+JAPN 110,JAPN 110,JAPN,1.4,0
+JAPN 101,JAPN 101,JAPN,1.4,0
+LBST 305,Gendering Economy: Paid and Unpaid Labour,LBST,1,1
+HS Foundations of Mathematics 12,HS Foundations of Mathematics 12,HS,1.4,0
+MATH 875,PhD Preliminary Examination,MATH,1.4,1
+MATH 876,PhD Comprehensive Examination,MATH,1.4,2
+MBB 432,Advanced Molecular Biology Techniques,MBB,1,4
+MBB 446,The Molecular Biology of Cancer,MBB,1,4
+MBB 447,Stem Cells - Current Trends,MBB,1,4
+MBB 465,Cancer Genomics,MBB,1,4
+MBB 478,Seminar in Molecular Epidemiology of Infectious Diseases,MBB,1,2
+MBB 738,Human Molecular Genetics,MBB,1,1
+MBB 821,Cell and Molecular Biology Colloquium,MBB,1,1
+MBB 861,Biomolecular Structure and Function Colloquium,MBB,1,1
+MSE 405W,"The Business of Engineering II, Entrepreneurship for Engineers",MSE,1,1
+MSE 426,Introduction to Engineering Design Optimization,MSE,1,2
+NUSC 444,Special Topics in Nuclear Science,NUSC,1,1
+NUSC 442,NUSC 442,NUSC,1.4,0
+ENSC 120,Introduction to Electronics Laboratory Instruments Operation and Measurement Techniques,ENSC,1.8,1
+HS BC Principles of Physics 12,HS BC Principles of Physics 12,HS,1.4,0
+PHYS 100,PHYS 100,PHYS,1.4,0
+PHYS 201,Physics Undergraduate Seminar,PHYS,1,1
+PHYS 391,Introduction to Observational Astrophysics,PHYS,1,2
+PHYS 395,Computational Physics,PHYS,1,2
+PHYS 421,Electromagnetic Waves,PHYS,1.8,1
+PHYS 435,Practicum III,PHYS,1,1
+PHYS 336,PHYS 336,PHYS,1.4,0
+PHYS 821,Advanced Electromagnetism I,PHYS,1,2
+PHYS 822,Advanced Electromagnetism II,PHYS,1,2
+PHYS 861,Introduction to Solid State Physics,PHYS,1,3
+PLAN 495,Professional Planning Capstone,PLAN,1,2
+ENV 302,Environment Practicum I,ENV,1.6,0
+PLCY 818,Quantitative Methods for Policy Analysts,PLCY,1,1
+PSYC 385,Evolution and Psychology,PSYC,1,2
+PSYC 807B,Advanced Topics in Intervention: Family Therapy,PSYC,1,1
+PSYC 807F,Advanced Topics in Intervention: Dialectical Behaviour Therapy,PSYC,1,1
+PSYC 821A,Practicum in Psychological Assessment I,PSYC,1.4,1
+REM 311,Applied Population Ecology,REM,1,1
+REM 427,Avalanche Risk Management,REM,1,1
+REM 431,Climate Change and Environmental Management,REM,1,2
+RISK 321,Fundamentals of Short-Term Insurance,RISK,1,4
+SA 321,Social Movements (S),SA,1,1
+SA 337,Sexuality and Society (S),SA,1,1
+SA 410,Sociology of Dangerous Classes (S),SA,1,1
+SA 474,"Cultures, Politics and Performances (A)",SA,1,1
+SA 496,Directed Readings in Anthropology (A),SA,1,1
+SA 497,Directed Readings in Sociology (S),SA,1,1
+SPAN 102,SPAN 102,SPAN,1.4,0
+HS grade 12 Spanish,HS grade 12 Spanish,HS,1.4,0
+SPAN 210,Intermediate Spanish II,SPAN,1,1
+SPAN 201,SPAN 201,SPAN,1.4,0
+SPAN 302,Spanish Conversation Through Cinema,SPAN,1,1
+STAT 180,Career Development Seminar for Statistics and Actuarial Science,STAT,1,1
+STAT 240,Introduction to Data Science,STAT,1.4,1
+STAT 440,Learning from Big Data,STAT,1,2
+STAT 341,STAT 341,STAT,1.8,0
+STAT 452,Statistical Learning and Prediction,STAT,1,2
+URB 697,Research Project,URB,1,1
+URB 696,URB 696,URB,1.4,0
+ARCH 348,Archaeological Conservation,ARCH,1,1
+ARCH 375,From Soup to Nuts: The Archaeology of Food,ARCH,1,1
+ARCH 377,Historical Archaeology,ARCH,1,1
+EDUC 863,Quantitative Methods in Educational Research,EDUC,1,1
+EDUC 810,EDUC 810,EDUC,1.4,0
+EDUC 864,Research Designs in Education,EDUC,1.8,0
+EDUC 867,Advanced Qualitative Research in Education,EDUC,1,1
+EDUC 866,EDUC 866,EDUC,1.4,0
+EDUC 870,Theories of Counselling,EDUC,1.8,0
+EDUC 871,Family Counselling,EDUC,1,1
+EDUC 874,Counselling Skills and Strategies,EDUC,1.6,1
+EDUC 878,Group Counselling,EDUC,1,2
+EDUC 889,Educational Leadership Research Project,EDUC,1,1
+EDUC 719,EDUC 719,EDUC,1.4,0
+EDUC 901A,Seminar in the History of Educational Theory A,EDUC,1.4,1
+EDUC 901B,Seminar in the History of Educational Theory B,EDUC,1.4,2
+EDUC 902A,Interdisciplinary Seminar in Contemporary Educational Theory A,EDUC,1.4,1
+EDUC 902B,Interdisciplinary Seminar in Contemporary Educational Theory B,EDUC,1.4,2
+EDUC 934,Learning Design Development Workshop,EDUC,1.4,1
+EDUC 890,EDUC 890,EDUC,1.6,0
+EDUC 891,EDUC 891,EDUC,1.6,0
+EDUC 892,EDUC 892,EDUC,1.6,0
+EDUC 893,EDUC 893,EDUC,1.6,0
+EDUC 935,Learning Design Demonstration of Mastery,EDUC,1.4,2
+EDUC 971,Advanced Topics in Educational Psychology,EDUC,1,1
+EDUC 860,EDUC 860,EDUC,1.4,0
+ENGL 111W,Literary Classics in English,ENGL,1.4,0
+ENGL 113W,Literature and Performance,ENGL,1.4,0
+ENGL 114W,Language and Purpose,ENGL,1.4,0
+ENGL 115W,Literature and Culture,ENGL,1.4,0
+ENGL 272,Creative Reading,ENGL,1.6,1
+ENGL 112W,ENGL 112W,ENGL,1.4,0
+WL 105W,WL 105W,WL,1.4,0
+PUB 101,PUB 101,PUB,1.4,0
+ENGL 372,Creative Writing I: Poetry,ENGL,1,2
+ENGL 374,Creative Writing II: Fiction,ENGL,1,2
+ENGL 894,PhD Thesis Prospectus,ENGL,1,1
+ENGL 892,ENGL 892,ENGL,1.4,0
+ENGL 893,ENGL 893,ENGL,1.4,0
+ENSC 100W,"Engineering, Science and Society",ENSC,1,1
+ENSC 105W,"Process, Form, and Convention in Professional Genres",ENSC,1.4,1
+HS BC Pre-Calculus 12,HS BC Pre-Calculus 12,HS,1.4,0
+HS BC Physics 12,HS BC Physics 12,HS,1.4,0
+ENSC 180,Introduction to Engineering Analysis,ENSC,1.6,2
+ENSC 151,Introduction to Software Development for Engineers,ENSC,2,1
+ENSC 225,Microelectronics I,ENSC,2,2
+CMPT 127,CMPT 127,CMPT,1.4,0
+ENSC 295,Industrial Internship II,ENSC,1.6,1
+ENSC 195,ENSC 195,ENSC,1.6,0
+ENSC 196,ENSC 196,ENSC,1.6,0
+ENSC 296,Special Internship II,ENSC,1.6,1
+ENSC 316,Engineering Electromagnetics I,ENSC,1.4,1
+ENSC 324,Electronic Devices,ENSC,1,2
+ENSC 325,Microelectronics II,ENSC,1.6,1
+ENSC 350,Digital Systems Design,ENSC,1.8,1
+ENSC 250,ENSC 250,ENSC,1.6,0
+CMPT 250,CMPT 250,CMPT,1.6,0
+ENSC 385,Statics and Strength of Materials,ENSC,1.4,2
+ENSC 386,Introduction to Mechanical Design,ENSC,1.4,1
+ENSC 395,Industrial Internship III,ENSC,1,2
+ENSC 396,Special Internship III,ENSC,1,2
+ENSC 413,Deep Learning Systems in Engineering,ENSC,1,4
+ENSC 416,Engineering Electromagnetics II: Design,ENSC,1.4,2
+ENSC 424,Multimedia Communications Engineering,ENSC,1,2
+ENSC 425,Electronic System Design,ENSC,1,3
+ENSC 426,High Frequency Electronics,ENSC,1,2
+ENSC 427,Communication Networks,ENSC,1.4,1
+ENSC 327,ENSC 327,ENSC,1.6,0
+ENSC 429,Digital Signal Processing,ENSC,1.4,2
+ENSC 328,ENSC 328,ENSC,1.4,0
+ENSC 440,Capstone B: Engineering Design Project,ENSC,1,1
+ENSC 405W,ENSC 405W,ENSC,1.4,0
+ENSC 450,VLSI Systems Design,ENSC,1,2
+ENSC 452,Advanced Digital System Design,ENSC,1,2
+ENSC 453,Programming for Heterogeneous Computing Systems,ENSC,1,2
+ENSC 470,Optical and Laser Engineering Applications,ENSC,1,1
+ENSC 474,Digital/Medical Image Processing,ENSC,1,2
+ENSC 475,Biomedical Instrumentation,ENSC,1,3
+ENSC 477,Biomedical Image Acquisition,ENSC,1,2
+ENSC 482,Introduction to Decision Making in Engineering,ENSC,1,2
+ENSC 483,Modern Control Systems,ENSC,1,2
+ENSC 488,Introduction to Robotics,ENSC,1.4,2
+ENSC 230,ENSC 230,ENSC,1.4,0
+ENSC 495,Introduction to Microelectronic Fabrication,ENSC,1,2
+ENSC 498,Engineering Science Thesis Proposal,ENSC,1.4,0
+ENSC 499,Engineering Science Undergraduate Thesis,ENSC,1,1
+ENSC 835,Communication Networks,ENSC,1,2
+ENSC 861,Advanced Multimedia Compression,ENSC,1,3
+ENSC 890,Advanced Robotics: Mechanics and Control,ENSC,1,3
+ENV 402,Environment Practicum III,ENV,1.4,2
+ENV 303,Environment Practicum II,ENV,1.4,1
+GEOG 303,GEOG 303,GEOG,1.4,0
+ENV 404,Environment Practicum V,ENV,1,4
+ENV 403,Environment Practicum IV,ENV,1.4,3
+GEOG 403,GEOG 403,GEOG,1.6,0
+EVSC 201W,Environmental Science in Practice,EVSC,1.4,1
+EVSC 300,Seminar in Environmental Science,EVSC,1.4,2
+EVSC 305,Methods in Environmental Science,EVSC,1.8,1
+EVSC 380,Practicum I,EVSC,1.4,0
+EVSC 381,Practicum II,EVSC,1.4,1
+EVSC 400,Environmental Science Capstone,EVSC,1,3
+EVSC 410,River Restoration,EVSC,1,2
+EASC 100,EASC 100,EASC,1.4,0
+EVSC 445,Environmental Data Analysis,EVSC,1,1
+STAT 100,STAT 100,STAT,1.4,0
+EVSC 480,Practicum III,EVSC,1.4,2
+EVSC 481,Practicum IV,EVSC,1.4,3
+EVSC 482,Practicum V,EVSC,1,4
+EVSC 489,Environmental Science Thesis I,EVSC,1.4,2
+EVSC 490W,Environmental Science Thesis II,EVSC,1,3
+FREN 101,Elementary French I,FREN,1.4,0
+FREN 102,Elementary French II,FREN,1.4,1
+FREN 120,French for Beginners,FREN,1.4,0
+FREN 121,FREN 121,FREN,1.4,0
+FREN 201,Intermediate French I : Cultures and Communication,FREN,1.4,1
+HS Grade 12 French,HS Grade 12 French,HS,1.4,0
+FREN 122,FREN 122,FREN,1.4,0
+FREN 202,Intermediate French II: Cultures and Communication,FREN,2.2,1
+FREN 210,FREN 210,FREN,1.4,0
+FREN 203,Contemporary Francophone Issues in the Humanities and Social Sciences,FREN,1,1
+HS Grade 12 French Immersion,HS Grade 12 French Immersion,HS,2.2,0
+FREN 221,FREN 221,FREN,2.2,0
+FREN 222,French Writing II,FREN,1.4,1
+FREN 211,FREN 211,FREN,1.4,0
+FREN 212,FREN 212,FREN,1.4,0
+FREN 245,Introduction to French and Francophone Studies,FREN,2.2,1
+FREN 275,"French Inside Out: Introduction to French Language, Culture, and Society",FREN,2,1
+FREN 301W,Writing Your Way Toward French Proficiency,FREN,2.2,1
+FREN 302,"Critical Thinking & Public Speaking on Contemporary Francophone Cultural, Social & Political Issues",FREN,1,1
+FREN 303,Practical French for a Practical World I,FREN,1,1
+FREN 304,Advanced French Grammar,FREN,1,1
+FREN 330,Francophone World,FREN,1,2
+FREN 331,Accents of French,FREN,1,2
+FREN 332,Social Approaches to French,FREN,1,2
+FREN 333,The Magic of French Words,FREN,1,1
+FREN 270,FREN 270,FREN,1.6,0
+LING 222,LING 222,LING,1.6,0
+FREN 334,Topics in French Applied Linguistics,FREN,1,1
+FREN 340,Survey of Quebecois Literature,FREN,1,1
+FREN 240,FREN 240,FREN,1.8,0
+FREN 341,Survey of French Literature to 1600,FREN,1,2
+FREN 344,Survey of French Literature after 1789,FREN,1,1
+FREN 230,FREN 230,FREN,1.6,0
+FREN 345,Survey of French Literature from 1600 to 1789,FREN,1,2
+FREN 350,Global View of Francophone Literatures in North Africa,FREN,1,2
+FREN 351,STT-Introduction to Francophone Caribbean Literature,FREN,1,2
+FREN 355,Survey of Indigenous Literatures in French and Translation,FREN,1,2
+FREN 365,Survey of African Literature in French,FREN,1,2
+EDUC 946,Doctoral Seminar in Mathematics Education,EDUC,1,1
+EDUC 942,EDUC 942,EDUC,1.4,0
+GEOG 214,Weather and Climate,GEOG,1.8,1
+GEOG 241,"People, Place, Society",GEOG,1.4,1
+GEOG 255,Geographical Information Science I,GEOG,1.8,0
+GEOG 261,Encountering the City,GEOG,1,1
+GEOG 102,GEOG 102,GEOG,1.6,0
+GEOG 266W,Geography in Practice,GEOG,1,1
+GEOG 104,GEOG 104,GEOG,1.8,0
+GEOG 267,Indigenous Land-Based Knowledge and Relationships,GEOG,1,1
+GEOG 162,GEOG 162,GEOG,1.4,0
+GEOG 304,Geography of Wine,GEOG,1,1
+GEOG 312,Geography of Natural Hazards,GEOG,1,1
+EASC 104,EASC 104,EASC,1.4,0
+GEOG 313,River Geomorphology,GEOG,1,2
+GEOG 314,The Climate System,GEOG,1.4,2
+GEOG 315,World Ecosystems,GEOG,1,2
+GEOG 316,Global Biogeochemical and Water Cycles,GEOG,1,2
+GEOG 317,Soil Science,GEOG,1,2
+GEOG 321,Geographies of Global Capitalism,GEOG,1,1
+GEOG 324,Geography of Transportation,GEOG,1,1
+GEOG 327,Geography of Tourism,GEOG,1,1
+GEOG 328,Labour Geographies,GEOG,1,1
+GEOG 340,Queer Geographies,GEOG,1,1
+GSWS 100,Sex Talk: Introduction to Contemporary Issues in Sexuality Studies,GSWS,1.4,0
+GSWS 101,Gender Talk,GSWS,1.6,0
+GSWS 102,Feminist Action,GSWS,1.6,0
+HSCI 120,HSCI 120,HSCI,1.4,0
+GEOG 351,Multimedia Cartography,GEOG,1.4,1
+GEOG 352,Spatial Analysis,GEOG,1.4,1
+GEOG 353,Advanced Remote Sensing,GEOG,1.4,1
+GEOG 253,GEOG 253,GEOG,1.4,0
+GEOG 355,Geographical Information Science II,GEOG,1.6,1
+GEOG 362W,Gentrification and Urban Change,GEOG,1,1
+GEOG 363,Urban Planning and Policy,GEOG,1,1
+GEOG 364,Cities and Crisis,GEOG,1,1
+GEOG 382,World on the Move,GEOG,1,1
+GEOG 385,Food and the City,GEOG,1,1
+GEOG 389W,Nature and Society,GEOG,1,1
+GEOG 409,Geography Practicum V,GEOG,1,1
+GEOG 429,Racial Capitalism and Beyond,GEOG,1,1
+GEOG 441,"Cities, Space, and Politics",GEOG,1,1
+GEOG 161,GEOG 161,GEOG,1.4,0
+GEOG 455W,Theoretical and Applied GIS,GEOG,1,2
+GEOG 465,Geographies of Conquest and Liberation,GEOG,1,2
+GEOG 600,Introduction to Graduate Studies: Fall Semester,GEOG,2,0
+GEOG 601,Introduction to Graduate Studies: Spring Semester,GEOG,1.6,0
+GEOG 606,Research Design and Analytical Techniques in Physical Geography,GEOG,1.4,0
+GEOG 671,Doctoral Qualifying Exams,GEOG,1.4,1
+GEOG 677,Msc Thesis Proposal,GEOG,1,1
+GEOG 678,MA Thesis Proposal,GEOG,1,1
+GEOG 603,GEOG 603,GEOG,1.4,0
+GEOG 679,PhD Thesis Proposal,GEOG,1,2
+GERM 100,Introductory German I,GERM,1.4,0
+GERM 110,Introductory German II,GERM,1.4,1
+GERM 102,GERM 102,GERM,1.4,0
+GERM 200,Intermediate German I,GERM,1.4,1
+GERM 103,GERM 103,GERM,1.4,0
+GERM 210,Intermediate German II,GERM,1,1
+GERM 201,GERM 201,GERM,1.4,0
+GERM 300,Advanced German: Composition and Conversation,GERM,1,1
+GERM 202,GERM 202,GERM,1.4,0
+GERO 996,Thesis Proposal,GERO,1,1
+GERO 994,Comprehensive Examination I,GERO,1.4,0
+GERO 995,GERO 995,GERO,1.4,0
+GRK 100,Introductory Modern Greek I,GRK,1.4,0
+GRK 111,Introductory Modern Greek II,GRK,1.4,1
+GRK 191,GRK 191,GRK,1.4,0
+GRK 200,Intermediate Modern Greek I,GRK,1.4,1
+GRK 192,GRK 192,GRK,1.4,0
+GRK 211,Intermediate Modern Greek II,GRK,1,1
+GRK 291,GRK 291,GRK,1.4,0
+GSWS 401,Research Project,GSWS,1,1
+WS 101,WS 101,WS,1.4,0
+WS 102,WS 102,WS,1.4,0
+GSWS 844,Directed Studies II,GSWS,1,1
+GSWS 822,GSWS 822,GSWS,1.4,0
+REM 423,Research Methods in Fisheries Assessment,REM,1,2
+GEOG 356,3D GIScience,GEOG,1.4,1
+GEOG 412W,Glacial Processes and Environments,GEOG,1,2
+GEOG 414,Climate Change,GEOG,1,3
+GEOG 451,Spatial Modeling,GEOG,1,2
+RISK 438,Job Practicum V,RISK,1,2
+SEE 899,PhD Thesis,SEE,1,2
+BUS 492,Selected Topics in Business Administration,BUS,1,1
+ARCH 390,Archaeobotany,ARCH,1,1
+ARCH 272,ARCH 272,ARCH,1.4,0
+ARCH 442,Forensic Anthropology,ARCH,1,3
+BPK 324,BPK 324,BPK,1.4,0
+BPK 342,Active Health,BPK,1,2
+BPK 426,Functional Human Neuroanatomy,BPK,1,1
+BPK 443,Advanced Exercise Programming,BPK,1,2
+BPK 343,BPK 343,BPK,1.4,0
+BPK 459,Behavioural Neuroscience Undergraduate Honours Thesis,BPK,1,2
+BUS 401,Developing Organizational Opportunities,BUS,1,1
+BUS 311,BUS 311,BUS,1.4,0
+BUS 341,BUS 341,BUS,1.4,0
+BUS 340,BUS 340,BUS,1.4,0
+BUS 439,Analytics Project,BUS,1,3
+BUS 462,BUS 462,BUS,1.4,0
+BUS 443,New Product Development and Design,BUS,1,1
+FPA 122,FPA 122,FPA,1.4,0
+CA 216,Selected Topics in Cinema Studies,CA,1,1
+CA 135,CA 135,CA,1.6,0
+CA 136,CA 136,CA,1.8,0
+CA 235,Experimental Film and Video,CA,1.4,1
+CA 236,CA 236,CA,1.4,0
+CA 316,Intermediate Selected Topics in Cinema Studies,CA,1.8,1
+CA 337,CA 337,CA,1.8,0
+CA 318,CA 318,CA,1.8,0
+CA 335,CA 335,CA,1.8,0
+CA 416,Advanced Seminar in Cinema Studies,CA,1.4,1
+CA 436,CA 436,CA,1.4,0
+CA 339,Directing and Acting for Film and Video,CA,1,1
+FPA 251,FPA 251,FPA,1.4,0
+FPA 271,FPA 271,FPA,1.4,0
+CA 412W,Advanced Seminar in Art and Performance Studies,CA,1,1
+FPA 210W,FPA 210W,FPA,1.4,0
+FPA 210,FPA 210,FPA,1.4,0
+FPA 316,FPA 316,FPA,1.6,0
+FPA 337,FPA 337,FPA,1.6,0
+FPA 318,FPA 318,FPA,1.6,0
+FPA 335,FPA 335,FPA,1.6,0
+FPA 357W,FPA 357W,FPA,1.4,0
+CHIN 100,Mandarin Chinese I,CHIN,1.4,0
+CMPT 466,Animation,CMPT,1,3
+EASC 310W,Paleontology,EASC,1,2
+ECON 222,Introduction to Game Theory,ECON,1,1
+ECON 334,Data Visualization and Economic Analysis,ECON,1,1
+ECON 342,International Trade,ECON,1,1
+ECON 427W,Industrial Organization: Law and Economics,ECON,1,2
+EDUC 375,Struggle with Mathematics: Sources and Recovery,EDUC,1,2
+EDUC 401,EDUC 401,EDUC,2.4,0
+EDUC 416,Designs for Learning: Secondary Science,EDUC,1,2
+EDUC 430,Designs for Learning: Dance,EDUC,1,2
+EDUC 457,Drama and Education,EDUC,1,1
+EDUC 459,Instructional Activities in Physical Education,EDUC,1,2
+EDUC 467,Curriculum and Instruction in Teaching English as an Additional Language,EDUC,1,1
+EDUC 473W,Designs for Learning: Reading,EDUC,1,2
+EDUC 476,Designs for Learning: Elementary Science,EDUC,1,1
+EDUC 477,Designs for Learning: Art,EDUC,1,1
+EDUC 478,Designs for Learning: Music,EDUC,1,1
+ENSC 406,"Engineering Ethics, Law, and Professional Practice",ENSC,1,1
+GEOG 302,GEOG 302,GEOG,1.4,0
+GEOG 402,GEOG 402,GEOG,1.4,0
+HIST 401,Problems in Modern German History,HIST,1,1
+HIST 224,HIST 224,HIST,1.4,0
+HIST 225,HIST 225,HIST,1.4,0
+HSCI 452,Co-op Practicum V,HSCI,1,2
+IAT 431,Speculative Design,IAT,1,3
+IAT 333,IAT 333,IAT,1.4,0
+INDG 301,Indigenous/Indigenist Research Methods,INDG,1,1
+INDG 111,INDG 111,INDG,1.4,0
+FNST 111,FNST 111,FNST,1.4,0
+INDG 433,Indigenous Environmental Justice and Activism,INDG,1,1
+INDG 435,STT-Land-Based Learning Field Course,INDG,1,1
+MACM 203,Computing with Linear Algebra,MACM,1,2
+MACM 409,"Numerical Linear Algebra: Algorithms, Implementation and Applications",MACM,1,3
+MATH 303,Mathematical Journeys III,MATH,1,2
+MATH 418,Partial Differential Equations,MATH,1.4,2
+MATH 462,Fluid Dynamics,MATH,1,1
+MBB 229,Introductory Molecular Biology and Biochemistry Laboratory,MBB,1,1
+MBB 498,Directed Research,MBB,1,2
+PHYS 131,PHYS 131,PHYS,1.4,0
+PHIL 343,Topics in the Philosophy of Mind,PHIL,1,2
+PHYS 346,Energy and the Environment,PHYS,1,3
+PHYS 485,Particle Physics,PHYS,1,3
+PHYS 849,Topics in Nanophysics,PHYS,1,2
+SA 499,Honours Essay (SA),SA,1,1
+SA 495,SA 495,SA,1.4,0
+SEE 402,Professional Engineering Ethics and Practice,SEE,1,1
+SEE 464,Energy Systems Modeling for Buildings,SEE,1,3
+SEE 810,Sustainability and Sustainable Energy Technologies,SEE,1,1
+STAT 360,Advanced R for Data Science,STAT,1.4,1
+STAT 361,Laboratory for Advanced R for Data Science,STAT,1.4,2
