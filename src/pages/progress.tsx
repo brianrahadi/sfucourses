@@ -86,6 +86,7 @@ const ProgressPage = () => {
   const [outlineOptions, setOutlineOptions] = useState<OutlineOption[]>([]);
 
   const [catalogName, setCatalogName] = useState("Your name...");
+  const [targetCredits, setTargetCredits] = useState(120);
 
   const [mounted, setMounted] = useState(false);
   const loadedFromUrl = useRef(false);
@@ -94,6 +95,8 @@ const ProgressPage = () => {
     setMounted(true);
     const savedName = localStorage.getItem("catalog-name");
     if (savedName) setCatalogName(savedName);
+    const savedTarget = localStorage.getItem("catalog-target-credits");
+    if (savedTarget) setTargetCredits(parseInt(savedTarget) || 120);
   }, []);
 
   // Load courses from URL on mount
@@ -175,9 +178,12 @@ const ProgressPage = () => {
     );
   }, [inProgressCourses]);
 
-  const progressPercentage = Math.min((totalCompletedCredits / 120) * 100, 100);
+  const progressPercentage = Math.min(
+    (totalCompletedCredits / (targetCredits || 1)) * 100,
+    100
+  );
   const creditsRemaining = Math.max(
-    120 - totalCompletedCredits - totalInProgressCredits,
+    targetCredits - totalCompletedCredits - totalInProgressCredits,
     0
   );
 
@@ -589,8 +595,32 @@ const ProgressPage = () => {
             <div className="progress-header">
               <span>Overall degree progress</span>
               <span className="progress-text">
-                {totalCompletedCredits} / 120 credits (
-                {Math.round(progressPercentage)}%)
+                {totalCompletedCredits} /{" "}
+                <input
+                  type="number"
+                  value={targetCredits}
+                  onChange={(e) => {
+                    const val = parseInt(e.target.value) || 0;
+                    setTargetCredits(val);
+                    localStorage.setItem(
+                      "catalog-target-credits",
+                      val.toString()
+                    );
+                  }}
+                  className="target-credits-input"
+                  style={{
+                    background: "transparent",
+                    border: "none",
+                    outline: "none",
+                    color: "inherit",
+                    width: "40px",
+                    fontWeight: "inherit",
+                    fontSize: "inherit",
+                    textAlign: "center",
+                    padding: 0,
+                  }}
+                />{" "}
+                credits
               </span>
             </div>
             <div className="progress-bar-container">
@@ -855,9 +885,9 @@ const ProgressPage = () => {
                     (sum, c) => sum + (Number(c.credits) || 3),
                     0
                   )}{" "}
-                / 120 cr planned.{" "}
+                / {targetCredits} cr planned.{" "}
                 {Math.max(
-                  120 -
+                  targetCredits -
                     totalCompletedCredits -
                     totalInProgressCredits -
                     coursesToTake.reduce(
@@ -1044,7 +1074,7 @@ const ProgressPage = () => {
         onSave={handleMassAdd}
       >
         <textarea
-          placeholder='[{"course": "CMPT 120", "term": "2022 Summer"}] Tip: Go SFU > Academic Progress > View My Course History > Copy the whole course block into any LLMs.'
+          placeholder='[{"course": "CMPT 120", "term": "2022 Summer"}] Tip: Go SFU > Academic Progress > View My Course History > Copy the whole course block into any LLMs ("Convert this to Strict JSON Format Ex: to [{"course": "CMPT 120", "term": "Summer 2025"}]).'
           value={massAddJson}
           onChange={(e) => setMassAddJson(e.target.value)}
           style={{
