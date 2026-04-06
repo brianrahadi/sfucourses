@@ -1,17 +1,51 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import {
   Hero,
   CatalogModal,
   CourseCombobox,
   CatalogCourseCard,
+  CopyLinkButton,
 } from "@components";
 import ButtonGroup from "../components/ButtonGroup";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
-import { useCatalogStore } from "src/store/useCatalogStore";
+import { useCatalogStore, CompletedCourse } from "src/store/useCatalogStore";
 import { useCoursesData } from "src/hooks/UseCoursesData";
 import { getCurrentAndNextTerm } from "@utils";
 import toast from "react-hot-toast";
 import { OutlineOption } from "src/components/CourseCombobox";
+import { insertUrlParam, removeUrlParameter } from "@utils/url";
+import { FaImage } from "react-icons/fa";
+import html2canvas from "html2canvas";
+
+const seasonToAbbrev: Record<string, string> = {
+  Spring: "sp",
+  Summer: "su",
+  Fall: "fa",
+};
+const abbrevToSeason: Record<string, string> = {
+  sp: "Spring",
+  su: "Summer",
+  fa: "Fall",
+};
+
+function encodeCourse(id: string, term: string): string {
+  const [season, year] = term.split(" ");
+  const abbrev = seasonToAbbrev[season] || "sp";
+  const shortYear = (year || "00").slice(-2);
+  return `${id.replace(" ", "").toLowerCase()}${abbrev}${shortYear}`;
+}
+
+function decodeCourse(encoded: string): { id: string; term: string } | null {
+  // Match: dept (letters), number (digits + optional letters like W), season abbrev (2 chars), year (2 digits)
+  const match = encoded.match(/^([a-z]+)(\d+\w*?)(sp|su|fa)(\d{2})$/i);
+  if (!match) return null;
+  const dept = match[1].toUpperCase();
+  const number = match[2].toUpperCase();
+  const season = abbrevToSeason[match[3].toLowerCase()];
+  const year = `20${match[4]}`;
+  if (!season) return null;
+  return { id: `${dept} ${number}`, term: `${season} ${year}` };
+}
 
 const ProgressPage = () => {
   const {
@@ -51,10 +85,46 @@ const ProgressPage = () => {
   const [outlineOptions, setOutlineOptions] = useState<OutlineOption[]>([]);
 
   const [mounted, setMounted] = useState(false);
+  const loadedFromUrl = useRef(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Load courses from URL on mount
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const coursesParam = params.get("courses");
+    if (!coursesParam) return;
+
+    const encoded = coursesParam.split("-").filter(Boolean);
+    if (encoded.length === 0) return;
+
+    loadedFromUrl.current = true;
+    encoded.forEach((code) => {
+      const decoded = decodeCourse(code);
+      if (!decoded) return;
+      const exists = completedCourses.some(
+        (c) => c.id === decoded.id && c.term === decoded.term
+      );
+      if (!exists) {
+        addCompletedCourse({ id: decoded.id, term: decoded.term, credits: 3 });
+      }
+    });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Sync completed courses to URL
+  useEffect(() => {
+    if (!mounted) return;
+    if (completedCourses.length === 0) {
+      removeUrlParameter("courses");
+      return;
+    }
+    const encoded = completedCourses
+      .map((c) => encodeCourse(c.id, c.term))
+      .join("-");
+    insertUrlParam("courses", encoded);
+  }, [completedCourses, mounted]);
 
   // Sync in-progress and next-term courses from default schedules
   useEffect(() => {
@@ -206,6 +276,16 @@ const ProgressPage = () => {
     return null;
   };
 
+  const isTermBeforeCurrent = (term: string) => {
+    if (!term || term === "Undecided") return false;
+    const seasons: Record<string, number> = { Spring: 1, Summer: 2, Fall: 3 };
+    const [seasonA, yearA] = term.split(" ");
+    const [seasonB, yearB] = currentTerm.split(" ");
+    if (parseInt(yearA || "0") !== parseInt(yearB || "0"))
+      return parseInt(yearA || "0") < parseInt(yearB || "0");
+    return (seasons[seasonA] || 0) < (seasons[seasonB] || 0);
+  };
+
   const handleDragStart = (
     e: React.DragEvent<HTMLDivElement>,
     sourceSection: string,
@@ -267,6 +347,16 @@ const ProgressPage = () => {
       const match = getCourseMatch(courseId);
       const credits = match ? match.units : 3;
 
+      // Validate before removing from source
+      if (targetSection === "completed") {
+        const completedTerm =
+          courseTerm && courseTerm !== "Undecided" ? courseTerm : undefined;
+        if (!completedTerm || !isTermBeforeCurrent(completedTerm)) {
+          toast.error("Completed courses must be from a previous term");
+          return;
+        }
+      }
+
       if (sourceSection === "completed") {
         removeCompletedCourse(courseId, courseTerm);
       } else {
@@ -274,10 +364,10 @@ const ProgressPage = () => {
       }
 
       if (targetSection === "completed") {
+        const completedTerm = courseTerm!;
         addCompletedCourse({
           id: courseId,
-          term:
-            courseTerm && courseTerm !== "Undecided" ? courseTerm : currentTerm,
+          term: completedTerm,
           credits,
         });
       } else if (targetSection === "in-progress") {
@@ -315,10 +405,15 @@ const ProgressPage = () => {
     const courseMatch = getCourseMatch(courseInput);
     if (!courseMatch) return toast.error("Course not found in SFU API");
 
+    const completedTerm =
+      selectedCourseTerm === "Undecided" ? undefined : selectedCourseTerm;
+    if (!completedTerm || !isTermBeforeCurrent(completedTerm)) {
+      return toast.error("Completed courses must be from a previous term");
+    }
+
     addCompletedCourse({
       id: courseInput.trim().toUpperCase(),
-      term:
-        selectedCourseTerm === "Undecided" ? currentTerm : selectedCourseTerm,
+      term: completedTerm,
       credits: courseMatch.units || 0,
     });
     closeModals();
@@ -469,7 +564,54 @@ const ProgressPage = () => {
               <p>BSc Computer Science · Student ID: 20210482 · Year 3</p>
             </div>
           </div> */}
-
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-end",
+              gap: "8px",
+            }}
+          >
+            <CopyLinkButton hasSelectedCourses={completedCourses.length > 0} />
+            <button
+              className="utility-button"
+              onClick={async () => {
+                try {
+                  const el = document.querySelector(".catalog-dashboard");
+                  if (!el) return;
+                  const canvas = await html2canvas(el as HTMLElement, {
+                    backgroundColor: "#141515",
+                    scale: 2,
+                    logging: false,
+                  });
+                  canvas.toBlob(async (blob) => {
+                    if (!blob) return;
+                    try {
+                      await navigator.clipboard.write([
+                        new ClipboardItem({ "image/png": blob }),
+                      ]);
+                      toast.success("Progress image copied to clipboard!");
+                    } catch {
+                      const url = URL.createObjectURL(blob);
+                      const link = document.createElement("a");
+                      link.href = url;
+                      link.download = "sfu-progress.png";
+                      document.body.appendChild(link);
+                      link.click();
+                      document.body.removeChild(link);
+                    }
+                  }, "image/png");
+                } catch (err) {
+                  toast.error("Failed to capture image");
+                }
+              }}
+              disabled={completedCourses.length === 0}
+              title="Copy progress as image"
+            >
+              <FaImage />
+              &nbsp; Copy Image
+            </button>
+          </div>
           <div className="db-progress-section">
             <div className="progress-header">
               <span>Overall degree progress</span>
