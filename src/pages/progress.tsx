@@ -65,6 +65,7 @@ const ProgressPage = () => {
 
   const [isAddCompletedOpen, setIsAddCompletedOpen] = useState(false);
   const [isInProgressOpen, setIsInProgressOpen] = useState(false);
+  const [isNextTermOpen, setIsNextTermOpen] = useState(false);
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [isMassAddOpen, setIsMassAddOpen] = useState(false);
   const [massAddJson, setMassAddJson] = useState("");
@@ -156,6 +157,38 @@ const ProgressPage = () => {
     return terms;
   }, [currentYearStr]);
 
+  const futureTerms = useMemo(() => {
+    const seasons = { Spring: 1, Summer: 2, Fall: 3 };
+    const [seasonN, yearN] = nextTerm.split(" ");
+    const nextTermValue =
+      parseInt(yearN || "0") * 10 +
+      (seasons[seasonN as keyof typeof seasons] || 0);
+
+    return chronologicalTerms.filter((t) => {
+      const [seasonT, yearT] = t.split(" ");
+      const tValue =
+        parseInt(yearT || "0") * 10 +
+        (seasons[seasonT as keyof typeof seasons] || 0);
+      return tValue > nextTermValue;
+    });
+  }, [chronologicalTerms, nextTerm]);
+
+  const pastTerms = useMemo(() => {
+    const seasons = { Spring: 1, Summer: 2, Fall: 3 };
+    const [seasonC, yearC] = currentTerm.split(" ");
+    const currentTermValue =
+      parseInt(yearC || "0") * 10 +
+      (seasons[seasonC as keyof typeof seasons] || 0);
+
+    return chronologicalTerms.filter((t) => {
+      const [seasonT, yearT] = t.split(" ");
+      const tValue =
+        parseInt(yearT || "0") * 10 +
+        (seasons[seasonT as keyof typeof seasons] || 0);
+      return tValue < currentTermValue;
+    });
+  }, [chronologicalTerms, currentTerm]);
+
   const totalCompletedCredits = useMemo(() => {
     return completedCourses.reduce(
       (sum, course) => sum + (Number(course.credits) || 0),
@@ -186,6 +219,51 @@ const ProgressPage = () => {
     targetCredits - totalCompletedCredits - totalInProgressCredits,
     0
   );
+
+  const currentTermOptions = useMemo(() => {
+    if (!courses || courses.length === 0) return outlineOptions;
+    const filtered = courses.filter(
+      (c) => c.offerings && c.offerings.some((o) => o.term === currentTerm)
+    );
+    if (filtered.length === 0) return outlineOptions;
+    return filtered.map((c) => ({
+      dept: c.dept,
+      number: c.number,
+      title: c.title,
+      units: Number(c.units) || 3,
+    }));
+  }, [courses, currentTerm, outlineOptions]);
+
+  const futureCourseOptions = useMemo(() => {
+    if (selectedCourseTerm === "Undecided" || !selectedCourseTerm)
+      return outlineOptions;
+    if (!courses || courses.length === 0) return outlineOptions;
+    const filtered = courses.filter(
+      (c) =>
+        c.offerings && c.offerings.some((o) => o.term === selectedCourseTerm)
+    );
+    if (filtered.length === 0) return outlineOptions;
+    return filtered.map((c) => ({
+      dept: c.dept,
+      number: c.number,
+      title: c.title,
+      units: Number(c.units) || 3,
+    }));
+  }, [courses, selectedCourseTerm, outlineOptions]);
+
+  const nextTermOptions = useMemo(() => {
+    if (!courses || courses.length === 0) return outlineOptions;
+    const filtered = courses.filter(
+      (c) => c.offerings && c.offerings.some((o) => o.term === nextTerm)
+    );
+    if (filtered.length === 0) return outlineOptions;
+    return filtered.map((c) => ({
+      dept: c.dept,
+      number: c.number,
+      title: c.title,
+      units: Number(c.units) || 3,
+    }));
+  }, [courses, nextTerm, outlineOptions]);
 
   const getCourseMatch = (courseId: string) => {
     const parts = courseId.trim().toUpperCase().split(" ");
@@ -304,6 +382,32 @@ const ProgressPage = () => {
           toast.error("Completed courses must be from a previous term");
           return;
         }
+      } else if (targetSection === "in-progress" && courses) {
+        const courseObj = courses.find(
+          (c) =>
+            `${c.dept} ${c.number}`.toUpperCase() === courseId.toUpperCase()
+        );
+        if (
+          courseObj &&
+          courseObj.offerings &&
+          !courseObj.offerings.some((o) => o.term === currentTerm)
+        ) {
+          toast.error(`Course not offered in ${currentTerm}`);
+          return;
+        }
+      } else if (targetSection === "next-term" && courses) {
+        const courseObj = courses.find(
+          (c) =>
+            `${c.dept} ${c.number}`.toUpperCase() === courseId.toUpperCase()
+        );
+        if (
+          courseObj &&
+          courseObj.offerings &&
+          !courseObj.offerings.some((o) => o.term === nextTerm)
+        ) {
+          toast.error(`Course not offered in ${nextTerm}`);
+          return;
+        }
       }
 
       if (sourceSection === "completed") {
@@ -388,6 +492,25 @@ const ProgressPage = () => {
     toast.success("Course added to in progress");
   };
 
+  const handleAddNextTerm = () => {
+    if (!courseInput.trim()) return toast.error("Course code required");
+
+    const existingSection = checkCourseExists(courseInput);
+    if (existingSection)
+      return toast.error(`Course already exists in ${existingSection}`);
+
+    const courseMatch = getCourseMatch(courseInput);
+    if (!courseMatch) return toast.error("Course not found in SFU API");
+
+    addWishlistCourse({
+      id: courseInput.trim().toUpperCase(),
+      credits: courseMatch.units || 3,
+      termPlanned: nextTerm,
+    });
+    closeModals();
+    toast.success("Course added to next term");
+  };
+
   const handleAddWishlist = () => {
     if (!courseInput.trim()) return toast.error("Course code required");
 
@@ -411,6 +534,7 @@ const ProgressPage = () => {
   const closeModals = () => {
     setIsAddCompletedOpen(false);
     setIsInProgressOpen(false);
+    setIsNextTermOpen(false);
     setIsWishlistOpen(false);
     setIsMassAddOpen(false);
     setCourseInput("");
@@ -719,7 +843,7 @@ const ProgressPage = () => {
                 <h2>NEXT TERM — {nextTerm.toUpperCase()} </h2>
                 <button
                   className="add-btn"
-                  onClick={() => setIsWishlistOpen(true)}
+                  onClick={() => setIsNextTermOpen(true)}
                 >
                   Add
                 </button>
@@ -802,7 +926,10 @@ const ProgressPage = () => {
                 </h2>
                 <button
                   className="add-btn"
-                  onClick={() => setIsWishlistOpen(true)}
+                  onClick={() => {
+                    setSelectedCourseTerm("Undecided");
+                    setIsWishlistOpen(true);
+                  }}
                 >
                   Add
                 </button>
@@ -931,7 +1058,10 @@ const ProgressPage = () => {
                 </button>
                 <button
                   className="add-btn"
-                  onClick={() => setIsAddCompletedOpen(true)}
+                  onClick={() => {
+                    setSelectedCourseTerm(pastTerms[0] || "");
+                    setIsAddCompletedOpen(true);
+                  }}
                 >
                   Add
                 </button>
@@ -1017,7 +1147,7 @@ const ProgressPage = () => {
           value={selectedCourseTerm}
           onChange={(e) => setSelectedCourseTerm(e.target.value)}
         >
-          {chronologicalTerms.map((t: string) => (
+          {pastTerms.map((t: string) => (
             <option key={t} value={t}>
               {t}
             </option>
@@ -1034,7 +1164,20 @@ const ProgressPage = () => {
         <CourseCombobox
           value={courseInput}
           onChange={setCourseInput}
-          options={outlineOptions}
+          options={currentTermOptions}
+        />
+      </CatalogModal>
+
+      <CatalogModal
+        isOpen={isNextTermOpen}
+        onClose={closeModals}
+        title={`Add Next Term (${nextTerm})`}
+        onSave={handleAddNextTerm}
+      >
+        <CourseCombobox
+          value={courseInput}
+          onChange={setCourseInput}
+          options={nextTermOptions}
         />
       </CatalogModal>
 
@@ -1047,14 +1190,14 @@ const ProgressPage = () => {
         <CourseCombobox
           value={courseInput}
           onChange={setCourseInput}
-          options={outlineOptions}
+          options={futureCourseOptions}
         />
         <select
           value={selectedCourseTerm}
           onChange={(e) => setSelectedCourseTerm(e.target.value)}
         >
           <option value="Undecided">Undecided / I don&apos;t know</option>
-          {chronologicalTerms.map((t: string) => (
+          {futureTerms.map((t: string) => (
             <option key={t} value={t}>
               {t}
             </option>
