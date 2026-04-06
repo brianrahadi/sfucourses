@@ -205,8 +205,14 @@ const GraphPage: React.FC<GraphPageProps> = ({ nodes, links }) => {
       if (courseLevels.length > 0 && number) {
         const match = number.match(/^(\d)/);
         if (match) {
-          const lvl = match[1] + "00";
-          matchesLevel = courseLevels.includes(lvl);
+          const courseDigit = +match[1];
+          matchesLevel = courseLevels.some((level) => {
+            const levelDigit = +level[0];
+            if (levelDigit >= 5) {
+              return courseDigit >= 5;
+            }
+            return courseDigit === levelDigit;
+          });
         } else {
           matchesLevel = false;
         }
