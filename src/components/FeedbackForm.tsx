@@ -88,7 +88,7 @@ export const FeedbackForm: React.FC = () => {
                 <textarea
                   id="message"
                   name="message"
-                  placeholder="give feedbacks here!"
+                  placeholder="i love bigway"
                   required
                 />
                 <ValidationError
