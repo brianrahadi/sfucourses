@@ -964,13 +964,13 @@ const ProgressPage = () => {
                   className="add-btn"
                   onClick={() => setIsMassAddOpen(true)}
                 >
-                  + Mass Add
+                  Mass Add
                 </button>
                 <button
                   className="add-btn"
                   onClick={() => setIsAddCompletedOpen(true)}
                 >
-                  + Add
+                  Add
                 </button>
               </div>
             </div>
