@@ -1008,44 +1008,52 @@ const ProgressPage = () => {
           <div className="db-card">
             <div
               className="card-header"
-              style={{ flexWrap: "wrap", gap: "16px" }}
+              style={{
+                flexDirection: "column",
+                alignItems: "stretch",
+                gap: "16px",
+              }}
             >
+              <h2>
+                COMPLETED COURSES{" "}
+                <span
+                  style={{
+                    color: "var(--colour-neutral-500)",
+                    fontWeight: "normal",
+                  }}
+                >
+                  ({totalCompletedCredits} CR)
+                </span>
+              </h2>
               <div
-                style={{ display: "flex", alignItems: "center", gap: "16px" }}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
               >
-                <h2>
-                  COMPLETED COURSES{" "}
-                  <span
-                    style={{
-                      color: "var(--colour-neutral-500)",
-                      fontWeight: "normal",
-                    }}
-                  >
-                    ({totalCompletedCredits} CR)
-                  </span>
-                </h2>
                 <ButtonGroup
                   options={["Term", "A-Z"]}
                   onSelect={(val) => setCompletedSort(val as "Term" | "A-Z")}
                   selectedOption={completedSort}
                 />
-              </div>
-              <div style={{ display: "flex", gap: "8px" }}>
-                <button
-                  className="add-btn"
-                  onClick={() => setIsMassAddOpen(true)}
-                >
-                  Mass Add
-                </button>
-                <button
-                  className="add-btn"
-                  onClick={() => {
-                    setSelectedCourseTerm(pastTerms[0] || "");
-                    setIsAddCompletedOpen(true);
-                  }}
-                >
-                  Add
-                </button>
+                <div style={{ display: "flex", gap: "8px" }}>
+                  <button
+                    className="add-btn"
+                    onClick={() => setIsMassAddOpen(true)}
+                  >
+                    Mass Add
+                  </button>
+                  <button
+                    className="add-btn"
+                    onClick={() => {
+                      setSelectedCourseTerm(pastTerms[0] || "");
+                      setIsAddCompletedOpen(true);
+                    }}
+                  >
+                    Add
+                  </button>
+                </div>
               </div>
             </div>
 
