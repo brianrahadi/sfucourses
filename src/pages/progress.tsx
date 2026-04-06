@@ -628,7 +628,7 @@ const ProgressPage = () => {
 
   return (
     <div className="page progress-page">
-      <Hero title="progress" backgroundImage={HeroImage.src} />
+      {/* <Hero title="progress" backgroundImage={HeroImage.src} /> */}
       <main className="container">
         <div className="catalog-dashboard">
           {/* <div className="db-header">
