@@ -505,7 +505,7 @@ const ProgressPage = () => {
                   className="add-btn"
                   onClick={() => setIsInProgressOpen(true)}
                 >
-                  + Add
+                  Add
                 </button>
               </div>
               <div
@@ -587,7 +587,7 @@ const ProgressPage = () => {
                     setIsWishlistOpen(true);
                   }}
                 >
-                  + Add
+                  Add
                 </button>
               </div>
 
