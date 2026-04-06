@@ -2,7 +2,8 @@ import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import { GlobalSearch } from "./GlobalSearch";
-import { Home, Search, Calendar, Users, Activity, Book } from "react-feather";
+import { Home, Search, Calendar, Users, Book } from "react-feather";
+import { PiGraphFill } from "react-icons/pi";
 
 export const HeaderNav: React.FC = () => {
   const router = useRouter();
@@ -146,7 +147,7 @@ export const HeaderNav: React.FC = () => {
             isActivePath("/graph") ? "active" : ""
           }`}
         >
-          <Activity size={20} />
+          <PiGraphFill size={20} />
           <span>Graph</span>
         </Link>
         <Link

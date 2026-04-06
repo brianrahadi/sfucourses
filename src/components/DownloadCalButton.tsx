@@ -158,7 +158,7 @@ export const DownloadCalButton: React.FC<ICalendarExportProps> = ({
       disabled={coursesWithSections.length === 0}
     >
       <CiCalendar />
-      &nbsp; Download Cal (.ics)
+      <span className="hide-on-mobile">&nbsp; Download Cal (.ics)</span>
     </button>
   );
 };

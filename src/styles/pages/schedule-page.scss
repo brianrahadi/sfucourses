@@ -254,7 +254,11 @@
       position: static;
 
       &__header {
-        flex-direction: column;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        width: 100%;
       }
 
       .view-column-button-group {

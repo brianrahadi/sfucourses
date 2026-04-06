@@ -49,7 +49,7 @@
   }
 
   .catalog-toolbar {
-    margin-top: 1rem;
+    margin-top: 2rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -232,6 +232,7 @@
 
     &.draggable {
       cursor: grab;
+
       &:active {
         cursor: grabbing;
       }

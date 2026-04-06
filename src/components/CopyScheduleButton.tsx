@@ -140,7 +140,7 @@ export const CopyScheduleButton: React.FC<ScheduleScreenshotProps> = ({
       title="Copy schedule as image to clipboard"
     >
       <FaImage />
-      &nbsp; Copy Image
+      <span className="hide-on-mobile">&nbsp; Copy Image</span>
     </button>
   );
 };

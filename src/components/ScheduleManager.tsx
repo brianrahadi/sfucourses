@@ -212,7 +212,7 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
           disabled={coursesWithSections.length === 0}
         >
           <FaSave />
-          &nbsp; Save
+          <span className="hide-on-mobile">&nbsp; Save</span>
         </button>
         <button
           onClick={() => setShowLoadDialog(true)}
@@ -220,7 +220,7 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
           disabled={filteredSchedules.length === 0}
         >
           <FaFolderOpen />
-          &nbsp; Load
+          <span className="hide-on-mobile">&nbsp; Load</span>
         </button>
       </div>
 
