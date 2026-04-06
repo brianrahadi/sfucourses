@@ -7,7 +7,7 @@ import {
   Review,
 } from "@types";
 import { getCourseAPIData } from "@utils";
-import { Hero, RedditPosts, Helmet, ReviewsAndPostsTabs } from "@components";
+import { Hero, Helmet, ReviewsAndPostsTabs } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { RotatingLines } from "react-loader-spinner";
 import Link from "next/link";
@@ -27,13 +27,6 @@ import {
   INSTRUCTOR_REDIRECT_NAME_MAPPING,
 } from "@const";
 
-interface RedditPostData {
-  title: string;
-  upvotes: number;
-  date_created: Date;
-  url: string;
-}
-
 const InstructorPage = () => {
   const router = useRouter();
   let { name } = router.query;
@@ -41,24 +34,21 @@ const InstructorPage = () => {
   const [reviewData, setReviewData] = useState<InstructorReviewData | null>(
     null
   );
-  const [redditPosts, setRedditPosts] = useState<RedditPostData[]>([]);
+
   const [loading, setLoading] = useState(true);
   const [reviewLoading, setReviewLoading] = useState(true);
-  const [redditLoading, setRedditLoading] = useState(true);
+
   const [error, setError] = useState<string | null>(null);
   const [reviewError, setReviewError] = useState<string | null>(null);
-  const [redditError, setRedditError] = useState<string | null>(null);
+
   const [displayedReviews, setDisplayedReviews] = useState<Review[]>([]);
-  const [displayedRedditPosts, setDisplayedRedditPosts] = useState<
-    RedditPostData[]
-  >([]);
+
   const [reviewsPage, setReviewsPage] = useState(1);
-  const [redditPage, setRedditPage] = useState(1);
+
   const [selectedCourseFilter, setSelectedCourseFilter] =
     useState<string>("all");
   const [selectedSortOption, setSelectedSortOption] = useState("most-recent");
   const reviewsPerPage = 5;
-  const redditPerPage = 5;
 
   // Get course codes with review counts
   const getCourseCodesWithCounts = useCallback(() => {
@@ -242,21 +232,6 @@ const InstructorPage = () => {
     }
   }, []);
 
-  // Fetch Reddit posts
-  const fetchRedditPosts = useCallback(async (query: string) => {
-    try {
-      const response = await fetch(
-        `/api/reddit?query=${encodeURIComponent(query)}`
-      );
-      if (!response.ok) {
-        throw new Error(`Failed to fetch Reddit posts: ${response.status}`);
-      }
-      return await response.json();
-    } catch (error) {
-      throw error;
-    }
-  }, []);
-
   // Load more reviews
   const loadMoreReviews = useCallback(() => {
     const filteredReviews = getFilteredReviews();
@@ -269,18 +244,6 @@ const InstructorPage = () => {
     setDisplayedReviews((prev) => [...prev, ...newReviews]);
     setReviewsPage((prev) => prev + 1);
   }, [getFilteredReviews, reviewsPage]);
-
-  // Load more Reddit posts
-  const loadMoreRedditPosts = useCallback(() => {
-    if (!redditPosts.length) return;
-
-    const startIndex = (redditPage - 1) * redditPerPage;
-    const endIndex = startIndex + redditPerPage;
-    const newPosts = redditPosts.slice(startIndex, endIndex);
-
-    setDisplayedRedditPosts((prev) => [...prev, ...newPosts]);
-    setRedditPage((prev) => prev + 1);
-  }, [redditPosts, redditPage]);
 
   useEffect(() => {
     if (!name || typeof name !== "string") return;
@@ -317,20 +280,7 @@ const InstructorPage = () => {
         setReviewError("Review data not available");
         setReviewLoading(false);
       });
-
-    // Fetch Reddit posts
-    setRedditLoading(true);
-    setRedditError(null);
-    fetchRedditPosts(name)
-      .then((data) => {
-        setRedditPosts(data);
-        setRedditLoading(false);
-      })
-      .catch((err) => {
-        setRedditError("Could not load Reddit posts. Fixing soon! :D");
-        setRedditLoading(false);
-      });
-  }, [name, fetchRedditPosts, fetchInstructorReviews, router]);
+  }, [name, fetchInstructorReviews, router]);
 
   // Initialize displayed items when data changes
   useEffect(() => {
@@ -349,14 +299,6 @@ const InstructorPage = () => {
     selectedSortOption,
     getFilteredReviews,
   ]);
-
-  useEffect(() => {
-    if (redditPosts.length > 0) {
-      const initialPosts = redditPosts.slice(0, redditPerPage);
-      setDisplayedRedditPosts(initialPosts);
-      setRedditPage(2);
-    }
-  }, [redditPosts]);
 
   return (
     <div className="page courses-page">
@@ -561,13 +503,8 @@ const InstructorPage = () => {
               reviewData={reviewData ? { reviews: getFilteredReviews() } : null}
               reviewLoading={reviewLoading}
               reviewError={reviewError}
-              redditPosts={redditPosts}
-              redditLoading={redditLoading}
-              redditError={redditError}
               displayedReviews={displayedReviews}
-              displayedRedditPosts={displayedRedditPosts}
               onLoadMoreReviews={loadMoreReviews}
-              onLoadMoreRedditPosts={loadMoreRedditPosts}
               getCourseCodesWithCounts={getCourseCodesWithCounts}
               getFilterStats={getFilterStats}
               selectedCourseFilter={selectedCourseFilter}

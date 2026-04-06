@@ -38,13 +38,6 @@ interface InstructorSummary {
   reviews: Review[];
 }
 
-interface RedditPostData {
-  title: string;
-  upvotes: number;
-  date_created: Date;
-  url: string;
-}
-
 interface SidebarCourseProps {
   course: CourseOutline | CourseWithSectionDetails;
   onClose: () => void;
@@ -110,17 +103,7 @@ export const SidebarCourse: React.FC<SidebarCourseProps> = ({
     useState("all");
   const [selectedSortOption, setSelectedSortOption] = useState("most-recent");
 
-  // Reddit posts state
-  const [redditPosts, setRedditPosts] = useState<RedditPostData[]>([]);
-  const [redditLoading, setRedditLoading] = useState(true);
-  const [redditError, setRedditError] = useState<string | null>(null);
-  const [displayedRedditPosts, setDisplayedRedditPosts] = useState<
-    RedditPostData[]
-  >([]);
-  const [redditPage, setRedditPage] = useState(1);
-
   const reviewsPerPage = 5;
-  const redditPerPage = 5;
 
   // Fetch course review data
   const fetchCourseReviews = useCallback(async () => {
@@ -153,35 +136,6 @@ export const SidebarCourse: React.FC<SidebarCourseProps> = ({
       setReviewLoading(false);
     }
   }, [course.dept, course.number, reviewsPerPage]);
-
-  // Fetch Reddit posts
-  const fetchRedditPosts = useCallback(async () => {
-    const query = `${course.dept.toLowerCase()} ${course.number}`;
-    setRedditLoading(true);
-    setRedditError(null);
-    setRedditPosts([]);
-    setDisplayedRedditPosts([]);
-
-    try {
-      const response = await fetch(
-        `/api/reddit?query=${encodeURIComponent(query)}`
-      );
-      if (!response.ok) {
-        throw new Error("Failed to fetch Reddit posts");
-      }
-      const data = await response.json();
-      setRedditPosts(data);
-
-      // Initialize displayed posts with first page
-      setDisplayedRedditPosts(data.slice(0, redditPerPage));
-    } catch (err) {
-      setRedditError("Failed to load Reddit posts");
-      setRedditPosts([]);
-      setDisplayedRedditPosts([]);
-    } finally {
-      setRedditLoading(false);
-    }
-  }, [course.dept, course.number, redditPerPage]);
 
   // Get instructors with review counts
   const getInstructorsWithCounts = useCallback(() => {
@@ -337,18 +291,6 @@ export const SidebarCourse: React.FC<SidebarCourseProps> = ({
     }
   }, [getFilteredReviews, reviewsPage, reviewsPerPage]);
 
-  // Load more Reddit posts
-  const loadMoreRedditPosts = useCallback(() => {
-    const startIndex = redditPage * redditPerPage;
-    const endIndex = startIndex + redditPerPage;
-    const newPosts = redditPosts.slice(startIndex, endIndex);
-
-    if (newPosts.length > 0) {
-      setDisplayedRedditPosts((prev) => [...prev, ...newPosts]);
-      setRedditPage((prev) => prev + 1);
-    }
-  }, [redditPosts, redditPage, redditPerPage]);
-
   // Get chart data for rating and difficulty distribution
   const getChartData = useCallback(() => {
     if (!courseReviewData?.instructors) {
@@ -400,11 +342,10 @@ export const SidebarCourse: React.FC<SidebarCourseProps> = ({
     };
   }, [courseReviewData]);
 
-  // Fetch course reviews and Reddit posts immediately
+  // Fetch course reviews immediately
   useEffect(() => {
     fetchCourseReviews();
-    fetchRedditPosts();
-  }, [fetchCourseReviews, fetchRedditPosts]);
+  }, [fetchCourseReviews]);
 
   // Update displayed reviews when filter or sort changes
   useEffect(() => {
@@ -608,13 +549,8 @@ export const SidebarCourse: React.FC<SidebarCourseProps> = ({
         reviewData={courseReviewData ? { reviews: getFilteredReviews() } : null}
         reviewLoading={reviewLoading}
         reviewError={reviewError}
-        redditPosts={redditPosts}
-        redditLoading={redditLoading}
-        redditError={redditError}
         displayedReviews={displayedReviews}
-        displayedRedditPosts={displayedRedditPosts}
         onLoadMoreReviews={loadMoreReviews}
-        onLoadMoreRedditPosts={loadMoreRedditPosts}
         getCourseCodesWithCounts={() =>
           getInstructorsWithCounts().map((item) => ({
             courseCode: item.instructorName,
