@@ -145,6 +145,8 @@ const GraphPage: React.FC<GraphPageProps> = ({ nodes, links }) => {
   const [isFilterOpen, setIsFilterOpen] = useState(true);
   const courseSubjects = useExploreStore((state) => state.courseSubjects);
   const courseLevels = useExploreStore((state) => state.courseLevels);
+  const fgRef = useRef<any>(null);
+  const [zoomLevel, setZoomLevel] = useState(1);
 
   useEffect(() => {
     if (window.innerWidth <= 768) {
@@ -236,6 +238,35 @@ const GraphPage: React.FC<GraphPageProps> = ({ nodes, links }) => {
 
   const hasFilters = courseSubjects.length > 0 || courseLevels.length > 0;
 
+  const nodeCanvasObject = useCallback(
+    (node: any, ctx: CanvasRenderingContext2D, globalScale: number) => {
+      const label = node.id as string;
+      const size = Math.sqrt(node.size * 2) * 2;
+      const color = groupColors.get(node.group) || "#fff";
+
+      // Draw node circle
+      ctx.beginPath();
+      ctx.arc(node.x, node.y, size, 0, 2 * Math.PI, false);
+      ctx.fillStyle = color;
+      ctx.fill();
+
+      // Draw text label when zoomed in enough
+      const ZOOM_THRESHOLD = 2;
+      if (globalScale >= ZOOM_THRESHOLD) {
+        const fontSize = Math.min(12 / globalScale, 4);
+        ctx.font = `${fontSize}px Inter, sans-serif`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        // Fade in label between zoom 2 and 4
+        const opacity = Math.min((globalScale - ZOOM_THRESHOLD) / 2, 1);
+        ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+        ctx.fillText(label, node.x, node.y + size + fontSize * 0.8);
+      }
+    },
+    [groupColors]
+  );
+
   return (
     <div className="page graph-page">
       <main className="container">
@@ -271,13 +302,24 @@ const GraphPage: React.FC<GraphPageProps> = ({ nodes, links }) => {
           )}
 
           <ForceGraph2D
+            ref={fgRef}
             graphData={graphData}
             nodeLabel="id"
             // Use bottom-up DAG only when filtered, otherwise use default force layout
             dagMode={hasFilters ? "bu" : undefined}
             dagLevelDistance={hasFilters ? 40 : undefined}
-            nodeColor={(node: any) => groupColors.get(node.group) || "#fff"}
-            nodeVal={(node: any) => node.size * 2}
+            nodeCanvasObject={nodeCanvasObject}
+            nodePointerAreaPaint={(
+              node: any,
+              color: string,
+              ctx: CanvasRenderingContext2D
+            ) => {
+              const size = Math.sqrt(node.size * 2) * 2;
+              ctx.beginPath();
+              ctx.arc(node.x, node.y, size, 0, 2 * Math.PI, false);
+              ctx.fillStyle = color;
+              ctx.fill();
+            }}
             linkWidth={(link: any) => (link.type === "corequisite" ? 1.5 : 1.2)}
             linkColor={(link: any) =>
               link.type === "corequisite"
@@ -290,6 +332,7 @@ const GraphPage: React.FC<GraphPageProps> = ({ nodes, links }) => {
               link.type === "corequisite" ? 0.3 : 0
             }
             onNodeClick={handleNodeClick}
+            onZoom={(transform: any) => setZoomLevel(transform.k)}
           />
         </section>
       </main>
