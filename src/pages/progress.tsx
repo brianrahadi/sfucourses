@@ -1006,15 +1006,8 @@ const ProgressPage = () => {
 
           {/* Bottom Section: Completed Courses Grid */}
           <div className="db-card">
-            <div
-              className="card-header"
-              style={{
-                flexDirection: "column",
-                alignItems: "stretch",
-                gap: "16px",
-              }}
-            >
-              <h2>
+            <div className="card-header completed-courses-header">
+              <h2 className="header-title">
                 COMPLETED COURSES{" "}
                 <span
                   style={{
@@ -1025,19 +1018,13 @@ const ProgressPage = () => {
                   ({totalCompletedCredits} CR)
                 </span>
               </h2>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
+              <div className="header-controls">
                 <ButtonGroup
                   options={["Term", "A-Z"]}
                   onSelect={(val) => setCompletedSort(val as "Term" | "A-Z")}
                   selectedOption={completedSort}
                 />
-                <div style={{ display: "flex", gap: "8px" }}>
+                <div className="action-buttons">
                   <button
                     className="add-btn"
                     onClick={() => setIsMassAddOpen(true)}

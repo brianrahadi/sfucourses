@@ -187,6 +187,29 @@
           color: var(--colour-neutral-100);
         }
       }
+
+      &.completed-courses-header {
+        gap: 16px;
+        flex-wrap: wrap;
+
+        .header-title {
+          margin-right: 16px;
+        }
+
+        .header-controls {
+          display: flex;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 16px;
+          flex: 1;
+          justify-content: space-between;
+        }
+
+        .action-buttons {
+          display: flex;
+          gap: 8px;
+        }
+      }
     }
 
     .course-stack {
