@@ -710,44 +710,23 @@ const ProgressPage = () => {
                   )}
               </div>
             </div>
-
-            {/* Right Column: Courses To Take */}
-            <div className="db-card">
+            {/* Middle Column: Next Term */}
+            <div
+              className="db-card"
+              style={{ display: "flex", flexDirection: "column" }}
+            >
               <div className="card-header">
-                <h2>
-                  COURSES TO TAKE{" "}
-                  <span
-                    style={{
-                      color: "var(--colour-neutral-500)",
-                      fontWeight: "normal",
-                    }}
-                  >
-                    ({creditsRemaining} CR REMAINING)
-                  </span>
-                </h2>
+                <h2>NEXT TERM — {nextTerm.toUpperCase()} </h2>
                 <button
                   className="add-btn"
-                  onClick={() => {
-                    setSelectedCourseTerm(nextTerm);
-                    setIsWishlistOpen(true);
-                  }}
+                  onClick={() => setIsWishlistOpen(true)}
                 >
                   Add
                 </button>
               </div>
 
-              <h3
-                style={{
-                  fontSize: "14px",
-                  color: "var(--colour-neutral-300)",
-                  marginBottom: "16px",
-                  marginTop: "4px",
-                }}
-              >
-                Next Term ({nextTerm})
-              </h3>
               <div
-                className="course-list-grid"
+                className="course-stack"
                 onDragOver={(e) => handleDragOver(e, "next-term")}
                 onDrop={(e) => handleDrop(e, "next-term")}
                 style={{ minHeight: "80px" }}
@@ -802,19 +781,35 @@ const ProgressPage = () => {
                     />
                   )}
               </div>
+            </div>
 
-              <h3
-                style={{
-                  fontSize: "14px",
-                  color: "var(--colour-neutral-300)",
-                  marginBottom: "16px",
-                  marginTop: "32px",
-                }}
-              >
-                Future & Undecided
-              </h3>
+            {/* Right Column: Future & Undecided */}
+            <div
+              className="db-card"
+              style={{ display: "flex", flexDirection: "column" }}
+            >
+              <div className="card-header">
+                <h2>
+                  FUTURE COURSES{" "}
+                  <span
+                    style={{
+                      color: "var(--colour-neutral-500)",
+                      fontWeight: "normal",
+                    }}
+                  >
+                    ({creditsRemaining} CR REMAINING)
+                  </span>
+                </h2>
+                <button
+                  className="add-btn"
+                  onClick={() => setIsWishlistOpen(true)}
+                >
+                  Add
+                </button>
+              </div>
+
               <div
-                className="course-list-grid"
+                className="course-stack"
                 onDragOver={(e) => handleDragOver(e, "undecided")}
                 onDrop={(e) => handleDrop(e, "undecided")}
                 style={{ minHeight: "80px" }}
@@ -872,7 +867,7 @@ const ProgressPage = () => {
 
               <div
                 style={{
-                  marginTop: "32px",
+                  marginTop: "auto",
                   fontSize: "13px",
                   color: "var(--colour-neutral-500)",
                   borderTop: "1px solid var(--colour-neutral-1000)",
