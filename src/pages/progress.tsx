@@ -56,6 +56,68 @@ const ProgressPage = () => {
     setMounted(true);
   }, []);
 
+  // Sync in-progress and next-term courses from default schedules
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("savedSchedules");
+      if (!raw) return;
+      const savedSchedules = JSON.parse(raw);
+
+      // Read persisted catalog directly from localStorage to avoid hydration race
+      const catalogRaw = localStorage.getItem("catalog-storage");
+      const existingIds = new Set<string>();
+      if (catalogRaw) {
+        try {
+          const catalogState = JSON.parse(catalogRaw)?.state;
+          catalogState?.completedCourses?.forEach((c: any) =>
+            existingIds.add(c.id)
+          );
+          catalogState?.wishlistCourses?.forEach((c: any) =>
+            existingIds.add(c.id)
+          );
+        } catch {}
+      }
+
+      // Current term default schedule → In Progress
+      const currentDefault = savedSchedules.find(
+        (s: any) => s.isDefault && s.term === currentTerm
+      );
+      if (currentDefault?.courses) {
+        currentDefault.courses.forEach((course: any) => {
+          const id = `${course.dept} ${course.number}`.toUpperCase();
+          if (!existingIds.has(id)) {
+            addWishlistCourse({
+              id,
+              credits: Number(course.units) || 3,
+              termPlanned: currentTerm,
+            });
+            existingIds.add(id);
+          }
+        });
+      }
+
+      // Next term default schedule → Courses to Take (next term)
+      const nextDefault = savedSchedules.find(
+        (s: any) => s.isDefault && s.term === nextTerm
+      );
+      if (nextDefault?.courses) {
+        nextDefault.courses.forEach((course: any) => {
+          const id = `${course.dept} ${course.number}`.toUpperCase();
+          if (!existingIds.has(id)) {
+            addWishlistCourse({
+              id,
+              credits: Number(course.units) || 3,
+              termPlanned: nextTerm,
+            });
+            existingIds.add(id);
+          }
+        });
+      }
+    } catch (err) {
+      console.error("Error syncing schedule to catalog:", err);
+    }
+  }, []);
+
   useEffect(() => {
     fetch("https://api.sfucourses.com/v1/rest/outlines?short=true")
       .then((res) => res.json())
