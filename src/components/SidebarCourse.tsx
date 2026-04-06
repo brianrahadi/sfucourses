@@ -127,6 +127,8 @@ export const SidebarCourse: React.FC<SidebarCourseProps> = ({
     const courseCodeStr = `${course.dept.toUpperCase()}${course.number}`;
     setReviewLoading(true);
     setReviewError(null);
+    setCourseReviewData(null);
+    setDisplayedReviews([]);
 
     try {
       const response = await fetch(
@@ -145,6 +147,8 @@ export const SidebarCourse: React.FC<SidebarCourseProps> = ({
       setDisplayedReviews(allReviews.slice(0, reviewsPerPage));
     } catch (err) {
       setReviewError("Failed to load course reviews");
+      setCourseReviewData(null);
+      setDisplayedReviews([]);
     } finally {
       setReviewLoading(false);
     }
@@ -155,6 +159,8 @@ export const SidebarCourse: React.FC<SidebarCourseProps> = ({
     const query = `${course.dept.toLowerCase()} ${course.number}`;
     setRedditLoading(true);
     setRedditError(null);
+    setRedditPosts([]);
+    setDisplayedRedditPosts([]);
 
     try {
       const response = await fetch(
@@ -170,6 +176,8 @@ export const SidebarCourse: React.FC<SidebarCourseProps> = ({
       setDisplayedRedditPosts(data.slice(0, redditPerPage));
     } catch (err) {
       setRedditError("Failed to load Reddit posts");
+      setRedditPosts([]);
+      setDisplayedRedditPosts([]);
     } finally {
       setRedditLoading(false);
     }
