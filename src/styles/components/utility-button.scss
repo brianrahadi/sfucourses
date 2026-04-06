@@ -27,4 +27,18 @@
     outline: 2px solid var(--colour-sosy-green-500);
     outline-offset: 2px;
   }
+
+  .hide-on-mobile {
+    @include viewport(mobile) {
+      display: none;
+    }
+  }
+
+  svg {
+    font-size: 1rem;
+
+    @include viewport(mobile) {
+      font-size: 1.35rem;
+    }
+  }
 }

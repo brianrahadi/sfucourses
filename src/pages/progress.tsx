@@ -637,15 +637,8 @@ const ProgressPage = () => {
               <p>BSc Computer Science · Student ID: 20210482 · Year 3</p>
             </div>
           </div> */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: "8px",
-            }}
-          >
-            <div>
+          <div className="catalog-toolbar">
+            <div className="toolbar-left">
               <CatalogManager />
             </div>
 
@@ -657,21 +650,9 @@ const ProgressPage = () => {
                 localStorage.setItem("catalog-name", e.target.value);
               }}
               className="catalog-title-input"
-              style={{
-                flex: "1",
-                textAlign: "center",
-                background: "transparent",
-                border: "none",
-                outline: "none",
-                color: "var(--colour-neutral-100)",
-                fontSize: "20px",
-                fontWeight: "600",
-                textOverflow: "ellipsis",
-                margin: "0 16px",
-              }}
             />
 
-            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+            <div className="toolbar-right">
               <CopyLinkButton
                 hasSelectedCourses={completedCourses.length > 0}
               />
@@ -711,7 +692,7 @@ const ProgressPage = () => {
                 title="Copy progress as image"
               >
                 <FaImage />
-                &nbsp; Copy Image
+                <span className="hide-on-mobile">&nbsp; Copy Image</span>
               </button>
             </div>
           </div>

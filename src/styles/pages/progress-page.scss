@@ -48,6 +48,66 @@
     }
   }
 
+  .catalog-toolbar {
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+
+    @include viewport(mobile) {
+      gap: 12px;
+    }
+
+    .toolbar-left,
+    .toolbar-right {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .toolbar-left {
+      flex: 1;
+      min-width: 150px;
+
+      @include viewport(mobile) {
+        min-width: unset;
+      }
+    }
+
+    .toolbar-right {
+      flex: 1;
+      justify-content: flex-end;
+      min-width: 150px;
+
+      @include viewport(mobile) {
+        min-width: unset;
+        justify-content: flex-end;
+      }
+    }
+
+    .catalog-title-input {
+      flex: 2;
+      text-align: center;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--colour-neutral-100);
+      font-size: 20px;
+      font-weight: 600;
+      text-overflow: ellipsis;
+      min-width: 200px;
+      margin: 0 16px;
+
+      @include viewport(mobile) {
+        min-width: 50px;
+        margin: 0 8px;
+        font-size: 18px;
+      }
+    }
+  }
+
   .db-progress-section {
     background-color: var(--colour-neutral-1100);
     border: 1px solid var(--colour-neutral-1000);

@@ -166,7 +166,7 @@ export const CatalogManager: React.FC = () => {
           }
         >
           <FaSave />
-          &nbsp; Save
+          <span className="hide-on-mobile">&nbsp; Save</span>
         </button>
         <button
           onClick={() => setShowLoadDialog(true)}
@@ -174,7 +174,7 @@ export const CatalogManager: React.FC = () => {
           disabled={savedCatalogs.length === 0}
         >
           <FaFolderOpen />
-          &nbsp; Load
+          <span className="hide-on-mobile">&nbsp; Load</span>
         </button>
       </div>
 

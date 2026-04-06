@@ -24,7 +24,7 @@ export const CopyLinkButton: React.FC<ScheduleScreenshotProps> = ({
       title="Copy URL to clipboard"
     >
       <FaLink />
-      &nbsp; Copy Link
+      <span className="hide-on-mobile">&nbsp; Copy Link</span>
     </button>
   );
 };

@@ -117,6 +117,14 @@
           display: flex;
           justify-content: space-between;
           align-items: center;
+          gap: 0.5rem;
+          flex-wrap: wrap;
+
+          @include viewport(mobile) {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.75rem;
+          }
 
           &:last-child {
             margin-bottom: 0;
@@ -126,6 +134,7 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            flex-wrap: wrap;
 
             .star-button {
               background: none;
