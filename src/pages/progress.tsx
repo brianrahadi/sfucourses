@@ -5,6 +5,7 @@ import {
   CourseCombobox,
   CatalogCourseCard,
   CopyLinkButton,
+  CatalogManager,
 } from "@components";
 import ButtonGroup from "../components/ButtonGroup";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
@@ -84,11 +85,15 @@ const ProgressPage = () => {
 
   const [outlineOptions, setOutlineOptions] = useState<OutlineOption[]>([]);
 
+  const [catalogName, setCatalogName] = useState("Your name...");
+
   const [mounted, setMounted] = useState(false);
   const loadedFromUrl = useRef(false);
 
   useEffect(() => {
     setMounted(true);
+    const savedName = localStorage.getItem("catalog-name");
+    if (savedName) setCatalogName(savedName);
   }, []);
 
   // Load courses from URL on mount
@@ -568,49 +573,79 @@ const ProgressPage = () => {
             style={{
               display: "flex",
               alignItems: "center",
-              justifyContent: "flex-end",
+              justifyContent: "space-between",
               gap: "8px",
             }}
           >
-            <CopyLinkButton hasSelectedCourses={completedCourses.length > 0} />
-            <button
-              className="utility-button"
-              onClick={async () => {
-                try {
-                  const el = document.querySelector(".catalog-dashboard");
-                  if (!el) return;
-                  const canvas = await html2canvas(el as HTMLElement, {
-                    backgroundColor: "#141515",
-                    scale: 2,
-                    logging: false,
-                  });
-                  canvas.toBlob(async (blob) => {
-                    if (!blob) return;
-                    try {
-                      await navigator.clipboard.write([
-                        new ClipboardItem({ "image/png": blob }),
-                      ]);
-                      toast.success("Progress image copied to clipboard!");
-                    } catch {
-                      const url = URL.createObjectURL(blob);
-                      const link = document.createElement("a");
-                      link.href = url;
-                      link.download = "sfu-progress.png";
-                      document.body.appendChild(link);
-                      link.click();
-                      document.body.removeChild(link);
-                    }
-                  }, "image/png");
-                } catch (err) {
-                  toast.error("Failed to capture image");
-                }
+            <div>
+              <CatalogManager />
+            </div>
+
+            <input
+              type="text"
+              value={catalogName}
+              onChange={(e) => {
+                setCatalogName(e.target.value);
+                localStorage.setItem("catalog-name", e.target.value);
               }}
-              disabled={completedCourses.length === 0}
-              title="Copy progress as image"
-            >
-              <FaImage />
-              &nbsp; Copy Image
-            </button>
+              className="catalog-title-input"
+              style={{
+                flex: "1",
+                textAlign: "center",
+                background: "transparent",
+                border: "none",
+                outline: "none",
+                color: "var(--colour-neutral-100)",
+                fontSize: "20px",
+                fontWeight: "600",
+                textOverflow: "ellipsis",
+                margin: "0 16px",
+              }}
+            />
+
+            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+              <CopyLinkButton
+                hasSelectedCourses={completedCourses.length > 0}
+              />
+              <button
+                className="utility-button"
+                onClick={async () => {
+                  try {
+                    const el = document.querySelector(".catalog-dashboard");
+                    if (!el) return;
+                    const canvas = await html2canvas(el as HTMLElement, {
+                      backgroundColor: "#141515",
+                      scale: 2,
+                      logging: false,
+                    });
+                    canvas.toBlob(async (blob) => {
+                      if (!blob) return;
+                      try {
+                        await navigator.clipboard.write([
+                          new ClipboardItem({ "image/png": blob }),
+                        ]);
+                        toast.success("Progress image copied to clipboard!");
+                      } catch {
+                        const url = URL.createObjectURL(blob);
+                        const link = document.createElement("a");
+                        link.href = url;
+                        link.download = "sfu-progress.png";
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                      }
+                    }, "image/png");
+                  } catch (err) {
+                    toast.error("Failed to capture image");
+                  }
+                }}
+                disabled={completedCourses.length === 0}
+                title="Copy progress as image"
+              >
+                <FaImage />
+                &nbsp; Copy Image
+              </button>
+            </div>
           </div>
           <div className="db-progress-section">
             <div className="progress-header">

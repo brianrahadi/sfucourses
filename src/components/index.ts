@@ -37,3 +37,4 @@ export { FeedbackForm } from "./FeedbackForm";
 export { CatalogModal } from "./CatalogModal";
 export { CourseCombobox } from "./CourseCombobox";
 export { CatalogCourseCard } from "./CatalogCourseCard";
+export { CatalogManager } from "./CatalogManager";
