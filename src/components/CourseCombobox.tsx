@@ -24,6 +24,7 @@ export const CourseCombobox: React.FC<CourseComboboxProps> = ({
 }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [filteredOptions, setFilteredOptions] = useState<OutlineOption[]>([]);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -54,14 +55,17 @@ export const CourseCombobox: React.FC<CourseComboboxProps> = ({
           .slice(0, 50)
       );
       setShowDropdown(true);
+      setSelectedIndex(-1);
     } else {
       setShowDropdown(false);
+      setSelectedIndex(-1);
     }
   };
 
   const handleSelectCourse = (course: OutlineOption) => {
     onChange(`${course.dept.toUpperCase()} ${course.number}`);
     setShowDropdown(false);
+    setSelectedIndex(-1);
   };
 
   return (
@@ -76,13 +80,30 @@ export const CourseCombobox: React.FC<CourseComboboxProps> = ({
         }}
         autoComplete="off"
         autoFocus={autoFocus}
+        onKeyDown={(e) => {
+          if (e.key === "ArrowDown") {
+            e.preventDefault();
+            setSelectedIndex((prev) =>
+              Math.min(prev + 1, filteredOptions.length - 1)
+            );
+          } else if (e.key === "ArrowUp") {
+            e.preventDefault();
+            setSelectedIndex((prev) => Math.max(prev - 1, -1));
+          } else if (e.key === "Enter" && showDropdown && selectedIndex >= 0) {
+            e.preventDefault();
+            e.stopPropagation();
+            handleSelectCourse(filteredOptions[selectedIndex]);
+          }
+        }}
       />
       {showDropdown && filteredOptions.length > 0 && (
         <ul className="autocomplete-dropdown">
           {filteredOptions.map((o, idx) => (
             <li
               key={`${o.dept}-${o.number}-${idx}`}
+              className={idx === selectedIndex ? "selected" : ""}
               onClick={() => handleSelectCourse(o)}
+              onMouseEnter={() => setSelectedIndex(idx)}
             >
               <span className="course-code">
                 {o.dept.toUpperCase()} {o.number}

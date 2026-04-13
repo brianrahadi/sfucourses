@@ -430,6 +430,7 @@
       font-size: 13px;
     }
 
+    &.selected,
     &:hover {
       background: var(--colour-neutral-900);
       color: var(--colour-neutral-100);
