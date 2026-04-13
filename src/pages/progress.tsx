@@ -1,6 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from "react";
 import {
-  Hero,
   CatalogModal,
   CourseCombobox,
   CatalogCourseCard,
@@ -56,6 +55,8 @@ const ProgressPage = () => {
     removeCompletedCourse,
     addWishlistCourse,
     removeWishlistCourse,
+    catalogName,
+    setCatalogName,
   } = useCatalogStore();
   const { courses } = useCoursesData();
   const [currentTerm, nextTerm] = getCurrentAndNextTerm();
@@ -86,7 +87,6 @@ const ProgressPage = () => {
 
   const [outlineOptions, setOutlineOptions] = useState<OutlineOption[]>([]);
 
-  const [catalogName, setCatalogName] = useState("Your name...");
   const [targetCredits, setTargetCredits] = useState(120);
 
   const [mounted, setMounted] = useState(false);
@@ -94,8 +94,6 @@ const ProgressPage = () => {
 
   useEffect(() => {
     setMounted(true);
-    const savedName = localStorage.getItem("catalog-name");
-    if (savedName) setCatalogName(savedName);
     const savedTarget = localStorage.getItem("catalog-target-credits");
     if (savedTarget) setTargetCredits(parseInt(savedTarget) || 120);
   }, []);
@@ -647,7 +645,6 @@ const ProgressPage = () => {
               value={catalogName}
               onChange={(e) => {
                 setCatalogName(e.target.value);
-                localStorage.setItem("catalog-name", e.target.value);
               }}
               className="catalog-title-input"
             />

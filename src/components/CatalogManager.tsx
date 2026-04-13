@@ -24,15 +24,22 @@ export const CatalogManager: React.FC = () => {
   const [catalogName, setCatalogName] = useState("");
   const [savedCatalogs, setSavedCatalogs] = useState<SavedCatalog[]>([]);
 
-  const completedCourses = useCatalogStore((state) => state.completedCourses);
-  const wishlistCourses = useCatalogStore((state) => state.wishlistCourses);
+  const {
+    completedCourses,
+    wishlistCourses,
+    catalogName: globalCatalogName,
+    setCatalogName: setGlobalCatalogName,
+  } = useCatalogStore();
+
   const setCatalogState = (
     completed: CompletedCourse[],
-    wishlist: WishlistCourse[]
+    wishlist: WishlistCourse[],
+    name: string
   ) => {
     useCatalogStore.setState({
       completedCourses: completed,
       wishlistCourses: wishlist,
+      catalogName: name,
     });
   };
 
@@ -92,6 +99,7 @@ export const CatalogManager: React.FC = () => {
       toast.success(`Progress "${catalogName}" saved`);
     }
 
+    setGlobalCatalogName(catalogName);
     setShowSaveDialog(false);
     setCatalogName("");
   };
@@ -99,7 +107,8 @@ export const CatalogManager: React.FC = () => {
   const handleLoadCatalog = (catalog: SavedCatalog) => {
     setCatalogState(
       catalog.completedCourses || [],
-      catalog.wishlistCourses || []
+      catalog.wishlistCourses || [],
+      catalog.name
     );
     setShowLoadDialog(false);
     toast.success(`Progress "${catalog.name}" loaded`);
@@ -159,7 +168,12 @@ export const CatalogManager: React.FC = () => {
     <div className="schedule-manager">
       <div className="schedule-manager-buttons">
         <button
-          onClick={() => setShowSaveDialog(true)}
+          onClick={() => {
+            setCatalogName(
+              globalCatalogName === "Your name..." ? "" : globalCatalogName
+            );
+            setShowSaveDialog(true);
+          }}
           className="utility-button"
           disabled={
             completedCourses.length === 0 && wishlistCourses.length === 0

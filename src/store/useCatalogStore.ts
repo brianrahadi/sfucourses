@@ -21,6 +21,8 @@ interface CatalogState {
   removeCompletedCourse: (id: string, term: string) => void;
   addWishlistCourse: (course: WishlistCourse) => void;
   removeWishlistCourse: (id: string) => void;
+  catalogName: string;
+  setCatalogName: (name: string) => void;
 }
 
 export const useCatalogStore = create<CatalogState>()(
@@ -28,6 +30,8 @@ export const useCatalogStore = create<CatalogState>()(
     (set) => ({
       completedCourses: [],
       wishlistCourses: [],
+      catalogName: "Your name...",
+      setCatalogName: (name) => set({ catalogName: name }),
       addCompletedCourse: (course) =>
         set((state) => ({
           completedCourses: [
