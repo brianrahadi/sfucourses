@@ -1,7 +1,8 @@
 import Select, { SelectInstance } from "react-select";
 import { Button } from "@components";
 import { SearchBar } from "@components";
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
+import { useRouter } from "next/router";
 import { RiResetLeftFill } from "react-icons/ri";
 import { MdClose } from "react-icons/md";
 import {
@@ -146,6 +147,112 @@ export const ExploreFilter: React.FC<{
       setter([...array, item]);
     }
   };
+
+  const router = useRouter();
+  const isHydratedRef = useRef(false);
+
+  // Sync state from query on initial load
+  useEffect(() => {
+    if (router.isReady && !isHydratedRef.current) {
+      const q = router.query;
+      if (q.subjects) setCourseSubjects((q.subjects as string).split(","));
+      if (q.levels) setCourseLevels((q.levels as string).split(","));
+      if (q.terms) setCourseTerms((q.terms as string).split(","));
+      if (q.deliveries)
+        setCourseDeliveries((q.deliveries as string).split(","));
+      if (q.designations)
+        setCourseDesignations((q.designations as string).split(","));
+      if (q.prereqQuery && typeof q.prereqQuery === "string")
+        setCoursePrereqSearchQuery(q.prereqQuery);
+      if (q.prereqIsShown === "true") setCoursePrereqIsShown(true);
+      if (q.prereqHasNone === "true") setCoursePrereqHasNone(true);
+      if (q.minReviews) setCourseMinReviews(Number(q.minReviews));
+
+      isHydratedRef.current = true;
+    }
+  }, [
+    router.isReady,
+    router.query,
+    setCourseSubjects,
+    setCourseLevels,
+    setCourseTerms,
+    setCourseDeliveries,
+    setCourseDesignations,
+    setCoursePrereqSearchQuery,
+    setCoursePrereqIsShown,
+    setCoursePrereqHasNone,
+    setCourseMinReviews,
+  ]);
+
+  // Sync state to query when state changes
+  useEffect(() => {
+    if (!router.isReady || !isHydratedRef.current) return;
+
+    const query = { ...router.query };
+
+    const syncArray = (key: string, arr: string[]) => {
+      if (arr.length > 0) query[key] = arr.join(",");
+      else delete query[key];
+    };
+
+    syncArray("subjects", courseSubjects);
+    syncArray("levels", courseLevels);
+    syncArray("terms", courseTerms);
+    syncArray("deliveries", courseDeliveries);
+    syncArray("designations", courseDesignations);
+
+    if (coursePrereqSearchQuery) query.prereqQuery = coursePrereqSearchQuery;
+    else delete query.prereqQuery;
+
+    if (coursePrereqIsShown) query.prereqIsShown = "true";
+    else delete query.prereqIsShown;
+
+    if (coursePrereqHasNone) query.prereqHasNone = "true";
+    else delete query.prereqHasNone;
+
+    if (courseMinReviews > 0) query.minReviews = courseMinReviews.toString();
+    else delete query.minReviews;
+
+    const keysToCheck = [
+      "subjects",
+      "levels",
+      "terms",
+      "deliveries",
+      "designations",
+      "prereqQuery",
+      "prereqIsShown",
+      "prereqHasNone",
+      "minReviews",
+    ];
+
+    let changed = false;
+    for (const key of keysToCheck) {
+      if (query[key] !== router.query[key]) {
+        changed = true;
+        break;
+      }
+    }
+
+    if (changed) {
+      router.replace({ pathname: router.pathname, query }, undefined, {
+        shallow: true,
+      });
+    }
+  }, [
+    router,
+    router.isReady,
+    router.query,
+    router.pathname,
+    courseSubjects,
+    courseLevels,
+    courseTerms,
+    courseDeliveries,
+    courseDesignations,
+    coursePrereqSearchQuery,
+    coursePrereqIsShown,
+    coursePrereqHasNone,
+    courseMinReviews,
+  ]);
 
   return (
     <div className="explore-filter">
