@@ -1,8 +1,8 @@
 import { GetStaticProps } from "next";
 import dynamic from "next/dynamic";
-import Head from "next/head";
 import fs from "fs";
 import path from "path";
+import { useRouter } from "next/router";
 import React, {
   useState,
   useEffect,
@@ -141,12 +141,71 @@ const pastelColors = [
 ];
 
 const GraphPage: React.FC<GraphPageProps> = ({ nodes, links }) => {
+  const router = useRouter();
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [isFilterOpen, setIsFilterOpen] = useState(true);
+
   const courseSubjects = useExploreStore((state) => state.courseSubjects);
+  const setCourseSubjects = useExploreStore((state) => state.setCourseSubjects);
+
   const courseLevels = useExploreStore((state) => state.courseLevels);
+  const setCourseLevels = useExploreStore((state) => state.setCourseLevels);
+
   const fgRef = useRef<any>(null);
   const [zoomLevel, setZoomLevel] = useState(1);
+  const isHydratedRef = useRef(false);
+
+  // Sync state from query on initial load
+  useEffect(() => {
+    if (router.isReady && !isHydratedRef.current) {
+      const { subjects, levels } = router.query;
+      if (subjects) {
+        setCourseSubjects((subjects as string).split(","));
+      }
+      if (levels) {
+        setCourseLevels((levels as string).split(","));
+      }
+      isHydratedRef.current = true;
+    }
+  }, [router.isReady, router.query, setCourseSubjects, setCourseLevels]);
+
+  // Sync state to query when state changes
+  useEffect(() => {
+    if (!router.isReady || !isHydratedRef.current) return;
+
+    const query = { ...router.query };
+
+    if (courseSubjects.length > 0) {
+      query.subjects = courseSubjects.join(",");
+    } else {
+      delete query.subjects;
+    }
+
+    if (courseLevels.length > 0) {
+      query.levels = courseLevels.join(",");
+    } else {
+      delete query.levels;
+    }
+
+    const currentSubjects = router.query.subjects as string | undefined;
+    const currentLevels = router.query.levels as string | undefined;
+
+    const newSubjects = query.subjects as string | undefined;
+    const newLevels = query.levels as string | undefined;
+
+    if (currentSubjects !== newSubjects || currentLevels !== newLevels) {
+      router.replace({ pathname: router.pathname, query }, undefined, {
+        shallow: true,
+      });
+    }
+  }, [
+    courseSubjects,
+    courseLevels,
+    router,
+    router.isReady,
+    router.query,
+    router.pathname,
+  ]);
 
   useEffect(() => {
     if (window.innerWidth <= 768) {
