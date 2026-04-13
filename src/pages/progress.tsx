@@ -887,121 +887,123 @@ const ProgressPage = () => {
                   )}
               </div>
             </div>
+          </div>
 
-            {/* Right Column: Future & Undecided */}
-            <div
-              className="db-card"
-              style={{ display: "flex", flexDirection: "column" }}
-            >
-              <div className="card-header">
-                <h2>
-                  FUTURE COURSES{" "}
-                  <span
-                    style={{
-                      color: "var(--colour-neutral-500)",
-                      fontWeight: "normal",
-                    }}
-                  >
-                    ({creditsRemaining} CR REMAINING)
-                  </span>
-                </h2>
-                <button
-                  className="add-btn"
-                  onClick={() => {
-                    setSelectedCourseTerm("Undecided");
-                    setIsWishlistOpen(true);
+          {/* Middle Section: Future Courses Grid */}
+          <div className="db-card">
+            <div className="card-header completed-courses-header">
+              <h2 className="header-title">
+                FUTURE COURSES{" "}
+                <span
+                  style={{
+                    color: "var(--colour-neutral-500)",
+                    fontWeight: "normal",
                   }}
                 >
-                  Add
-                </button>
-              </div>
-
-              <div
-                className="course-stack"
-                onDragOver={(e) => handleDragOver(e, "undecided")}
-                onDrop={(e) => handleDrop(e, "undecided")}
-                style={{ minHeight: "80px" }}
-              >
-                {undecidedCoursesToTake.length === 0 &&
-                (!dragHoverTarget ||
-                  dragHoverTarget !== "undecided" ||
-                  draggedItemData?.sourceSection === "undecided") ? (
-                  <p
-                    style={{
-                      fontSize: "14px",
-                      color: "var(--colour-neutral-500)",
-                    }}
-                  >
-                    No future courses planned.
-                  </p>
-                ) : null}
-                {undecidedCoursesToTake.map((c) => (
-                  <CatalogCourseCard
-                    key={c.id}
-                    id={c.id}
-                    title={getCourseTitle(c.id)}
-                    credits={c.credits || 3}
-                    term={c.termPlanned || "Undecided"}
-                    onRemove={() => removeWishlistCourse(c.id)}
-                    accentColor="grey"
-                    draggable
-                    onDragStart={(e) =>
-                      handleDragStart(
-                        e,
-                        "undecided",
-                        c.id,
-                        c.termPlanned,
-                        c.credits || 3,
-                        "grey"
-                      )
-                    }
-                    onDragEnd={handleDragEnd}
-                  />
-                ))}
-                {dragHoverTarget === "undecided" &&
-                  draggedItemData &&
-                  draggedItemData.sourceSection !== "undecided" && (
-                    <CatalogCourseCard
-                      id={draggedItemData.id}
-                      title={draggedItemData.title}
-                      credits={draggedItemData.credits}
-                      term={"Undecided"}
-                      onRemove={() => {}}
-                      accentColor="grey"
-                      isSkeleton
-                    />
-                  )}
-              </div>
-
-              <div
-                style={{
-                  marginTop: "auto",
-                  fontSize: "13px",
-                  color: "var(--colour-neutral-500)",
-                  borderTop: "1px solid var(--colour-neutral-1000)",
-                  paddingTop: "16px",
-                }}
-              >
-                {totalCompletedCredits +
-                  totalInProgressCredits +
-                  coursesToTake.reduce(
-                    (sum, c) => sum + (Number(c.credits) || 3),
-                    0
-                  )}{" "}
-                / {targetCredits} cr planned.{" "}
-                {Math.max(
-                  targetCredits -
-                    totalCompletedCredits -
-                    totalInProgressCredits -
+                  ({creditsRemaining} CR REMAINING)
+                </span>
+                <span
+                  style={{
+                    fontSize: "13px",
+                    color: "var(--colour-neutral-500)",
+                    fontWeight: "normal",
+                    marginLeft: "12px",
+                  }}
+                >
+                  —{" "}
+                  {totalCompletedCredits +
+                    totalInProgressCredits +
                     coursesToTake.reduce(
                       (sum, c) => sum + (Number(c.credits) || 3),
                       0
-                    ),
-                  0
-                )}{" "}
-                more cr needed.
+                    )}{" "}
+                  / {targetCredits} cr planned.{" "}
+                  {Math.max(
+                    targetCredits -
+                      totalCompletedCredits -
+                      totalInProgressCredits -
+                      coursesToTake.reduce(
+                        (sum, c) => sum + (Number(c.credits) || 3),
+                        0
+                      ),
+                    0
+                  )}{" "}
+                  more cr needed.
+                </span>
+              </h2>
+              <div
+                className="header-controls"
+                style={{ justifyContent: "flex-end" }}
+              >
+                <div className="action-buttons">
+                  <button
+                    className="add-btn"
+                    onClick={() => {
+                      setSelectedCourseTerm("Undecided");
+                      setIsWishlistOpen(true);
+                    }}
+                  >
+                    Add
+                  </button>
+                </div>
               </div>
             </div>
+
+            <div
+              className="completed-grid"
+              onDragOver={(e) => handleDragOver(e, "undecided")}
+              onDrop={(e) => handleDrop(e, "undecided")}
+              style={{ minHeight: "100px" }}
+            >
+              {undecidedCoursesToTake.map((c) => (
+                <CatalogCourseCard
+                  key={c.id}
+                  id={c.id}
+                  title={getCourseTitle(c.id)}
+                  credits={c.credits || 3}
+                  term={c.termPlanned || "Undecided"}
+                  onRemove={() => removeWishlistCourse(c.id)}
+                  accentColor="grey"
+                  draggable
+                  onDragStart={(e) =>
+                    handleDragStart(
+                      e,
+                      "undecided",
+                      c.id,
+                      c.termPlanned,
+                      c.credits || 3,
+                      "grey"
+                    )
+                  }
+                  onDragEnd={handleDragEnd}
+                />
+              ))}
+              {dragHoverTarget === "undecided" &&
+                draggedItemData &&
+                draggedItemData.sourceSection !== "undecided" && (
+                  <CatalogCourseCard
+                    id={draggedItemData.id}
+                    title={draggedItemData.title}
+                    credits={draggedItemData.credits}
+                    term={"Undecided"}
+                    onRemove={() => {}}
+                    accentColor="grey"
+                    isSkeleton
+                  />
+                )}
+            </div>
+
+            {undecidedCoursesToTake.length === 0 && (
+              <p
+                style={{
+                  fontSize: "14px",
+                  color: "var(--colour-neutral-400)",
+                  marginTop: "16px",
+                }}
+              >
+                No future courses planned.
+              </p>
+            )}
           </div>
 
           {/* Bottom Section: Completed Courses Grid */}
