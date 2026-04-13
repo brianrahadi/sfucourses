@@ -759,7 +759,7 @@ const ProgressPage = () => {
                 </button>
               </div>
               <div
-                className="course-stack"
+                className="course-list-grid"
                 onDragOver={(e) => handleDragOver(e, "in-progress")}
                 onDrop={(e) => handleDrop(e, "in-progress")}
                 style={{ minHeight: "100px" }}
@@ -831,7 +831,7 @@ const ProgressPage = () => {
               </div>
 
               <div
-                className="course-stack"
+                className="course-list-grid"
                 onDragOver={(e) => handleDragOver(e, "next-term")}
                 onDrop={(e) => handleDrop(e, "next-term")}
                 style={{ minHeight: "80px" }}
@@ -1120,6 +1120,7 @@ const ProgressPage = () => {
           value={courseInput}
           onChange={setCourseInput}
           options={outlineOptions}
+          autoFocus
         />
         <select
           value={selectedCourseTerm}
@@ -1143,6 +1144,7 @@ const ProgressPage = () => {
           value={courseInput}
           onChange={setCourseInput}
           options={currentTermOptions}
+          autoFocus
         />
       </CatalogModal>
 
@@ -1156,6 +1158,7 @@ const ProgressPage = () => {
           value={courseInput}
           onChange={setCourseInput}
           options={nextTermOptions}
+          autoFocus
         />
       </CatalogModal>
 
@@ -1169,6 +1172,7 @@ const ProgressPage = () => {
           value={courseInput}
           onChange={setCourseInput}
           options={futureCourseOptions}
+          autoFocus
         />
         <select
           value={selectedCourseTerm}

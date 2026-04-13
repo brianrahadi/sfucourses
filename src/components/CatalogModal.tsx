@@ -23,7 +23,19 @@ export const CatalogModal: React.FC<CatalogModalProps> = ({
 
   return (
     <div className="catalog-dialog-overlay" onClick={onClose}>
-      <div className="catalog-dialog" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="catalog-dialog"
+        onClick={(e) => e.stopPropagation()}
+        onKeyDown={(e) => {
+          if (
+            e.key === "Enter" &&
+            (e.target as HTMLElement).tagName !== "TEXTAREA"
+          ) {
+            e.preventDefault();
+            onSave();
+          }
+        }}
+      >
         <h3>{title}</h3>
         {children}
         <div className="btn-group">

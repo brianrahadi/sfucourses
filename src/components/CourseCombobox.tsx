@@ -12,6 +12,7 @@ export interface CourseComboboxProps {
   onChange: (val: string) => void;
   options: OutlineOption[];
   placeholder?: string;
+  autoFocus?: boolean;
 }
 
 export const CourseCombobox: React.FC<CourseComboboxProps> = ({
@@ -19,6 +20,7 @@ export const CourseCombobox: React.FC<CourseComboboxProps> = ({
   onChange,
   options,
   placeholder = "e.g. CMPT 225",
+  autoFocus = false,
 }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [filteredOptions, setFilteredOptions] = useState<OutlineOption[]>([]);
@@ -73,6 +75,7 @@ export const CourseCombobox: React.FC<CourseComboboxProps> = ({
           if (value) setShowDropdown(true);
         }}
         autoComplete="off"
+        autoFocus={autoFocus}
       />
       {showDropdown && filteredOptions.length > 0 && (
         <ul className="autocomplete-dropdown">
