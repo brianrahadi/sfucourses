@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/router";
 import { Button, ButtonGroup } from "@components";
 import { MdTune } from "react-icons/md";
 import { SUBJECTS } from "@const";
@@ -108,100 +107,6 @@ export const FilterDialog: React.FC = () => {
     timeFilter.end !== "" ||
     subjectFilter.length > 0 ||
     levelFilter.length > 0;
-
-  const router = useRouter();
-  const isHydratedRef = useRef(false);
-
-  // Sync state from query on initial load
-  useEffect(() => {
-    if (router.isReady && !isHydratedRef.current) {
-      const q = router.query;
-
-      if (q.filterConflicts === "true") setFilterConflicts(true);
-      if (q.campus) setCampusFilter((q.campus as string).split(","));
-      if (q.days) setDaysFilter((q.days as string).split(","));
-      if (q.subjects) setSubjectFilter((q.subjects as string).split(","));
-      if (q.levels) setLevelFilter((q.levels as string).split(","));
-      if (q.timeStart || q.timeEnd) {
-        setTimeFilter({
-          start: (q.timeStart as string) || "",
-          end: (q.timeEnd as string) || "",
-        });
-      }
-
-      isHydratedRef.current = true;
-    }
-  }, [
-    router.isReady,
-    router.query,
-    setFilterConflicts,
-    setCampusFilter,
-    setDaysFilter,
-    setSubjectFilter,
-    setLevelFilter,
-    setTimeFilter,
-  ]);
-
-  // Sync state to query when state changes
-  useEffect(() => {
-    if (!router.isReady || !isHydratedRef.current) return;
-
-    const query = { ...router.query };
-
-    const syncArray = (key: string, arr: string[]) => {
-      if (arr.length > 0) query[key] = arr.join(",");
-      else delete query[key];
-    };
-
-    syncArray("campus", campusFilter);
-    syncArray("days", daysFilter);
-    syncArray("subjects", subjectFilter);
-    syncArray("levels", levelFilter);
-
-    if (filterConflicts) query.filterConflicts = "true";
-    else delete query.filterConflicts;
-
-    if (timeFilter.start) query.timeStart = timeFilter.start;
-    else delete query.timeStart;
-
-    if (timeFilter.end) query.timeEnd = timeFilter.end;
-    else delete query.timeEnd;
-
-    const keysToCheck = [
-      "filterConflicts",
-      "campus",
-      "days",
-      "subjects",
-      "levels",
-      "timeStart",
-      "timeEnd",
-    ];
-
-    let changed = false;
-    for (const key of keysToCheck) {
-      if (query[key] !== router.query[key]) {
-        changed = true;
-        break;
-      }
-    }
-
-    if (changed) {
-      router.replace({ pathname: router.pathname, query }, undefined, {
-        shallow: true,
-      });
-    }
-  }, [
-    router,
-    router.isReady,
-    router.query,
-    router.pathname,
-    filterConflicts,
-    campusFilter,
-    daysFilter,
-    subjectFilter,
-    levelFilter,
-    timeFilter,
-  ]);
 
   useEffect(() => {
     const handleEscapeKey = (event: KeyboardEvent) => {
