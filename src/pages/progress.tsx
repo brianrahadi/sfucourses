@@ -91,6 +91,46 @@ const ProgressPage = () => {
 
   const [mounted, setMounted] = useState(false);
   const loadedFromUrl = useRef(false);
+  const lastDialogRef = useRef<
+    "completed" | "in-progress" | "next-term" | "wishlist" | "mass-add" | null
+  >(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (
+        document.activeElement?.tagName === "INPUT" ||
+        document.activeElement?.tagName === "TEXTAREA" ||
+        document.activeElement?.tagName === "SELECT"
+      ) {
+        return;
+      }
+      if (e.key.toLowerCase() === "a") {
+        if (
+          !isAddCompletedOpen &&
+          !isInProgressOpen &&
+          !isNextTermOpen &&
+          !isWishlistOpen &&
+          !isMassAddOpen
+        ) {
+          e.preventDefault();
+          const last = lastDialogRef.current;
+          if (last === "completed") setIsAddCompletedOpen(true);
+          else if (last === "in-progress") setIsInProgressOpen(true);
+          else if (last === "next-term") setIsNextTermOpen(true);
+          else if (last === "wishlist") setIsWishlistOpen(true);
+          else if (last === "mass-add") setIsMassAddOpen(true);
+        }
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [
+    isAddCompletedOpen,
+    isInProgressOpen,
+    isNextTermOpen,
+    isWishlistOpen,
+    isMassAddOpen,
+  ]);
 
   useEffect(() => {
     setMounted(true);
@@ -750,7 +790,10 @@ const ProgressPage = () => {
                 </h2>
                 <button
                   className="add-btn"
-                  onClick={() => setIsInProgressOpen(true)}
+                  onClick={() => {
+                    lastDialogRef.current = "in-progress";
+                    setIsInProgressOpen(true);
+                  }}
                 >
                   Add
                 </button>
@@ -821,7 +864,10 @@ const ProgressPage = () => {
                 <h2>NEXT TERM — {nextTerm.toUpperCase()} </h2>
                 <button
                   className="add-btn"
-                  onClick={() => setIsNextTermOpen(true)}
+                  onClick={() => {
+                    lastDialogRef.current = "next-term";
+                    setIsNextTermOpen(true);
+                  }}
                 >
                   Add
                 </button>
@@ -936,6 +982,7 @@ const ProgressPage = () => {
                   <button
                     className="add-btn"
                     onClick={() => {
+                      lastDialogRef.current = "wishlist";
                       setSelectedCourseTerm("Undecided");
                       setIsWishlistOpen(true);
                     }}
@@ -1026,13 +1073,17 @@ const ProgressPage = () => {
                 <div className="action-buttons">
                   <button
                     className="add-btn"
-                    onClick={() => setIsMassAddOpen(true)}
+                    onClick={() => {
+                      lastDialogRef.current = "mass-add";
+                      setIsMassAddOpen(true);
+                    }}
                   >
                     Mass Add
                   </button>
                   <button
                     className="add-btn"
                     onClick={() => {
+                      lastDialogRef.current = "completed";
                       setSelectedCourseTerm(pastTerms[0] || "");
                       setIsAddCompletedOpen(true);
                     }}
