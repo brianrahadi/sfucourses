@@ -10,7 +10,8 @@
     "start": "next start",
     "lint": "next lint",
     "format:write": "npx prettier --write .",
-    "format:check": "npx prettier --check ."
+    "format:check": "npx prettier --check .",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@floating-ui/react": "^0.27.16",
@@ -50,6 +51,7 @@
     "zustand": "^5.0.12"
   },
   "devDependencies": {
+    "@playwright/test": "^1.59.1",
     "@types/node": "20.9.0",
     "@types/pako": "^2.0.3",
     "@types/papaparse": "^5.5.2",
