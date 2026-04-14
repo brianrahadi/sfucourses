@@ -56,254 +56,66 @@
     }
   }
 
-  .discover-ssss {
+  // Feature cards grid
+  .landing-features {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
     padding-bottom: 4rem;
 
-    h3 {
-      font-size: 1.75rem;
-    }
-
-    p {
-      font-weight: 500;
-      margin-top: 0.25rem;
-    }
-
-    header {
-      margin-bottom: 1rem;
-
-      button {
-        margin-top: 1rem;
-      }
-    }
-
-    .discover-ssss__main-link-item,
-    .discover-ssss__link-item {
-      text-decoration: none;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      height: 14rem;
-      border-radius: $border-radius;
-      padding: 1rem;
-      background: linear-gradient(180deg, rgba(20, 21, 21, 0) 0%, #141515 100%),
-        url("../../assets/images/landing-page/explore-sfu.webp");
-      background-size: cover;
-      background-position: center;
-      cursor: pointer;
-    }
-
-    .discover-ssss__link-items {
-      margin-top: 2rem;
-
-      & > * + * {
-        margin-top: 2rem;
-      }
-
-      .discover-ssss__link-item:nth-child(1) {
-        background: linear-gradient(
-            180deg,
-            rgba(20, 21, 21, 0) 0%,
-            #141515 100%
-          ),
-          url("../../assets/images/landing-page/schedule.webp");
-        background-size: cover;
-        background-position: center;
-      }
-    }
-
-    @include viewport(tablet-desktop) {
-      display: grid;
-      grid-template-areas:
-        "header header"
-        "main items";
-      gap: 1rem;
-      grid-template-columns: 1fr 50%;
-
-      header {
-        grid-area: header;
-        display: flex;
-        width: 100%;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 0;
-
-        button {
-          margin-top: 0;
-        }
-      }
-
-      .discover-ssss__main-link-item {
-        grid-area: main;
-        height: 100%;
-        padding: 2rem;
-      }
-
-      .discover-ssss__link-items {
-        grid-area: items;
-        margin-top: 0;
-
-        & > .discover-ssss__link-item:nth-child(1),
-        & > .discover-ssss__link-item:nth-child(2),
-        & > .discover-ssss__link-item:nth-child(3) {
-          height: 20rem;
-          justify-content: center;
-          overflow: hidden;
-          position: relative;
-          padding-left: 1.5rem;
-          padding-right: 1.5rem;
-          margin: 0 0 1rem 0;
-          background: var(--colour-neutral-1100);
-
-          &::before {
-            content: "";
-            background-size: cover;
-            background-position: center;
-            display: block;
-            clip-path: polygon(25% 0%, 100% 0%, 100% 100%, 0% 100%);
-            position: absolute;
-            right: 0;
-            width: 50%;
-            height: 100%;
-          }
-        }
-
-        .discover-ssss__link-item:nth-child(1)::before {
-          background-image: url("../../assets/images/landing-page/schedule.webp");
-        }
-      }
+    @include viewport(desktop) {
+      grid-template-columns: repeat(4, 1fr);
     }
   }
 
-  // Schedule preview section
-  .schedule-preview-section {
-    padding-top: 4rem;
-    padding-bottom: 4rem;
+  .feature-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    text-decoration: none;
+    background: var(--colour-neutral-1100);
+    border: 1px solid var(--colour-neutral-1000);
+    border-radius: 0.75rem;
+    padding: 2rem 1.5rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
 
-    h2 {
-      text-align: center;
-      margin-bottom: 2rem;
+    &:hover {
+      border-color: var(--colour-neutral-800);
+      background: var(--colour-neutral-1000);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
     }
 
-    .schedule-preview-tabs {
+    .feature-card__icon {
       display: flex;
+      align-items: center;
       justify-content: center;
-      gap: 1rem;
-      margin-bottom: 2rem;
-
-      .tab-button {
-        background-color: var(--colour-neutral-1000);
-        color: var(--colour-neutral-100);
-        border: none;
-        padding: 0.75rem 1.5rem;
-        border-radius: 0.5rem;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        font-weight: 500;
-
-        &:hover {
-          background-color: var(--colour-neutral-900);
-        }
-
-        &.active {
-          background-color: var(--colour-sosy-green-800);
-          color: var(--colour-neutral-000);
-        }
-      }
+      width: 56px;
+      height: 56px;
+      border-radius: 0.75rem;
+      background: var(--colour-neutral-1000);
+      margin-bottom: 1rem;
+      transition: background 0.2s ease;
     }
 
-    .schedule-preview-content {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-
-      @include viewport(desktop) {
-        flex-direction: row;
-      }
-
-      .selected-courses-preview {
-        flex: 1;
-        background-color: var(--colour-neutral-1100);
-        border-radius: 0.75rem;
-        padding: 1.5rem;
-
-        h3 {
-          margin-bottom: 1rem;
-          color: var(--colour-sosy-green-500);
-        }
-
-        .selected-courses-badges {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 0.5rem;
-        }
-
-        .no-courses {
-          color: var(--colour-neutral-500);
-          text-align: center;
-          padding: 2rem 0;
-        }
-      }
-
-      .weekly-schedule-preview {
-        flex: 2;
-        background-color: var(--colour-neutral-1100);
-        border-radius: 0.75rem;
-        padding: 1.5rem;
-        min-height: 400px;
-
-        .empty-schedule-message {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          height: 100%;
-          min-height: 300px;
-
-          p {
-            color: var(--colour-neutral-500);
-            margin-bottom: 1.5rem;
-          }
-
-          .create-schedule-link {
-            background-color: var(--colour-sosy-green-700);
-            color: var(--colour-neutral-000);
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            text-decoration: none;
-            transition: all 0.2s ease;
-
-            &:hover {
-              background-color: var(--colour-sosy-green-600);
-              transform: translateY(-2px);
-            }
-          }
-        }
-      }
+    &:hover .feature-card__icon {
+      background: var(--colour-neutral-900);
     }
 
-    .no-default-schedules {
-      text-align: center;
-      padding: 3rem 0;
+    .feature-card__title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+      color: var(--colour-neutral-100);
+    }
 
-      p {
-        color: var(--colour-neutral-400);
-        margin-bottom: 1.5rem;
-      }
-
-      .create-schedule-button {
-        display: inline-block;
-        background-color: var(--colour-sosy-green-700);
-        color: var(--colour-neutral-000);
-        padding: 0.75rem 1.5rem;
-        border-radius: 0.5rem;
-        text-decoration: none;
-        transition: all 0.2s ease;
-
-        &:hover {
-          background-color: var(--colour-sosy-green-600);
-          transform: translateY(-2px);
-        }
-      }
+    .feature-card__desc {
+      font-size: 0.875rem;
+      color: var(--colour-neutral-500);
+      font-weight: 500;
+      line-height: 1.4;
     }
   }
 }

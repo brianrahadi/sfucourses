@@ -6,12 +6,14 @@ interface HeroProps {
   subtitle?: string;
   title: string;
   backgroundImage: string;
+  children?: React.ReactNode;
 }
 
 export const Hero: React.FC<HeroProps> = ({
   subtitle,
   title,
   backgroundImage,
+  children,
 }) => {
   const {
     data: lastUpdatedData,
@@ -45,6 +47,7 @@ export const Hero: React.FC<HeroProps> = ({
             : "N/A"
           : ""}
       </p>
+      {children}
     </header>
   );
 };

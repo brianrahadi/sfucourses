@@ -24,6 +24,7 @@ export { CopyScheduleButton } from "./CopyScheduleButton";
 export { CopyLinkButton } from "./CopyLinkButton";
 export { ResetFilterButton } from "./ResetFilterButton";
 export { GlobalSearch } from "./GlobalSearch";
+export { HeroSearch } from "./HeroSearch";
 export { ScheduleManager } from "./ScheduleManager";
 export { CompactSelectedCourses } from "./CompactSelectedCourses";
 export { ConflictFilterButton } from "./ConflictFilterButton";
