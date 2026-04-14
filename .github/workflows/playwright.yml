@@ -17,7 +17,7 @@ jobs:
         run: npm ci
       - name: Store playwright version
         id: playwright-version
-        run: echo "PLAYWRIGHT_VERSION=$(npm ls @playwright/test | grep @playwright | sed 's/.*@//')" >> $GITHUB_ENV
+        run: echo "PLAYWRIGHT_VERSION=$(npm ls @playwright/test --depth=0 2>/dev/null | grep '@playwright/test' | sed -n \"s/.*@playwright\/test@\([^ ]*\).*/\1/p\")" >> $GITHUB_ENV
       - name: Cache playwright binaries
         uses: actions/cache@v4
         id: playwright-cache
