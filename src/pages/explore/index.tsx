@@ -563,6 +563,7 @@ const ExplorePage: React.FC = () => {
             handleInputChange={setQuery}
             searchSelected={searchSelected}
             setSearchSelected={setSearchSelected}
+            value={query}
             placeholder={
               mode === "courses"
                 ? "course code, title, description, or instructor"

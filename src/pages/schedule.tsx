@@ -447,6 +447,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
               handleInputChange={setQuery}
               searchSelected={searchSelected}
               setSearchSelected={setSearchSelected}
+              value={query}
               placeholder="course code, title, or instructor"
             />
           </div>
