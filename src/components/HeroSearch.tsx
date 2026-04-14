@@ -179,7 +179,7 @@ export const HeroSearch: React.FC = () => {
         }}
         searchSelected={isFocused}
         setSearchSelected={(selected) => setIsFocused(selected)}
-        placeholder="search courses and instructors"
+        placeholder="search course or instructor"
         value={query}
         onKeyDown={handleKeyDown}
         className="hero-search__input"
