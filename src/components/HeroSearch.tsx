@@ -100,7 +100,7 @@ export const HeroSearch: React.FC = () => {
             .toLowerCase()
             .includes(lowerQuery)
         )
-        .slice(0, 8)
+        .slice(0, 50)
         .map((course: MinimalCourseData) => ({
           type: "course",
           data: course,
@@ -111,7 +111,7 @@ export const HeroSearch: React.FC = () => {
         .filter((instructor: MinimalInstructorData) =>
           instructor.name.toLowerCase().includes(lowerQuery)
         )
-        .slice(0, 4)
+        .slice(0, 50)
         .map((instructor: MinimalInstructorData) => ({
           type: "instructor",
           data: instructor,
