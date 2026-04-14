@@ -107,8 +107,8 @@ export const HeaderNav: React.FC = () => {
             <Link href="/graph" className="page-link" prefetch={false}>
               graph
             </Link>
-            <Link href="/progress" className="page-link" prefetch={false}>
-              progress
+            <Link href="/degree" className="page-link" prefetch={false}>
+              degree
             </Link>
           </nav>
         </div>
@@ -151,13 +151,13 @@ export const HeaderNav: React.FC = () => {
           <span>Graph</span>
         </Link>
         <Link
-          href="/progress"
+          href="/degree"
           className={`mobile-nav-item ${
-            isActivePath("/progress") ? "active" : ""
+            isActivePath("/degree") ? "active" : ""
           }`}
         >
           <Book size={20} />
-          <span>Progress</span>
+          <span>Degree</span>
         </Link>
       </div>
     </>

@@ -6,7 +6,7 @@ const pages = [
   "/explore/acma-101",
   "/instructors/brian fraser",
   "/graph",
-  "/progress",
+  "/degree",
   "/schedule",
 ];
 

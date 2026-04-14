@@ -30,7 +30,7 @@ const features = [
   {
     title: "Degree Planner",
     description: "Track progress toward your degree",
-    href: "/progress",
+    href: "/degree",
     icon: Book,
     color: "#f87c8c",
   },
