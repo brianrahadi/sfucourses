@@ -10,10 +10,10 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import { SidebarCourse, ExploreFilter } from "@components";
+import { SidebarCourse, ExploreFilter, DraggablePanel } from "@components";
 import { useExploreStore } from "src/store/useExploreStore";
 import { CourseOutline } from "@types";
-import { MdFilterList, MdClose } from "react-icons/md";
+import { MdFilterList } from "react-icons/md";
 
 const ForceGraph2D = dynamic(() => import("react-force-graph-2d"), {
   ssr: false,
@@ -329,37 +329,42 @@ const GraphPage: React.FC<GraphPageProps> = ({ nodes, links }) => {
   return (
     <div className="page graph-page">
       <main className="container">
-        {/* Left Sidebar Native Layout (Mirrors courses-section in schedule) */}
+        {/* Left Sidebar - Draggable */}
         {selectedCourseOutline && (
-          <section className="courses-section">
+          <DraggablePanel
+            anchor="top-left"
+            defaultPosition={{ top: 20, left: 20 }}
+            className="graph-panel graph-panel--sidebar"
+            resizable
+          >
             <SidebarCourse
               course={selectedCourseOutline}
               onClose={closeSidebar}
             />
-          </section>
+          </DraggablePanel>
         )}
 
-        {/* Right Layout (Mirrors schedule-section but holds graph) */}
-        <section>
-          {/* Floating Filter Menu */}
-          <div
-            className={`search-filter-container ${
-              isFilterOpen ? "" : "closed"
-            }`}
+        {/* Floating Filter Menu - Draggable */}
+        {isFilterOpen ? (
+          <DraggablePanel
+            anchor="top-right"
+            defaultPosition={{ top: 20, right: 20 }}
+            className="graph-panel graph-panel--filter"
           >
             <ExploreFilter simplified onClose={() => setIsFilterOpen(false)} />
-          </div>
+          </DraggablePanel>
+        ) : (
+          <button
+            className="filter-half-circle"
+            onClick={() => setIsFilterOpen(true)}
+            aria-label="Open Filters"
+          >
+            <MdFilterList size={24} />
+          </button>
+        )}
 
-          {!isFilterOpen && (
-            <button
-              className="filter-half-circle"
-              onClick={() => setIsFilterOpen(true)}
-              aria-label="Open Filters"
-            >
-              <MdFilterList size={24} />
-            </button>
-          )}
-
+        {/* Graph Canvas */}
+        <section>
           <ForceGraph2D
             ref={fgRef}
             graphData={graphData}

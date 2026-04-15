@@ -22,27 +22,20 @@
     overflow: hidden;
   }
 
-  .courses-section {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    bottom: 20px;
-    width: 400px;
-    min-width: 400px;
-    height: auto;
-    // max-height: calc(100% - 40px);
-    overflow-y: auto;
-    background-color: var(--colour-neutral-1100);
-    z-index: 100;
-    border-radius: 12px;
-    // box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-    border: 1px solid var(--colour-neutral-800);
+  /* Draggable panels on the graph canvas */
+  .graph-panel {
+    &--sidebar {
+      width: 400px;
+      min-width: 320px;
 
-    @media screen and (max-width: 480px) {
-      left: 8px;
-      right: 8px;
-      width: auto;
-      min-width: unset;
+      @media screen and (max-width: 480px) {
+        width: calc(100% - 16px);
+        min-width: unset;
+      }
+    }
+
+    &--filter {
+      min-width: 260px;
     }
   }
 
@@ -53,20 +46,6 @@
     /* Default dark canvas for ForceGraph2D */
     background-color: #1e1e1e;
     overflow: hidden;
-  }
-
-  .search-filter-container {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    z-index: 100;
-    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
-
-    &.closed {
-      transform: translateX(120%);
-      opacity: 0;
-      pointer-events: none;
-    }
   }
 
   .filter-half-circle {

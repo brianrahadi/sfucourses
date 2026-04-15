@@ -1,0 +1,93 @@
+.draggable-panel {
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--colour-neutral-800);
+  background-color: var(--colour-neutral-1100);
+  max-height: calc(100% - 40px);
+
+  &__handle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 0;
+    cursor: grab;
+    background-color: var(--colour-neutral-1000);
+    border-bottom: 1px solid var(--colour-neutral-800);
+    user-select: none;
+    touch-action: none;
+    flex-shrink: 0;
+    transition: background-color 0.15s ease;
+
+    &:hover {
+      background-color: var(--colour-neutral-900);
+    }
+
+    &:active {
+      cursor: grabbing;
+      background-color: var(--colour-neutral-900);
+    }
+  }
+
+  &__handle-dots {
+    display: grid;
+    grid-template-columns: repeat(3, 4px);
+    grid-template-rows: repeat(2, 4px);
+    gap: 3px;
+    pointer-events: none;
+
+    span {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background-color: var(--colour-neutral-600);
+      transition: background-color 0.15s ease;
+    }
+  }
+
+  &__handle:hover &__handle-dots span {
+    background-color: var(--colour-neutral-400);
+  }
+
+  &__content {
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+  }
+
+  // Resize handle on right edge
+  &__resize-handle {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 6px;
+    height: 100%;
+    cursor: col-resize;
+    user-select: none;
+    touch-action: none;
+    z-index: 10;
+    background-color: transparent;
+    transition: background-color 0.15s ease;
+
+    &:hover {
+      background-color: var(--colour-sosy-green-600);
+    }
+
+    &:active {
+      background-color: var(--colour-sosy-green-500);
+    }
+  }
+
+  // When resizable, allow overflow for the resize handle
+  &--resizable {
+    overflow: visible;
+
+    .draggable-panel__content {
+      overflow-y: auto;
+      overflow-x: hidden;
+      border-radius: 0 0 12px 12px;
+    }
+  }
+}
