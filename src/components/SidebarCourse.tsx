@@ -398,58 +398,6 @@ export const SidebarCourse: React.FC<SidebarCourseProps> = ({
         )}
       </div>
 
-      {/* Course Review Summary Stats */}
-      {courseReviewData && (
-        <div className="course-review-summary">
-          <div className="review-stats">
-            <div className="stat-item">
-              <span className="stat-value">
-                {(() => {
-                  const allReviews = courseReviewData.instructors.flatMap(
-                    (instructor) => instructor.reviews
-                  );
-                  const totalRating = allReviews.reduce(
-                    (sum, review) => sum + parseFloat(review.rating),
-                    0
-                  );
-                  return (totalRating / allReviews.length).toFixed(2);
-                })()}
-                /5
-              </span>
-              <span className="stat-label">Overall Rating</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-value">
-                {(() => {
-                  const allReviews = courseReviewData.instructors.flatMap(
-                    (instructor) => instructor.reviews
-                  );
-                  const totalDifficulty = allReviews.reduce(
-                    (sum, review) => sum + parseFloat(review.difficulty),
-                    0
-                  );
-                  return (totalDifficulty / allReviews.length).toFixed(2);
-                })()}
-                /5
-              </span>
-              <span className="stat-label">Overall Difficulty</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-value">
-                {courseReviewData.total_reviews}
-              </span>
-              <span className="stat-label">Total Reviews</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-value">
-                {courseReviewData.instructors.length}
-              </span>
-              <span className="stat-label">Instructors</span>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Course Review Charts */}
       {courseReviewData &&
         (() => {
