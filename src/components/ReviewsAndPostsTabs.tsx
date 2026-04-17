@@ -171,39 +171,41 @@ const ReviewsAndPostsTabs: React.FC<ReviewsAndPostsTabsProps> = ({
             <div className="reviews-list">
               <div className="reviews-header">
                 <div className="filter-dropdowns">
-                  <div className="course-filter">
-                    <select
-                      value={selectedCourseFilter}
-                      onChange={(e) => onCourseFilterChange(e.target.value)}
-                      className="course-filter-dropdown"
-                    >
-                      <option value="all">
-                        {context === "instructor"
-                          ? "All Courses"
-                          : "All Instructors"}
-                      </option>
-                      {getCourseCodesWithCounts().map(
-                        ({ courseCode, count }) => (
-                          <option key={courseCode} value={courseCode}>
-                            {courseCode} ({count})
-                          </option>
-                        )
-                      )}
-                    </select>
-                  </div>
-                  <div className="review-sorter">
-                    <select
-                      value={selectedSortOption}
-                      onChange={(e) => onSortOptionChange(e.target.value)}
-                      className="review-sorter-dropdown"
-                    >
-                      <option value="most-recent">Most Recent</option>
-                      <option value="least-recent">Least Recent</option>
-                      <option value="hardest">Hardest</option>
-                      <option value="easiest">Easiest</option>
-                      <option value="most-liked">Most Liked</option>
-                      <option value="most-disliked">Most Disliked</option>
-                    </select>
+                  <div className="filter-dropdowns-left">
+                    <div className="course-filter">
+                      <select
+                        value={selectedCourseFilter}
+                        onChange={(e) => onCourseFilterChange(e.target.value)}
+                        className="course-filter-dropdown"
+                      >
+                        <option value="all">
+                          {context === "instructor"
+                            ? "All Courses"
+                            : "All Instructors"}
+                        </option>
+                        {getCourseCodesWithCounts().map(
+                          ({ courseCode, count }) => (
+                            <option key={courseCode} value={courseCode}>
+                              {courseCode} ({count})
+                            </option>
+                          )
+                        )}
+                      </select>
+                    </div>
+                    <div className="review-sorter">
+                      <select
+                        value={selectedSortOption}
+                        onChange={(e) => onSortOptionChange(e.target.value)}
+                        className="review-sorter-dropdown"
+                      >
+                        <option value="most-recent">Most Recent</option>
+                        <option value="least-recent">Least Recent</option>
+                        <option value="hardest">Hardest</option>
+                        <option value="easiest">Easiest</option>
+                        <option value="most-liked">Most Liked</option>
+                        <option value="most-disliked">Most Disliked</option>
+                      </select>
+                    </div>
                   </div>
                   <div className="filter-stats">
                     <div

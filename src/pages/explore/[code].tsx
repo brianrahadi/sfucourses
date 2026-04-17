@@ -501,7 +501,7 @@ const CoursePage: React.FC<CoursePageProps> = () => {
           <div className="course-bottom-right">
             <div className="prerequisites-section">
               <div className="prereq-header">
-                <h2>Prerequisites</h2>
+                {!showPrereqVis ? <h2>Prerequisites</h2> : <div></div>}
                 <button
                   className="prereq-toggle-btn"
                   onClick={() => setShowPrereqVis(!showPrereqVis)}
@@ -533,7 +533,6 @@ const CoursePage: React.FC<CoursePageProps> = () => {
                     height: "350px",
                     border: "none",
                     borderRadius: "8px",
-                    marginTop: "1rem",
                   }}
                   title="Prerequisites Visualization"
                 ></iframe>
