@@ -4,6 +4,7 @@ import {
   Hero,
   SectionDetails,
   ReviewsAndPostsTabs,
+  ReviewCharts,
 } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useEffect, useState, useCallback, useRef } from "react";
@@ -12,16 +13,7 @@ import { CourseOutline, Review } from "@types";
 import { useRouter } from "next/router";
 import { useCourseOfferings } from "@hooks";
 import { RotatingLines } from "react-loader-spinner";
-import { StarIcon, BrainIcon } from "../../components/ReviewIcons";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+
 import { BASE_URL } from "@const";
 
 interface CoursePageProps {}
@@ -450,190 +442,35 @@ const CoursePage: React.FC<CoursePageProps> = () => {
             </div>
           </div>
 
-          <div className="course-charts-section">
-            {courseReviewData && (
-              <div className="course-charts">
-                <div className="chart-container">
-                  <div className="chart-header">
-                    <span className="chart-title">
-                      <StarIcon size={16} style={{ marginRight: "8px" }} />
-                      RATING
-                    </span>
-                    <div className="chart-score-bar rating">
-                      <span className="score-text">
-                        {(() => {
-                          const allReviews =
-                            courseReviewData.instructors.flatMap(
-                              (instructor) => instructor.reviews
-                            );
-                          let totalRating = 0;
-                          if (allReviews.length > 0) {
-                            totalRating =
-                              allReviews.reduce(
-                                (sum, review) =>
-                                  sum + parseFloat(review.rating),
-                                0
-                              ) / allReviews.length;
-                          }
-                          return totalRating.toFixed(2);
-                        })()}
-                        /5
-                      </span>
-                      <div className="score-bar-bg">
-                        <div
-                          className="score-bar-fill"
-                          style={{
-                            width: `${(() => {
-                              const allReviews =
-                                courseReviewData.instructors.flatMap(
-                                  (instructor) => instructor.reviews
-                                );
-                              let totalRating = 0;
-                              if (allReviews.length > 0) {
-                                totalRating =
-                                  allReviews.reduce(
-                                    (sum, review) =>
-                                      sum + parseFloat(review.rating),
-                                    0
-                                  ) / allReviews.length;
-                              }
-                              return totalRating * 20;
-                            })()}%`,
-                          }}
-                        ></div>
-                      </div>
-                    </div>
-                  </div>
-                  <ResponsiveContainer width="100%" height={150}>
-                    <BarChart data={getChartData().ratingData}>
-                      <CartesianGrid
-                        strokeDasharray="3 3"
-                        stroke="var(--colour-neutral-800)"
-                      />
-                      <XAxis
-                        dataKey="rating"
-                        stroke="var(--colour-neutral-400)"
-                        fontSize={12}
-                        tickLine={false}
-                        axisLine={false}
-                      />
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: "var(--colour-neutral-1100)",
-                          border: "1px solid var(--colour-neutral-800)",
-                          borderRadius: "0.5rem",
-                          color: "var(--colour-neutral-200)",
-                        }}
-                        formatter={(value: number) => [
-                          `${value} (${(
-                            (value / courseReviewData.total_reviews) *
-                            100
-                          ).toFixed(0)}%)`,
-                          "Count",
-                        ]}
-                        labelFormatter={(label: string) => ``}
-                      />
-                      <Bar
-                        dataKey="count"
-                        fill="#f59e0b"
-                        radius={[2, 2, 0, 0]}
-                        barSize={30}
-                      />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-                <div className="chart-container">
-                  <div className="chart-header">
-                    <span className="chart-title">
-                      <BrainIcon size={16} style={{ marginRight: "8px" }} />
-                      DIFFICULTY
-                    </span>
-                    <div className="chart-score-bar difficulty">
-                      <span className="score-text">
-                        {(() => {
-                          const allReviews =
-                            courseReviewData.instructors.flatMap(
-                              (instructor) => instructor.reviews
-                            );
-                          let totalDiff = 0;
-                          if (allReviews.length > 0) {
-                            totalDiff =
-                              allReviews.reduce(
-                                (sum, review) =>
-                                  sum + parseFloat(review.difficulty),
-                                0
-                              ) / allReviews.length;
-                          }
-                          return totalDiff.toFixed(2);
-                        })()}
-                        /5
-                      </span>
-                      <div className="score-bar-bg">
-                        <div
-                          className="score-bar-fill"
-                          style={{
-                            width: `${(() => {
-                              const allReviews =
-                                courseReviewData.instructors.flatMap(
-                                  (instructor) => instructor.reviews
-                                );
-                              let totalDiff = 0;
-                              if (allReviews.length > 0) {
-                                totalDiff =
-                                  allReviews.reduce(
-                                    (sum, review) =>
-                                      sum + parseFloat(review.difficulty),
-                                    0
-                                  ) / allReviews.length;
-                              }
-                              return totalDiff * 20;
-                            })()}%`,
-                          }}
-                        ></div>
-                      </div>
-                    </div>
-                  </div>
-                  <ResponsiveContainer width="100%" height={150}>
-                    <BarChart data={getChartData().difficultyData}>
-                      <CartesianGrid
-                        strokeDasharray="3 3"
-                        stroke="var(--colour-neutral-800)"
-                      />
-                      <XAxis
-                        dataKey="difficulty"
-                        stroke="var(--colour-neutral-400)"
-                        fontSize={12}
-                        tickLine={false}
-                        axisLine={false}
-                      />
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: "var(--colour-neutral-1100)",
-                          border: "1px solid var(--colour-neutral-800)",
-                          borderRadius: "0.5rem",
-                          color: "var(--colour-neutral-200)",
-                        }}
-                        formatter={(value: number) => [
-                          `${value} (${(
-                            (value / courseReviewData.total_reviews) *
-                            100
-                          ).toFixed(0)}%)`,
-                          "Count",
-                        ]}
-                        labelFormatter={(label: string) => ``}
-                      />
-                      <Bar
-                        dataKey="count"
-                        fill="#f05f5f"
-                        radius={[2, 2, 0, 0]}
-                        barSize={30}
-                      />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-            )}
-          </div>
+          {courseReviewData &&
+            (() => {
+              const allReviews = courseReviewData.instructors.flatMap(
+                (instructor) => instructor.reviews
+              );
+              let totalRating = 0;
+              let totalDiff = 0;
+              if (allReviews.length > 0) {
+                totalRating =
+                  allReviews.reduce(
+                    (sum, review) => sum + parseFloat(review.rating),
+                    0
+                  ) / allReviews.length;
+                totalDiff =
+                  allReviews.reduce(
+                    (sum, review) => sum + parseFloat(review.difficulty),
+                    0
+                  ) / allReviews.length;
+              }
+              return (
+                <ReviewCharts
+                  ratingData={getChartData().ratingData}
+                  difficultyData={getChartData().difficultyData}
+                  totalReviews={courseReviewData.total_reviews}
+                  overallRating={totalRating}
+                  overallDifficulty={totalDiff}
+                />
+              );
+            })()}
         </div>
 
         <div className="course-bottom-container">

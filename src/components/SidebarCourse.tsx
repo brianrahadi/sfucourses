@@ -1,20 +1,11 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { CourseOutline, CourseWithSectionDetails, Review } from "../types";
-import { RedditPosts, ReviewsAndPostsTabs } from "@components";
+import { RedditPosts, ReviewsAndPostsTabs, ReviewCharts } from "@components";
 import { getCourseAPIData } from "@utils";
 import { IoArrowBackOutline } from "react-icons/io5";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { Tooltip } from "react-tooltip";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip as RechartsTooltip,
-  ResponsiveContainer,
-} from "recharts";
 import { BASE_URL } from "@const";
 import { RotatingLines } from "react-loader-spinner";
 
@@ -460,80 +451,37 @@ export const SidebarCourse: React.FC<SidebarCourseProps> = ({
       )}
 
       {/* Course Review Charts */}
-      {courseReviewData && (
-        <div className="course-charts-section">
-          <div className="course-charts">
-            <div className="chart-container">
-              <h3>Rating Distribution</h3>
-              <ResponsiveContainer width="100%" height={120}>
-                <BarChart data={getChartData().ratingData}>
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    stroke="var(--colour-neutral-800)"
-                  />
-                  <XAxis
-                    dataKey="rating"
-                    stroke="var(--colour-neutral-400)"
-                    fontSize={10}
-                  />
-                  <YAxis stroke="var(--colour-neutral-400)" fontSize={10} />
-                  <RechartsTooltip
-                    contentStyle={{
-                      backgroundColor: "var(--colour-neutral-1100)",
-                      border: "1px solid var(--colour-neutral-800)",
-                      borderRadius: "0.5rem",
-                      color: "var(--colour-neutral-200)",
-                    }}
-                    formatter={(value: number) => [
-                      `${value} (${(
-                        (value / courseReviewData.total_reviews) *
-                        100
-                      ).toFixed(0)}%)`,
-                      "Count",
-                    ]}
-                    labelFormatter={(label: string) => ``}
-                  />
-                  <Bar dataKey="count" fill="#f59e0b" radius={[2, 2, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="chart-container">
-              <h3>Difficulty Distribution</h3>
-              <ResponsiveContainer width="100%" height={120}>
-                <BarChart data={getChartData().difficultyData}>
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    stroke="var(--colour-neutral-800)"
-                  />
-                  <XAxis
-                    dataKey="difficulty"
-                    stroke="var(--colour-neutral-400)"
-                    fontSize={10}
-                  />
-                  <YAxis stroke="var(--colour-neutral-400)" fontSize={10} />
-                  <RechartsTooltip
-                    contentStyle={{
-                      backgroundColor: "var(--colour-neutral-1100)",
-                      border: "1px solid var(--colour-neutral-800)",
-                      borderRadius: "0.5rem",
-                      color: "var(--colour-neutral-200)",
-                    }}
-                    formatter={(value: number) => [
-                      `${value} (${(
-                        (value / courseReviewData.total_reviews) *
-                        100
-                      ).toFixed(0)}%)`,
-                      "Count",
-                    ]}
-                    labelFormatter={(label: string) => ``}
-                  />
-                  <Bar dataKey="count" fill="#f59e0b" radius={[2, 2, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        </div>
-      )}
+      {courseReviewData &&
+        (() => {
+          const allReviews = courseReviewData.instructors.flatMap(
+            (instructor) => instructor.reviews
+          );
+          let totalRating = 0;
+          let totalDiff = 0;
+          if (allReviews.length > 0) {
+            totalRating =
+              allReviews.reduce(
+                (sum, review) => sum + parseFloat(review.rating),
+                0
+              ) / allReviews.length;
+            totalDiff =
+              allReviews.reduce(
+                (sum, review) => sum + parseFloat(review.difficulty),
+                0
+              ) / allReviews.length;
+          }
+          return (
+            <ReviewCharts
+              ratingData={getChartData().ratingData}
+              difficultyData={getChartData().difficultyData}
+              totalReviews={courseReviewData.total_reviews}
+              overallRating={totalRating}
+              overallDifficulty={totalDiff}
+              height={120}
+              fontSize={10}
+            />
+          );
+        })()}
 
       {/* Reviews and Posts Tabs */}
       <ReviewsAndPostsTabs

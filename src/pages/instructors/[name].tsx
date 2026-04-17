@@ -12,15 +12,7 @@ import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { RotatingLines } from "react-loader-spinner";
 import Link from "next/link";
 import { termToIcon } from "@utils/exploreFilters";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import { ReviewCharts } from "@components";
 import {
   BASE_URL,
   INSTRUCTOR_RMP_NAME_MAPPING,
@@ -323,196 +315,118 @@ const InstructorPage = () => {
             <h2>{error}</h2>
           </div>
         ) : instructor ? (
-          <div className="instructor-details-container">
-            {/* Instructor Header with Review Stats */}
-            <div className="instructor-header">
-              <div className="instructor-main-section">
-                <div className="instructor-info-container">
-                  <h1>{instructor.name}</h1>
-                  {reviewData && reviewData.department && (
-                    <p>{reviewData.department}</p>
-                  )}
+          <>
+            <div className="course-main-header">
+              <div
+                className="course-page-card"
+                style={{
+                  alignSelf: "stretch",
+                  justifyContent: "space-between",
+                }}
+              >
+                <div className="course-header-row">
+                  <span className="course-code-title">{instructor.name}</span>
+                </div>
+                {reviewData && reviewData.department && (
+                  <div className="course-title">{reviewData.department}</div>
+                )}
+                <div
+                  className="course-page-card__connt"
+                  style={{ marginTop: "auto", paddingBottom: "0.5rem" }}
+                >
                   {reviewData && (
-                    <div className="instructor-review-summary">
-                      <div className="review-stats">
-                        <div className="stat-item">
-                          <span className="stat-value">
-                            {reviewData.overall_rating}/5
-                          </span>
-                          <span className="stat-label">Overall Rating</span>
-                        </div>
-                        <div className="stat-item">
-                          <span className="stat-value">
-                            {reviewData.would_take_again}%
-                          </span>
-                          <span className="stat-label">Would Take Again</span>
-                        </div>
-                        <div className="stat-item">
-                          <span className="stat-value">
-                            {reviewData.difficulty_level}/5
-                          </span>
-                          <span className="stat-label">Difficulty</span>
-                        </div>
-                        <div className="stat-item">
-                          <span className="stat-value">
-                            {reviewData.total_ratings}
-                          </span>
-                          <span className="stat-label">Total Reviews</span>
-                        </div>
-                      </div>
-                    </div>
+                    <p className="course-reviews-count">
+                      {reviewData.total_ratings} reviews •{" "}
+                      {reviewData.would_take_again}% would take again
+                    </p>
                   )}
                 </div>
-
-                {reviewData && (
-                  <div className="instructor-charts-container">
-                    <div className="chart-container">
-                      <h3>Rating Distribution</h3>
-                      <ResponsiveContainer width="100%" height={150}>
-                        <BarChart data={getChartData().ratingData}>
-                          <CartesianGrid
-                            strokeDasharray="3 3"
-                            stroke="var(--colour-neutral-800)"
-                          />
-                          <XAxis
-                            dataKey="rating"
-                            stroke="var(--colour-neutral-400)"
-                            fontSize={12}
-                          />
-                          <YAxis
-                            stroke="var(--colour-neutral-400)"
-                            fontSize={12}
-                          />
-                          <Tooltip
-                            contentStyle={{
-                              backgroundColor: "var(--colour-neutral-1100)",
-                              border: "1px solid var(--colour-neutral-800)",
-                              borderRadius: "0.5rem",
-                              color: "var(--colour-neutral-200)",
-                            }}
-                            formatter={(value: number) => [
-                              `${value} (${(
-                                (value / +reviewData.total_ratings) *
-                                100
-                              ).toFixed(0)}%)`,
-                              "Count",
-                            ]}
-                            labelFormatter={(label: string) => ``}
-                          />
-                          <Bar
-                            dataKey="count"
-                            fill="var(--colour-sosy-green-500)"
-                            radius={[2, 2, 0, 0]}
-                          />
-                        </BarChart>
-                      </ResponsiveContainer>
-                    </div>
-                    <div className="chart-container">
-                      <h3>Difficulty Distribution</h3>
-                      <ResponsiveContainer width="100%" height={150}>
-                        <BarChart data={getChartData().difficultyData}>
-                          <CartesianGrid
-                            strokeDasharray="3 3"
-                            stroke="var(--colour-neutral-800)"
-                          />
-                          <XAxis
-                            dataKey="difficulty"
-                            stroke="var(--colour-neutral-400)"
-                            fontSize={12}
-                          />
-                          <YAxis
-                            stroke="var(--colour-neutral-400)"
-                            fontSize={12}
-                          />
-                          <Tooltip
-                            contentStyle={{
-                              backgroundColor: "var(--colour-neutral-1100)",
-                              border: "1px solid var(--colour-neutral-800)",
-                              borderRadius: "0.5rem",
-                              color: "var(--colour-neutral-200)",
-                            }}
-                            formatter={(value: number) => [
-                              `${value} (${(
-                                (value / +reviewData.total_ratings) *
-                                100
-                              ).toFixed(0)}%)`,
-                              "Count",
-                            ]}
-                            labelFormatter={(label: string) => ``}
-                          />
-                          <Bar
-                            dataKey="count"
-                            fill="var(--colour-neutral-500)"
-                            radius={[2, 2, 0, 0]}
-                          />
-                        </BarChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </div>
-                )}
               </div>
-            </div>
 
-            <h2>Courses Taught</h2>
-            <div className="instructor-offerings-list">
-              {instructor.offerings && instructor.offerings.length > 0 ? (
-                Object.entries(
-                  instructor.offerings.reduce((acc, offering) => {
-                    if (!acc[offering.term]) acc[offering.term] = [];
-                    acc[offering.term].push(offering);
-                    return acc;
-                  }, {} as Record<string, InstructorOffering[]>)
-                ).map(([term, offerings]) => (
-                  <div
-                    key={term}
-                    className="course-card instructor-card instructor-offering-term-group"
-                  >
-                    <div className="course-title dark">
-                      {termToIcon(term.split(" ")[0])}&nbsp;
-                      <b>{term}</b>
-                    </div>
-                    <div className="course-card__row">
-                      {offerings.map((offering) => (
-                        <div
-                          key={offering.dept + offering.number + offering.term}
-                          style={{ width: "100%" }}
-                        >
-                          <Link
-                            href={`/explore/${offering.dept.toLowerCase()}-${
-                              offering.number
-                            }`}
-                            className="offering-course-link no-underline"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            {offering.dept} {offering.number} - {offering.title}
-                          </Link>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p>No course offerings found.</p>
+              {reviewData && (
+                <ReviewCharts
+                  ratingData={getChartData().ratingData}
+                  difficultyData={getChartData().difficultyData}
+                  totalReviews={parseInt(reviewData.total_ratings || "0", 10)}
+                  overallRating={parseFloat(reviewData.overall_rating || "0")}
+                  overallDifficulty={parseFloat(
+                    reviewData.difficulty_level || "0"
+                  )}
+                />
               )}
             </div>
 
-            {/* Reviews and Posts Tabs */}
-            <ReviewsAndPostsTabs
-              context="instructor"
-              reviewData={reviewData ? { reviews: getFilteredReviews() } : null}
-              reviewLoading={reviewLoading}
-              reviewError={reviewError}
-              displayedReviews={displayedReviews}
-              onLoadMoreReviews={loadMoreReviews}
-              getCourseCodesWithCounts={getCourseCodesWithCounts}
-              getFilterStats={getFilterStats}
-              selectedCourseFilter={selectedCourseFilter}
-              onCourseFilterChange={setSelectedCourseFilter}
-              selectedSortOption={selectedSortOption}
-              onSortOptionChange={setSelectedSortOption}
-            />
-          </div>
+            <div className="course-bottom-container">
+              <div className="course-bottom-left">
+                {/* Reviews and Posts Tabs */}
+                <ReviewsAndPostsTabs
+                  context="instructor"
+                  reviewData={
+                    reviewData ? { reviews: getFilteredReviews() } : null
+                  }
+                  reviewLoading={reviewLoading}
+                  reviewError={reviewError}
+                  displayedReviews={displayedReviews}
+                  onLoadMoreReviews={loadMoreReviews}
+                  getCourseCodesWithCounts={getCourseCodesWithCounts}
+                  getFilterStats={getFilterStats}
+                  selectedCourseFilter={selectedCourseFilter}
+                  onCourseFilterChange={setSelectedCourseFilter}
+                  selectedSortOption={selectedSortOption}
+                  onSortOptionChange={setSelectedSortOption}
+                />
+              </div>
+
+              <div className="course-bottom-right">
+                {/* <h2 style={{ marginBottom: "1rem", fontSize: "1.25rem", fontWeight: "bold", color: "white" }}>Courses Taught</h2> */}
+                <div className="instructor-offerings-list">
+                  {instructor.offerings && instructor.offerings.length > 0 ? (
+                    Object.entries(
+                      instructor.offerings.reduce((acc, offering) => {
+                        if (!acc[offering.term]) acc[offering.term] = [];
+                        acc[offering.term].push(offering);
+                        return acc;
+                      }, {} as Record<string, InstructorOffering[]>)
+                    ).map(([term, offerings]) => (
+                      <div
+                        key={term}
+                        className="course-card instructor-card instructor-offering-term-group"
+                      >
+                        <div className="course-title dark">
+                          {termToIcon(term.split(" ")[0])}&nbsp;
+                          <b>{term}</b>
+                        </div>
+                        <div className="course-card__row">
+                          {offerings.map((offering) => (
+                            <div
+                              key={
+                                offering.dept + offering.number + offering.term
+                              }
+                              style={{ width: "100%" }}
+                            >
+                              <Link
+                                href={`/explore/${offering.dept.toLowerCase()}-${
+                                  offering.number
+                                }`}
+                                className="offering-course-link no-underline"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                {offering.dept} {offering.number} -{" "}
+                                {offering.title}
+                              </Link>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p>No course offerings found.</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </>
         ) : null}
       </main>
     </div>

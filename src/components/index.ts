@@ -39,3 +39,4 @@ export { CourseCombobox } from "./CourseCombobox";
 export { CatalogCourseCard } from "./CatalogCourseCard";
 export { CatalogManager } from "./CatalogManager";
 export { DraggablePanel } from "./DraggablePanel";
+export { ReviewCharts } from "./ReviewCharts";
