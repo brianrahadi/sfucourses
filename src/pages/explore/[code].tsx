@@ -543,8 +543,14 @@ const CoursePage: React.FC<CoursePageProps> = () => {
                       "This course has no prerequisites."}
                   </p>
 
-                  <h2 className="coreq-heading">Corequisites</h2>
-                  <p className="prereq-text">{course.corequisites || "None"}</p>
+                  {course.corequisites && (
+                    <>
+                      <h2 className="coreq-heading">Corequisites</h2>
+                      <p className="prereq-text">
+                        {course.corequisites || "None"}
+                      </p>
+                    </>
+                  )}
                 </div>
               )}
             </div>

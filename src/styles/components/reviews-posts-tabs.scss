@@ -1,10 +1,3 @@
-// Reviews and Posts Tabs Component
-.reviews-posts-tabs-section {
-  // border-top: 1px solid white;
-  // padding-top: 1rem;
-  // margin-top: 1rem;
-}
-
 .reviews-section-title {
   margin-bottom: 2rem;
   font-size: 1.1rem;
@@ -204,17 +197,10 @@
 
 .review-header {
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: flex-start;
   margin-bottom: 1rem;
-  gap: 1rem;
-  flex-wrap: wrap;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    gap: 0.75rem;
-  }
+  gap: 0.5rem;
 }
 
 // Mobile responsive styles for metadata
@@ -250,13 +236,16 @@
 .review-rating {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.5rem;
+  width: 100%;
 }
 
 .course-instructor-info {
   display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
 }
 
 .review-rating .course-code {
@@ -284,11 +273,17 @@
 
 .rating-line {
   display: flex;
-  gap: 1rem;
+  justify-content: flex-start;
   align-items: center;
+  gap: 1.25rem;
+  width: 100%;
+  flex-wrap: wrap;
 }
 
 .rating-value {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
   font-weight: bold;
 }
 
@@ -297,30 +292,11 @@
   font-weight: 500;
 }
 
-.review-meta {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  justify-content: flex-start;
-  gap: 0.5rem;
-
-  @media (max-width: 768px) {
-    align-items: flex-start;
-  }
-}
-
-.sidebar {
-  .review-meta {
-    align-items: flex-start;
-  }
-}
-
 .review-metadata {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
   justify-content: flex-start;
-  margin-bottom: 0.25rem;
 }
 
 .metadata-item {
@@ -352,6 +328,9 @@
 
 .review-date {
   color: var(--colour-neutral-400);
+  white-space: nowrap;
+  margin-left: auto;
+  // font-size: 0.9rem;
 }
 
 .review-content {

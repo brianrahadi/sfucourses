@@ -352,17 +352,16 @@ const ReviewsAndPostsTabs: React.FC<ReviewsAndPostsTabsProps> = ({
                               {review.course_code}
                             </Link>
                           )}
+                          <span className="review-date">{review.date}</span>
                         </div>
                         <div className="rating-line">
                           <span className="rating-value">
-                            Rating: {+review.rating}/5
+                            <StarIcon size={16} />: {+review.rating}/5
                           </span>
                           <span className="rating-value">
-                            Difficulty: {+review.difficulty}/5
+                            <BrainIcon size={16} />: {+review.difficulty}/5
                           </span>
                         </div>
-                      </div>
-                      <div className="review-meta">
                         <div className="review-metadata">
                           <span className="metadata-item">
                             For Credit:{" "}
@@ -406,7 +405,6 @@ const ReviewsAndPostsTabs: React.FC<ReviewsAndPostsTabsProps> = ({
                               </span>
                             )}
                         </div>
-                        <span className="review-date">{review.date}</span>
                       </div>
                     </div>
                     <div className="review-content">
