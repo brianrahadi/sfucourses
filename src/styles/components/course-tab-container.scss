@@ -1,21 +1,24 @@
 .course-tab-container {
   width: 100%;
   max-width: 400px;
-  border-radius: 8px;
+  border-radius: 0.65rem;
   background: var(--colour-neutral-1100) 100%;
+  overflow: hidden;
 
   .tabs {
     display: flex;
     background: var(--colour-neutral-1100) 100%;
-    border-bottom: 2px solid var(--colour-neutral-900);
+    border-bottom: none;
     font-size: 0.95rem;
+    border-top-left-radius: 0.65rem;
+    border-top-right-radius: 0.65rem;
 
     .tab {
       flex: 1 1;
       padding: 0.75rem;
       cursor: pointer;
       border: none;
-      background: none;
+      background: var(--colour-neutral-1000);
       font-size: 1em;
       color: var(--colour-neutral-400);
       transition: all 0.3s ease;
@@ -25,15 +28,43 @@
         background: var(--colour-neutral-1100) 100%;
       }
 
+      &:first-child {
+        border-top-left-radius: 0.65rem;
+      }
+
+      &:last-child {
+        border-top-right-radius: 0.65rem;
+      }
+
       &.active {
         color: var(--colour-neutral-000);
-        border-bottom: 2px solid var(--colour-sosy-green-800);
         font-weight: bold;
+        background-color: transparent;
+
+        &::after {
+          content: none;
+        }
+      }
+
+      &.active:first-child {
+        border-top-left-radius: 0.65rem;
+      }
+
+      &.active:last-child {
+        border-top-right-radius: 0.65rem;
       }
 
       &:hover {
         color: var(--colour-neutral-000);
-        background-color: var(--colour-neutral-900);
+        background-color: color-mix(
+          in srgb,
+          var(--colour-neutral-1100) 50%,
+          var(--colour-neutral-1000) 50%
+        );
+      }
+
+      &.active:hover {
+        background-color: transparent;
       }
     }
   }
@@ -45,7 +76,7 @@
     align-items: center;
     background-color: var(--colour-neutral-1100);
     border-top: none;
-    border-radius: 0 0 8px 8px;
+    border-radius: 0 0 0.65rem 0.65rem;
     color: var(--colour-neutral-400);
   }
 }
