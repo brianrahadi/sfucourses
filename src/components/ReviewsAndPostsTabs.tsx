@@ -356,10 +356,12 @@ const ReviewsAndPostsTabs: React.FC<ReviewsAndPostsTabsProps> = ({
                         </div>
                         <div className="rating-line">
                           <span className="rating-value">
-                            <StarIcon size={16} />: {+review.rating}/5
+                            <StarIcon size={16} />
+                            &nbsp;{+review.rating}/5
                           </span>
                           <span className="rating-value">
-                            <BrainIcon size={16} />: {+review.difficulty}/5
+                            <BrainIcon size={16} />
+                            &nbsp;{+review.difficulty}/5
                           </span>
                         </div>
                         <div className="review-metadata">
