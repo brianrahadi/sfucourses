@@ -74,22 +74,6 @@
 
   .course-review-icon {
     font-size: 1.25rem;
-
-    &--star {
-      fill: #f59e0b; // amber
-    }
-
-    &--brain {
-      fill: #ec4899; // pink - brain color
-    }
-
-    &--comment {
-      fill: skyblue;
-    }
-
-    &--check {
-      fill: var(--colour-sosy-green-500); // green for "would take again"
-    }
   }
 
   &.instructor-card {

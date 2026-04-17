@@ -13,7 +13,7 @@ import {
   MdBrightness3,
   MdDirectionsCar,
 } from "react-icons/md";
-import { FaStar, FaBrain } from "react-icons/fa";
+import { StarIcon, BrainIcon } from "./ReviewIcons";
 import { Tooltip } from "react-tooltip";
 import { IoIosInformationCircleOutline } from "react-icons/io";
 import { useQuery } from "@tanstack/react-query";
@@ -130,7 +130,7 @@ const InsightsList = ({
     />
     {avgInstructorRating !== null && (
       <InsightRow
-        icon={FaStar}
+        icon={StarIcon}
         text="Avg instructor rating"
         value={avgInstructorRating.toFixed(1)}
         tooltipId="rating-tooltip"
@@ -139,7 +139,7 @@ const InsightsList = ({
     )}
     {avgInstructorDifficulty !== null && (
       <InsightRow
-        icon={FaBrain}
+        icon={BrainIcon}
         text="Avg instructor difficulty"
         value={avgInstructorDifficulty.toFixed(1)}
         tooltipId="difficulty-tooltip"

@@ -12,6 +12,7 @@ import { CourseOutline, Review } from "@types";
 import { useRouter } from "next/router";
 import { useCourseOfferings } from "@hooks";
 import { RotatingLines } from "react-loader-spinner";
+import { StarIcon, BrainIcon } from "../../components/ReviewIcons";
 import {
   BarChart,
   Bar,
@@ -60,6 +61,7 @@ const CoursePage: React.FC<CoursePageProps> = () => {
 
   const [course, setCourse] = useState<CourseOutline | undefined>();
   const [showInvalid, setShowInvalid] = useState(false);
+  const [showPrereqVis, setShowPrereqVis] = useState(false);
 
   // Course review state
   const [courseReviewData, setCourseReviewData] =
@@ -415,85 +417,251 @@ const CoursePage: React.FC<CoursePageProps> = () => {
   return (
     <div className="page courses-page">
       <Helmet pageTitle={`${course.dept.toLowerCase()} ${course.number}`} />
-      <Hero
+      {/* <Hero
         title={`${course.dept.toLowerCase()} ${course.number} @ sfucourses`}
         backgroundImage={HeroImage.src}
-      />
+      /> */}
       <main className="container course-container">
-        <div className="course-top-container">
-          <div className="course-left-section">
-            <div className="course-page-card">
-              <div className="course-title">
-                {`${course.dept} ${course.number} - ${course.title}${
-                  course.units && course.units !== "0" && course.units !== "N/A"
-                    ? ` (${course.units})`
-                    : ""
-                }`}
-              </div>
-              <div className="course-page-card__connt">
-                <p className="course-description">
-                  {course.description}
-                  {course.designation && course.designation != "N/A"
-                    ? " " + course.designation
-                    : ""}
-                </p>
-                <p className="course-description">
-                  Prerequisite: {course.prerequisites || "N/A"}
-                </p>
-              </div>
+        <div className="course-main-header">
+          <div className="course-page-card">
+            <div className="course-header-row">
+              <span className="course-code-title">
+                {course.dept} {course.number}
+              </span>
+              {course.units &&
+                course.units !== "0" &&
+                course.units !== "N/A" && (
+                  <span className="course-credits">{course.units} Credits</span>
+                )}
             </div>
+            <div className="course-title">{course.title}</div>
+            <div className="course-page-card__connt">
+              <p className="course-description">
+                {course.description}
+                {course.designation && course.designation != "N/A"
+                  ? " " + course.designation
+                  : ""}
+              </p>
+              {courseReviewData && (
+                <p className="course-reviews-count">
+                  {courseReviewData.total_reviews} reviews
+                </p>
+              )}
+            </div>
+          </div>
 
-            {/* Course Review Summary Stats */}
+          <div className="course-charts-section">
             {courseReviewData && (
-              <div className="course-review-summary">
-                <div className="review-stats">
-                  <div className="stat-item">
-                    <span className="stat-value">
-                      {(() => {
-                        const allReviews = courseReviewData.instructors.flatMap(
-                          (instructor) => instructor.reviews
-                        );
-                        const totalRating = allReviews.reduce(
-                          (sum, review) => sum + parseFloat(review.rating),
-                          0
-                        );
-                        return (totalRating / allReviews.length).toFixed(2);
-                      })()}
-                      /5
+              <div className="course-charts">
+                <div className="chart-container">
+                  <div className="chart-header">
+                    <span className="chart-title">
+                      <StarIcon size={16} style={{ marginRight: "8px" }} />
+                      RATING
                     </span>
-                    <span className="stat-label">Overall Rating</span>
+                    <div className="chart-score-bar rating">
+                      <span className="score-text">
+                        {(() => {
+                          const allReviews =
+                            courseReviewData.instructors.flatMap(
+                              (instructor) => instructor.reviews
+                            );
+                          let totalRating = 0;
+                          if (allReviews.length > 0) {
+                            totalRating =
+                              allReviews.reduce(
+                                (sum, review) =>
+                                  sum + parseFloat(review.rating),
+                                0
+                              ) / allReviews.length;
+                          }
+                          return totalRating.toFixed(2);
+                        })()}
+                        /5
+                      </span>
+                      <div className="score-bar-bg">
+                        <div
+                          className="score-bar-fill"
+                          style={{
+                            width: `${(() => {
+                              const allReviews =
+                                courseReviewData.instructors.flatMap(
+                                  (instructor) => instructor.reviews
+                                );
+                              let totalRating = 0;
+                              if (allReviews.length > 0) {
+                                totalRating =
+                                  allReviews.reduce(
+                                    (sum, review) =>
+                                      sum + parseFloat(review.rating),
+                                    0
+                                  ) / allReviews.length;
+                              }
+                              return totalRating * 20;
+                            })()}%`,
+                          }}
+                        ></div>
+                      </div>
+                    </div>
                   </div>
-                  <div className="stat-item">
-                    <span className="stat-value">
-                      {(() => {
-                        const allReviews = courseReviewData.instructors.flatMap(
-                          (instructor) => instructor.reviews
-                        );
-                        const totalDifficulty = allReviews.reduce(
-                          (sum, review) => sum + parseFloat(review.difficulty),
-                          0
-                        );
-                        return (totalDifficulty / allReviews.length).toFixed(2);
-                      })()}
-                      /5
+                  <ResponsiveContainer width="100%" height={150}>
+                    <BarChart data={getChartData().ratingData}>
+                      <CartesianGrid
+                        strokeDasharray="3 3"
+                        stroke="var(--colour-neutral-800)"
+                      />
+                      <XAxis
+                        dataKey="rating"
+                        stroke="var(--colour-neutral-400)"
+                        fontSize={12}
+                        tickLine={false}
+                        axisLine={false}
+                      />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: "var(--colour-neutral-1100)",
+                          border: "1px solid var(--colour-neutral-800)",
+                          borderRadius: "0.5rem",
+                          color: "var(--colour-neutral-200)",
+                        }}
+                        formatter={(value: number) => [
+                          `${value} (${(
+                            (value / courseReviewData.total_reviews) *
+                            100
+                          ).toFixed(0)}%)`,
+                          "Count",
+                        ]}
+                        labelFormatter={(label: string) => ``}
+                      />
+                      <Bar
+                        dataKey="count"
+                        fill="var(--colour-sosy-green-500)"
+                        radius={[2, 2, 0, 0]}
+                        barSize={30}
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="chart-container">
+                  <div className="chart-header">
+                    <span className="chart-title">
+                      <BrainIcon size={16} style={{ marginRight: "8px" }} />
+                      DIFFICULTY
                     </span>
-                    <span className="stat-label">Overall Difficulty</span>
+                    <div className="chart-score-bar difficulty">
+                      <span className="score-text">
+                        {(() => {
+                          const allReviews =
+                            courseReviewData.instructors.flatMap(
+                              (instructor) => instructor.reviews
+                            );
+                          let totalDiff = 0;
+                          if (allReviews.length > 0) {
+                            totalDiff =
+                              allReviews.reduce(
+                                (sum, review) =>
+                                  sum + parseFloat(review.difficulty),
+                                0
+                              ) / allReviews.length;
+                          }
+                          return totalDiff.toFixed(2);
+                        })()}
+                        /5
+                      </span>
+                      <div className="score-bar-bg">
+                        <div
+                          className="score-bar-fill"
+                          style={{
+                            width: `${(() => {
+                              const allReviews =
+                                courseReviewData.instructors.flatMap(
+                                  (instructor) => instructor.reviews
+                                );
+                              let totalDiff = 0;
+                              if (allReviews.length > 0) {
+                                totalDiff =
+                                  allReviews.reduce(
+                                    (sum, review) =>
+                                      sum + parseFloat(review.difficulty),
+                                    0
+                                  ) / allReviews.length;
+                              }
+                              return totalDiff * 20;
+                            })()}%`,
+                          }}
+                        ></div>
+                      </div>
+                    </div>
                   </div>
-                  <div className="stat-item">
-                    <span className="stat-value">
-                      {courseReviewData.total_reviews}
-                    </span>
-                    <span className="stat-label">Total Reviews</span>
-                  </div>
-                  <div className="stat-item">
-                    <span className="stat-value">
-                      {courseReviewData.instructors.length}
-                    </span>
-                    <span className="stat-label">Instructors</span>
-                  </div>
+                  <ResponsiveContainer width="100%" height={150}>
+                    <BarChart data={getChartData().difficultyData}>
+                      <CartesianGrid
+                        strokeDasharray="3 3"
+                        stroke="var(--colour-neutral-800)"
+                      />
+                      <XAxis
+                        dataKey="difficulty"
+                        stroke="var(--colour-neutral-400)"
+                        fontSize={12}
+                        tickLine={false}
+                        axisLine={false}
+                      />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: "var(--colour-neutral-1100)",
+                          border: "1px solid var(--colour-neutral-800)",
+                          borderRadius: "0.5rem",
+                          color: "var(--colour-neutral-200)",
+                        }}
+                        formatter={(value: number) => [
+                          `${value} (${(
+                            (value / courseReviewData.total_reviews) *
+                            100
+                          ).toFixed(0)}%)`,
+                          "Count",
+                        ]}
+                        labelFormatter={(label: string) => ``}
+                      />
+                      <Bar
+                        dataKey="count"
+                        fill="#f05f5f"
+                        radius={[2, 2, 0, 0]}
+                        barSize={30}
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
                 </div>
               </div>
             )}
+          </div>
+        </div>
+
+        <div className="course-bottom-container">
+          <div className="course-bottom-left">
+            <ReviewsAndPostsTabs
+              context="course"
+              reviewData={
+                courseReviewData ? { reviews: getFilteredReviews() } : null
+              }
+              reviewLoading={reviewLoading}
+              reviewError={reviewError}
+              displayedReviews={displayedReviews}
+              onLoadMoreReviews={loadMoreReviews}
+              getCourseCodesWithCounts={() =>
+                getInstructorsWithCounts().map((item) => ({
+                  courseCode: item.instructorName,
+                  count: item.count,
+                }))
+              }
+              getFilterStats={getFilterStats}
+              selectedCourseFilter={selectedInstructorFilter}
+              onCourseFilterChange={setSelectedInstructorFilter}
+              selectedSortOption={selectedSortOption}
+              onSortOptionChange={setSelectedSortOption}
+            />
+          </div>
+
+          <div className="course-bottom-right">
             <div className="course-offerings">
               {isLoadingOfferings || isIdleOfferings ? (
                 <div className="loading-spinner-container">
@@ -507,128 +675,62 @@ const CoursePage: React.FC<CoursePageProps> = () => {
                 <CourseTabContainer tabs={tabs} />
               )}
             </div>
-          </div>
-          <div className="prerequisites-visualization">
-            {/* Course Review Charts */}
-            {courseReviewData && (
-              <div className="course-charts-section">
-                <div className="course-charts">
-                  <div className="chart-container">
-                    <h3>Rating Distribution</h3>
-                    <ResponsiveContainer width="100%" height={150}>
-                      <BarChart data={getChartData().ratingData}>
-                        <CartesianGrid
-                          strokeDasharray="3 3"
-                          stroke="var(--colour-neutral-800)"
-                        />
-                        <XAxis
-                          dataKey="rating"
-                          stroke="var(--colour-neutral-400)"
-                          fontSize={12}
-                        />
-                        <YAxis
-                          stroke="var(--colour-neutral-400)"
-                          fontSize={12}
-                        />
-                        <Tooltip
-                          contentStyle={{
-                            backgroundColor: "var(--colour-neutral-1100)",
-                            border: "1px solid var(--colour-neutral-800)",
-                            borderRadius: "0.5rem",
-                            color: "var(--colour-neutral-200)",
-                          }}
-                          formatter={(value: number) => [
-                            `${value} (${(
-                              (value / courseReviewData.total_reviews) *
-                              100
-                            ).toFixed(0)}%)`,
-                            "Count",
-                          ]}
-                          labelFormatter={(label: string) => ``}
-                        />
-                        <Bar
-                          dataKey="count"
-                          fill="var(--colour-sosy-green-500)"
-                          radius={[2, 2, 0, 0]}
-                        />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                  <div className="chart-container">
-                    <h3>Difficulty Distribution</h3>
-                    <ResponsiveContainer width="100%" height={150}>
-                      <BarChart data={getChartData().difficultyData}>
-                        <CartesianGrid
-                          strokeDasharray="3 3"
-                          stroke="var(--colour-neutral-800)"
-                        />
-                        <XAxis
-                          dataKey="difficulty"
-                          stroke="var(--colour-neutral-400)"
-                          fontSize={12}
-                        />
-                        <YAxis
-                          stroke="var(--colour-neutral-400)"
-                          fontSize={12}
-                        />
-                        <Tooltip
-                          contentStyle={{
-                            backgroundColor: "var(--colour-neutral-1100)",
-                            border: "1px solid var(--colour-neutral-800)",
-                            borderRadius: "0.5rem",
-                            color: "var(--colour-neutral-200)",
-                          }}
-                          formatter={(value: number) => [
-                            `${value} (${(
-                              (value / courseReviewData.total_reviews) *
-                              100
-                            ).toFixed(0)}%)`,
-                            "Count",
-                          ]}
-                          labelFormatter={(label: string) => ``}
-                        />
-                        <Bar
-                          dataKey="count"
-                          fill="var(--colour-neutral-500)"
-                          radius={[2, 2, 0, 0]}
-                        />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
-              </div>
-            )}
 
-            <iframe
-              src={`https://prerequisites-visualization.vercel.app/sfu/courses/${courseCode.dept}/${courseCode.number}`}
-              style={{ width: "100%", height: "600px", border: "none" }}
-              title="Prerequisites Visualization"
-            ></iframe>
+            <div className="prerequisites-section">
+              <div className="prereq-header">
+                <h2>Prerequisites</h2>
+                <button
+                  className="prereq-toggle-btn"
+                  onClick={() => setShowPrereqVis(!showPrereqVis)}
+                >
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M21 12V7H5a2 2 0 0 1-2-2V3" />
+                    <path d="M21 12H13a2 2 0 0 0-2 2v2" />
+                    <circle cx="21" cy="12" r="2" />
+                    <circle cx="21" cy="7" r="2" />
+                    <circle cx="11" cy="16" r="2" />
+                  </svg>
+                </button>
+              </div>
+
+              {showPrereqVis ? (
+                <iframe
+                  src={`https://prerequisites-visualization.vercel.app/sfu/courses/${courseCode.dept}/${courseCode.number}`}
+                  style={{
+                    width: "100%",
+                    height: "350px",
+                    border: "none",
+                    borderRadius: "8px",
+                    marginTop: "1rem",
+                  }}
+                  title="Prerequisites Visualization"
+                ></iframe>
+              ) : (
+                <div className="prereq-content">
+                  <p className="prereq-text">
+                    {course.prerequisites ||
+                      "This course has no prerequisites."}
+                  </p>
+
+                  <h2 className="coreq-heading">Corequisites</h2>
+                  <p className="prereq-text">{course.corequisites || "None"}</p>
+
+                  <h2 className="coreq-heading">Restrictions</h2>
+                  <p className="prereq-text">See SFU calendar for details.</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-
-        {/* Reviews and Posts Tabs */}
-        <ReviewsAndPostsTabs
-          context="course"
-          reviewData={
-            courseReviewData ? { reviews: getFilteredReviews() } : null
-          }
-          reviewLoading={reviewLoading}
-          reviewError={reviewError}
-          displayedReviews={displayedReviews}
-          onLoadMoreReviews={loadMoreReviews}
-          getCourseCodesWithCounts={() =>
-            getInstructorsWithCounts().map((item) => ({
-              courseCode: item.instructorName,
-              count: item.count,
-            }))
-          }
-          getFilterStats={getFilterStats}
-          selectedCourseFilter={selectedInstructorFilter}
-          onCourseFilterChange={setSelectedInstructorFilter}
-          selectedSortOption={selectedSortOption}
-          onSortOptionChange={setSelectedSortOption}
-        />
       </main>
     </div>
   );

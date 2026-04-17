@@ -51,7 +51,7 @@ export const useCourseOfferings = (
   );
   const errorOfferings = results.find((r) => r.error)?.error ?? null;
   const isIdleOfferings = results.every(
-    (r, idx) => idx >= loadCount || r.isIdle
+    (r, idx) => idx >= loadCount || (r.isPending && r.fetchStatus === "idle")
   );
 
   return {

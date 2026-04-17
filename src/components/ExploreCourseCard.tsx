@@ -3,7 +3,7 @@ import Link from "next/link";
 import { CourseOutline } from "../types";
 import { Highlight } from "@components";
 import { termToIcon } from "@utils/exploreFilters";
-import { FaStar, FaBrain, FaComment } from "react-icons/fa";
+import { StarIcon, BrainIcon, CommentIcon } from "./ReviewIcons";
 
 interface CourseReviewSummary {
   course_code: string;
@@ -52,15 +52,15 @@ export const ExploreCourseCard: React.FC<ExploreCourseCardProps> = ({
           {reviewData && (
             <div className="course-review-stats">
               <span className="course-review-stat">
-                <FaStar className="course-review-icon course-review-icon--star" />
+                <StarIcon className="course-review-icon" />
                 {reviewData.avg_rating.toFixed(1)}
               </span>
               <span className="course-review-stat">
-                <FaBrain className="course-review-icon course-review-icon--brain" />
+                <BrainIcon className="course-review-icon" />
                 {reviewData.avg_difficulty.toFixed(1)}
               </span>
               <span className="course-review-stat">
-                <FaComment className="course-review-icon course-review-icon--comment" />
+                <CommentIcon className="course-review-icon" />
                 {reviewData.total_reviews}
               </span>
             </div>

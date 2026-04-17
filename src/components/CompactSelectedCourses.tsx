@@ -4,7 +4,7 @@ import { getInstructorReviewData } from "@utils";
 import { IoRemoveCircle } from "react-icons/io5";
 import { BsFillPersonFill } from "react-icons/bs";
 import { MdPlace } from "react-icons/md";
-import { FaStar, FaBrain, FaComment, FaCheckCircle } from "react-icons/fa";
+import { StarIcon, BrainIcon, CommentIcon, CheckIcon } from "./ReviewIcons";
 import Link from "next/link";
 import { Tooltip } from "react-tooltip";
 import { useQuery } from "@tanstack/react-query";
@@ -177,19 +177,19 @@ export const CompactSelectedCourses: React.FC<CompactSelectedCoursesProps> = ({
           <Tooltip key={tooltipId} id={tooltipId} place="top">
             <div className="instructor-stats-tooltip">
               <div className="instructor-stats-tooltip__stat">
-                <FaStar className="instructor-stats-tooltip__icon instructor-stats-tooltip__icon--star" />
+                <StarIcon className="instructor-stats-tooltip__icon" />
                 <span>{reviewData.Quality}</span>
               </div>
               <div className="instructor-stats-tooltip__stat">
-                <FaBrain className="instructor-stats-tooltip__icon instructor-stats-tooltip__icon--brain" />
+                <BrainIcon className="instructor-stats-tooltip__icon" />
                 <span>{reviewData.Difficulty}</span>
               </div>
               <div className="instructor-stats-tooltip__stat">
-                <FaCheckCircle className="instructor-stats-tooltip__icon instructor-stats-tooltip__icon--check" />
+                <CheckIcon className="instructor-stats-tooltip__icon" />
                 <span>{reviewData.WouldTakeAgain}</span>
               </div>
               <div className="instructor-stats-tooltip__stat">
-                <FaComment className="instructor-stats-tooltip__icon instructor-stats-tooltip__icon--comment" />
+                <CommentIcon className="instructor-stats-tooltip__icon" />
                 <span>{reviewData.Ratings}</span>
               </div>
             </div>

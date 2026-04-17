@@ -3,7 +3,7 @@ import { Instructor } from "@types";
 import { Highlight } from "@components";
 import Link from "next/link";
 import { termToIcon } from "@utils/exploreFilters";
-import { FaStar, FaBrain, FaComment, FaCheckCircle } from "react-icons/fa";
+import { StarIcon, BrainIcon, CommentIcon, CheckIcon } from "./ReviewIcons";
 
 interface InstructorReviewSummary {
   URL: string;
@@ -43,19 +43,19 @@ export const InstructorCard: React.FC<InstructorCardProps> = ({
           {reviewData && (
             <div className="course-review-stats">
               <span className="course-review-stat">
-                <FaStar className="course-review-icon course-review-icon--star" />
+                <StarIcon className="course-review-icon" />
                 {reviewData.Quality}
               </span>
               <span className="course-review-stat">
-                <FaBrain className="course-review-icon course-review-icon--brain" />
+                <BrainIcon className="course-review-icon" />
                 {reviewData.Difficulty}
               </span>
               <span className="course-review-stat">
-                <FaCheckCircle className="course-review-icon course-review-icon--check" />
+                <CheckIcon className="course-review-icon" />
                 {reviewData.WouldTakeAgain}
               </span>
               <span className="course-review-stat">
-                <FaComment className="course-review-icon course-review-icon--comment" />
+                <CommentIcon className="course-review-icon" />
                 {reviewData.Ratings}
               </span>
             </div>

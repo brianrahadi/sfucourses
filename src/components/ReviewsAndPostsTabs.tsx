@@ -4,7 +4,7 @@ import { RotatingLines } from "react-loader-spinner";
 import { BiSolidUpvote } from "react-icons/bi";
 import { Review } from "../types";
 import { formatShortDate } from "../utils/format";
-import { TextBadge } from "./TextBadge";
+import { StarIcon, BrainIcon } from "./ReviewIcons";
 import {
   BarChart,
   Bar,
@@ -125,25 +125,6 @@ const ReviewsAndPostsTabs: React.FC<ReviewsAndPostsTabsProps> = ({
     return { ratingData, difficultyData };
   }, [reviewData?.reviews]);
 
-  // Aggregate review tags and count occurrences
-  const getAggregatedTags = useCallback(() => {
-    if (!reviewData?.reviews) return [];
-
-    const tagCounts = reviewData.reviews.reduce((acc, review) => {
-      if (review.tags && review.tags.length > 0) {
-        review.tags.forEach((tag) => {
-          acc[tag] = (acc[tag] || 0) + 1;
-        });
-      }
-      return acc;
-    }, {} as Record<string, number>);
-
-    return Object.entries(tagCounts)
-      .map(([tag, count]) => ({ tag, count }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 10); // Limit to top 10 tags
-  }, [reviewData?.reviews]);
-
   // Helper functions for hover with delay
   const handleMouseEnter = (statType: string) => {
     if (hoverTimeout) {
@@ -174,7 +155,7 @@ const ReviewsAndPostsTabs: React.FC<ReviewsAndPostsTabsProps> = ({
 
   return (
     <div className={`reviews-posts-tabs-section ${className || ""}`}>
-      <h2 className="reviews-section-title">RateMyProf Reviews</h2>
+      {/* <h2 className="reviews-section-title">RateMyProf Reviews</h2> */}
       <div className="tab-content">
         <div className="reviews-section">
           {reviewLoading ? (
@@ -189,42 +170,40 @@ const ReviewsAndPostsTabs: React.FC<ReviewsAndPostsTabsProps> = ({
           ) : reviewData ? (
             <div className="reviews-list">
               <div className="reviews-header">
-                <div className="filter-controls">
-                  <div className="filter-dropdowns">
-                    <div className="course-filter">
-                      <select
-                        value={selectedCourseFilter}
-                        onChange={(e) => onCourseFilterChange(e.target.value)}
-                        className="course-filter-dropdown"
-                      >
-                        <option value="all">
-                          {context === "instructor"
-                            ? "All Courses"
-                            : "All Instructors"}
-                        </option>
-                        {getCourseCodesWithCounts().map(
-                          ({ courseCode, count }) => (
-                            <option key={courseCode} value={courseCode}>
-                              {courseCode} ({count})
-                            </option>
-                          )
-                        )}
-                      </select>
-                    </div>
-                    <div className="review-sorter">
-                      <select
-                        value={selectedSortOption}
-                        onChange={(e) => onSortOptionChange(e.target.value)}
-                        className="review-sorter-dropdown"
-                      >
-                        <option value="most-recent">Most Recent</option>
-                        <option value="least-recent">Least Recent</option>
-                        <option value="hardest">Hardest</option>
-                        <option value="easiest">Easiest</option>
-                        <option value="most-liked">Most Liked</option>
-                        <option value="most-disliked">Most Disliked</option>
-                      </select>
-                    </div>
+                <div className="filter-dropdowns">
+                  <div className="course-filter">
+                    <select
+                      value={selectedCourseFilter}
+                      onChange={(e) => onCourseFilterChange(e.target.value)}
+                      className="course-filter-dropdown"
+                    >
+                      <option value="all">
+                        {context === "instructor"
+                          ? "All Courses"
+                          : "All Instructors"}
+                      </option>
+                      {getCourseCodesWithCounts().map(
+                        ({ courseCode, count }) => (
+                          <option key={courseCode} value={courseCode}>
+                            {courseCode} ({count})
+                          </option>
+                        )
+                      )}
+                    </select>
+                  </div>
+                  <div className="review-sorter">
+                    <select
+                      value={selectedSortOption}
+                      onChange={(e) => onSortOptionChange(e.target.value)}
+                      className="review-sorter-dropdown"
+                    >
+                      <option value="most-recent">Most Recent</option>
+                      <option value="least-recent">Least Recent</option>
+                      <option value="hardest">Hardest</option>
+                      <option value="easiest">Easiest</option>
+                      <option value="most-liked">Most Liked</option>
+                      <option value="most-disliked">Most Disliked</option>
+                    </select>
                   </div>
                   <div className="filter-stats">
                     <div
@@ -237,7 +216,9 @@ const ReviewsAndPostsTabs: React.FC<ReviewsAndPostsTabsProps> = ({
                         )
                       }
                     >
-                      <span className="filter-stat-label">Avg Rating:</span>
+                      <span className="filter-stat-label">
+                        <StarIcon size={16} style={{ display: "block" }} />
+                      </span>
                       <span className="filter-stat-value">
                         {getFilterStats().avgRating.toFixed(1)}/5
                       </span>
@@ -292,7 +273,9 @@ const ReviewsAndPostsTabs: React.FC<ReviewsAndPostsTabsProps> = ({
                         )
                       }
                     >
-                      <span className="filter-stat-label">Avg Difficulty:</span>
+                      <span className="filter-stat-label">
+                        <BrainIcon size={16} style={{ display: "block" }} />
+                      </span>
                       <span className="filter-stat-value">
                         {getFilterStats().avgDifficulty.toFixed(1)}/5
                       </span>
@@ -340,20 +323,6 @@ const ReviewsAndPostsTabs: React.FC<ReviewsAndPostsTabsProps> = ({
                       )}
                     </div>
                   </div>
-                  {getAggregatedTags().length > 0 && (
-                    <div className="tag-badges-section">
-                      <div className="tag-badges-container">
-                        {getAggregatedTags().map(({ tag, count }) => (
-                          <TextBadge
-                            key={tag}
-                            content={`${tag} (${count})`}
-                            className="tag-badge"
-                            enableBgColor={false}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  )}
                 </div>
               </div>
               {displayedReviews.length > 0 ? (
