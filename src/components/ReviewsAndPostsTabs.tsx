@@ -256,7 +256,7 @@ const ReviewsAndPostsTabs: React.FC<ReviewsAndPostsTabsProps> = ({
                                     color: "var(--colour-neutral-200)",
                                   }}
                                 />
-                                <Bar dataKey="count" fill="#24a98b" />
+                                <Bar dataKey="count" fill="#f59e0b" />
                               </BarChart>
                             </ResponsiveContainer>
                           </div>

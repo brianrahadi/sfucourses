@@ -535,7 +535,7 @@ const CoursePage: React.FC<CoursePageProps> = () => {
                       />
                       <Bar
                         dataKey="count"
-                        fill="var(--colour-sosy-green-500)"
+                        fill="#f59e0b"
                         radius={[2, 2, 0, 0]}
                         barSize={30}
                       />
@@ -662,20 +662,6 @@ const CoursePage: React.FC<CoursePageProps> = () => {
           </div>
 
           <div className="course-bottom-right">
-            <div className="course-offerings">
-              {isLoadingOfferings || isIdleOfferings ? (
-                <div className="loading-spinner-container">
-                  <RotatingLines visible={true} strokeColor="#24a98b" />
-                </div>
-              ) : errorOfferings ? (
-                `Error loading offerings: ${errorOfferings.message}`
-              ) : offerings.length === 0 ? (
-                "No offerings available"
-              ) : (
-                <CourseTabContainer tabs={tabs} />
-              )}
-            </div>
-
             <div className="prerequisites-section">
               <div className="prereq-header">
                 <h2>Prerequisites</h2>
@@ -723,10 +709,21 @@ const CoursePage: React.FC<CoursePageProps> = () => {
 
                   <h2 className="coreq-heading">Corequisites</h2>
                   <p className="prereq-text">{course.corequisites || "None"}</p>
-
-                  <h2 className="coreq-heading">Restrictions</h2>
-                  <p className="prereq-text">See SFU calendar for details.</p>
                 </div>
+              )}
+            </div>
+
+            <div className="course-offerings">
+              {isLoadingOfferings || isIdleOfferings ? (
+                <div className="loading-spinner-container">
+                  <RotatingLines visible={true} strokeColor="#24a98b" />
+                </div>
+              ) : errorOfferings ? (
+                `Error loading offerings: ${errorOfferings.message}`
+              ) : offerings.length === 0 ? (
+                "No offerings available"
+              ) : (
+                <CourseTabContainer tabs={tabs} />
               )}
             </div>
           </div>

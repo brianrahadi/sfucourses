@@ -493,11 +493,7 @@ export const SidebarCourse: React.FC<SidebarCourseProps> = ({
                     ]}
                     labelFormatter={(label: string) => ``}
                   />
-                  <Bar
-                    dataKey="count"
-                    fill="var(--colour-sosy-green-500)"
-                    radius={[2, 2, 0, 0]}
-                  />
+                  <Bar dataKey="count" fill="#f59e0b" radius={[2, 2, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -531,11 +527,7 @@ export const SidebarCourse: React.FC<SidebarCourseProps> = ({
                     ]}
                     labelFormatter={(label: string) => ``}
                   />
-                  <Bar
-                    dataKey="count"
-                    fill="var(--colour-neutral-500)"
-                    radius={[2, 2, 0, 0]}
-                  />
+                  <Bar dataKey="count" fill="#f59e0b" radius={[2, 2, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>

@@ -57,7 +57,8 @@ export const useCourseOfferings = (
   return {
     offerings: results
       .map((r) => r.data)
-      .filter(Boolean) as CourseWithSectionDetails[],
+      .filter(Boolean)
+      .reverse() as CourseWithSectionDetails[],
     isLoadingOfferings,
     errorOfferings,
     isIdleOfferings,
