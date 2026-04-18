@@ -83,7 +83,7 @@ const CoursePage: React.FC<CoursePageProps> = () => {
       );
       setDisplayedReviews(allReviews.slice(0, reviewsPerPage));
     } catch (err) {
-      setReviewError("Failed to load course reviews");
+      setReviewError("No reviews found for this course");
     } finally {
       setReviewLoading(false);
     }
