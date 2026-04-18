@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import { CourseWithSectionDetails } from "@types";
+import { getCourseAPIData } from "@utils";
 import { TextBadge } from "./TextBadge";
 import {
   calculateScheduleInsights,
@@ -154,10 +155,7 @@ export const ScheduleInsights: React.FC<ScheduleInsightsProps> = ({
 }) => {
   const { data: instructorReviewsData } = useQuery({
     queryKey: ["instructorReviews"],
-    queryFn: async () => {
-      const res = await fetch(`${BASE_URL}/reviews/instructors`);
-      return res.json() as Promise<InstructorReviewSummary[]>;
-    },
+    queryFn: () => getCourseAPIData("/reviews/instructors"),
     staleTime: 60 * 60 * 1000,
   });
 

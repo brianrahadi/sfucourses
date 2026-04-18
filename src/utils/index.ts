@@ -19,26 +19,41 @@ async function decompressGzip(response: Response): Promise<any> {
   }
 }
 
+async function proxiedFetch(pathWithQuery: string) {
+  const isServer = typeof window === "undefined";
+
+  if (isServer) {
+    // On the server, we can call the caching wrapper directly
+    const { fetchWithCache } = await import("../lib/api-wrapper");
+    return fetchWithCache(`https://api.sfucourses.com${pathWithQuery}`);
+  }
+
+  // On the client, we call the proxy API route
+  const proxyUrl = `/api/proxy?path=${encodeURIComponent(pathWithQuery)}`;
+  const response = await fetch(proxyUrl);
+
+  if (!response.ok) {
+    if (response.status === 404) {
+      throw new Error("404");
+    }
+    throw new Error(`HTTP error! Status: ${response.status}`);
+  }
+
+  return response.json();
+}
+
 export async function loadCourseAPIData(
   queryString: string,
-  setData: Dispatch<SetStateAction<any>>
+  setData: (data: any) => void
 ): Promise<void> {
-  const url = `${BASE_URL}${queryString}`;
+  const path = `/v1/rest${queryString}`;
 
   try {
-    const response = await fetch(`${url}`);
-
-    if (!response.ok) {
-      if (response.status === 404) {
-        throw new Error("404");
-      }
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-
-    setData(response);
+    const data = await proxiedFetch(path);
+    setData(data);
   } catch (error) {
-    console.error(`Error fetching ${url}:`, error);
-    throw error; // Re-throw to allow caller to handle errors
+    console.error(`Error fetching ${path}:`, error);
+    throw error;
   }
 }
 
@@ -46,32 +61,20 @@ export async function getCourseAPIData(
   path: string,
   params: Record<string, string> = {}
 ): Promise<any> {
-  let url = `${BASE_URL}${path}`;
+  let pathWithParams = `/v1/rest${path}`;
 
   // Add parameters to URL
+  const searchParams = new URLSearchParams();
   Object.entries(params).forEach(([key, value]) => {
-    url = addParameterToUrl(url, key, value);
+    searchParams.append(key, value);
   });
 
-  try {
-    const response = await fetch(url, {
-      headers: {
-        "Accept-Encoding": "gzip, deflate, br",
-      },
-    });
-
-    if (!response.ok) {
-      if (response.status === 404) {
-        throw new Error("404");
-      }
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-
-    return response.json();
-  } catch (error) {
-    console.error(`Error fetching ${url}:`, error);
-    throw error;
+  const queryString = searchParams.toString();
+  if (queryString) {
+    pathWithParams += (pathWithParams.includes("?") ? "&" : "?") + queryString;
   }
+
+  return proxiedFetch(pathWithParams);
 }
 
 export function generateBaseOutlinePath(
@@ -117,10 +120,11 @@ interface HealthResponse {
 }
 
 export const fetchLastUpdated = async (): Promise<string> => {
-  const response = await fetch("https://api.sfucourses.com/health");
-  if (!response.ok) {
+  try {
+    const data: HealthResponse = await proxiedFetch("/health");
+    return data.lastDataUpdate;
+  } catch (error) {
+    console.error("Error fetching health data:", error);
     throw new Error("Failed to fetch health data");
   }
-  const data: HealthResponse = await response.json();
-  return data.lastDataUpdate;
 };

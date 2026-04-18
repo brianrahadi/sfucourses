@@ -72,18 +72,12 @@ export const getStaticProps: GetStaticProps = async () => {
 
   await queryClient.prefetchQuery({
     queryKey: ["instructorReviews"],
-    queryFn: async () => {
-      const res = await fetch(`${BASE_URL}/reviews/instructors`);
-      return res.json() as Promise<InstructorReviewSummary[]>;
-    },
+    queryFn: () => getCourseAPIData("/reviews/instructors"),
   });
 
   await queryClient.prefetchQuery({
     queryKey: ["courseReviews"],
-    queryFn: async () => {
-      const res = await fetch(`${BASE_URL}/reviews/courses`);
-      return res.json() as Promise<CourseReviewSummary[]>;
-    },
+    queryFn: () => getCourseAPIData("/reviews/courses"),
   });
 
   return {
@@ -118,10 +112,7 @@ const ExplorePage: React.FC = () => {
   const { data: instructorReviewsData, isLoading: isLoadingReviews } = useQuery(
     {
       queryKey: ["instructorReviews"],
-      queryFn: async () => {
-        const res = await fetch(`${BASE_URL}/reviews`);
-        return res.json() as Promise<InstructorReviewSummary[]>;
-      },
+      queryFn: () => getCourseAPIData("/reviews"),
       staleTime: 60 * 60 * 1000,
     }
   );
@@ -129,10 +120,7 @@ const ExplorePage: React.FC = () => {
   const { data: courseReviewsData, isLoading: isLoadingCourseReviews } =
     useQuery({
       queryKey: ["courseReviews"],
-      queryFn: async () => {
-        const res = await fetch(`${BASE_URL}/reviews/courses`);
-        return res.json() as Promise<CourseReviewSummary[]>;
-      },
+      queryFn: () => getCourseAPIData("/reviews/courses"),
       staleTime: 60 * 60 * 1000,
     });
 

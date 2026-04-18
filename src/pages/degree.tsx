@@ -10,7 +10,7 @@ import ButtonGroup from "../components/ButtonGroup";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useCatalogStore, CompletedCourse } from "src/store/useCatalogStore";
 import { useCoursesData } from "src/hooks/UseCoursesData";
-import { getCurrentAndNextTerm } from "@utils";
+import { getCurrentAndNextTerm, getCourseAPIData } from "@utils";
 import toast from "react-hot-toast";
 import { OutlineOption } from "src/components/CourseCombobox";
 import { insertUrlParam, removeUrlParameter } from "@utils/url";
@@ -174,8 +174,7 @@ const ProgressPage = () => {
   }, [completedCourses, mounted]);
 
   useEffect(() => {
-    fetch("https://api.sfucourses.com/v1/rest/outlines?short=true")
-      .then((res) => res.json())
+    getCourseAPIData("/outlines", { short: "true" })
       .then((data) => setOutlineOptions(data))
       .catch((err) => console.error("Error fetching outlines:", err));
   }, []);

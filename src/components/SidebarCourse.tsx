@@ -105,13 +105,7 @@ export const SidebarCourse: React.FC<SidebarCourseProps> = ({
     setDisplayedReviews([]);
 
     try {
-      const response = await fetch(
-        `${BASE_URL}/reviews/courses/${courseCodeStr}`
-      );
-      if (!response.ok) {
-        throw new Error("Failed to fetch course reviews");
-      }
-      const data = await response.json();
+      const data = await getCourseAPIData(`/reviews/courses/${courseCodeStr}`);
       setCourseReviewData(data);
 
       // Initialize displayed reviews with first page

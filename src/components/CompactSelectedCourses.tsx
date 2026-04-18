@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { CourseWithSectionDetails, InstructorReviewSummary } from "@types";
-import { getInstructorReviewData } from "@utils";
+import { getInstructorReviewData, getCourseAPIData } from "@utils";
 import { IoRemoveCircle } from "react-icons/io5";
 import { BsFillPersonFill } from "react-icons/bs";
 import { MdPlace } from "react-icons/md";
@@ -26,10 +26,7 @@ export const CompactSelectedCourses: React.FC<CompactSelectedCoursesProps> = ({
 }) => {
   const { data: instructorReviewsData } = useQuery({
     queryKey: ["instructorReviews"],
-    queryFn: async () => {
-      const res = await fetch(`${BASE_URL}/reviews/instructors`);
-      return res.json() as Promise<InstructorReviewSummary[]>;
-    },
+    queryFn: () => getCourseAPIData("/reviews/instructors"),
     staleTime: 60 * 60 * 1000,
   });
 

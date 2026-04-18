@@ -212,13 +212,7 @@ const InstructorPage = () => {
       const reviewName =
         INSTRUCTOR_RMP_NAME_MAPPING[instructorName] || instructorName;
       const formattedName = reviewName.replace(/\s+/g, "_");
-      const response = await fetch(
-        `${BASE_URL}/reviews/instructors/${formattedName}`
-      );
-      if (!response.ok) {
-        throw new Error("Review data not available");
-      }
-      return await response.json();
+      return await getCourseAPIData(`/reviews/instructors/${formattedName}`);
     } catch (error) {
       throw error;
     }

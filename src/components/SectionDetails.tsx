@@ -9,6 +9,7 @@ import {
   generateBaseOutlinePath,
   onlyUnique,
   getInstructorReviewData,
+  getCourseAPIData,
 } from "@utils";
 import Link from "next/link";
 import {
@@ -83,10 +84,7 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
 
   const { data: instructorReviewsData } = useQuery({
     queryKey: ["instructorReviews"],
-    queryFn: async () => {
-      const res = await fetch(`${BASE_URL}/reviews/instructors`);
-      return res.json() as Promise<InstructorReviewSummary[]>;
-    },
+    queryFn: () => getCourseAPIData("/reviews/instructors"),
     staleTime: 60 * 60 * 1000,
   });
 
