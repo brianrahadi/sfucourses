@@ -1,20 +1,16 @@
 import {
   CourseTabContainer,
   Helmet,
-  Hero,
   SectionDetails,
   ReviewsAndPostsTabs,
   ReviewCharts,
 } from "@components";
-import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useEffect, useState, useCallback, useRef } from "react";
-import { getCourseAPIData, loadCourseAPIData } from "@utils";
+import { getCourseAPIData } from "@utils";
 import { CourseOutline, Review } from "@types";
 import { useRouter } from "next/router";
 import { useCourseOfferings } from "@hooks";
 import { RotatingLines } from "react-loader-spinner";
-
-import { BASE_URL } from "@const";
 
 interface CoursePageProps {}
 
@@ -348,7 +344,6 @@ const CoursePage: React.FC<CoursePageProps> = () => {
   if (showInvalid) {
     return (
       <div className="page courses-page">
-        <Hero title="explore courses" backgroundImage={HeroImage.src} />
         <main className="container">
           <div className="center">
             <h2>Whoopsie! Invalid course code provided</h2>
@@ -361,7 +356,6 @@ const CoursePage: React.FC<CoursePageProps> = () => {
   if (!course) {
     return (
       <div className="page courses-page">
-        <Hero title="explore courses" backgroundImage={HeroImage.src} />
         <main className="container">
           <div className="center loading-spinner-container">
             <RotatingLines visible={true} strokeColor="#24a98b" />

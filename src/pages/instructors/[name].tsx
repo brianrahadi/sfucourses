@@ -7,14 +7,12 @@ import {
   Review,
 } from "@types";
 import { getCourseAPIData } from "@utils";
-import { Hero, Helmet, ReviewsAndPostsTabs } from "@components";
-import HeroImage from "@images/resources-page/hero-laptop.jpeg";
+import { Helmet, ReviewsAndPostsTabs } from "@components";
 import { RotatingLines } from "react-loader-spinner";
 import Link from "next/link";
 import { termToIcon } from "@utils/exploreFilters";
 import { ReviewCharts } from "@components";
 import {
-  BASE_URL,
   INSTRUCTOR_RMP_NAME_MAPPING,
   INSTRUCTOR_REDIRECT_NAME_MAPPING,
 } from "@const";
@@ -292,12 +290,6 @@ const InstructorPage = () => {
         pageTitle={`${
           instructor ? `${instructor.name} @ sfucourses` : "instructor details"
         }`}
-      />
-      <Hero
-        title={
-          instructor ? `${instructor.name} @ sfucourses` : "instructor details"
-        }
-        backgroundImage={HeroImage.src}
       />
       <main className="container course-container">
         {loading ? (
