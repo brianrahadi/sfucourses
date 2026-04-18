@@ -30,6 +30,7 @@ const customStyles = {
     backgroundColor: colourNeutral1000,
     color: "#fff",
   }),
+  menuPortal: (base: any) => ({ ...base, zIndex: 100 }),
   option: (base: any, state: any) => ({
     ...base,
     backgroundColor: state.isFocused ? colourNeutral900 : colourNeutral1000,
@@ -176,6 +177,9 @@ export const ExploreFilter: React.FC<{
           isMulti={true}
           closeMenuOnSelect={false}
           styles={customStyles}
+          menuPortalTarget={
+            typeof document !== "undefined" ? document.body : null
+          }
           value={subjectOptions.filter(
             (option: { value: string; label: string }) =>
               courseSubjects.includes(option.value)
