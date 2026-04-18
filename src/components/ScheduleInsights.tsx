@@ -153,7 +153,7 @@ const InsightsList = ({
 export const ScheduleInsights: React.FC<ScheduleInsightsProps> = ({
   coursesWithSections,
 }) => {
-  const { data: instructorReviewsData } = useQuery({
+  const { data: instructorReviewsData } = useQuery<InstructorReviewSummary[]>({
     queryKey: ["instructorReviews"],
     queryFn: () => getCourseAPIData("/reviews/instructors"),
     staleTime: 60 * 60 * 1000,

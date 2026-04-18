@@ -109,16 +109,16 @@ const ExplorePage: React.FC = () => {
     staleTime: 60 * 60 * 1000,
   });
 
-  const { data: instructorReviewsData, isLoading: isLoadingReviews } = useQuery(
-    {
-      queryKey: ["instructorReviews"],
-      queryFn: () => getCourseAPIData("/reviews"),
-      staleTime: 60 * 60 * 1000,
-    }
-  );
+  const { data: instructorReviewsData, isLoading: isLoadingReviews } = useQuery<
+    InstructorReviewSummary[]
+  >({
+    queryKey: ["instructorReviews"],
+    queryFn: () => getCourseAPIData("/reviews/instructors"),
+    staleTime: 60 * 60 * 1000,
+  });
 
   const { data: courseReviewsData, isLoading: isLoadingCourseReviews } =
-    useQuery({
+    useQuery<CourseReviewSummary[]>({
       queryKey: ["courseReviews"],
       queryFn: () => getCourseAPIData("/reviews/courses"),
       staleTime: 60 * 60 * 1000,
