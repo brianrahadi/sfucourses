@@ -86,7 +86,7 @@
     align-items: flex-start;
 
     @media (max-width: 900px) {
-      flex-direction: column;
+      flex-direction: column-reverse;
     }
 
     .course-bottom-left {
