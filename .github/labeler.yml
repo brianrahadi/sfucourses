@@ -1,0 +1,32 @@
+# Labeler configuration
+# https://github.com/actions/labeler
+
+frontend:
+  - changed-files:
+      - any-glob-to-any-file:
+          ["src/components/**/*", "src/styles/**/*", "src/pages/**/*"]
+
+api:
+  - changed-files:
+      - any-glob-to-any-file: ["src/pages/api/**/*", "src/lib/api-wrapper.ts"]
+
+docs:
+  - changed-files:
+      - any-glob-to-any-file: ["*.md", "LICENSE"]
+
+config:
+  - changed-files:
+      - any-glob-to-any-file:
+          [
+            "*.json",
+            "*.js",
+            "*.ts",
+            ".gitignore",
+            ".env*",
+            ".github/**/*",
+            "package*.json",
+          ]
+
+tests:
+  - changed-files:
+      - any-glob-to-any-file: ["tests/**/*", "playwright.config.ts"]
