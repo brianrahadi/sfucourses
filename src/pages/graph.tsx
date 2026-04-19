@@ -114,6 +114,7 @@ export const getStaticProps: GetStaticProps<GraphPageProps> = async () => {
       nodes: Array.from(nodesMap.values()),
       links: Array.from(uniqueLinksMap.values()),
     },
+    revalidate: 60 * 60 * 24, // daily
   };
 };
 
