@@ -1,0 +1,57 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+
+language: "en-US"
+early_access: true
+
+reviews:
+  profile: "assertive"
+  high_level_summary: true
+  auto_review:
+    enabled: true
+    drafts: false
+    ignore_title_keywords:
+      - "WIP"
+      - "Draft"
+
+  # Exclude non-source files
+  path_filters:
+    - "!**/node_modules/**"
+    - "!**/.next/**"
+    - "!**/public/**"
+    - "!**/playwright-report/**"
+    - "!**/package-lock.json"
+
+  # Deep contextual instructions for sfucourses
+  path_instructions:
+    - path: "src/styles/**/*.scss"
+      instructions: |
+        - Ensure all colors and tokens use variables from `src/styles/variables.scss`.
+        - Use `@use` instead of `@import`.
+        - Maintain the dark-themed aesthetic (Glassmorphism/Premium design).
+        - Avoid hardcoding hex values or raw pixel values for spacing; use variables or clamp/calc.
+
+    - path: "src/hooks/**/*.tsx"
+      instructions: |
+        - Validate React Query v5 patterns (e.g., ensure `staleTime` and `cacheTime` are appropriate).
+        - Check for efficient lazy-loading or pagination logic.
+        - Ensure hooks handle error and loading states gracefully.
+
+    - path: "src/components/**/*.tsx"
+      instructions: |
+        - Ensure components are responsive and handle mobile viewports correctly.
+        - Check for accessibility (Aria labels, semantic HTML).
+        - Verify that components use the shared design system components/styles rather than ad-hoc inline styles.
+
+    - path: "src/pages/**/*.tsx"
+      instructions: |
+        - Ensure every page includes proper SEO metadata (Title, Description).
+        - Check for Next.js 14 specific features where applicable (though pages are in `src/pages`).
+        - Validate that dynamic routes are handled securely.
+
+    - path: "tests/**/*.ts"
+      instructions: |
+        - Ensure Playwright tests cover critical user paths (Explore, Schedule, Instructor).
+        - Check for flaky selectors and suggest more robust alternatives.
+
+chat:
+  auto_reply: true
