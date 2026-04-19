@@ -1,4 +1,5 @@
 import { Button, Highlight } from "@components";
+import { RotatingLines } from "react-loader-spinner";
 import {
   CourseWithSectionDetails,
   SectionDetail,
@@ -88,8 +89,12 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
     staleTime: 60 * 60 * 1000,
   });
 
-  const processedSections = processSectionDetails(offering.sections).filter(
-    (section) => section.schedules && section.schedules.length > 0
+  const processedSections = useMemo(
+    () =>
+      processSectionDetails(offering.sections).filter(
+        (section) => section.schedules && section.schedules.length > 0
+      ),
+    [offering.sections]
   );
 
   const notLabOrTut = (sectionCode: string) =>
@@ -143,6 +148,17 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
     });
     return tooltips;
   }, [shownSections, instructorReviewsData]);
+
+  if (offering.isLoading) {
+    return (
+      <div
+        key={"loading-" + offering.term}
+        className="offering-loading-container"
+      >
+        <RotatingLines visible={true} strokeColor="#24a98b" width="40" />
+      </div>
+    );
+  }
 
   return (
     <div

@@ -18,10 +18,10 @@ export const useCourseOfferings = (
   const [loadCount, setLoadCount] = useState(1);
 
   // Only proceed if course and offerings exist
-  const offerings = course?.offerings?.slice(0, 3) ?? [];
+  const rawOfferings = course?.offerings?.slice(0, 3) ?? [];
 
   // Prepare queries for up to 3 offerings, but only enable as needed
-  const queries = offerings.map((offering, idx) => {
+  const queries = rawOfferings.map((offering, idx) => {
     const termURL = toTermCode(offering.term);
     const queryUrl = `/sections?term=${termURL}&dept=${course?.dept}&number=${course?.number}`;
     return {
@@ -37,28 +37,42 @@ export const useCourseOfferings = (
 
   // When the latest loaded query is done, increment loadCount to load the next
   useEffect(() => {
-    if (loadCount < offerings.length) {
+    if (loadCount < rawOfferings.length) {
       const prevResult = results[loadCount - 1];
       if (prevResult && prevResult.isSuccess) {
         setLoadCount(loadCount + 1);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [results, loadCount, offerings.length]);
+  }, [results, loadCount, rawOfferings.length]);
 
-  const isLoadingOfferings = results.some(
-    (r, idx) => idx < loadCount && r.isLoading
-  );
+  const offerings = rawOfferings
+    .map((offering, idx) => {
+      const result = results[idx];
+      if (result?.data) {
+        return {
+          ...(result.data as CourseWithSectionDetails),
+          isLoading: false,
+        };
+      }
+      return {
+        dept: course?.dept ?? "",
+        number: course?.number ?? "",
+        title: course?.title ?? "",
+        units: course?.units ?? "",
+        term: offering.term,
+        sections: [],
+        isLoading: result?.isLoading ?? true,
+      };
+    })
+    .reverse();
+
+  const isLoadingOfferings = false; // Always false so headers show immediately
   const errorOfferings = results.find((r) => r.error)?.error ?? null;
-  const isIdleOfferings = results.every(
-    (r, idx) => idx >= loadCount || (r.isPending && r.fetchStatus === "idle")
-  );
+  const isIdleOfferings = false; // Always false to allow rendering
 
   return {
-    offerings: results
-      .map((r) => r.data)
-      .filter(Boolean)
-      .reverse() as CourseWithSectionDetails[],
+    offerings: offerings as CourseWithSectionDetails[],
     isLoadingOfferings,
     errorOfferings,
     isIdleOfferings,

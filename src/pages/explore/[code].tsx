@@ -331,8 +331,7 @@ const CoursePage: React.FC<CoursePageProps> = () => {
     }
   }, [courseCode.dept, courseCode.number]);
 
-  const { offerings, isLoadingOfferings, errorOfferings, isIdleOfferings } =
-    useCourseOfferings(course);
+  const { offerings, errorOfferings } = useCourseOfferings(course);
 
   const [showAllSectionsMap, setShowAllSectionsMap] = useState<
     Record<string, boolean>
@@ -544,11 +543,7 @@ const CoursePage: React.FC<CoursePageProps> = () => {
             </div>
 
             <div className="course-offerings">
-              {isLoadingOfferings || isIdleOfferings ? (
-                <div className="loading-spinner-container">
-                  <RotatingLines visible={true} strokeColor="#24a98b" />
-                </div>
-              ) : errorOfferings ? (
+              {errorOfferings ? (
                 `Error loading offerings: ${errorOfferings.message}`
               ) : offerings.length === 0 ? (
                 "No offerings available"

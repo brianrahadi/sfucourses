@@ -24,6 +24,7 @@ export interface CourseWithSectionDetails {
   number: string; // 225
   term: string; // Fall 2024
   sections: SectionDetail[];
+  isLoading?: boolean;
 }
 
 export interface CourseOutlineWithSectionDetails
