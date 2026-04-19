@@ -4,7 +4,7 @@ export const useLocalStorage = <T,>(
   key: string,
   initialValue: T
 ): [T, (value: T) => void] => {
-  let [storedValue, setStoredValue] = useState<T>(() => {
+  const [storedValue, setStoredValue] = useState<T>(() => {
     if (typeof window === "undefined") {
       return initialValue;
     }
