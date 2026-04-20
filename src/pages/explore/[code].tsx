@@ -10,7 +10,6 @@ import { getCourseAPIData } from "@utils";
 import { CourseOutline, Review } from "@types";
 import { useRouter } from "next/router";
 import { useCourseOfferings } from "@hooks";
-import { RotatingLines } from "react-loader-spinner";
 
 interface CoursePageProps {}
 
@@ -356,9 +355,7 @@ const CoursePage: React.FC<CoursePageProps> = () => {
     return (
       <div className="page courses-page">
         <main className="container">
-          <div className="center loading-spinner-container">
-            <RotatingLines visible={true} strokeColor="#24a98b" />
-          </div>
+          <div className="center loading-spinner-container"></div>
         </main>
       </div>
     );

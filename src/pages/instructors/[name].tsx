@@ -8,7 +8,6 @@ import {
 } from "@types";
 import { getCourseAPIData } from "@utils";
 import { Helmet, ReviewsAndPostsTabs } from "@components";
-import { RotatingLines } from "react-loader-spinner";
 import Link from "next/link";
 import { termToIcon } from "@utils/exploreFilters";
 import { ReviewCharts } from "@components";
@@ -293,9 +292,7 @@ const InstructorPage = () => {
       />
       <main className="container course-container">
         {loading ? (
-          <div className="center loading-spinner-container">
-            <RotatingLines visible={true} strokeColor="#24a98b" />
-          </div>
+          <div className="center loading-spinner-container"></div>
         ) : error ? (
           <div className="center">
             <h2>{error}</h2>
