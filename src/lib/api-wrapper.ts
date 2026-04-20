@@ -1,7 +1,7 @@
 import redis from "./redis";
 
-const CACHE_TTL = 60 * 60 * 24 * 31; // 1 month in seconds (absolute expiration)
-const STALE_THRESHOLD = 60 * 60 * 24; // 1 day in seconds (when to revalidate in background)
+const CACHE_TTL = 60 * 60 * 24 * 7; // 1 week in seconds (absolute expiration)
+const STALE_THRESHOLD = 60 * 60; // 1 hour in seconds (when to revalidate in background)
 
 interface CacheEntry {
   data: any;
