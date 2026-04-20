@@ -2,7 +2,7 @@
 .course-details-inline {
   background: var(--colour-neutral-1100) 100%;
   margin-top: 0.5rem;
-  padding: 0.5rem 0.5rem 1rem 0.5rem;
+  padding: 0 1rem;
   border-radius: 0.5rem;
   display: flex;
   flex-direction: column;
@@ -110,13 +110,13 @@
 
   // Course Review Charts for Sidebar
   .course-charts-section {
-    flex-direction: column;
+    // flex-direction: column;
     margin: 1rem 0;
   }
 
   .course-charts {
     display: flex;
-    flex-direction: column;
+    // flex-direction: column;
     gap: 0.75rem;
     width: 90%;
     margin: auto;
@@ -124,10 +124,8 @@
 
   .chart-container {
     flex: 1;
-    background: var(--colour-neutral-1000);
     border-radius: 0.5rem;
     padding: 0.75rem;
-    border: 1px solid var(--colour-neutral-900);
 
     h3 {
       font-size: 0.875rem;
@@ -176,6 +174,7 @@
 .sidebar .reviews-section {
   width: 100%;
   margin: auto;
+
   .filter-controls {
     justify-content: flex-start;
     align-items: flex-start;
