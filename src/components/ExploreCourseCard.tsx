@@ -112,7 +112,6 @@ export const ExploreCourseCard: React.FC<ExploreCourseCardProps> = ({
                       offering.instructors[0]
                     )}`}
                     className="text-badge instructor-badge-link"
-                    key={offering.instructors + offering.term}
                   >
                     {termToIcon(offering.term.split(" ")[0])}
                     {offering.term.split(" ")[1].slice(2)}
@@ -120,7 +119,7 @@ export const ExploreCourseCard: React.FC<ExploreCourseCardProps> = ({
                     {query ? (
                       <Highlight text={text} query={query} />
                     ) : (
-                      <p className="instructor-link">{text}</p>
+                      <p>{text}</p>
                     )}
                   </Link>
                 );
@@ -132,14 +131,13 @@ export const ExploreCourseCard: React.FC<ExploreCourseCardProps> = ({
 
   if (isLink) {
     return (
-      <div key={course.dept + course.number} className="course-card is-link">
-        <Link
-          href={`/explore/${course.dept.toLowerCase()}-${course.number}`}
-          className="course-card is-link"
-          aria-label={`View details for ${course.dept} ${course.number}`}
-        />
+      <Link
+        href={`/explore/${course.dept.toLowerCase()}-${course.number}`}
+        key={course.dept + course.number}
+        className="course-card is-link"
+      >
         <CardContent />
-      </div>
+      </Link>
     );
   }
 

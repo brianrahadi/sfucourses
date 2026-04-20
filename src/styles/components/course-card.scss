@@ -2,6 +2,7 @@
 
 .course-card {
   position: relative;
+
   max-width: 50rem;
   width: 100%;
   border-radius: 0.5rem;
@@ -14,6 +15,7 @@
 
   &.is-link {
     transition: transform 0.15s, opacity 0.15s;
+    cursor: pointer;
 
     &:hover {
       opacity: 0.8;
