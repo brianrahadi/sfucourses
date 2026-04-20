@@ -20,7 +20,7 @@
 
   &__icon {
     transition: stroke 0.2s ease;
-    stroke: #9ca3af;
+    stroke: var(--colour-gray-400);
 
     &--selected {
       stroke: var(--colour-sosy-green-500);

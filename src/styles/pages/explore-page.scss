@@ -45,7 +45,7 @@
         background: var(--colour-neutral-1000);
         border: 0;
         border-radius: 0.5rem;
-        color: #fff;
+        color: var(--colour-neutral-000);
         padding: 0.5rem 2rem 0.5rem 0.75rem;
         // min-width: px;
         height: 3rem;
@@ -68,12 +68,12 @@
 
         option {
           background: var(--colour-neutral-1000);
-          // color: #fff;
+          // color: var(--colour-neutral-000);
           padding: 0.5rem;
         }
 
         &:invalid {
-          color: #9ca3af;
+          color: var(--colour-gray-400);
         }
       }
 

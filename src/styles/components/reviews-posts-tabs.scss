@@ -161,7 +161,7 @@
     border: 1px solid var(--colour-neutral-900);
     border-radius: 0.5rem;
     padding: 1rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 12px rgba(var(--colour-black-rgb), 0.3);
     min-width: 300px;
 
     h4 {

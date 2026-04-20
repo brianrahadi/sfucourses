@@ -13,9 +13,12 @@
   }
 
   &.header-scrolled {
-    background-color: rgba(20, 21, 21, 0.85); // Semi-transparent dark gray
+    background-color: rgba(
+      var(--colour-neutral-1200-rgb),
+      0.85
+    ); // Semi-transparent dark gray
     backdrop-filter: blur(8px); // Adds a subtle blur effect for modern browsers
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); // Subtle shadow for depth
+    box-shadow: 0 2px 10px rgba(var(--colour-black-rgb), 0.2); // Subtle shadow for depth
   }
 
   &__primary {
@@ -190,9 +193,9 @@
   }
 
   &.header-scrolled {
-    background-color: rgba(20, 21, 21, 0.85);
+    background-color: rgba(var(--colour-neutral-1200-rgb), 0.85);
     backdrop-filter: blur(8px);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 10px rgba(var(--colour-black-rgb), 0.2);
   }
 
   &__primary {
@@ -257,9 +260,9 @@
     left: 0;
     right: 0;
     height: 60px;
-    background-color: rgba(25, 26, 26, 0.95);
+    background-color: rgba(var(--colour-neutral-1100-rgb), 0.95);
     backdrop-filter: blur(8px);
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 -2px 10px rgba(var(--colour-black-rgb), 0.2);
     z-index: 101;
 
     .mobile-nav-item {

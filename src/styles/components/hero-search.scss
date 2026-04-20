@@ -44,7 +44,7 @@
     background: var(--colour-neutral-1100);
     border: 1px solid var(--colour-neutral-900);
     border-radius: 0.75rem;
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 12px 32px rgba(var(--colour-black-rgb), 0.4);
     overflow: hidden;
     animation: heroDropdownIn 0.15s ease-out;
     z-index: 100;

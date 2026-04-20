@@ -23,7 +23,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(var(--colour-black-rgb), 0.7);
     z-index: 2;
     display: flex;
     align-items: center;
@@ -35,7 +35,7 @@
       padding: 1.5rem;
       width: 90%;
       max-width: 400px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 4px 20px rgba(var(--colour-black-rgb), 0.3);
 
       h3 {
         margin-top: 0;
@@ -91,7 +91,7 @@
             color: var(--colour-neutral-400);
 
             svg {
-              color: #dc4c64;
+              color: var(--colour-red-brand);
             }
           }
         }

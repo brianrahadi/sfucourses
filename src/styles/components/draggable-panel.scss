@@ -3,7 +3,8 @@
   flex-direction: column;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 32px rgba(var(--colour-black-rgb), 0.4),
+    0 2px 8px rgba(var(--colour-black-rgb), 0.2);
   border: 1px solid var(--colour-neutral-800);
   background-color: var(--colour-neutral-1100);
   max-height: calc(100% - 40px);

@@ -76,6 +76,30 @@
   --colour-neutral-200: #eff0f0;
   --colour-neutral-100: #f7f8f7;
   --colour-neutral-000: #fff;
+
+  /* New Standard Colors */
+  --colour-neutral-1150: #1e1e1e;
+  --colour-gray-400: #9ca3af;
+  --colour-blue-500: #3b82f6;
+  --colour-green-500: #22c55e;
+  --colour-amber-500: #f59e0b;
+  --colour-red-400: #f05f5f;
+  --colour-red-500: #ef4444;
+  --colour-red-600: #dc2626;
+  --colour-red-brand: #dc4c64;
+
+  /* RGB variants for rgba() scaling */
+  --colour-black-rgb: 0, 0, 0;
+  --colour-white-rgb: 255, 255, 255;
+  --colour-neutral-1200-rgb: 20, 21, 21;
+  --colour-neutral-1100-rgb: 25, 26, 26;
+  --colour-sosy-green-600-rgb: 29, 135, 111;
+  --colour-green-500-rgb: 34, 197, 94;
+  --colour-blue-500-rgb: 59, 130, 246;
+  --colour-red-600-rgb: 220, 38, 38;
+  --colour-red-500-rgb: 239, 68, 68;
+  --colour-red-brand-rgb: 220, 76, 100;
+  --colour-amber-500-rgb: 245, 158, 11;
 }
 
 *,

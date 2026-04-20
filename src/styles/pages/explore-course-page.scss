@@ -136,7 +136,7 @@
 
     // Override svg color for difficulty
     &:has(.difficulty) .chart-title svg {
-      color: #f05f5f;
+      color: var(--colour-red-400);
     }
 
     .chart-score-bar {
@@ -165,11 +165,11 @@
       }
 
       &.rating .score-bar-fill {
-        background: #f59e0b;
+        background: var(--colour-amber-500);
       }
 
       &.difficulty .score-bar-fill {
-        background: #f05f5f;
+        background: var(--colour-red-400);
       }
     }
   }

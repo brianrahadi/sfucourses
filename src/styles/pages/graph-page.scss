@@ -44,7 +44,7 @@
     position: relative;
     height: 100%;
     /* Default dark canvas for ForceGraph2D */
-    background-color: #1e1e1e;
+    background-color: var(--colour-neutral-1150);
     overflow: hidden;
   }
 
@@ -61,7 +61,7 @@
     padding: 12px 14px 12px 16px;
     color: white;
     cursor: pointer;
-    box-shadow: -4px 4px 10px rgba(0, 0, 0, 0.3);
+    box-shadow: -4px 4px 10px rgba(var(--colour-black-rgb), 0.3);
     transition: background-color 0.2s ease;
 
     display: flex;

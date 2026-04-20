@@ -49,9 +49,9 @@
     -webkit-appearance: none;
     width: 1.5rem;
     height: 1.5rem;
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    border: 2px solid rgba(var(--colour-white-rgb), 0.3);
     border-radius: 4px;
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: rgba(var(--colour-white-rgb), 0.05);
     cursor: pointer;
     display: inline-flex;
     align-items: center;
@@ -59,13 +59,13 @@
     transition: all 0.2s ease-in-out;
 
     &:hover {
-      border-color: rgba(255, 255, 255, 0.5);
-      background-color: rgba(255, 255, 255, 0.1);
+      border-color: rgba(var(--colour-white-rgb), 0.5);
+      background-color: rgba(var(--colour-white-rgb), 0.1);
     }
 
     &:checked {
-      background-color: rgba(255, 255, 255, 0.9);
-      border-color: rgba(255, 255, 255, 0.9);
+      background-color: rgba(var(--colour-white-rgb), 0.9);
+      border-color: rgba(var(--colour-white-rgb), 0.9);
 
       &::after {
         content: "";
