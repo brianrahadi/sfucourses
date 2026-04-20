@@ -2,7 +2,7 @@
 .course-details-inline {
   background: var(--colour-neutral-1100) 100%;
   margin-top: 0.5rem;
-  padding: 0 1rem;
+  padding: 0.5rem 1rem;
   border-radius: 0.5rem;
   display: flex;
   flex-direction: column;
@@ -125,7 +125,6 @@
   .chart-container {
     flex: 1;
     border-radius: 0.5rem;
-    padding: 0.75rem;
 
     h3 {
       font-size: 0.875rem;
