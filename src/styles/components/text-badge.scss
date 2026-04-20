@@ -22,4 +22,9 @@
     padding: 0.5rem;
     height: 3rem;
   }
+
+  &.instructor-badge-link {
+    z-index: 2;
+    text-decoration: none;
+  }
 }
