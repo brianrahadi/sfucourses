@@ -108,6 +108,7 @@ export const ExploreCourseCard: React.FC<ExploreCourseCardProps> = ({
                 }`;
                 return (
                   <Link
+                    key={`${course.dept}-${course.number}-${offering.term}-${offering.instructors[0]}`}
                     href={`/instructors/${encodeURIComponent(
                       offering.instructors[0]
                     )}`}
