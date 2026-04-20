@@ -78,6 +78,16 @@ const KeyboardShortcutsTip = () => (
         <span>Reopen dialog</span>
         <kbd style={kbdStyle}>A</kbd>
       </div>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <span>Close dialog</span>
+        <kbd style={kbdStyle}>Esc</kbd>
+      </div>
     </div>
   </div>
 );
@@ -101,6 +111,20 @@ export const CatalogModal: React.FC<CatalogModalProps> = ({
   saveText = "Add",
   cancelText = "Cancel",
 }) => {
+  React.useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+    if (isOpen) {
+      document.addEventListener("keydown", handleEscape);
+    }
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   return (
