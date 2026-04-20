@@ -30,7 +30,7 @@ export const useCatalogStore = create<CatalogState>()(
     (set) => ({
       completedCourses: [],
       wishlistCourses: [],
-      catalogName: "Your name...",
+      catalogName: "Insert Name...",
       setCatalogName: (name) => set({ catalogName: name }),
       addCompletedCourse: (course) =>
         set((state) => ({

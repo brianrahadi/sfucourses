@@ -170,7 +170,7 @@ export const CatalogManager: React.FC = () => {
         <button
           onClick={() => {
             setCatalogName(
-              globalCatalogName === "Your name..." ? "" : globalCatalogName
+              globalCatalogName === "Insert Name.." ? "" : globalCatalogName
             );
             setShowSaveDialog(true);
           }}
