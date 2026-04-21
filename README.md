@@ -2,8 +2,6 @@
 
 Explore and schedule SFU courses with the best user experience.
 
-![SFU Courses Overview](https://github.com/user-attachments/assets/3ebc5b8b-cae3-476e-8c48-8f4f2244200d)
-
 ## Features
 
 - **Explore:** Robust course filtering, past instructor/offering data, and Reddit insights.
