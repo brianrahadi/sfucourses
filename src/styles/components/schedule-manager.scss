@@ -33,11 +33,16 @@
       background-color: var(--colour-neutral-1100);
       border-radius: 0.75rem;
       padding: 1.5rem;
-      width: 90vw;
-      max-width: 1100px;
-      max-height: 90vh;
-      overflow-y: auto;
+      width: 90%;
+      max-width: 400px;
       box-shadow: 0 4px 20px rgba(var(--colour-black-rgb), 0.3);
+
+      &--wide {
+        width: 90vw;
+        max-width: 1100px;
+        max-height: 90vh;
+        overflow-y: auto;
+      }
 
       h3 {
         margin-top: 0;
