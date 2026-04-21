@@ -1,4 +1,5 @@
-import { getDarkColorFromHash } from "@utils/format";
+import { getColorFromHash } from "@utils/format";
+import { useTheme } from "next-themes";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
@@ -15,8 +16,9 @@ export const TextBadge: React.FC<TextBadgeProps> = ({
   icon,
   enableBgColor,
 }) => {
+  const { resolvedTheme } = useTheme();
   const bgColor = enableBgColor
-    ? getDarkColorFromHash(String(content))
+    ? getColorFromHash(String(content), resolvedTheme === "light")
     : undefined;
 
   return (

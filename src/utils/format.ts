@@ -1,19 +1,34 @@
 import { createHash } from "crypto";
 
-export function getDarkColorFromHash(input: string): string {
+export function getColorFromHash(
+  input: string,
+  isLightMode: boolean = false
+): string {
   const hash = createHash("sha256").update(input).digest("hex");
 
   const hex = hash.substring(0, 6);
 
-  const r = parseInt(hex.substring(0, 2), 16) % 128; // Limit to 0-127
-  const g = parseInt(hex.substring(2, 4), 16) % 128;
-  const b = parseInt(hex.substring(4, 6), 16) % 128;
+  let r = parseInt(hex.substring(0, 2), 16);
+  let g = parseInt(hex.substring(2, 4), 16);
+  let b = parseInt(hex.substring(4, 6), 16);
 
-  const darkHexColor = `#${r.toString(16).padStart(2, "0")}${g
+  if (isLightMode) {
+    // Generate pastel colors for light mode (shift towards white)
+    r = (r % 128) + 127;
+    g = (g % 128) + 127;
+    b = (b % 128) + 127;
+  } else {
+    // Generate dark colors for dark mode (shift towards black)
+    r = r % 128;
+    g = g % 128;
+    b = b % 128;
+  }
+
+  const hexColor = `#${r.toString(16).padStart(2, "0")}${g
     .toString(16)
     .padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
 
-  return darkHexColor;
+  return hexColor;
 }
 
 export function formatTime(hour: number, minute: number = 0): string {

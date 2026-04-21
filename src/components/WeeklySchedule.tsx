@@ -1,5 +1,6 @@
 import { CourseWithSectionDetails, TimeBlock } from "@types";
-import { formatTime, getDarkColorFromHash } from "@utils/format";
+import { formatTime, getColorFromHash } from "@utils/format";
+import { useTheme } from "next-themes";
 import React, {
   Dispatch,
   SetStateAction,
@@ -99,6 +100,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
   setTimeBlocks,
   previewCourse,
 }) => {
+  const { resolvedTheme } = useTheme();
   const [timeslots, setTimeslots] = useState<Course[]>([]);
   const [weekStartDate, setWeekStartDate] = useState<Date | null>(null);
   const [currentWeekOffset, setCurrentWeekOffset] = useState(1);
@@ -647,8 +649,9 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
                       height: `${height}px`,
                       backgroundColor: isTimeBlock
                         ? "rgba(220, 76, 100, 0.7)" // Red-ish for blocked time
-                        : getDarkColorFromHash(
-                            course.name.split(" ").slice(0, 2).join(" ")
+                        : getColorFromHash(
+                            course.name.split(" ").slice(0, 2).join(" "),
+                            resolvedTheme === "light"
                           ),
                     }}
                     onClick={
@@ -726,8 +729,9 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
                       style={{
                         top: `${topOffset}px`,
                         height: `${height}px`,
-                        backgroundColor: getDarkColorFromHash(
-                          name.split(" ").slice(0, 2).join(" ")
+                        backgroundColor: getColorFromHash(
+                          name.split(" ").slice(0, 2).join(" "),
+                          resolvedTheme === "light"
                         ),
                         opacity: 0.5,
                         zIndex: 10,
