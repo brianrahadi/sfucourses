@@ -47,6 +47,13 @@ function decodeCourse(encoded: string): { id: string; term: string } | null {
   return { id: `${dept} ${number}`, term: `${season} ${year}` };
 }
 
+// Decode a course ID without term (e.g. "cmpt120" -> "CMPT 120")
+function decodeCourseId(encoded: string): string | null {
+  const match = encoded.match(/^([a-z]+)(\d+\w*)$/i);
+  if (!match) return null;
+  return `${match[1].toUpperCase()} ${match[2].toUpperCase()}`;
+}
+
 const ProgressPage = () => {
   const {
     completedCourses,
@@ -138,40 +145,115 @@ const ProgressPage = () => {
     if (savedTarget) setTargetCredits(parseInt(savedTarget) || 120);
   }, []);
 
-  // Load courses from URL on mount
+  // Load courses from URL on mount (3 separate params: completed, ip, wish)
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const coursesParam = params.get("courses");
-    if (!coursesParam) return;
 
-    const encoded = coursesParam.split("-").filter(Boolean);
-    if (encoded.length === 0) return;
+    // Load completed courses: "cmpt120fa23-cmpt225sp24"
+    const completedParam = params.get("completed");
+    if (completedParam) {
+      const entries = completedParam.split("-").filter(Boolean);
+      entries.forEach((code) => {
+        const decoded = decodeCourse(code);
+        if (!decoded) return;
+        const exists = completedCourses.some(
+          (c) => c.id === decoded.id && c.term === decoded.term
+        );
+        if (!exists) {
+          addCompletedCourse({
+            id: decoded.id,
+            term: decoded.term,
+            credits: 3,
+          });
+        }
+      });
+    }
 
-    loadedFromUrl.current = true;
-    encoded.forEach((code) => {
-      const decoded = decodeCourse(code);
-      if (!decoded) return;
-      const exists = completedCourses.some(
-        (c) => c.id === decoded.id && c.term === decoded.term
-      );
-      if (!exists) {
-        addCompletedCourse({ id: decoded.id, term: decoded.term, credits: 3 });
-      }
-    });
+    // Load in-progress courses: "cmpt225-cmpt120" (no term suffix, uses currentTerm)
+    const ipParam = params.get("ip");
+    if (ipParam) {
+      const entries = ipParam.split("-").filter(Boolean);
+      entries.forEach((code) => {
+        const id = decodeCourseId(code);
+        if (!id) return;
+        const exists = wishlistCourses.some((c) => c.id === id);
+        if (!exists) {
+          addWishlistCourse({ id, credits: 3, termPlanned: currentTerm });
+        }
+      });
+    }
+
+    // Load wishlist/future courses: "cmpt300fa26-macm101" (with or without term)
+    const wishParam = params.get("wish");
+    if (wishParam) {
+      const entries = wishParam.split("-").filter(Boolean);
+      entries.forEach((code) => {
+        // Try decoding with term first
+        const withTerm = decodeCourse(code);
+        if (withTerm) {
+          const exists = wishlistCourses.some((c) => c.id === withTerm.id);
+          if (!exists) {
+            addWishlistCourse({
+              id: withTerm.id,
+              credits: 3,
+              termPlanned: withTerm.term,
+            });
+          }
+          return;
+        }
+        // No term — undecided
+        const id = decodeCourseId(code);
+        if (!id) return;
+        const exists = wishlistCourses.some((c) => c.id === id);
+        if (!exists) {
+          addWishlistCourse({ id, credits: 3, termPlanned: undefined });
+        }
+      });
+    }
+
+    if (completedParam || ipParam || wishParam) {
+      loadedFromUrl.current = true;
+    }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Sync completed courses to URL
+  // Sync courses to URL (3 separate params)
   useEffect(() => {
     if (!mounted) return;
-    if (completedCourses.length === 0) {
-      removeUrlParameter("courses");
-      return;
+
+    // Completed courses: always have a term
+    const completedEntries = completedCourses.map((c) =>
+      encodeCourse(c.id, c.term)
+    );
+    if (completedEntries.length > 0) {
+      insertUrlParam("completed", completedEntries.join("-"));
+    } else {
+      removeUrlParameter("completed");
     }
-    const encoded = completedCourses
-      .map((c) => encodeCourse(c.id, c.term))
-      .join("-");
-    insertUrlParam("courses", encoded);
-  }, [completedCourses, mounted]);
+
+    // In-progress courses: current term, encode just the ID
+    const ipEntries = wishlistCourses
+      .filter((c) => c.termPlanned === currentTerm)
+      .map((c) => c.id.replace(" ", "").toLowerCase());
+    if (ipEntries.length > 0) {
+      insertUrlParam("ip", ipEntries.join("-"));
+    } else {
+      removeUrlParameter("ip");
+    }
+
+    // Wishlist/future courses: encode with term if available, just ID if undecided
+    const wishEntries = wishlistCourses
+      .filter((c) => c.termPlanned !== currentTerm)
+      .map((c) =>
+        c.termPlanned
+          ? encodeCourse(c.id, c.termPlanned)
+          : c.id.replace(" ", "").toLowerCase()
+      );
+    if (wishEntries.length > 0) {
+      insertUrlParam("wish", wishEntries.join("-"));
+    } else {
+      removeUrlParameter("wish");
+    }
+  }, [completedCourses, wishlistCourses, mounted, currentTerm]);
 
   useEffect(() => {
     getCourseAPIData("/outlines", { short: "true" })
