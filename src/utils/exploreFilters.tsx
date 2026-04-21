@@ -36,7 +36,12 @@ export const termToIcon = (term: string) => {
     case "Summer":
       return (
         <BsSun
-          style={{ fill: "#FFD700", verticalAlign: "middle" }}
+          style={{
+            fill: "#FFD700",
+            stroke: "var(--colour-neutral-000)",
+            strokeWidth: "0.5",
+            verticalAlign: "middle",
+          }}
           title="Summer"
         />
       );

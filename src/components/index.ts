@@ -40,3 +40,4 @@ export { CatalogCourseCard } from "./CatalogCourseCard";
 export { CatalogManager } from "./CatalogManager";
 export { DraggablePanel } from "./DraggablePanel";
 export { ReviewCharts } from "./ReviewCharts";
+export { ThemeToggle } from "./ThemeToggle";

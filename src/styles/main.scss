@@ -112,3 +112,37 @@
   -webkit-font-smoothing: antialiased;
   color: var(--colour-neutral-000);
 }
+
+[data-theme="light"] {
+  /* Inverting text to a very dark gray/black and background to beige */
+  --colour-neutral-1200: #fdfbf7; /* Beige background instead of white */
+  --colour-neutral-1150: #f5f2eb;
+  --colour-neutral-1100: #eeebe4;
+  --colour-neutral-1000: #e3ded5;
+  --colour-neutral-900: #c2bcaf;
+  --colour-neutral-800: #9e998c;
+  --colour-neutral-700: #757268;
+  --colour-neutral-600: #5e5c53;
+  --colour-neutral-500: #47453f;
+  --colour-neutral-400: #3b3a35;
+  --colour-neutral-300: #292825;
+  --colour-neutral-200: #242321;
+  --colour-neutral-100: #1e1d1b;
+  --colour-neutral-000: #141515; /* Dark text */
+
+  /* Update RGB variants for shadows and gradients */
+  --colour-neutral-1200-rgb: 253, 251, 247;
+  --colour-neutral-1100-rgb: 238, 235, 228;
+
+  /* Softer/Darker Greens for Light Palette readable contrast */
+  --colour-sosy-green-900: #d3eee8;
+  --colour-sosy-green-800: #a7ddd1;
+  --colour-sosy-green-700: #7ccbb9;
+  --colour-sosy-green-600: #50baa2;
+  --colour-sosy-green-500: #166553;
+  --colour-sosy-green-500-rgb: 22, 101, 83;
+  --colour-sosy-green-400: #1d876f;
+  --colour-sosy-green-300: #0e4438;
+  --colour-sosy-green-200: #0e4438;
+  --colour-sosy-green-100: #07221c;
+}

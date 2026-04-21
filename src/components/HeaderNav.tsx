@@ -2,6 +2,7 @@ import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import { GlobalSearch } from "./GlobalSearch";
+import { ThemeToggle } from "./ThemeToggle";
 import { Home, Search, Calendar, Users, Book } from "react-feather";
 import { PiGraphFill } from "react-icons/pi";
 
@@ -92,8 +93,11 @@ export const HeaderNav: React.FC = () => {
               <h2>sfucourses</h2>
             </Link>
 
-            {/* Global Search */}
-            <GlobalSearch />
+            {/* Global Search and Theme */}
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              <GlobalSearch />
+              <ThemeToggle />
+            </div>
           </div>
 
           {/* Desktop Navigation */}

@@ -14,21 +14,22 @@ import {
 import { subjectOptions } from "@utils/exploreFilters";
 import { useExploreStore } from "src/store/useExploreStore";
 
-const colourNeutral1000 = "#323434";
-const colourNeutral900 = "#4b4e4d";
-const colourNeutral800 = "#646867";
+const colourNeutral1000 = "var(--colour-neutral-1000)";
+const colourNeutral900 = "var(--colour-neutral-900)";
+const colourNeutral800 = "var(--colour-neutral-800)";
+const colourNeutral000 = "var(--colour-neutral-000)";
 const customStyles = {
   control: (base: any) => ({
     ...base,
     backgroundColor: colourNeutral1000,
     border: 0,
     borderColor: colourNeutral800,
-    color: "#fff",
+    color: colourNeutral000,
   }),
   menu: (base: any) => ({
     ...base,
     backgroundColor: colourNeutral1000,
-    color: "#fff",
+    color: colourNeutral000,
   }),
   menuPortal: (base: any) => ({ ...base, zIndex: 100 }),
   option: (base: any, state: any) => ({
@@ -39,18 +40,18 @@ const customStyles = {
   multiValue: (base: any) => ({
     ...base,
     backgroundColor: colourNeutral900,
-    color: "#fff",
+    color: colourNeutral000,
   }),
   multiValueLabel: (base: any) => ({
     ...base,
-    color: "#fff",
+    color: colourNeutral000,
   }),
   multiValueRemove: (base: any) => ({
     ...base,
-    color: "#fff",
+    color: colourNeutral000,
     ":hover": {
       backgroundColor: colourNeutral800,
-      color: "#fff",
+      color: colourNeutral000,
     },
   }),
 };

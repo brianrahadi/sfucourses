@@ -5,7 +5,7 @@
   height: fit-content;
 
   background-color: var(--colour-sosy-green-800);
-  color: white;
+  color: var(--colour-neutral-000);
   padding: 0.5rem;
   border-radius: 4px;
   border: none;
@@ -19,7 +19,8 @@
   }
 
   &:disabled {
-    background-color: var(--colour-neutral-600);
+    background-color: var(--colour-neutral-900);
+    color: var(--colour-neutral-500);
     cursor: not-allowed;
   }
 

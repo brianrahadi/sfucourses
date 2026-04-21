@@ -33,7 +33,7 @@
         .course-code-title {
           font-size: 2rem;
           font-weight: bold;
-          color: white;
+          color: var(--colour-neutral-000);
         }
 
         .course-credits {
@@ -147,7 +147,7 @@
       .score-text {
         font-weight: bold;
         font-size: 0.9rem;
-        color: white;
+        color: var(--colour-neutral-000);
         white-space: nowrap;
       }
 
@@ -189,7 +189,7 @@
     h2 {
       font-size: 1.1rem;
       font-weight: bold;
-      color: white;
+      color: var(--colour-neutral-000);
       margin: 0;
     }
 
@@ -208,7 +208,7 @@
 
       &:hover {
         background: var(--colour-neutral-700);
-        color: white;
+        color: var(--colour-neutral-000);
       }
     }
   }
@@ -217,7 +217,7 @@
     h2.coreq-heading {
       font-size: 1.1rem;
       font-weight: bold;
-      color: white;
+      color: var(--colour-neutral-000);
       margin: 1.5rem 0 0.5rem 0;
     }
 

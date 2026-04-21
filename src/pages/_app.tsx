@@ -16,6 +16,7 @@ import {
 import { Toaster } from "react-hot-toast";
 
 import { FormspreeProvider } from "@formspree/react";
+import { ThemeProvider } from "next-themes";
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
@@ -86,16 +87,18 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }: AppProps) => {
   return (
     <QueryClientProvider client={queryClient}>
       <HydrationBoundary state={pageProps.dehydratedState}>
-        <FormspreeProvider project="2913445847263870687">
-          <Helmet pageTitle={router.pathname} />
-          <HeaderNav />
-          <Component {...pageProps} key={router.asPath} />
-          <Footer />
-          <Toaster />
-          <Analytics />
-          <SpeedInsights />
-          <FeedbackForm />
-        </FormspreeProvider>
+        <ThemeProvider defaultTheme="dark">
+          <FormspreeProvider project="2913445847263870687">
+            <Helmet pageTitle={router.pathname} />
+            <HeaderNav />
+            <Component {...pageProps} key={router.asPath} />
+            <Footer />
+            <Toaster />
+            <Analytics />
+            <SpeedInsights />
+            <FeedbackForm />
+          </FormspreeProvider>
+        </ThemeProvider>
       </HydrationBoundary>
     </QueryClientProvider>
   );
