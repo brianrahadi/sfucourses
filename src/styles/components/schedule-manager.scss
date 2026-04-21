@@ -44,6 +44,13 @@
         overflow-y: auto;
       }
 
+      &--single {
+        width: 90vw;
+        max-width: 550px;
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+
       h3 {
         margin-top: 0;
         margin-bottom: 1.25rem;
@@ -126,6 +133,10 @@
         .saved-schedule-item {
           background-color: var(--colour-neutral-1000);
           border-radius: 0.5rem;
+
+          &:only-child {
+            grid-column: 1 / -1;
+          }
           padding: 0.75rem 1rem;
           display: flex;
           flex-direction: column;

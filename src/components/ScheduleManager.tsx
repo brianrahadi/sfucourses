@@ -275,8 +275,10 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
         <div className="schedule-dialog">
           <div
             className={`schedule-dialog-content${
-              filteredSchedules.length > 0
+              filteredSchedules.length > 1
                 ? " schedule-dialog-content--wide"
+                : filteredSchedules.length === 1
+                ? " schedule-dialog-content--single"
                 : ""
             }`}
           >
