@@ -33,8 +33,10 @@
       background-color: var(--colour-neutral-1100);
       border-radius: 0.75rem;
       padding: 1.5rem;
-      width: 90%;
-      max-width: 400px;
+      width: 90vw;
+      max-width: 1100px;
+      max-height: 90vh;
+      overflow-y: auto;
       box-shadow: 0 4px 20px rgba(var(--colour-black-rgb), 0.3);
 
       h3 {
@@ -105,29 +107,41 @@
       }
 
       .saved-schedules-list {
-        max-height: 300px;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+        max-height: 70vh;
         overflow-y: auto;
         margin-bottom: 1rem;
+
+        @include viewport(mobile) {
+          grid-template-columns: 1fr;
+        }
 
         .saved-schedule-item {
           background-color: var(--colour-neutral-1000);
           border-radius: 0.5rem;
           padding: 0.75rem 1rem;
-          margin-bottom: 0.75rem;
           display: flex;
-          justify-content: space-between;
-          align-items: center;
+          flex-direction: column;
           gap: 0.5rem;
-          flex-wrap: wrap;
-
-          @include viewport(mobile) {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.75rem;
-          }
 
           &:last-child {
             margin-bottom: 0;
+          }
+
+          .saved-schedule-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+
+            @include viewport(mobile) {
+              flex-direction: column;
+              align-items: flex-start;
+              gap: 0.5rem;
+            }
           }
 
           .saved-schedule-info {
@@ -232,6 +246,148 @@
           }
         }
       }
+    }
+  }
+}
+
+/* Mini Schedule Preview - shown in the Load dialog */
+.mini-schedule-preview {
+  border-radius: 0.375rem;
+  overflow: hidden;
+  border: 1px solid var(--colour-neutral-800);
+  background-color: var(--colour-neutral-1100);
+
+  &--empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem;
+    color: var(--colour-neutral-600);
+    font-size: 0.8rem;
+    font-style: italic;
+  }
+
+  .mini-schedule-grid {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mini-day-headers {
+    display: grid;
+    grid-template-columns: 2rem repeat(5, 1fr);
+    gap: 1px;
+    background-color: var(--colour-neutral-900);
+    border-bottom: 1px solid var(--colour-neutral-800);
+
+    .mini-time-header {
+      background-color: var(--colour-neutral-1000);
+    }
+
+    .mini-day-header {
+      text-align: center;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 4px 0;
+      color: var(--colour-neutral-400);
+      background-color: var(--colour-neutral-1000);
+    }
+  }
+
+  .mini-grid-body {
+    display: flex;
+    height: 400px;
+  }
+
+  .mini-time-column {
+    width: 2rem;
+    position: relative;
+    flex-shrink: 0;
+    background-color: var(--colour-neutral-1000);
+
+    .mini-time-label {
+      position: absolute;
+      right: 2px;
+      font-size: 0.55rem;
+      color: var(--colour-neutral-500);
+      font-family: monospace;
+      transform: translateY(-50%);
+      line-height: 1;
+      background-color: var(--colour-neutral-1000);
+      padding: 1px 0;
+      z-index: 1;
+    }
+  }
+
+  .mini-day-columns {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1px;
+    background-color: var(--colour-neutral-900);
+    flex: 1;
+
+    .mini-day-column {
+      position: relative;
+      background-color: var(--colour-neutral-1100);
+
+      .mini-grid-line {
+        position: absolute;
+        left: 0;
+        right: 0;
+        border-bottom: 1px dashed var(--colour-neutral-900);
+        box-sizing: border-box;
+
+        &--hour {
+          border-bottom-style: solid;
+          border-bottom-color: var(--colour-neutral-800);
+        }
+      }
+    }
+  }
+
+  .mini-block {
+    position: absolute;
+    left: 1px;
+    right: 1px;
+    border-radius: 3px;
+    min-height: 4px;
+    opacity: 0.9;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 2px 3px;
+    gap: 0px;
+
+    .mini-block-label {
+      font-size: 0.65rem;
+      line-height: 1.2;
+      color: var(--colour-neutral-000);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+      font-weight: 700;
+    }
+
+    .mini-block-sub {
+      font-size: 0.55rem;
+      line-height: 1.2;
+      color: var(--colour-neutral-000);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+      opacity: 0.85;
+    }
+
+    &--time {
+      background-image: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.15) 2px,
+        rgba(0, 0, 0, 0.15) 4px
+      );
     }
   }
 }

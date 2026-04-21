@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { CourseWithSectionDetails, TimeBlock } from "@types";
 import { Button } from "./Button";
+import { MiniSchedulePreview } from "./MiniSchedulePreview";
 import { FaSave, FaFolderOpen } from "react-icons/fa";
 import { IoMdStar, IoMdStarOutline } from "react-icons/io";
 import toast from "react-hot-toast";
@@ -278,41 +279,50 @@ export const ScheduleManager: React.FC<ScheduleManagerProps> = ({
               <div className="saved-schedules-list">
                 {filteredSchedules.map((schedule) => (
                   <div key={schedule.id} className="saved-schedule-item">
-                    <div className="saved-schedule-info">
-                      <button
-                        className="star-button"
-                        onClick={() => handleSetDefault(schedule.id)}
-                        title={
-                          schedule.isDefault
-                            ? "Default schedule"
-                            : "Set as default"
-                        }
-                      >
-                        {schedule.isDefault ? (
-                          <IoMdStar className="star-icon filled" />
-                        ) : (
-                          <IoMdStarOutline className="star-icon" />
-                        )}
-                      </button>
-                      <span className="schedule-name">{schedule.name}</span>
-                      <span className="schedule-contents">
-                        {getScheduleSummary(schedule)}
-                      </span>
+                    <div className="saved-schedule-top">
+                      <div className="saved-schedule-info">
+                        <button
+                          className="star-button"
+                          onClick={() => handleSetDefault(schedule.id)}
+                          title={
+                            schedule.isDefault
+                              ? "Default schedule"
+                              : "Set as default"
+                          }
+                        >
+                          {schedule.isDefault ? (
+                            <IoMdStar className="star-icon filled" />
+                          ) : (
+                            <IoMdStarOutline className="star-icon" />
+                          )}
+                        </button>
+                        <span className="schedule-name">{schedule.name}</span>
+                        <span className="schedule-contents">
+                          {getScheduleSummary(schedule)}
+                        </span>
+                      </div>
+                      <div className="saved-schedule-actions">
+                        <Button
+                          label="Load"
+                          onClick={() => handleLoadSchedule(schedule)}
+                          type="primary"
+                          className="small-btn"
+                        />
+                        <Button
+                          label="Delete"
+                          onClick={() => handleDeleteSchedule(schedule.id)}
+                          type="secondary"
+                          className="small-btn"
+                        />
+                      </div>
                     </div>
-                    <div className="saved-schedule-actions">
-                      <Button
-                        label="Load"
-                        onClick={() => handleLoadSchedule(schedule)}
-                        type="primary"
-                        className="small-btn"
+                    {(schedule.courses.length > 0 ||
+                      (schedule.timeBlocks?.length ?? 0) > 0) && (
+                      <MiniSchedulePreview
+                        courses={schedule.courses}
+                        timeBlocks={schedule.timeBlocks}
                       />
-                      <Button
-                        label="Delete"
-                        onClick={() => handleDeleteSchedule(schedule.id)}
-                        type="secondary"
-                        className="small-btn"
-                      />
-                    </div>
+                    )}
                   </div>
                 ))}
               </div>
