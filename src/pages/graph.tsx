@@ -10,6 +10,7 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
+import { useTheme } from "next-themes";
 import { SidebarCourse, ExploreFilter, DraggablePanel } from "@components";
 import { useExploreStore } from "src/store/useExploreStore";
 import { CourseOutline } from "@types";
@@ -118,7 +119,8 @@ export const getStaticProps: GetStaticProps<GraphPageProps> = async () => {
   };
 };
 
-const pastelColors = [
+// Dark mode: soft pastels that pop on a dark background
+const darkModeColors = [
   "#FFB3BA",
   "#FFDFBA",
   "#FFFFBA",
@@ -141,8 +143,34 @@ const pastelColors = [
   "#FF8B94",
 ];
 
+// Light mode: richer, more saturated colors with good contrast on beige/white
+const lightModeColors = [
+  "#D94452",
+  "#D97B2A",
+  "#B89E1C",
+  "#2D9E5A",
+  "#2E7DB5",
+  "#7C4DCC",
+  "#C94AC9",
+  "#D46A30",
+  "#6B8F2E",
+  "#2E9B82",
+  "#5A6BBD",
+  "#C44BA3",
+  "#D45F8A",
+  "#A24DD4",
+  "#6F50B8",
+  "#38A87A",
+  "#7DA32E",
+  "#D4723E",
+  "#CF4545",
+  "#E04E5E",
+];
+
 const GraphPage: React.FC<GraphPageProps> = ({ nodes, links }) => {
   const router = useRouter();
+  const { resolvedTheme } = useTheme();
+  const isLightMode = resolvedTheme === "light";
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [isFilterOpen, setIsFilterOpen] = useState(true);
 
@@ -237,13 +265,14 @@ const GraphPage: React.FC<GraphPageProps> = ({ nodes, links }) => {
 
   // Group colors map
   const groupColors = useMemo(() => {
+    const palette = isLightMode ? lightModeColors : darkModeColors;
     const groups = Array.from(new Set(nodes.map((n) => n.group)));
     const colorMap = new Map<string, string>();
     groups.forEach((group, i) => {
-      colorMap.set(group, pastelColors[i % pastelColors.length]);
+      colorMap.set(group, palette[i % palette.length]);
     });
     return colorMap;
-  }, [nodes]);
+  }, [nodes, isLightMode]);
 
   const graphData = useMemo(() => {
     if (courseSubjects.length === 0 && courseLevels.length === 0) {
@@ -320,11 +349,13 @@ const GraphPage: React.FC<GraphPageProps> = ({ nodes, links }) => {
 
         // Fade in label between zoom 2 and 4
         const opacity = Math.min((globalScale - ZOOM_THRESHOLD) / 2, 1);
-        ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+        ctx.fillStyle = isLightMode
+          ? `rgba(30, 29, 27, ${opacity})`
+          : `rgba(255, 255, 255, ${opacity})`;
         ctx.fillText(label, node.x, node.y + size + fontSize * 0.8);
       }
     },
-    [groupColors]
+    [groupColors, isLightMode]
   );
 
   return (
@@ -369,6 +400,7 @@ const GraphPage: React.FC<GraphPageProps> = ({ nodes, links }) => {
           <ForceGraph2D
             ref={fgRef}
             graphData={graphData}
+            backgroundColor={isLightMode ? "#f5f2eb" : "#1e1e1e"}
             nodeLabel="id"
             // Use bottom-up DAG only when filtered, otherwise use default force layout
             dagMode={hasFilters ? "bu" : undefined}
@@ -388,7 +420,11 @@ const GraphPage: React.FC<GraphPageProps> = ({ nodes, links }) => {
             linkWidth={(link: any) => (link.type === "corequisite" ? 1.5 : 1.2)}
             linkColor={(link: any) =>
               link.type === "corequisite"
-                ? "rgba(255, 165, 0, 0.6)"
+                ? isLightMode
+                  ? "rgba(200, 120, 0, 0.7)"
+                  : "rgba(255, 165, 0, 0.6)"
+                : isLightMode
+                ? "rgba(60, 130, 200, 0.6)"
                 : "rgba(100, 200, 255, 0.5)"
             }
             linkDirectionalArrowLength={6}
