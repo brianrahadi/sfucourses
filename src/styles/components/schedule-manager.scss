@@ -383,6 +383,13 @@
       text-overflow: ellipsis;
       width: 100%;
       font-weight: 700;
+
+      @include viewport(mobile) {
+        white-space: normal;
+        text-overflow: unset;
+        word-break: break-word;
+        font-size: 0.55rem;
+      }
     }
 
     .mini-block-sub {
@@ -394,6 +401,13 @@
       text-overflow: ellipsis;
       width: 100%;
       opacity: 0.85;
+
+      @include viewport(mobile) {
+        white-space: normal;
+        text-overflow: unset;
+        word-break: break-word;
+        font-size: 0.5rem;
+      }
     }
 
     &--time {
