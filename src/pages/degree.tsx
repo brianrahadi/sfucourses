@@ -780,8 +780,11 @@ const ProgressPage = () => {
                   try {
                     const el = document.querySelector(".catalog-dashboard");
                     if (!el) return;
+                    const isLightMode =
+                      document.documentElement.getAttribute("data-theme") ===
+                      "light";
                     const canvas = await html2canvas(el as HTMLElement, {
-                      backgroundColor: "#141515",
+                      backgroundColor: isLightMode ? "#fdfbf7" : "#141515",
                       scale: 2,
                       logging: false,
                     });

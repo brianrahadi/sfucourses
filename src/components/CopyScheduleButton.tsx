@@ -61,8 +61,10 @@ export const CopyScheduleButton: React.FC<ScheduleScreenshotProps> = ({
         parentElement?.appendChild(watermarkElement);
       }
 
+      const isLightMode =
+        document.documentElement.getAttribute("data-theme") === "light";
       const canvas = await html2canvas(scheduleElement as HTMLElement, {
-        backgroundColor: "#141515", // --color-neutral-1200
+        backgroundColor: isLightMode ? "#fdfbf7" : "#141515", // --colour-neutral-1200
         scale: 2, // Higher scale for better quality
         logging: false,
         allowTaint: true,
