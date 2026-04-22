@@ -78,6 +78,7 @@ const ProgressPage = () => {
   const [isMassAddOpen, setIsMassAddOpen] = useState(false);
   const [massAddJson, setMassAddJson] = useState("");
   const [completedSort, setCompletedSort] = useState<"Term" | "A-Z">("Term");
+  const [wishlistSort, setWishlistSort] = useState<"Term" | "A-Z">("Term");
 
   const [courseInput, setCourseInput] = useState("");
   const [selectedCourseTerm, setSelectedCourseTerm] = useState(currentTerm);
@@ -145,52 +146,32 @@ const ProgressPage = () => {
     if (savedTarget) setTargetCredits(parseInt(savedTarget) || 120);
   }, []);
 
-  // Load courses from URL on mount (3 separate params: completed, ip, wish)
+  // Load courses from URL on mount (single "courses" param)
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
+    const coursesParam = params.get("courses");
+    if (!coursesParam) return;
 
-    // Load completed courses: "cmpt120fa23-cmpt225sp24"
-    const completedParam = params.get("completed");
-    if (completedParam) {
-      const entries = completedParam.split("-").filter(Boolean);
-      entries.forEach((code) => {
-        const decoded = decodeCourse(code);
-        if (!decoded) return;
-        const exists = completedCourses.some(
-          (c) => c.id === decoded.id && c.term === decoded.term
-        );
-        if (!exists) {
-          addCompletedCourse({
-            id: decoded.id,
-            term: decoded.term,
-            credits: 3,
-          });
-        }
-      });
-    }
-
-    // Load in-progress courses: "cmpt225-cmpt120" (no term suffix, uses currentTerm)
-    const ipParam = params.get("ip");
-    if (ipParam) {
-      const entries = ipParam.split("-").filter(Boolean);
-      entries.forEach((code) => {
-        const id = decodeCourseId(code);
-        if (!id) return;
-        const exists = wishlistCourses.some((c) => c.id === id);
-        if (!exists) {
-          addWishlistCourse({ id, credits: 3, termPlanned: currentTerm });
-        }
-      });
-    }
-
-    // Load wishlist/future courses: "cmpt300fa26-macm101" (with or without term)
-    const wishParam = params.get("wish");
-    if (wishParam) {
-      const entries = wishParam.split("-").filter(Boolean);
-      entries.forEach((code) => {
-        // Try decoding with term first
-        const withTerm = decodeCourse(code);
-        if (withTerm) {
+    const entries = coursesParam.split("-").filter(Boolean);
+    entries.forEach((code) => {
+      // Try decoding with term first
+      const withTerm = decodeCourse(code);
+      if (withTerm) {
+        // Determine section by comparing term to current term
+        if (isTermBeforeCurrent(withTerm.term)) {
+          // Past term → completed
+          const exists = completedCourses.some(
+            (c) => c.id === withTerm.id && c.term === withTerm.term
+          );
+          if (!exists) {
+            addCompletedCourse({
+              id: withTerm.id,
+              term: withTerm.term,
+              credits: 3,
+            });
+          }
+        } else {
+          // Current or future term → wishlist (in-progress if currentTerm)
           const exists = wishlistCourses.some((c) => c.id === withTerm.id);
           if (!exists) {
             addWishlistCourse({
@@ -199,60 +180,51 @@ const ProgressPage = () => {
               termPlanned: withTerm.term,
             });
           }
-          return;
         }
-        // No term — undecided
-        const id = decodeCourseId(code);
-        if (!id) return;
-        const exists = wishlistCourses.some((c) => c.id === id);
-        if (!exists) {
-          addWishlistCourse({ id, credits: 3, termPlanned: undefined });
-        }
-      });
-    }
+        return;
+      }
+      // No term suffix → undecided wishlist
+      const id = decodeCourseId(code);
+      if (!id) return;
+      const exists = wishlistCourses.some((c) => c.id === id);
+      if (!exists) {
+        addWishlistCourse({ id, credits: 3, termPlanned: undefined });
+      }
+    });
 
-    if (completedParam || ipParam || wishParam) {
-      loadedFromUrl.current = true;
-    }
+    loadedFromUrl.current = true;
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Sync courses to URL (3 separate params)
+  // Sync all courses to URL (single "courses" param)
   useEffect(() => {
     if (!mounted) return;
 
+    const allEntries: string[] = [];
+
     // Completed courses: always have a term
-    const completedEntries = completedCourses.map((c) =>
-      encodeCourse(c.id, c.term)
-    );
-    if (completedEntries.length > 0) {
-      insertUrlParam("completed", completedEntries.join("-"));
+    completedCourses.forEach((c) => {
+      allEntries.push(encodeCourse(c.id, c.term));
+    });
+
+    // Wishlist courses: encode with term if available, just ID if undecided
+    wishlistCourses.forEach((c) => {
+      if (c.termPlanned) {
+        allEntries.push(encodeCourse(c.id, c.termPlanned));
+      } else {
+        allEntries.push(c.id.replace(" ", "").toLowerCase());
+      }
+    });
+
+    if (allEntries.length > 0) {
+      insertUrlParam("courses", allEntries.join("-"));
     } else {
-      removeUrlParameter("completed");
+      removeUrlParameter("courses");
     }
 
-    // In-progress courses: current term, encode just the ID
-    const ipEntries = wishlistCourses
-      .filter((c) => c.termPlanned === currentTerm)
-      .map((c) => c.id.replace(" ", "").toLowerCase());
-    if (ipEntries.length > 0) {
-      insertUrlParam("ip", ipEntries.join("-"));
-    } else {
-      removeUrlParameter("ip");
-    }
-
-    // Wishlist/future courses: encode with term if available, just ID if undecided
-    const wishEntries = wishlistCourses
-      .filter((c) => c.termPlanned !== currentTerm)
-      .map((c) =>
-        c.termPlanned
-          ? encodeCourse(c.id, c.termPlanned)
-          : c.id.replace(" ", "").toLowerCase()
-      );
-    if (wishEntries.length > 0) {
-      insertUrlParam("wish", wishEntries.join("-"));
-    } else {
-      removeUrlParameter("wish");
-    }
+    // Clean up old params if they exist
+    removeUrlParameter("completed");
+    removeUrlParameter("ip");
+    removeUrlParameter("wish");
   }, [completedCourses, wishlistCourses, mounted, currentTerm]);
 
   useEffect(() => {
@@ -718,6 +690,25 @@ const ProgressPage = () => {
     (c) => c.termPlanned !== nextTerm
   );
 
+  const sortedUndecidedCourses = useMemo(() => {
+    const sorted = [...undecidedCoursesToTake];
+    if (wishlistSort === "A-Z") {
+      sorted.sort((a, b) => a.id.localeCompare(b.id));
+    } else {
+      sorted.sort((a, b) => {
+        const termA = a.termPlanned || "";
+        const termB = b.termPlanned || "";
+        if (!termA && !termB) return a.id.localeCompare(b.id);
+        if (!termA) return 1;
+        if (!termB) return -1;
+        const diff = sortTerm(termA, termB);
+        if (diff === 0) return a.id.localeCompare(b.id);
+        return diff;
+      });
+    }
+    return sorted;
+  }, [undecidedCoursesToTake, wishlistSort]);
+
   const sortTerm = (a: string, b: string) => {
     const seasons = { Spring: 1, Summer: 2, Fall: 3 };
     const [seasonA, yearA] = a.split(" ");
@@ -772,7 +763,9 @@ const ProgressPage = () => {
 
             <div className="toolbar-right">
               <CopyLinkButton
-                hasSelectedCourses={completedCourses.length > 0}
+                hasSelectedCourses={
+                  completedCourses.length > 0 || wishlistCourses.length > 0
+                }
               />
               <button
                 className="utility-button"
@@ -809,7 +802,9 @@ const ProgressPage = () => {
                     toast.error("Failed to capture image");
                   }
                 }}
-                disabled={completedCourses.length === 0}
+                disabled={
+                  completedCourses.length === 0 && wishlistCourses.length === 0
+                }
                 title="Copy progress as image"
               >
                 <FaImage />
@@ -1029,39 +1024,13 @@ const ProgressPage = () => {
                 >
                   ({creditsRemaining} CR REMAINING)
                 </span>
-                <span
-                  style={{
-                    fontSize: "13px",
-                    color: "var(--colour-neutral-500)",
-                    fontWeight: "normal",
-                    marginLeft: "12px",
-                  }}
-                >
-                  —{" "}
-                  {totalCompletedCredits +
-                    totalInProgressCredits +
-                    coursesToTake.reduce(
-                      (sum, c) => sum + (Number(c.credits) || 3),
-                      0
-                    )}{" "}
-                  / {targetCredits} cr planned.{" "}
-                  {Math.max(
-                    targetCredits -
-                      totalCompletedCredits -
-                      totalInProgressCredits -
-                      coursesToTake.reduce(
-                        (sum, c) => sum + (Number(c.credits) || 3),
-                        0
-                      ),
-                    0
-                  )}{" "}
-                  more cr needed.
-                </span>
               </h2>
-              <div
-                className="header-controls"
-                style={{ justifyContent: "flex-end" }}
-              >
+              <div className="header-controls">
+                <ButtonGroup
+                  options={["Term", "A-Z"]}
+                  onSelect={(val) => setWishlistSort(val as "Term" | "A-Z")}
+                  selectedOption={wishlistSort}
+                />
                 <div className="action-buttons">
                   <button
                     className="add-btn"
@@ -1077,13 +1046,25 @@ const ProgressPage = () => {
               </div>
             </div>
 
+            {undecidedCoursesToTake.length === 0 && (
+              <p
+                style={{
+                  fontSize: "14px",
+                  color: "var(--colour-neutral-400)",
+                  marginTop: "16px",
+                }}
+              >
+                No future courses planned.
+              </p>
+            )}
+
             <div
               className="completed-grid"
               onDragOver={(e) => handleDragOver(e, "undecided")}
               onDrop={(e) => handleDrop(e, "undecided")}
               style={{ minHeight: "100px" }}
             >
-              {undecidedCoursesToTake.map((c) => (
+              {sortedUndecidedCourses.map((c) => (
                 <CatalogCourseCard
                   key={c.id}
                   id={c.id}
@@ -1121,17 +1102,32 @@ const ProgressPage = () => {
                 )}
             </div>
 
-            {undecidedCoursesToTake.length === 0 && (
-              <p
-                style={{
-                  fontSize: "14px",
-                  color: "var(--colour-neutral-400)",
-                  marginTop: "16px",
-                }}
-              >
-                No future courses planned.
-              </p>
-            )}
+            <p
+              style={{
+                fontSize: "13px",
+                color: "var(--colour-neutral-500)",
+                marginTop: "16px",
+              }}
+            >
+              {totalCompletedCredits +
+                totalInProgressCredits +
+                coursesToTake.reduce(
+                  (sum, c) => sum + (Number(c.credits) || 3),
+                  0
+                )}{" "}
+              / {targetCredits} cr planned.{" "}
+              {Math.max(
+                targetCredits -
+                  totalCompletedCredits -
+                  totalInProgressCredits -
+                  coursesToTake.reduce(
+                    (sum, c) => sum + (Number(c.credits) || 3),
+                    0
+                  ),
+                0
+              )}{" "}
+              more cr needed.
+            </p>
           </div>
 
           {/* Bottom Section: Completed Courses Grid */}
@@ -1177,6 +1173,18 @@ const ProgressPage = () => {
                 </div>
               </div>
             </div>
+
+            {completedCourses.length === 0 && (
+              <p
+                style={{
+                  fontSize: "14px",
+                  color: "var(--colour-neutral-400)",
+                  marginTop: "16px",
+                }}
+              >
+                No completed courses yet.
+              </p>
+            )}
 
             <div
               className="completed-grid"
@@ -1226,18 +1234,6 @@ const ProgressPage = () => {
                   />
                 )}
             </div>
-
-            {completedCourses.length === 0 && (
-              <p
-                style={{
-                  fontSize: "14px",
-                  color: "var(--colour-neutral-400)",
-                  marginTop: "16px",
-                }}
-              >
-                No completed courses yet.
-              </p>
-            )}
           </div>
         </div>
       </main>
