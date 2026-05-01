@@ -8,11 +8,11 @@ export const subjectOptions = SUBJECTS.map((subj) => {
 });
 export const levelOptions = ["1XX", "2XX", "3XX", "4XX", "5XX+"];
 export const termOptions = [
-  "Spring 2025",
   "Summer 2025",
   "Fall 2025",
   "Spring 2026",
   "Summer 2026",
+  "Fall 2026",
 ];
 export const deliveryOptions = ["In Person", "Online"];
 export const designationOptions = ["W", "Q", "B-Sci", "B-Hum", "B-Soc"];
