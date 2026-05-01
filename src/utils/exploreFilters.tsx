@@ -7,13 +7,23 @@ export const subjectOptions = SUBJECTS.map((subj) => {
   return { value: subj, label: subj };
 });
 export const levelOptions = ["1XX", "2XX", "3XX", "4XX", "5XX+"];
-export const termOptions = [
-  "Summer 2025",
-  "Fall 2025",
-  "Spring 2026",
-  "Summer 2026",
-  "Fall 2026",
-];
+
+// 5 term options, goes from previous 3 terms, current term, and next term
+export const termOptions = (() => {
+  const month = new Date().getMonth() + 1;
+  const terms = ["Spring", "Summer", "Fall"];
+  const currentTermIndex = Math.floor((month - 1) / 4) % 3;
+  const currentYear = new Date().getFullYear();
+
+  const result = [];
+  for (let i = -3; i <= 1; i++) {
+    let termIndex = (currentTermIndex + i) % 3;
+    if (termIndex < 0) termIndex += 3;
+    const yearOffset = Math.floor((currentTermIndex + i) / 3);
+    result.push(`${terms[termIndex]} ${currentYear + yearOffset}`);
+  }
+  return result;
+})();
 export const deliveryOptions = ["In Person", "Online"];
 export const designationOptions = ["W", "Q", "B-Sci", "B-Hum", "B-Soc"];
 
