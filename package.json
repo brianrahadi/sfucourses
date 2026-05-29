@@ -26,7 +26,7 @@
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^1.1.0",
     "axios": "^1.7.7",
-    "date-fns": "^2.29.3",
+    "date-fns": "^4.1.0",
     "fs": "^0.0.1-security",
     "gray-matter": "^4.0.3",
     "html2canvas": "^1.4.1",
