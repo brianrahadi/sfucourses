@@ -1,4 +1,10 @@
-import React, { useState, useCallback, useRef, useEffect } from "react";
+import React, {
+  useState,
+  useCallback,
+  useMemo,
+  useRef,
+  useEffect,
+} from "react";
 import Link from "next/link";
 import { RotatingLines } from "react-loader-spinner";
 import { BiSolidUpvote } from "react-icons/bi";
@@ -54,6 +60,7 @@ const ReviewsAndPostsTabs: React.FC<ReviewsAndPostsTabsProps> = ({
 }) => {
   const [hoveredStat, setHoveredStat] = useState<string | null>(null);
   const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [showAllTags, setShowAllTags] = useState(false);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
 
@@ -124,6 +131,33 @@ const ReviewsAndPostsTabs: React.FC<ReviewsAndPostsTabsProps> = ({
 
     return { ratingData, difficultyData };
   }, [reviewData?.reviews]);
+
+  // Compute aggregated tags with counts from filtered reviews
+  const aggregatedTags = useMemo(() => {
+    if (!reviewData?.reviews) return [];
+
+    const filteredReviews =
+      selectedCourseFilter === "all"
+        ? reviewData.reviews
+        : reviewData.reviews.filter((r) =>
+            context === "instructor"
+              ? r.course_code === selectedCourseFilter
+              : (r.instructor_name ?? r.course_code) === selectedCourseFilter
+          );
+
+    const tagCounts: Record<string, number> = {};
+    filteredReviews.forEach((review) => {
+      if (review.tags) {
+        review.tags.forEach((tag) => {
+          tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+        });
+      }
+    });
+
+    return Object.entries(tagCounts)
+      .sort((a, b) => b[1] - a[1])
+      .map(([tag, count]) => ({ tag, count }));
+  }, [reviewData?.reviews, selectedCourseFilter, context]);
 
   // Helper functions for hover with delay
   const handleMouseEnter = (statType: string) => {
@@ -327,6 +361,29 @@ const ReviewsAndPostsTabs: React.FC<ReviewsAndPostsTabsProps> = ({
                   </div>
                 </div>
               </div>
+              {aggregatedTags.length > 0 && (
+                <div className="aggregated-tags">
+                  {(showAllTags
+                    ? aggregatedTags
+                    : aggregatedTags.slice(0, 7)
+                  ).map(({ tag, count }) => (
+                    <span key={tag} className="aggregated-tag">
+                      {tag}
+                      <span className="aggregated-tag-count">({count})</span>
+                    </span>
+                  ))}
+                  {aggregatedTags.length > 7 && (
+                    <button
+                      className="aggregated-tags-toggle"
+                      onClick={() => setShowAllTags(!showAllTags)}
+                    >
+                      {showAllTags
+                        ? "Show less"
+                        : `+${aggregatedTags.length - 7} more`}
+                    </button>
+                  )}
+                </div>
+              )}
               {displayedReviews.length > 0 ? (
                 displayedReviews.map((review, index) => (
                   <div key={index} className="review-card">

@@ -193,6 +193,52 @@
   }
 }
 
+// Aggregated Tags
+.aggregated-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding-top: 0.25rem;
+}
+
+.aggregated-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  background: var(--colour-neutral-1000);
+  color: var(--colour-neutral-300);
+  padding: 0.3rem 0.625rem;
+  border-radius: 0.375rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.aggregated-tag-count {
+  color: var(--colour-neutral-400);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.aggregated-tags-toggle {
+  display: inline-flex;
+  align-items: center;
+  background: transparent;
+  border: 1px solid var(--colour-neutral-900);
+  color: var(--colour-neutral-400);
+  padding: 0.3rem 0.625rem;
+  border-radius: 0.375rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: var(--colour-neutral-1000);
+    color: var(--colour-neutral-200);
+    border-color: var(--colour-neutral-800);
+  }
+}
+
 // Review Card
 .review-card {
   background: var(--colour-neutral-1100);
