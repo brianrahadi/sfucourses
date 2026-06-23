@@ -1,16 +1,9 @@
 import React from "react";
 import Link from "next/link";
-import { CourseOutline } from "../types";
+import { CourseOutline, CourseReviewSummary } from "../types";
 import { Highlight } from "@components";
 import { termToIcon } from "@utils/exploreFilters";
 import { StarIcon, BrainIcon, CommentIcon } from "./ReviewIcons";
-
-interface CourseReviewSummary {
-  course_code: string;
-  total_reviews: number;
-  avg_rating: number;
-  avg_difficulty: number;
-}
 
 type ExploreCourseCardProps = {
   course: CourseOutline;

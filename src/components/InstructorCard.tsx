@@ -1,19 +1,9 @@
 import React from "react";
-import { Instructor } from "@types";
+import { Instructor, InstructorReviewSummary } from "@types";
 import { Highlight } from "@components";
 import Link from "next/link";
 import { termToIcon } from "@utils/exploreFilters";
 import { StarIcon, BrainIcon, CommentIcon, CheckIcon } from "./ReviewIcons";
-
-interface InstructorReviewSummary {
-  URL: string;
-  Quality: string;
-  Ratings: string;
-  Name: string;
-  WouldTakeAgain: string;
-  Difficulty: string;
-  Department: string;
-}
 
 type InstructorCardProps = {
   instructor: Instructor;

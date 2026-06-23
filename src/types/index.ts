@@ -166,3 +166,10 @@ export interface InstructorReviewSummary {
   Difficulty: string;
   Department: string;
 }
+
+export interface CourseReviewSummary {
+  course_code: string;
+  total_reviews: number;
+  avg_rating: number;
+  avg_difficulty: number;
+}

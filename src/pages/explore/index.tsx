@@ -11,24 +11,13 @@ import {
 } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useEffect, useMemo } from "react";
-import { CourseOutline, Instructor } from "@types";
+import {
+  CourseOutline,
+  Instructor,
+  InstructorReviewSummary,
+  CourseReviewSummary,
+} from "@types";
 
-interface InstructorReviewSummary {
-  URL: string;
-  Quality: string;
-  Ratings: string;
-  Name: string;
-  WouldTakeAgain: string;
-  Difficulty: string;
-  Department: string;
-}
-
-interface CourseReviewSummary {
-  course_code: string;
-  total_reviews: number;
-  avg_rating: number;
-  avg_difficulty: number;
-}
 import InfiniteScroll from "react-infinite-scroll-component";
 import { SortState } from "src/hooks/UseExploreFilters";
 import { InstructorSortState } from "src/hooks/useInstructorExploreFilters";
@@ -48,7 +37,7 @@ import {
 } from "@utils/courseFilters";
 import { numberWithCommas } from "@utils/format";
 import { RotatingLines } from "react-loader-spinner";
-import { BASE_URL } from "@const";
+import { BASE_URL, INSTRUCTOR_RMP_NAME_MAPPING } from "@const";
 import { useExploreStore } from "src/store/useExploreStore";
 
 export const getStaticProps: GetStaticProps = async () => {
@@ -195,9 +184,10 @@ const ExplorePage: React.FC = () => {
     instructorName: string
   ): InstructorReviewSummary | null => {
     if (!instructorReviewsData) return null;
+    const name = INSTRUCTOR_RMP_NAME_MAPPING[instructorName] || instructorName;
     return (
       instructorReviewsData.find(
-        (review) => review.Name.toLowerCase() === instructorName.toLowerCase()
+        (review) => review.Name.toLowerCase() === name.toLowerCase()
       ) || null
     );
   };
@@ -230,6 +220,15 @@ const ExplorePage: React.FC = () => {
     instructorReviewsData.forEach((review) => {
       map.set(review.Name.toLowerCase(), review);
     });
+    // Also key by school name for mapped instructors
+    Object.entries(INSTRUCTOR_RMP_NAME_MAPPING).forEach(
+      ([schoolName, rmpName]) => {
+        const review = map.get(rmpName.toLowerCase());
+        if (review) {
+          map.set(schoolName.toLowerCase(), review);
+        }
+      }
+    );
     return map;
   }, [instructorReviewsData]);
 

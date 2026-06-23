@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { CourseWithSectionDetails } from "@types";
+import { CourseWithSectionDetails, InstructorReviewSummary } from "@types";
 import { getCourseAPIData } from "@utils";
 import { TextBadge } from "./TextBadge";
 import {
@@ -19,16 +19,6 @@ import { Tooltip } from "react-tooltip";
 import { IoIosInformationCircleOutline } from "react-icons/io";
 import { useQuery } from "@tanstack/react-query";
 import { BASE_URL, INSTRUCTOR_RMP_NAME_MAPPING } from "@const";
-
-interface InstructorReviewSummary {
-  URL: string;
-  Quality: string;
-  Ratings: string;
-  Name: string;
-  WouldTakeAgain: string;
-  Difficulty: string;
-  Department: string;
-}
 
 interface ScheduleInsightsProps {
   coursesWithSections: CourseWithSectionDetails[];
