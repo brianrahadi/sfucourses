@@ -57,7 +57,7 @@
 
     .filter-dropdowns-left {
       display: flex;
-      gap: 1rem;
+      gap: 0.5rem;
       align-items: center;
       justify-content: flex-start;
       flex-wrap: wrap;
@@ -126,7 +126,7 @@
 
   .filter-stats {
     display: flex;
-    gap: 1rem;
+    gap: 0.5rem;
     align-items: center;
 
     @media (max-width: 768px) {
