@@ -5,6 +5,7 @@ export const INSTRUCTOR_RMP_NAME_MAPPING: Record<string, string> = {
   "William Sumner": "Nick Sumner",
   "Gregory Baker": "Greg Baker",
   "Ouldooz Baghban Karimi": "Ouldooz Karimi",
+  "Amirhossein Mozafari Khameneh": "Amirhossein Khameneh",
 };
 
 export const INSTRUCTOR_REDIRECT_NAME_MAPPING: Record<string, string> =
