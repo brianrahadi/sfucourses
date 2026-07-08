@@ -114,11 +114,10 @@
 }
 
 [data-theme="light"] {
-  /* Inverting text to a very dark gray/black and background to beige */
-  --colour-neutral-1200: #fdfbf7; /* Beige background instead of white */
-  --colour-neutral-1150: #f5f2eb;
-  --colour-neutral-1100: #eeebe4;
-  --colour-neutral-1000: #e3ded5;
+  --colour-neutral-1200: #faf9f5;
+  --colour-neutral-1150: #f1f0e9;
+  --colour-neutral-1100: #e8e6dc;
+  --colour-neutral-1000: #ddd9cd;
   --colour-neutral-900: #c2bcaf;
   --colour-neutral-800: #9e998c;
   --colour-neutral-700: #757268;
@@ -128,11 +127,12 @@
   --colour-neutral-300: #292825;
   --colour-neutral-200: #242321;
   --colour-neutral-100: #1e1d1b;
-  --colour-neutral-000: #141515; /* Dark text */
+  --colour-neutral-000: #141515;
+  /* Dark text */
 
   /* Update RGB variants for shadows and gradients */
-  --colour-neutral-1200-rgb: 253, 251, 247;
-  --colour-neutral-1100-rgb: 238, 235, 228;
+  --colour-neutral-1200-rgb: 250, 249, 245;
+  --colour-neutral-1100-rgb: 232, 230, 220;
 
   /* Softer/Darker Greens for Light Palette readable contrast */
   --colour-sosy-green-900: #d3eee8;
