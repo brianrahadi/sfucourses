@@ -49,7 +49,7 @@
     "react-loader-spinner": "^6.1.6",
     "react-select": "^5.10.2",
     "react-tooltip": "^5.29.1",
-    "recharts": "^3.3.0",
+    "recharts": "^3.10.0",
     "zustand": "^5.0.12"
   },
   "devDependencies": {
