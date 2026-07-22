@@ -54,7 +54,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.59.1",
-    "@types/node": "20.9.0",
+    "@types/node": "26.1.1",
     "@types/pako": "^2.0.3",
     "@types/papaparse": "^5.5.2",
     "eslint": "8.22.0",
