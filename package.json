@@ -16,7 +16,7 @@
   "dependencies": {
     "@floating-ui/react": "^0.27.16",
     "@formspree/react": "^3.0.0",
-    "@portabletext/react": "^6.0.3",
+    "@portabletext/react": "^6.2.0",
     "@sanity/image-url": "^1.0.2",
     "@sanity/ui": "^1.8.3",
     "@sanity/vision": "^3.18.1",
