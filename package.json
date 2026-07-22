@@ -19,7 +19,7 @@
     "@portabletext/react": "^6.0.3",
     "@sanity/image-url": "^1.0.2",
     "@sanity/ui": "^1.8.3",
-    "@sanity/vision": "^3.18.1",
+    "@sanity/vision": "^6.6.0",
     "@tanstack/react-query": "^5.62.16",
     "@types/react-big-calendar": "^1.16.3",
     "@upstash/redis": "^1.37.0",
