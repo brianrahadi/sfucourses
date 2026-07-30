@@ -428,9 +428,10 @@ const CoursePage: React.FC<CoursePageProps> = () => {
 
           {courseReviewData &&
             (() => {
-              const allReviews = courseReviewData.instructors.flatMap(
-                (instructor) => instructor.reviews
-              );
+              const allReviews =
+                courseReviewData.instructors?.flatMap(
+                  (instructor) => instructor.reviews
+                ) || [];
               let totalRating = 0;
               let totalDiff = 0;
               if (allReviews.length > 0) {
