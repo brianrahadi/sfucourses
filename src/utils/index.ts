@@ -113,16 +113,16 @@ export function toShortenedTerm(term: string) {
   return `${termMap[termName]}${year.slice(-2)}`;
 }
 
-interface HealthResponse {
+export interface HealthResponse {
   status: string;
   version: string;
   lastDataUpdate: string;
+  lastReviewUpdate?: string;
 }
 
-export const fetchLastUpdated = async (): Promise<string> => {
+export const fetchHealth = async (): Promise<HealthResponse> => {
   try {
-    const data: HealthResponse = await proxiedFetch("/health");
-    return data.lastDataUpdate;
+    return await proxiedFetch("/health");
   } catch (error) {
     console.error("Error fetching health data:", error);
     throw new Error("Failed to fetch health data");
