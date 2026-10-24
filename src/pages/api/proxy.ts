@@ -1,8 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { fetchWithCache } from "../../lib/api-wrapper";
+import { fetchFromApi } from "../../lib/api-wrapper";
 
 // Let Vercel's CDN cache proxied responses, so repeat requests are served from
-// the edge without running this function, Redis, or the API.
+// the edge without running this function or calling the API.
 // The API's data syncs hourly; /health is used for "last updated" info.
 const CACHE_CONTROL_DEFAULT =
   "public, s-maxage=3600, stale-while-revalidate=86400";
@@ -22,7 +22,7 @@ export default async function handler(
   const targetUrl = `https://api.sfucourses.com${path}`;
 
   try {
-    const data = await fetchWithCache(targetUrl);
+    const data = await fetchFromApi(targetUrl);
     res.setHeader(
       "Cache-Control",
       path === "/health" ? CACHE_CONTROL_HEALTH : CACHE_CONTROL_DEFAULT

@@ -23,9 +23,9 @@ async function proxiedFetch(pathWithQuery: string) {
   const isServer = typeof window === "undefined";
 
   if (isServer) {
-    // On the server, we can call the caching wrapper directly
-    const { fetchWithCache } = await import("../lib/api-wrapper");
-    return fetchWithCache(`https://api.sfucourses.com${pathWithQuery}`);
+    // On the server, call the API directly
+    const { fetchFromApi } = await import("../lib/api-wrapper");
+    return fetchFromApi(`https://api.sfucourses.com${pathWithQuery}`);
   }
 
   // On the client, we call the proxy API route
