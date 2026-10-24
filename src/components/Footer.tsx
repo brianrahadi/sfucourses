@@ -1,17 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchLastUpdated } from "@utils";
+import { fetchHealth } from "@utils";
 import Link from "next/link";
 import { formatShortDescriptiveDate } from "@utils/format";
 
 export const Footer: React.FC = () => {
-  const {
-    data: lastUpdatedData,
-    error,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["lastUpdated"],
-    queryFn: fetchLastUpdated,
+  useQuery({
+    queryKey: ["health"],
+    queryFn: fetchHealth,
   });
 
   return (
