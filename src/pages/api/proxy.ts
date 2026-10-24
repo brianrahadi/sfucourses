@@ -1,6 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { fetchWithCache } from "../../lib/api-wrapper";
 
+// Let Vercel's CDN cache proxied responses, so repeat requests are served from
+// the edge without running this function, Redis, or the API.
+// The API's data syncs hourly; /health is used for "last updated" info.
+const CACHE_CONTROL_DEFAULT =
+  "public, s-maxage=3600, stale-while-revalidate=86400";
+const CACHE_CONTROL_HEALTH = "public, s-maxage=60, stale-while-revalidate=300";
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -16,9 +23,17 @@ export default async function handler(
 
   try {
     const data = await fetchWithCache(targetUrl);
+    res.setHeader(
+      "Cache-Control",
+      path === "/health" ? CACHE_CONTROL_HEALTH : CACHE_CONTROL_DEFAULT
+    );
     res.status(200).json(data);
   } catch (error: any) {
     console.error("Proxy error:", error);
-    res.status(500).json({ error: error.message || "Internal server error" });
+    res.setHeader("Cache-Control", "no-store");
+    const message: string = error?.message || "Internal server error";
+    // Pass "not found" through so the client can show it as such
+    const status = message.includes("External API error: 404") ? 404 : 500;
+    res.status(status).json({ error: message });
   }
 }

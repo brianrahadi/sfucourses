@@ -12,6 +12,9 @@ const redis =
     ? new Redis({
         url: redisUrl,
         token: redisToken,
+        // The default (5 retries, exponential backoff) adds seconds to every
+        // request when Redis is unreachable. The cache is optional: fail fast.
+        retry: { retries: 1, backoff: () => 50 },
       })
     : null;
 

@@ -2,6 +2,39 @@ import redis from "./redis";
 
 const CACHE_TTL = 60 * 60 * 24 * 7; // 1 week in seconds (absolute expiration)
 const STALE_THRESHOLD = 60 * 60; // 1 hour in seconds (when to revalidate in background)
+const REDIS_TIMEOUT_MS = 500; // reads: never let the cache be slower than the API itself
+const REDIS_WRITE_TIMEOUT_MS = 1500; // writes can be multi-MB (e.g. /outlines)
+const REDIS_COOLDOWN_MS = 60 * 1000; // after a Redis failure, skip Redis for a minute
+
+// Per-instance circuit breaker: when Redis is down, don't pay the timeout on every request.
+let redisDownUntil = 0;
+function redisAvailable() {
+  return redis !== null && Date.now() >= redisDownUntil;
+}
+function markRedisDown(error: unknown) {
+  redisDownUntil = Date.now() + REDIS_COOLDOWN_MS;
+  console.error("Redis unavailable, bypassing cache for 60s:", error);
+}
+
+/** Resolve with the promise, or reject once `ms` passes. */
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(
+      () => reject(new Error(`Redis timed out after ${ms}ms`)),
+      ms
+    );
+    promise.then(
+      (value) => {
+        clearTimeout(timer);
+        resolve(value);
+      },
+      (error) => {
+        clearTimeout(timer);
+        reject(error);
+      }
+    );
+  });
+}
 
 interface CacheEntry {
   data: any;
@@ -25,9 +58,11 @@ async function revalidate(url: string, cacheKey: string) {
         data,
         lastUpdated: Date.now(),
       };
-      // No await here or wait? We should await the redis set but not the whole revalidate call from the main thread
-      if (redis) {
-        await redis.set(cacheKey, JSON.stringify(entry), { ex: CACHE_TTL });
+      if (redis && redisAvailable()) {
+        await withTimeout(
+          redis.set(cacheKey, JSON.stringify(entry), { ex: CACHE_TTL }),
+          REDIS_WRITE_TIMEOUT_MS
+        ).catch(markRedisDown);
         // console.log(`[SWR] Revalidated cache for: ${url}`);
       }
     }
@@ -37,7 +72,7 @@ async function revalidate(url: string, cacheKey: string) {
 }
 
 export async function fetchWithCache(url: string) {
-  if (!redis) {
+  if (!redis || !redisAvailable()) {
     const response = await fetch(url);
     if (!response.ok) {
       throw new Error(`External API error: ${response.status}`);
@@ -48,7 +83,10 @@ export async function fetchWithCache(url: string) {
   const cacheKey = `api-cache-v2:${url}`; // Versioned key to avoid conflicts with old format
 
   try {
-    const cached = (await redis.get(cacheKey)) as string | CacheEntry | null;
+    const cached = (await withTimeout(
+      redis.get(cacheKey),
+      REDIS_TIMEOUT_MS
+    )) as string | CacheEntry | null;
     if (cached) {
       const entry: CacheEntry =
         typeof cached === "string" ? JSON.parse(cached) : cached;
@@ -65,7 +103,7 @@ export async function fetchWithCache(url: string) {
       return entry.data;
     }
   } catch (error) {
-    console.error("Redis get error:", error);
+    markRedisDown(error);
   }
 
   // If no cache or erroring, fall back to fresh fetch
@@ -81,14 +119,19 @@ export async function fetchWithCache(url: string) {
 
   const data = await response.json();
 
+  if (!redisAvailable()) return data;
+
   try {
     const entry: CacheEntry = {
       data,
       lastUpdated: Date.now(),
     };
-    await redis.set(cacheKey, JSON.stringify(entry), { ex: CACHE_TTL });
+    await withTimeout(
+      redis.set(cacheKey, JSON.stringify(entry), { ex: CACHE_TTL }),
+      REDIS_WRITE_TIMEOUT_MS
+    );
   } catch (error) {
-    console.error("Redis set error:", error);
+    markRedisDown(error);
   }
 
   return data;
