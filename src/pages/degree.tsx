@@ -7,6 +7,7 @@ import {
   CatalogManager,
 } from "@components";
 import ButtonGroup from "../components/ButtonGroup";
+import { EligibleCourses } from "src/components/EligibleCourses";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useCatalogStore, CompletedCourse } from "src/store/useCatalogStore";
 import { useCoursesData } from "src/hooks/UseCoursesData";
@@ -1010,6 +1011,19 @@ const ProgressPage = () => {
               </div>
             </div>
           </div>
+
+          <EligibleCourses
+            completed={completedCourses.map((c) => c.id)}
+            inProgress={inProgressCourses.map((c) => c.id)}
+            planned={coursesToTake.map((c) => c.id)}
+            credits={totalCompletedCredits + totalInProgressCredits}
+            nextTerm={nextTerm}
+            courses={courses}
+            onAdd={(id, units) => {
+              addWishlistCourse({ id, credits: units, termPlanned: nextTerm });
+              toast.success(`${id} added to ${nextTerm}`);
+            }}
+          />
 
           {/* Middle Section: Future Courses Grid */}
           <div className="db-card">

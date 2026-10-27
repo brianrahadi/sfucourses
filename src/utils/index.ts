@@ -118,6 +118,7 @@ export interface HealthResponse {
   version: string;
   lastDataUpdate: string;
   lastReviewUpdate?: string;
+  lastPrereqUpdate?: string;
 }
 
 export const fetchHealth = async (): Promise<HealthResponse> => {

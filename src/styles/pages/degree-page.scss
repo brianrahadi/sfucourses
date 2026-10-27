@@ -152,6 +152,137 @@
     }
   }
 
+  .eligible-card {
+    margin-bottom: 24px;
+
+    .card-header {
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .eligible-count {
+      color: var(--colour-neutral-500);
+      font-weight: normal;
+    }
+
+    .eligible-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+      color: var(--colour-neutral-400);
+
+      select {
+        background: var(--colour-neutral-1000);
+        color: var(--colour-neutral-200);
+        border: 1px solid var(--colour-neutral-800);
+        border-radius: 6px;
+        padding: 3px 6px;
+        font-size: 12px;
+      }
+    }
+
+    .eligible-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+
+    .eligible-empty,
+    .eligible-note {
+      font-size: 14px;
+      color: var(--colour-neutral-500);
+    }
+
+    .eligible-note {
+      font-size: 12px;
+      margin: 12px 0 0 0;
+    }
+
+    .eligible-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 8px;
+    }
+
+    .eligible-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 10px 12px;
+      border: 1px solid var(--colour-neutral-1000);
+      border-radius: 8px;
+      background: var(--colour-neutral-1150);
+    }
+
+    .eligible-main {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .eligible-code {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--colour-neutral-100);
+      text-decoration: none;
+    }
+
+    .eligible-title {
+      font-size: 13px;
+      color: var(--colour-neutral-300);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .eligible-via {
+      font-size: 12px;
+      color: var(--colour-neutral-500);
+    }
+
+    .eligible-badge {
+      margin-left: 6px;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      font-size: 11px;
+      color: var(--colour-amber-500);
+      border: 1px solid rgba(var(--colour-amber-500-rgb), 0.5);
+    }
+
+    .eligible-item .add-btn {
+      flex-shrink: 0;
+      background: none;
+      border: 1px solid var(--colour-neutral-800);
+      border-radius: 9999px;
+      padding: 4px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--colour-neutral-300);
+      cursor: pointer;
+
+      &:hover {
+        border-color: var(--colour-neutral-500);
+        color: var(--colour-neutral-100);
+      }
+    }
+
+    .eligible-more {
+      margin-top: 10px;
+      background: none;
+      border: none;
+      color: var(--colour-neutral-400);
+      font-size: 13px;
+      cursor: pointer;
+      padding: 0;
+    }
+  }
+
   .db-card {
     background-color: var(--colour-neutral-1100);
     border: 1px solid var(--colour-neutral-1000);

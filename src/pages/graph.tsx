@@ -15,6 +15,7 @@ import { SidebarCourse, ExploreFilter, DraggablePanel } from "@components";
 import { useExploreStore } from "src/store/useExploreStore";
 import { CourseOutline } from "@types";
 import { getCourseAPIData } from "@utils";
+import { PrereqGraphEntry, groupsOf } from "@utils/prereqs";
 import { MdFilterList } from "react-icons/md";
 
 const ForceGraph2D = dynamic(() => import("react-force-graph-2d"), {
@@ -33,19 +34,14 @@ interface GraphLink {
   source: string;
   target: string;
   value: number;
-  type?: "prerequisite" | "corequisite";
+  /** prerequisite: required; alternative: one of several; corequisite: same term */
+  type?: "prerequisite" | "alternative" | "corequisite";
+  label?: string;
 }
 
 interface GraphPageProps {
   nodes: GraphNode[];
   links: GraphLink[];
-}
-
-interface PrereqGraphEntry {
-  dept: string;
-  number: string;
-  prerequisites: string[];
-  corequisites: string[];
 }
 
 /**
@@ -83,23 +79,22 @@ export const getStaticProps: GetStaticProps<GraphPageProps> = async () => {
       });
     }
 
-    c.prerequisites?.forEach((prereq: string) => {
-      rawLinks.push({
-        source: prereq,
-        target: id,
-        value: 1,
-        type: "prerequisite",
-      });
-      if (!nodesMap.has(prereq)) {
-        const pDept = prereq.split(" ")[0] || "UNKNOWN";
-        nodesMap.set(prereq, {
-          id: prereq,
-          title: prereq,
-          group: pDept,
-          size: 5,
-          depth: 1,
+    // Each group must be met with one of its courses: a single-course group is
+    // a hard requirement, a larger one is a set of alternatives.
+    groupsOf(c).forEach((group) => {
+      group.forEach((prereq) => {
+        const alternative = group.length > 1;
+        rawLinks.push({
+          source: prereq,
+          target: id,
+          value: 1,
+          type: alternative ? "alternative" : "prerequisite",
+          label: alternative
+            ? `${id} needs one of: ${group.join(", ")}`
+            : `${id} requires ${prereq}`,
         });
-      }
+        ensureNode(prereq);
+      });
     });
 
     c.corequisites?.forEach((coreq: string) => {
@@ -108,29 +103,43 @@ export const getStaticProps: GetStaticProps<GraphPageProps> = async () => {
         target: coreq,
         value: 1,
         type: "corequisite",
+        label: `${id} and ${coreq}: corequisites`,
       });
       rawLinks.push({
         source: coreq,
         target: id,
         value: 1,
         type: "corequisite",
+        label: `${id} and ${coreq}: corequisites`,
       });
-      if (!nodesMap.has(coreq)) {
-        const pDept = coreq.split(" ")[0] || "UNKNOWN";
-        nodesMap.set(coreq, {
-          id: coreq,
-          title: coreq,
-          group: pDept,
-          size: 5,
-          depth: 1,
-        });
-      }
+      ensureNode(coreq);
     });
   });
 
+  function ensureNode(code: string) {
+    if (!nodesMap.has(code)) {
+      nodesMap.set(code, {
+        id: code,
+        title: code,
+        group: code.split(" ")[0] || "UNKNOWN",
+        size: 5,
+        depth: 1,
+      });
+    }
+  }
+
   const uniqueLinksMap = new Map<string, GraphLink>();
   rawLinks.forEach((l) => {
-    uniqueLinksMap.set(`${l.source}-${l.target}-${l.type}`, l);
+    const kind = l.type === "corequisite" ? "co" : "pre";
+    const key = `${l.source}-${l.target}-${kind}`;
+    const existing = uniqueLinksMap.get(key);
+    // a course listed both as required and as an alternative is required
+    if (
+      !existing ||
+      (existing.type === "alternative" && l.type === "prerequisite")
+    ) {
+      uniqueLinksMap.set(key, l);
+    }
   });
 
   return {
@@ -418,6 +427,34 @@ const GraphPage: React.FC<GraphPageProps> = ({ nodes, links }) => {
           </button>
         )}
 
+        <div className="graph-legend" aria-label="Edge legend">
+          <span>
+            <svg width="28" height="8" aria-hidden="true">
+              <line x1="0" y1="4" x2="28" y2="4" className="legend-required" />
+            </svg>
+            required
+          </span>
+          <span>
+            <svg width="28" height="8" aria-hidden="true">
+              <line
+                x1="0"
+                y1="4"
+                x2="28"
+                y2="4"
+                className="legend-alternative"
+                strokeDasharray="4 2"
+              />
+            </svg>
+            one of
+          </span>
+          <span>
+            <svg width="28" height="8" aria-hidden="true">
+              <line x1="0" y1="4" x2="28" y2="4" className="legend-coreq" />
+            </svg>
+            corequisite
+          </span>
+        </div>
+
         {/* Graph Canvas */}
         <section>
           <ForceGraph2D
@@ -440,6 +477,10 @@ const GraphPage: React.FC<GraphPageProps> = ({ nodes, links }) => {
               ctx.fillStyle = color;
               ctx.fill();
             }}
+            linkLabel={(link: any) => link.label}
+            linkLineDash={(link: any) =>
+              link.type === "alternative" ? [4, 2] : null
+            }
             linkWidth={(link: any) => (link.type === "corequisite" ? 1.5 : 1.2)}
             linkColor={(link: any) =>
               link.type === "corequisite"

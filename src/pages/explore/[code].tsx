@@ -7,6 +7,7 @@ import {
 } from "@components";
 import { useEffect, useState, useCallback, useRef } from "react";
 import { getCourseAPIData } from "@utils";
+import { CourseRelations } from "src/components/CourseRelations";
 import { CourseOutline, Review } from "@types";
 import { useRouter } from "next/router";
 import { useCourseOfferings } from "@hooks";
@@ -536,6 +537,8 @@ const CoursePage: React.FC<CoursePageProps> = () => {
                       </p>
                     </>
                   )}
+
+                  <CourseRelations dept={course.dept} number={course.number} />
                 </div>
               )}
             </div>
