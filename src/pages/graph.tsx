@@ -14,6 +14,7 @@ import { useTheme } from "next-themes";
 import { SidebarCourse, ExploreFilter, DraggablePanel } from "@components";
 import { useExploreStore } from "src/store/useExploreStore";
 import { CourseOutline } from "@types";
+import { getCourseAPIData } from "@utils";
 import { MdFilterList } from "react-icons/md";
 
 const ForceGraph2D = dynamic(() => import("react-force-graph-2d"), {
@@ -40,10 +41,32 @@ interface GraphPageProps {
   links: GraphLink[];
 }
 
+interface PrereqGraphEntry {
+  dept: string;
+  number: string;
+  prerequisites: string[];
+  corequisites: string[];
+}
+
+/**
+ * Prerequisite data comes from the API (parsed from SFU's catalog and refreshed
+ * weekly; the API triggers revalidate-graph after each refresh). The bundled
+ * snapshot is only used if the API is unreachable at build time.
+ */
+async function loadPrereqGraph(): Promise<PrereqGraphEntry[]> {
+  try {
+    const data = await getCourseAPIData("/prerequisites/graph");
+    if (Array.isArray(data) && data.length > 0) return data;
+    throw new Error("empty prerequisite graph");
+  } catch (err) {
+    console.error("Falling back to bundled prerequisite snapshot:", err);
+    const coursesPath = path.join(process.cwd(), "public/courses/courses.json");
+    return JSON.parse(fs.readFileSync(coursesPath, "utf-8"));
+  }
+}
+
 export const getStaticProps: GetStaticProps<GraphPageProps> = async () => {
-  const coursesPath = path.join(process.cwd(), "public/courses/courses.json");
-  const coursesRaw = fs.readFileSync(coursesPath, "utf-8");
-  const courses = JSON.parse(coursesRaw);
+  const courses = await loadPrereqGraph();
 
   const nodesMap = new Map<string, GraphNode>();
   const rawLinks: GraphLink[] = [];
