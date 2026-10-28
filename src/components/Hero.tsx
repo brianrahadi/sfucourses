@@ -47,12 +47,6 @@ export const Hero: React.FC<HeroProps> = ({
       <p className="gray-text">
         review data last updated: {formatUpdated(health?.lastReviewUpdate)}
       </p>
-      {health?.lastPrereqUpdate && (
-        <p className="gray-text">
-          prerequisite data last updated:{" "}
-          {formatUpdated(health.lastPrereqUpdate)}
-        </p>
-      )}
       {children}
     </header>
   );
