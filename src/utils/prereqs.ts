@@ -26,6 +26,33 @@ export interface PrereqNode {
 
 export type PrereqTrees = Record<string, PrereqNode>;
 
+const isStringArray = (v: unknown): v is string[] =>
+  Array.isArray(v) && v.every((x) => typeof x === "string");
+
+/**
+ * Runtime check that API data has the shape the pages rely on, so a malformed
+ * response (e.g. `prerequisites: {}`) falls back to the snapshot instead of
+ * throwing later. `groups` and `exclusions` are optional (older snapshots).
+ */
+export function isPrereqGraph(data: unknown): data is PrereqGraphEntry[] {
+  return (
+    Array.isArray(data) &&
+    data.length > 0 &&
+    data.every(
+      (e) =>
+        e !== null &&
+        typeof e === "object" &&
+        typeof e.dept === "string" &&
+        typeof e.number === "string" &&
+        isStringArray(e.prerequisites) &&
+        isStringArray(e.corequisites) &&
+        (e.groups === undefined ||
+          (Array.isArray(e.groups) && e.groups.every(isStringArray))) &&
+        (e.exclusions === undefined || isStringArray(e.exclusions))
+    )
+  );
+}
+
 export const courseCode = (e: { dept: string; number: string }) =>
   `${e.dept.toUpperCase()} ${e.number.toUpperCase()}`;
 

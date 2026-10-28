@@ -14,8 +14,8 @@ import { useTheme } from "next-themes";
 import { SidebarCourse, ExploreFilter, DraggablePanel } from "@components";
 import { useExploreStore } from "src/store/useExploreStore";
 import { CourseOutline } from "@types";
-import { getCourseAPIData } from "@utils";
-import { PrereqGraphEntry, groupsOf } from "@utils/prereqs";
+import { fetchFromApi } from "src/lib/api-wrapper";
+import { PrereqGraphEntry, groupsOf, isPrereqGraph } from "@utils/prereqs";
 import { MdFilterList } from "react-icons/md";
 
 const ForceGraph2D = dynamic(() => import("react-force-graph-2d"), {
@@ -44,16 +44,24 @@ interface GraphPageProps {
   links: GraphLink[];
 }
 
+const PREREQ_GRAPH_URL =
+  "https://api.sfucourses.com/v1/rest/prerequisites/graph";
+// Long enough for a cold API start, short enough that a hung request falls
+// back to the snapshot well inside staticPageGenerationTimeout.
+const PREREQ_GRAPH_TIMEOUT_MS = 20_000;
+
 /**
  * Prerequisite data comes from the API (parsed from SFU's catalog and refreshed
  * weekly; the API triggers revalidate-graph after each refresh). The bundled
- * snapshot is only used if the API is unreachable at build time.
+ * snapshot is used if the API is unreachable, slow, or returns malformed data.
  */
 async function loadPrereqGraph(): Promise<PrereqGraphEntry[]> {
   try {
-    const data = await getCourseAPIData("/prerequisites/graph");
-    if (Array.isArray(data) && data.length > 0) return data;
-    throw new Error("empty prerequisite graph");
+    const data = await fetchFromApi(PREREQ_GRAPH_URL, {
+      timeoutMs: PREREQ_GRAPH_TIMEOUT_MS,
+    });
+    if (isPrereqGraph(data)) return data;
+    throw new Error("malformed or empty prerequisite graph");
   } catch (err) {
     console.error("Falling back to bundled prerequisite snapshot:", err);
     const coursesPath = path.join(process.cwd(), "public/courses/courses.json");
