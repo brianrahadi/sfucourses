@@ -1,0 +1,109 @@
+// Skeletons drawn by <BoneShell> (src/components/bones/BoneShell.tsx).
+// The ranges below must match BONE_RANGES there and boneyard.config.json.
+
+$bone-range-mins: 0, 601, 769, 901, 1025, 1280;
+
+:root {
+  --bone-colour: var(--colour-neutral-1000);
+  --bone-surface: color-mix(
+    in srgb,
+    var(--colour-neutral-1000) 35%,
+    transparent
+  );
+  --bone-highlight: color-mix(
+    in srgb,
+    var(--colour-neutral-900) 55%,
+    transparent
+  );
+}
+
+// Sized with min-height rather than height: regions such as `flex: 1.2`
+// have a flex-basis of 0, which would override height in a column layout.
+.bone-shell {
+  position: relative !important;
+  overflow: hidden !important;
+  height: auto !important;
+  max-height: none !important;
+  min-height: var(--bone-h-0) !important;
+  pointer-events: none;
+}
+
+.bone-shell--content-width {
+  width: min(100%, var(--bone-w-0)) !important;
+}
+
+.bone-set {
+  display: none;
+  position: absolute;
+  inset: 0;
+}
+
+.bone-set--0 {
+  display: block;
+}
+
+@for $i from 2 through length($bone-range-mins) {
+  @media (min-width: #{nth($bone-range-mins, $i)}px) {
+    .bone-shell {
+      min-height: var(--bone-h-#{$i - 1}) !important;
+    }
+    .bone-shell--content-width {
+      width: min(100%, var(--bone-w-#{$i - 1})) !important;
+    }
+    .bone-set {
+      display: none;
+    }
+    .bone-set--#{$i - 1} {
+      display: block;
+    }
+  }
+}
+
+.bone {
+  position: absolute;
+  display: block;
+  background-color: var(--bone-colour);
+  // One shimmer sweeps across every bone at once (fixed to the viewport).
+  background-image: linear-gradient(
+    100deg,
+    transparent 30%,
+    var(--bone-highlight) 50%,
+    transparent 70%
+  );
+  background-size: 200vw 100%;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  animation: bone-shimmer 1.6s ease-in-out infinite;
+}
+
+.bone--surface {
+  background-color: var(--bone-surface);
+  background-image: none;
+  animation: none;
+}
+
+@keyframes bone-shimmer {
+  from {
+    background-position: 100vw 0;
+  }
+  to {
+    background-position: -100vw 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bone {
+    animation: none;
+    background-image: none;
+  }
+}
+
+// On narrow screens these rows become columns aligned center/flex-start, so
+// an empty shell would shrink to zero width; the real regions fill the row
+// with their text, so the shells stretch instead.
+@media (max-width: 900px) {
+  .course-main-header > .bone-shell,
+  .course-bottom-container > .bone-shell {
+    align-self: stretch;
+  }
+}

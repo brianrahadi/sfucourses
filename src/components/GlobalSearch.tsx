@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { SearchBar } from "./SearchBar";
 import { useRouter } from "next/router";
-import { useQuery } from "@tanstack/react-query";
-import { getCourseAPIData } from "@utils";
+import { useSearchIndex } from "src/hooks/useSearchIndex";
 import { Search } from "react-feather";
 import { Button } from "./Button";
 import Link from "next/link";
@@ -20,7 +19,6 @@ interface MinimalCourseData {
 
 interface MinimalInstructorData {
   name: string;
-  offerings: { dept: string; number: string; term: string; title: string }[];
 }
 
 type SearchResult =
@@ -53,43 +51,14 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = () => {
   const [scrollPosition, setScrollPosition] = useState(0);
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const { data: courseData, isLoading: isLoadingCourses } = useQuery({
-    queryKey: ["globalSearchIndex"],
-    queryFn: async () => {
-      try {
-        const response = await getCourseAPIData("/outlines");
-        return response.map((course: any) => ({
-          dept: course.dept,
-          number: course.number,
-          title: course.title,
-        }));
-      } catch (error) {
-        console.error("Error fetching search data:", error);
-        return [];
-      }
-    },
-    refetchOnMount: true,
-    staleTime: 15 * 60 * 1000,
-    retry: 2,
-    refetchOnWindowFocus: false,
-  });
-
-  const { data: instructorData, isLoading: isLoadingInstructors } = useQuery({
-    queryKey: ["globalInstructorSearchIndex"],
-    queryFn: async () => {
-      try {
-        const response = await getCourseAPIData("/instructors");
-        return response as MinimalInstructorData[];
-      } catch (error) {
-        console.error("Error fetching instructor data:", error);
-        return [];
-      }
-    },
-    refetchOnMount: true,
-    staleTime: 15 * 60 * 1000,
-    retry: 2,
-    refetchOnWindowFocus: false,
-  });
+  // Load the search index only once the user is about to search (hover,
+  // focus, Cmd+K) or the browser is idle, instead of on every page load.
+  const [searchIntent, setSearchIntent] = useState(false);
+  const {
+    courses: courseData,
+    instructors: instructorData,
+    isLoading: isLoadingIndex,
+  } = useSearchIndex(showModal || searchIntent);
 
   useEffect(() => {
     setIsMac(isMacPlatform());
@@ -335,7 +304,12 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = () => {
 
   return (
     <>
-      <div className="global-search-button" onClick={openSearchModal}>
+      <div
+        className="global-search-button"
+        onClick={openSearchModal}
+        onMouseEnter={() => setSearchIntent(true)}
+        onTouchStart={() => setSearchIntent(true)}
+      >
         <Search size={20} />
         <span className="search-label">Search</span>
         <div className="search-shortcut">
@@ -374,7 +348,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = () => {
               />
             </div>
             <div className="global-search-results" ref={resultsContainerRef}>
-              {isLoadingCourses || isLoadingInstructors ? (
+              {isLoadingIndex ? (
                 <div className="search-loading">Loading...</div>
               ) : query.length < 2 ? (
                 <div className="search-hint">

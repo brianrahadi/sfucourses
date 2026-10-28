@@ -392,6 +392,7 @@ const ReviewsAndPostsTabs: React.FC<ReviewsAndPostsTabsProps> = ({
                         <div className="course-instructor-info">
                           {context === "course" ? (
                             <Link
+                              prefetch={false}
                               href={`/instructors/${encodeURIComponent(
                                 review.instructor_name ?? ""
                               )}`}
@@ -401,6 +402,7 @@ const ReviewsAndPostsTabs: React.FC<ReviewsAndPostsTabsProps> = ({
                             </Link>
                           ) : (
                             <Link
+                              prefetch={false}
                               href={`/explore/${review.course_code
                                 .toLowerCase()
                                 .replace(/([a-z])([0-9])/g, "$1-$2")}`}

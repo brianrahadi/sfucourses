@@ -1,8 +1,7 @@
-import { useQueries, useQuery } from "@tanstack/react-query";
+import { useQueries } from "@tanstack/react-query";
 import { CourseOutline, CourseWithSectionDetails } from "@types";
 import { getCourseAPIData } from "@utils";
 import { toTermCode } from "@utils/format";
-import { useEffect, useState } from "react";
 
 export interface CourseOfferingsResult {
   offerings: CourseWithSectionDetails[];
@@ -11,40 +10,44 @@ export interface CourseOfferingsResult {
   isIdleOfferings: boolean;
 }
 
-// Lazy load last 3 offerings, one by one
+/** How many of a course's most recent offerings the course page shows. */
+export const RECENT_OFFERINGS_COUNT = 3;
+
+/** The query key/URL for one term's sections of a course. */
+export function courseOfferingQuery(
+  dept: string,
+  number: string,
+  term: string
+) {
+  const queryUrl = `/sections?term=${toTermCode(
+    term
+  )}&dept=${dept}&number=${number}`;
+  return { queryKey: ["courseOffering", queryUrl], queryUrl };
+}
+
+// Load the last 3 offerings in parallel. On the course page they are usually
+// already in the cache, prefetched by getStaticProps.
 export const useCourseOfferings = (
   course: CourseOutline | undefined
 ): CourseOfferingsResult => {
-  const [loadCount, setLoadCount] = useState(1);
+  const rawOfferings =
+    course?.offerings?.slice(0, RECENT_OFFERINGS_COUNT) ?? [];
 
-  // Only proceed if course and offerings exist
-  const rawOfferings = course?.offerings?.slice(0, 3) ?? [];
-
-  // Prepare queries for up to 3 offerings, but only enable as needed
-  const queries = rawOfferings.map((offering, idx) => {
-    const termURL = toTermCode(offering.term);
-    const queryUrl = `/sections?term=${termURL}&dept=${course?.dept}&number=${course?.number}`;
-    return {
-      queryKey: ["courseOffering", queryUrl],
-      queryFn: () => getCourseAPIData(queryUrl).then((res) => res[0]),
-      enabled: idx < loadCount,
-      staleTime: 24 * 60 * 60 * 1000,
-      cacheTime: 24 * 60 * 60 * 1000,
-    };
+  const results = useQueries({
+    queries: rawOfferings.map((offering) => {
+      const { queryKey, queryUrl } = courseOfferingQuery(
+        course?.dept ?? "",
+        course?.number ?? "",
+        offering.term
+      );
+      return {
+        queryKey,
+        queryFn: () => getCourseAPIData(queryUrl).then((res) => res[0]),
+        staleTime: 24 * 60 * 60 * 1000,
+        gcTime: 24 * 60 * 60 * 1000,
+      };
+    }),
   });
-
-  const results = useQueries({ queries });
-
-  // When the latest loaded query is done, increment loadCount to load the next
-  useEffect(() => {
-    if (loadCount < rawOfferings.length) {
-      const prevResult = results[loadCount - 1];
-      if (prevResult && prevResult.isSuccess) {
-        setLoadCount(loadCount + 1);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [results, loadCount, rawOfferings.length]);
 
   const offerings = rawOfferings
     .map((offering, idx) => {

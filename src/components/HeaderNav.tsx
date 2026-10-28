@@ -129,6 +129,7 @@ export const HeaderNav: React.FC = () => {
         </Link>
         <Link
           href="/explore"
+          prefetch={false}
           className={`mobile-nav-item ${
             isActivePath("/explore") ? "active" : ""
           }`}
@@ -138,6 +139,7 @@ export const HeaderNav: React.FC = () => {
         </Link>
         <Link
           href="/schedule"
+          prefetch={false}
           className={`mobile-nav-item ${
             isActivePath("/schedule") ? "active" : ""
           }`}
@@ -147,6 +149,7 @@ export const HeaderNav: React.FC = () => {
         </Link>
         <Link
           href="/graph"
+          prefetch={false}
           className={`mobile-nav-item ${
             isActivePath("/graph") ? "active" : ""
           }`}
@@ -156,6 +159,7 @@ export const HeaderNav: React.FC = () => {
         </Link>
         <Link
           href="/degree"
+          prefetch={false}
           className={`mobile-nav-item ${
             isActivePath("/degree") ? "active" : ""
           }`}

@@ -10,7 +10,8 @@ import {
   ButtonGroup,
 } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/router";
 import {
   CourseOutline,
   Instructor,
@@ -36,38 +37,58 @@ import {
   filterCoursesByReviews,
 } from "@utils/courseFilters";
 import { numberWithCommas } from "@utils/format";
-import { RotatingLines } from "react-loader-spinner";
+import { ExploreCardsSkeleton } from "src/components/skeletons/ExploreSkeletons";
+import { BoneRegion } from "src/components/bones/BoneShell";
 import { BASE_URL, INSTRUCTOR_RMP_NAME_MAPPING } from "@const";
 import { useExploreStore } from "src/store/useExploreStore";
 
+// Only the fields the explore list uses (it has ~3,600 courses).
+const EXPLORE_COURSE_FIELDS = [
+  "dept",
+  "number",
+  "title",
+  "units",
+  "description",
+  "designation",
+  "deliveryMethod",
+  "prerequisites",
+  "offerings",
+] as const;
+
+const fetchExploreCourses = async () => {
+  const res: CourseOutline[] = await getCourseAPIData("/outlines");
+  return res.map(
+    (course) =>
+      Object.fromEntries(
+        EXPLORE_COURSE_FIELDS.filter(
+          (field) => course[field] !== undefined
+        ).map((field) => [field, course[field]])
+      ) as unknown as CourseOutline
+  );
+};
+
+const fetchInstructors = async () =>
+  (await getCourseAPIData("/instructors")) as Instructor[];
+
+const fetchInstructorReviews = () => getCourseAPIData("/reviews/instructors");
+const fetchCourseReviews = () => getCourseAPIData("/reviews/courses");
+
+// The page is prerendered with what courses mode needs. Instructor data
+// (~1.9 MB) is loaded only when it's needed, so it no longer weighs down
+// every visit to /explore.
 export const getStaticProps: GetStaticProps = async () => {
   const queryClient = new QueryClient();
 
-  await queryClient.prefetchQuery({
-    queryKey: ["allCourses"],
-    queryFn: async () => {
-      const res = await getCourseAPIData("/outlines");
-      return res as CourseOutline[];
-    },
-  });
-
-  await queryClient.prefetchQuery({
-    queryKey: ["allInstructors"],
-    queryFn: async () => {
-      const res = await getCourseAPIData("/instructors");
-      return res as Instructor[];
-    },
-  });
-
-  await queryClient.prefetchQuery({
-    queryKey: ["instructorReviews"],
-    queryFn: () => getCourseAPIData("/reviews/instructors"),
-  });
-
-  await queryClient.prefetchQuery({
-    queryKey: ["courseReviews"],
-    queryFn: () => getCourseAPIData("/reviews/courses"),
-  });
+  await Promise.all([
+    queryClient.prefetchQuery({
+      queryKey: ["exploreCourses"],
+      queryFn: fetchExploreCourses,
+    }),
+    queryClient.prefetchQuery({
+      queryKey: ["courseReviews"],
+      queryFn: fetchCourseReviews,
+    }),
+  ]);
 
   return {
     props: {
@@ -80,45 +101,48 @@ export const getStaticProps: GetStaticProps = async () => {
 const CHUNK_SIZE = 20;
 
 const ExplorePage: React.FC = () => {
+  // Store Connections
+  const mode = useExploreStore((state) => state.mode);
+  const setMode = useExploreStore((state) => state.setMode);
+
+  // Instructor data loads when instructors mode is shown, or in the
+  // background once the page is idle so switching modes is instant.
+  const [preloadInstructors, setPreloadInstructors] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => setPreloadInstructors(true), 3000);
+    return () => clearTimeout(timer);
+  }, []);
+  const needInstructors = mode === "instructors" || preloadInstructors;
+
   // Queries
   const { data: courseData, isLoading: isLoadingCourses } = useQuery({
-    queryKey: ["allCourses"],
-    queryFn: async () => {
-      const res = await getCourseAPIData("/outlines");
-      return res as CourseOutline[];
-    },
+    queryKey: ["exploreCourses"],
+    queryFn: fetchExploreCourses,
     staleTime: 60 * 60 * 1000,
   });
   const { data: instructorData, isLoading: isLoadingInstructors } = useQuery({
     queryKey: ["allInstructors"],
-    queryFn: async () => {
-      const res = await getCourseAPIData("/instructors");
-      return res as Instructor[];
-    },
+    queryFn: fetchInstructors,
     staleTime: 60 * 60 * 1000,
+    enabled: needInstructors,
   });
 
-  const { data: instructorReviewsData, isLoading: isLoadingReviews } = useQuery<
-    InstructorReviewSummary[]
-  >({
+  const { data: instructorReviewsData } = useQuery<InstructorReviewSummary[]>({
     queryKey: ["instructorReviews"],
-    queryFn: () => getCourseAPIData("/reviews/instructors"),
+    queryFn: fetchInstructorReviews,
+    staleTime: 60 * 60 * 1000,
+    enabled: needInstructors,
+  });
+
+  const { data: courseReviewsData } = useQuery<CourseReviewSummary[]>({
+    queryKey: ["courseReviews"],
+    queryFn: fetchCourseReviews,
     staleTime: 60 * 60 * 1000,
   });
 
-  const { data: courseReviewsData, isLoading: isLoadingCourseReviews } =
-    useQuery<CourseReviewSummary[]>({
-      queryKey: ["courseReviews"],
-      queryFn: () => getCourseAPIData("/reviews/courses"),
-      staleTime: 60 * 60 * 1000,
-    });
+  const courses = useMemo(() => courseData ?? [], [courseData]);
+  const instructors = useMemo(() => instructorData ?? [], [instructorData]);
 
-  const courses = courseData || [];
-  const instructors = instructorData || [];
-
-  // Store Connections
-  const mode = useExploreStore((state) => state.mode);
-  const setMode = useExploreStore((state) => state.setMode);
   const query = useExploreStore((state) => state.query);
   const setQuery = useExploreStore((state) => state.setQuery);
   const searchSelected = useExploreStore((state) => state.searchSelected);
@@ -179,31 +203,6 @@ const ExplorePage: React.FC = () => {
     (state) => state.resetInstructorFilters
   );
 
-  // Helper Methods
-  const getInstructorReviewData = (
-    instructorName: string
-  ): InstructorReviewSummary | null => {
-    if (!instructorReviewsData) return null;
-    const name = INSTRUCTOR_RMP_NAME_MAPPING[instructorName] || instructorName;
-    return (
-      instructorReviewsData.find(
-        (review) => review.Name.toLowerCase() === name.toLowerCase()
-      ) || null
-    );
-  };
-
-  const getCourseReviewData = (
-    courseCode: string
-  ): CourseReviewSummary | undefined => {
-    if (!courseReviewsData) return undefined;
-    return (
-      courseReviewsData.find(
-        (review) =>
-          review.course_code.toLowerCase() === courseCode.toLowerCase()
-      ) || undefined
-    );
-  };
-
   const courseReviewMap = useMemo(() => {
     if (!courseReviewsData) return new Map<string, CourseReviewSummary>();
     const map = new Map<string, CourseReviewSummary>();
@@ -231,6 +230,15 @@ const ExplorePage: React.FC = () => {
     );
     return map;
   }, [instructorReviewsData]);
+
+  // Support linking straight to a mode: /explore?mode=instructors
+  const router = useRouter();
+  useEffect(() => {
+    const requested = router.query.mode;
+    if (requested === "instructors" || requested === "courses") {
+      setMode(requested);
+    }
+  }, [router.query.mode, setMode]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -446,6 +454,33 @@ const ExplorePage: React.FC = () => {
     return filteredAndSortedInstructors.slice(0, instructorSliceIndex);
   }, [filteredAndSortedInstructors, instructorSliceIndex]);
 
+  // The skeleton cards are captured from a typical card (has reviews and
+  // several offerings), not whatever happens to sort first.
+  const courseTemplateIndex = useMemo(
+    () =>
+      Math.max(
+        0,
+        visibleCourses.findIndex(
+          (c) =>
+            (c.offerings?.length ?? 0) >= 2 &&
+            courseReviewMap.has(`${c.dept}${c.number}`.toLowerCase())
+        )
+      ),
+    [visibleCourses, courseReviewMap]
+  );
+  const instructorTemplateIndex = useMemo(
+    () =>
+      Math.max(
+        0,
+        visibleInstructors.findIndex(
+          (i) =>
+            i.offerings.length >= 3 &&
+            instructorReviewMap.has(i.name.toLowerCase())
+        )
+      ),
+    [visibleInstructors, instructorReviewMap]
+  );
+
   const maxVisibleCoursesLength = filteredAndSortedCourses.length;
   const maxVisibleInstructors = filteredAndSortedInstructors.length;
 
@@ -456,152 +491,182 @@ const ExplorePage: React.FC = () => {
     setInstructorSliceIndex((prev) => prev + CHUNK_SIZE);
   };
 
-  if (
+  const isLoadingList =
     (mode === "courses" && isLoadingCourses && courses.length === 0) ||
-    (mode === "instructors" && isLoadingInstructors && instructors.length === 0)
-  ) {
-    return (
-      <div className="page courses-page">
-        <Hero title={`explore ${mode}`} backgroundImage={HeroImage.src} />
-        <main id="explore-container" className="container">
-          <div className="center">
-            <RotatingLines visible={true} strokeColor="#24a98b" />
-          </div>
-        </main>
-      </div>
-    );
-  }
+    (mode === "instructors" &&
+      (isLoadingInstructors || !instructorData) &&
+      instructors.length === 0);
 
   return (
     <div className="page courses-page">
       <Hero title={`explore ${mode}`} backgroundImage={HeroImage.src} />
       <main id="explore-container" className="container">
         <section className="courses-section">
-          <div className="courses-section__explore-header">
-            <div className="courses-section__explore-header__left">
-              <TextBadge
-                className="big explore gray-text"
-                content={`${
-                  mode === "courses"
-                    ? maxVisibleCoursesLength
-                      ? numberWithCommas(maxVisibleCoursesLength)
+          <BoneRegion name="explore-header">
+            <div className="courses-section__explore-header">
+              <div className="courses-section__explore-header__left">
+                <TextBadge
+                  className="big explore gray-text"
+                  content={`${
+                    isLoadingList
+                      ? "…"
+                      : mode === "courses"
+                      ? maxVisibleCoursesLength
+                        ? numberWithCommas(maxVisibleCoursesLength)
+                        : "0"
+                      : maxVisibleInstructors
+                      ? numberWithCommas(maxVisibleInstructors)
                       : "0"
-                    : maxVisibleInstructors
-                    ? numberWithCommas(maxVisibleInstructors)
-                    : "0"
-                } found`}
-              />
-              <ButtonGroup
-                options={["courses", "instructors"]}
-                onSelect={(value) => {
-                  setMode(value as "courses" | "instructors");
-                  resetCourseFilters();
-                  resetInstructorFilters();
-                }}
-                selectedOption={mode}
-              />
+                  } found`}
+                />
+                <ButtonGroup
+                  options={["courses", "instructors"]}
+                  onSelect={(value) => {
+                    setMode(value as "courses" | "instructors");
+                    resetCourseFilters();
+                    resetInstructorFilters();
+                  }}
+                  selectedOption={mode}
+                />
+              </div>
+              <div className="courses-section__explore-header__right">
+                {mode === "courses" && (
+                  <select
+                    className="sort-dropdown"
+                    value={courseSortValue || ""}
+                    onChange={(e) =>
+                      setCourseSortValue((e.target.value as SortState) || null)
+                    }
+                  >
+                    <option value="">Sort By</option>
+                    <option value="reviews-asc">Reviews ↑</option>
+                    <option value="reviews-desc">Reviews ↓</option>
+                    <option value="rating-asc">Rating ↑</option>
+                    <option value="rating-desc">Rating ↓</option>
+                    <option value="difficulty-asc">Difficulty ↑</option>
+                    <option value="difficulty-desc">Difficulty ↓</option>
+                  </select>
+                )}
+                {mode === "instructors" && (
+                  <select
+                    className="sort-dropdown"
+                    value={instructorSortValue || ""}
+                    onChange={(e) =>
+                      setInstructorSortValue(
+                        (e.target.value as InstructorSortState) || null
+                      )
+                    }
+                  >
+                    <option value="">Sort By</option>
+                    <option value="quality-asc">Quality ↑</option>
+                    <option value="quality-desc">Quality ↓</option>
+                    <option value="difficulty-asc">Difficulty ↑</option>
+                    <option value="difficulty-desc">Difficulty ↓</option>
+                    <option value="would-take-again-asc">
+                      Would Take Again ↑
+                    </option>
+                    <option value="would-take-again-desc">
+                      Would Take Again ↓
+                    </option>
+                    <option value="reviews-asc">Reviews ↑</option>
+                    <option value="reviews-desc">Reviews ↓</option>
+                  </select>
+                )}
+              </div>
             </div>
-            <div className="courses-section__explore-header__right">
-              {mode === "courses" && (
-                <select
-                  className="sort-dropdown"
-                  value={courseSortValue || ""}
-                  onChange={(e) =>
-                    setCourseSortValue((e.target.value as SortState) || null)
-                  }
-                >
-                  <option value="">Sort By</option>
-                  <option value="reviews-asc">Reviews ↑</option>
-                  <option value="reviews-desc">Reviews ↓</option>
-                  <option value="rating-asc">Rating ↑</option>
-                  <option value="rating-desc">Rating ↓</option>
-                  <option value="difficulty-asc">Difficulty ↑</option>
-                  <option value="difficulty-desc">Difficulty ↓</option>
-                </select>
-              )}
-              {mode === "instructors" && (
-                <select
-                  className="sort-dropdown"
-                  value={instructorSortValue || ""}
-                  onChange={(e) =>
-                    setInstructorSortValue(
-                      (e.target.value as InstructorSortState) || null
-                    )
-                  }
-                >
-                  <option value="">Sort By</option>
-                  <option value="quality-asc">Quality ↑</option>
-                  <option value="quality-desc">Quality ↓</option>
-                  <option value="difficulty-asc">Difficulty ↑</option>
-                  <option value="difficulty-desc">Difficulty ↓</option>
-                  <option value="would-take-again-asc">
-                    Would Take Again ↑
-                  </option>
-                  <option value="would-take-again-desc">
-                    Would Take Again ↓
-                  </option>
-                  <option value="reviews-asc">Reviews ↑</option>
-                  <option value="reviews-desc">Reviews ↓</option>
-                </select>
-              )}
+          </BoneRegion>
+          <BoneRegion name="explore-search">
+            <SearchBar
+              handleInputChange={setQuery}
+              searchSelected={searchSelected}
+              setSearchSelected={setSearchSelected}
+              value={query}
+              placeholder={
+                mode === "courses"
+                  ? "course code, title, description, or instructor"
+                  : "instructor name or course code"
+              }
+            />
+          </BoneRegion>
+          {isLoadingList ? (
+            <div className="courses-container">
+              <ExploreCardsSkeleton mode={mode} count={8} />
             </div>
-          </div>
-          <SearchBar
-            handleInputChange={setQuery}
-            searchSelected={searchSelected}
-            setSearchSelected={setSearchSelected}
-            value={query}
-            placeholder={
-              mode === "courses"
-                ? "course code, title, description, or instructor"
-                : "instructor name or course code"
-            }
-          />
-          {mode === "courses" ? (
+          ) : mode === "courses" ? (
             <InfiniteScroll
               dataLength={visibleCourses.length}
               hasMore={visibleCourses.length < maxVisibleCoursesLength}
-              loader={<p>Loading...</p>}
+              loader={<ExploreCardsSkeleton mode="courses" count={2} />}
               next={loadMoreCourses}
               className="courses-container"
             >
-              {visibleCourses.map((outline) => (
-                <ExploreCourseCard
-                  key={outline.dept + outline.number}
-                  course={outline}
-                  query={query}
-                  showPrereqs={coursePrereqIsShown}
-                  prereqsQuery={coursePrereqSearchQuery}
-                  showInstructors={true}
-                  reviewData={getCourseReviewData(
-                    `${outline.dept}${outline.number}`
-                  )}
-                />
-              ))}
+              {visibleCourses.map((outline, i) => {
+                const card = (
+                  <ExploreCourseCard
+                    key={outline.dept + outline.number}
+                    course={outline}
+                    query={query}
+                    showPrereqs={coursePrereqIsShown}
+                    prereqsQuery={coursePrereqSearchQuery}
+                    showInstructors={true}
+                    reviewData={courseReviewMap.get(
+                      `${outline.dept}${outline.number}`.toLowerCase()
+                    )}
+                  />
+                );
+                return i === courseTemplateIndex ? (
+                  <BoneRegion key="bone-template" name="explore-course-card">
+                    {card}
+                  </BoneRegion>
+                ) : (
+                  card
+                );
+              })}
             </InfiniteScroll>
           ) : (
             <InfiniteScroll
               dataLength={visibleInstructors.length}
               hasMore={visibleInstructors.length < maxVisibleInstructors}
-              loader={<p>Loading...</p>}
+              loader={<ExploreCardsSkeleton mode="instructors" count={2} />}
               next={loadMoreInstructors}
               className="courses-container"
             >
-              {visibleInstructors.map((instructor) => (
-                <InstructorCard
-                  key={instructor.name}
-                  instructor={instructor}
-                  query={query}
-                  isLink
-                  reviewData={getInstructorReviewData(instructor.name)}
-                />
-              ))}
+              {visibleInstructors.map((instructor, i) => {
+                const card = (
+                  <InstructorCard
+                    key={instructor.name}
+                    instructor={instructor}
+                    query={query}
+                    isLink
+                    reviewData={
+                      instructorReviewMap.get(instructor.name.toLowerCase()) ??
+                      null
+                    }
+                  />
+                );
+                return i === instructorTemplateIndex ? (
+                  <BoneRegion
+                    key="bone-template"
+                    name="explore-instructor-card"
+                  >
+                    {card}
+                  </BoneRegion>
+                ) : (
+                  card
+                );
+              })}
             </InfiniteScroll>
           )}
         </section>
-        <section className="filter-section">
-          {mode === "courses" ? <ExploreFilter /> : <InstructorExploreFilter />}
-        </section>
+        <BoneRegion name="explore-filter">
+          <section className="filter-section">
+            {mode === "courses" ? (
+              <ExploreFilter />
+            ) : (
+              <InstructorExploreFilter />
+            )}
+          </section>
+        </BoneRegion>
       </main>
     </div>
   );

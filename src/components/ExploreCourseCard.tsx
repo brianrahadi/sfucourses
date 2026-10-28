@@ -106,6 +106,7 @@ export const ExploreCourseCard: React.FC<ExploreCourseCardProps> = ({
                       offering.instructors[0]
                     )}`}
                     className="text-badge instructor-badge-link"
+                    prefetch={false}
                   >
                     {termToIcon(offering.term.split(" ")[0])}
                     {offering.term.split(" ")[1].slice(2)}
@@ -129,6 +130,9 @@ export const ExploreCourseCard: React.FC<ExploreCourseCardProps> = ({
         href={`/explore/${course.dept.toLowerCase()}-${course.number}`}
         key={course.dept + course.number}
         className="course-card is-link"
+        // Prefetch on hover/touch only: viewport prefetching would generate
+        // every listed course page.
+        prefetch={false}
       >
         <CardContent />
       </Link>
