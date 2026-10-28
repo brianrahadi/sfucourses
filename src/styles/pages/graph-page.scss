@@ -48,6 +48,51 @@
     overflow: hidden;
   }
 
+  /* Edge legend, bottom-left over the canvas */
+  .graph-legend {
+    position: absolute;
+    left: 16px;
+    bottom: 16px;
+    z-index: 80;
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 9999px;
+    background-color: rgba(var(--colour-neutral-1100-rgb), 0.85);
+    border: 1px solid var(--colour-neutral-1000);
+    font-size: 12px;
+    color: var(--colour-neutral-300);
+    pointer-events: none;
+
+    span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    line {
+      stroke-width: 2;
+    }
+    .legend-required,
+    .legend-alternative {
+      stroke: rgba(100, 200, 255, 0.8);
+    }
+    .legend-coreq {
+      stroke: rgba(255, 165, 0, 0.8);
+    }
+  }
+
+  [data-theme="light"] & .graph-legend {
+    .legend-required,
+    .legend-alternative {
+      stroke: rgba(60, 130, 200, 0.9);
+    }
+    .legend-coreq {
+      stroke: rgba(200, 120, 0, 0.9);
+    }
+  }
+
   .filter-half-circle {
     position: absolute;
     top: 20px;

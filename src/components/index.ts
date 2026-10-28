@@ -41,3 +41,6 @@ export { CatalogManager } from "./CatalogManager";
 export { DraggablePanel } from "./DraggablePanel";
 export { ReviewCharts } from "./ReviewCharts";
 export { ThemeToggle } from "./ThemeToggle";
+export { CourseRelations } from "./CourseRelations";
+export { CreditOverlapWarning } from "./CreditOverlapWarning";
+export { EligibleCourses } from "./EligibleCourses";

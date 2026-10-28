@@ -394,3 +394,27 @@
     left: 0.4rem;
   }
 }
+
+.credit-overlap-warning {
+  margin: 0 0 12px 0;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(var(--colour-amber-500-rgb), 0.5);
+  background-color: rgba(var(--colour-amber-500-rgb), 0.08);
+  color: var(--colour-neutral-200);
+  font-size: 0.9rem;
+
+  strong {
+    color: var(--colour-amber-500);
+  }
+
+  ul {
+    margin: 4px 0 0 0;
+    padding-left: 18px;
+  }
+
+  a {
+    color: inherit;
+    font-weight: 600;
+  }
+}

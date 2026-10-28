@@ -51,6 +51,7 @@ import {
 } from "@utils/timeBlocks";
 import toast from "react-hot-toast";
 import { useScheduleStore } from "src/store/useScheduleStore";
+import { CreditOverlapWarning } from "src/components/CreditOverlapWarning";
 
 interface SchedulePageProps {
   initialSections?: CourseOutlineWithSectionDetails[];
@@ -110,6 +111,13 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
   );
   const setSelectedOutlinesWithSections = useScheduleStore(
     (state) => state.setSelectedOutlinesWithSections
+  );
+  const selectedCodes = useMemo(
+    () =>
+      selectedOutlinesWithSections.map((c) =>
+        `${c.dept} ${c.number}`.toUpperCase()
+      ),
+    [selectedOutlinesWithSections]
   );
   const timeBlocks = useScheduleStore((state) => state.timeBlocks);
   const setTimeBlocks = useScheduleStore((state) => state.setTimeBlocks);
@@ -511,6 +519,7 @@ const SchedulePage: React.FC<SchedulePageProps> = ({ initialSections }) => {
               }}
               term={selectedTerm}
             />
+            <CreditOverlapWarning codes={selectedCodes} />
             <div className="schedule-container">
               <WeeklySchedule
                 coursesWithSections={selectedOutlinesWithSections}

@@ -226,6 +226,54 @@
       line-height: 1.5;
       font-size: 0.95rem;
     }
+
+    .course-relations {
+      .relation-count {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--colour-neutral-500);
+        margin-left: 4px;
+      }
+
+      .relation-hint {
+        font-size: 0.85rem;
+        color: var(--colour-neutral-500);
+        margin: 0 0 0.6rem 0;
+      }
+
+      .relation-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .relation-chip {
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 9999px;
+        border: 1px solid var(--colour-neutral-800);
+        color: var(--colour-neutral-300);
+        background: none;
+        text-decoration: none;
+        cursor: pointer;
+        white-space: nowrap;
+
+        &:hover {
+          border-color: var(--colour-neutral-500);
+          color: var(--colour-neutral-100);
+        }
+
+        &--more {
+          color: var(--colour-neutral-500);
+        }
+
+        &--warn {
+          border-color: rgba(var(--colour-amber-500-rgb), 0.6);
+          color: var(--colour-amber-500);
+        }
+      }
+    }
   }
 }
 
