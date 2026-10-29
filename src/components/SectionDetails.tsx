@@ -1,5 +1,6 @@
 import { Button, Highlight } from "@components";
 import { BoneFile, BoneRegion, BoneShell } from "./bones/BoneShell";
+import { useRevealAfterLoading } from "./skeletons/SkeletonCrossfade";
 import sectionBones from "src/bones/section-details.bones.json";
 import {
   CourseWithSectionDetails,
@@ -157,6 +158,8 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
     return tooltips;
   }, [shownSections, instructorReviewsData]);
 
+  const revealing = useRevealAfterLoading(!!offering.isLoading);
+
   if (offering.isLoading) {
     return (
       <BoneShell
@@ -174,7 +177,7 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
         key={"s" + offering.term + offering.dept + offering.number}
         className={`offering ${
           type === "SELECTED_COURSES" ? "selected-courses-offering" : ""
-        }`}
+        }${revealing ? " content-reveal" : ""}`}
       >
         {shownSections.map((section, index) => {
           const schedules = section.schedules || [];

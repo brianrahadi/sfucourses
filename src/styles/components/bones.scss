@@ -107,3 +107,67 @@ $bone-range-mins: 0, 601, 769, 901, 1025, 1280;
     align-self: stretch;
   }
 }
+
+// ---------------------------------------------------------------------------
+// Skeleton → content transitions (src/components/skeletons/SkeletonCrossfade)
+//
+// A hard swap reads as a jump even when the geometry matches. Instead the
+// content renders underneath and the skeleton dissolves on top of it; nested
+// regions fade their content in. Short (~240ms) and decelerating, so the
+// content arrives quickly but the change is seen as one continuous motion.
+
+:root {
+  --skeleton-fade-duration: 240ms; // SKELETON_FADE_MS
+  --skeleton-fade-easing: cubic-bezier(0.33, 0, 0.2, 1);
+}
+
+// A plain block box: transparent to the layout of the page inside it.
+.skeleton-crossfade {
+  position: relative;
+}
+
+.skeleton-crossfade__out {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+  animation: skeleton-fade-out var(--skeleton-fade-duration)
+    var(--skeleton-fade-easing) both;
+}
+
+// Region-level swaps (a card or panel whose surface is the same in both
+// states): keep the surface and fade only what's inside it.
+.content-reveal > * {
+  animation: content-reveal var(--skeleton-fade-duration)
+    var(--skeleton-fade-easing) both;
+}
+
+@keyframes skeleton-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes content-reveal {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// SkeletonCrossfade doesn't render the overlay at all for these users; this
+// is a backstop in case the preference changes mid-fade.
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-crossfade__out {
+    display: none;
+  }
+  .content-reveal > * {
+    animation: none;
+  }
+}

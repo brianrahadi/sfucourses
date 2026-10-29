@@ -9,6 +9,7 @@ import { ReviewCharts } from "@components";
 import { INSTRUCTOR_REDIRECT_NAME_MAPPING } from "@const";
 import { BoneRegion } from "src/components/bones/BoneShell";
 import dynamic from "next/dynamic";
+import { SkeletonCrossfade } from "src/components/skeletons/SkeletonCrossfade";
 
 // Only fallback renders need the skeleton, so it's a separate chunk that
 // fully generated pages never download.
@@ -85,17 +86,23 @@ const InstructorPage: React.FC<Partial<InstructorPageProps>> = ({
 }) => {
   const router = useRouter();
 
-  // First visit to an instructor that hasn't been generated yet.
-  if (router.isFallback || !instructor) {
-    return (
-      <>
-        <Helmet pageTitle="instructor details" />
-        <InstructorPageSkeleton />
-      </>
-    );
-  }
+  // First visit to an instructor that hasn't been generated yet: skeleton,
+  // then cross-fade to the page once it's generated.
+  const loading = router.isFallback || !instructor;
 
-  return <InstructorView instructor={instructor} reviews={reviews ?? null} />;
+  return (
+    <>
+      {loading && <Helmet pageTitle="instructor details" />}
+      <SkeletonCrossfade
+        loading={loading}
+        skeleton={<InstructorPageSkeleton />}
+      >
+        {instructor && (
+          <InstructorView instructor={instructor} reviews={reviews ?? null} />
+        )}
+      </SkeletonCrossfade>
+    </>
+  );
 };
 
 const InstructorView: React.FC<InstructorPageProps> = ({
