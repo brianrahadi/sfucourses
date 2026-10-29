@@ -20,8 +20,10 @@ import {
   useState,
   useRef,
   useMemo,
+  useContext,
   Fragment,
 } from "react";
+import { InstructorRatingsContext } from "./InstructorRatingsContext";
 import { BsFillPersonFill } from "react-icons/bs";
 import { CiCalendar, CiClock1 } from "react-icons/ci";
 import { FaTimeline } from "react-icons/fa6";
@@ -84,11 +86,16 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
 }) => {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const { data: instructorReviewsData } = useQuery({
+  // The course page provides its instructors' ratings; elsewhere fetch the
+  // full list (shared, cached) for the tooltips.
+  const pageRatings = useContext(InstructorRatingsContext);
+  const { data: fetchedRatings } = useQuery({
     queryKey: ["instructorReviews"],
     queryFn: () => getCourseAPIData("/reviews/instructors"),
     staleTime: 60 * 60 * 1000,
+    enabled: !pageRatings,
   });
+  const instructorReviewsData = pageRatings ?? fetchedRatings;
 
   const processedSections = useMemo(
     () =>

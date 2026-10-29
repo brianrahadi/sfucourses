@@ -8,12 +8,14 @@ import type { DehydratedState } from "@tanstack/react-query";
 import type {
   CourseOutline,
   CourseReviewSummary,
+  CourseWithSectionDetails,
   Instructor,
   InstructorReviewData,
   InstructorReviewSummary,
   Review,
 } from "@types";
 import { INSTRUCTOR_RMP_NAME_MAPPING } from "@const";
+import { getInstructorReviewData } from "../utils/reviewUtils";
 import { API_ORIGIN, fetchFromApi } from "./api-wrapper";
 import {
   courseOfferingQuery,
@@ -84,6 +86,8 @@ export interface CourseReviewData {
 export interface CoursePageProps {
   course: CourseOutline;
   reviews: CourseReviewData | null;
+  /** RateMyProf summaries for the instructors teaching the shown terms. */
+  instructorRatings: InstructorReviewSummary[];
   dehydratedState: DehydratedState;
 }
 
@@ -106,7 +110,7 @@ export async function loadCoursePage(
   if (!parsed) return null;
   const { dept, number } = parsed;
 
-  const [outlines, reviews] = await Promise.all([
+  const [outlines, reviews, allRatings] = await Promise.all([
     apiOrNull<CourseOutline[]>(
       `/outlines?dept=${encodeURIComponent(dept)}&number=${encodeURIComponent(
         number
@@ -117,6 +121,11 @@ export async function loadCoursePage(
         `${dept.toUpperCase()}${number.toUpperCase()}`
       )}`
     ),
+    // Ratings for the section tooltips; only this course's are sent on.
+    api<InstructorReviewSummary[]>("/reviews/instructors", {
+      timeoutMs: PREFETCH_TIMEOUT_MS,
+      retries: 0,
+    }).catch(() => null),
   ]);
   const course = outlines?.[0];
   if (!course) return null;
@@ -124,6 +133,7 @@ export async function loadCoursePage(
   // Seed the react-query cache with the sections useCourseOfferings needs,
   // so the offerings tabs render complete on the first paint.
   const queryClient = new QueryClient();
+  const instructorNames = new Set<string>();
   await Promise.all(
     (course.offerings ?? [])
       .slice(0, RECENT_OFFERINGS_COUNT)
@@ -134,20 +144,32 @@ export async function loadCoursePage(
           offering.term
         );
         try {
-          const sections = await api<unknown[]>(queryUrl, {
+          const sections = await api<CourseWithSectionDetails[]>(queryUrl, {
             timeoutMs: PREFETCH_TIMEOUT_MS,
             retries: 0,
           });
-          if (sections?.[0]) queryClient.setQueryData(queryKey, sections[0]);
+          if (sections?.[0]) {
+            queryClient.setQueryData(queryKey, sections[0]);
+            for (const section of sections[0].sections ?? []) {
+              for (const i of section.instructors ?? []) {
+                instructorNames.add(i.name);
+              }
+            }
+          }
         } catch {
           // Missing sections are fetched by the browser instead.
         }
       })
   );
 
+  const instructorRatings = [...instructorNames]
+    .map((name) => getInstructorReviewData(name, allRatings ?? undefined))
+    .filter((r): r is InstructorReviewSummary => r !== null);
+
   return {
     course,
     reviews: reviews?.instructors ? reviews : null,
+    instructorRatings,
     dehydratedState: dehydrate(queryClient),
   };
 }

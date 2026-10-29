@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 import { Review } from "@types";
 import { useCourseOfferings } from "@hooks";
 import { BoneRegion } from "src/components/bones/BoneShell";
+import { InstructorRatingsContext } from "src/components/InstructorRatingsContext";
 import dynamic from "next/dynamic";
 
 // Only fallback renders need the skeleton, so it's a separate chunk that
@@ -67,6 +68,7 @@ export const getStaticProps: GetStaticProps<CoursePageProps> = async ({
 const CoursePage: React.FC<Partial<CoursePageProps>> = ({
   course,
   reviews,
+  instructorRatings,
 }) => {
   const router = useRouter();
 
@@ -81,7 +83,15 @@ const CoursePage: React.FC<Partial<CoursePageProps>> = ({
     );
   }
 
-  return <CourseView course={course} reviews={reviews ?? null} />;
+  return (
+    <InstructorRatingsContext.Provider value={instructorRatings ?? null}>
+      <CourseView
+        course={course}
+        reviews={reviews ?? null}
+        instructorRatings={instructorRatings ?? []}
+      />
+    </InstructorRatingsContext.Provider>
+  );
 };
 
 const CourseView: React.FC<Omit<CoursePageProps, "dehydratedState">> = ({
