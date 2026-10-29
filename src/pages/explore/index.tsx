@@ -43,6 +43,7 @@ import {
 import { numberWithCommas } from "@utils/format";
 import { ExploreCardsSkeleton } from "src/components/skeletons/ExploreSkeletons";
 import { BoneRegion } from "src/components/bones/BoneShell";
+import { useRevealAfterLoading } from "src/components/skeletons/SkeletonCrossfade";
 import { BASE_URL, INSTRUCTOR_RMP_NAME_MAPPING } from "@const";
 import { useExploreStore } from "src/store/useExploreStore";
 
@@ -499,6 +500,8 @@ const ExplorePage: React.FC<Partial<ExplorePageProps>> = ({
     (mode === "instructors" &&
       isLoadingInstructors &&
       instructors.length === 0);
+  // Fade the first cards in where the skeleton cards were.
+  const revealingList = useRevealAfterLoading(isLoadingList);
 
   return (
     <div className="page courses-page">
@@ -601,7 +604,9 @@ const ExplorePage: React.FC<Partial<ExplorePageProps>> = ({
               hasMore={visibleCourses.length < maxVisibleCoursesLength}
               loader={<ExploreCardsSkeleton mode="courses" count={2} />}
               next={loadMoreCourses}
-              className="courses-container"
+              className={`courses-container${
+                revealingList ? " content-reveal" : ""
+              }`}
             >
               {visibleCourses.map((outline, i) => {
                 const card = (
@@ -632,7 +637,9 @@ const ExplorePage: React.FC<Partial<ExplorePageProps>> = ({
               hasMore={visibleInstructors.length < maxVisibleInstructors}
               loader={<ExploreCardsSkeleton mode="instructors" count={2} />}
               next={loadMoreInstructors}
-              className="courses-container"
+              className={`courses-container${
+                revealingList ? " content-reveal" : ""
+              }`}
             >
               {visibleInstructors.map((instructor, i) => {
                 const card = (

@@ -13,6 +13,7 @@ import { useCourseOfferings } from "@hooks";
 import { BoneRegion } from "src/components/bones/BoneShell";
 import { InstructorRatingsContext } from "src/components/InstructorRatingsContext";
 import dynamic from "next/dynamic";
+import { SkeletonCrossfade } from "src/components/skeletons/SkeletonCrossfade";
 
 // Only fallback renders need the skeleton, so it's a separate chunk that
 // fully generated pages never download.
@@ -72,25 +73,28 @@ const CoursePage: React.FC<Partial<CoursePageProps>> = ({
 }) => {
   const router = useRouter();
 
-  // First visit to a course that hasn't been generated yet.
-  if (router.isFallback || !course) {
-    const code = typeof router.query.code === "string" ? router.query.code : "";
-    return (
-      <>
-        <Helmet pageTitle={code ? code.replace("-", " ") : "course details"} />
-        <CoursePageSkeleton />
-      </>
-    );
-  }
+  // First visit to a course that hasn't been generated yet: skeleton, then
+  // cross-fade to the page once it's generated.
+  const loading = router.isFallback || !course;
+  const code = typeof router.query.code === "string" ? router.query.code : "";
 
   return (
-    <InstructorRatingsContext.Provider value={instructorRatings ?? null}>
-      <CourseView
-        course={course}
-        reviews={reviews ?? null}
-        instructorRatings={instructorRatings ?? []}
-      />
-    </InstructorRatingsContext.Provider>
+    <>
+      {loading && (
+        <Helmet pageTitle={code ? code.replace("-", " ") : "course details"} />
+      )}
+      <SkeletonCrossfade loading={loading} skeleton={<CoursePageSkeleton />}>
+        {course && (
+          <InstructorRatingsContext.Provider value={instructorRatings ?? null}>
+            <CourseView
+              course={course}
+              reviews={reviews ?? null}
+              instructorRatings={instructorRatings ?? []}
+            />
+          </InstructorRatingsContext.Provider>
+        )}
+      </SkeletonCrossfade>
+    </>
   );
 };
 

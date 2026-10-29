@@ -18,6 +18,7 @@ import { Toaster } from "react-hot-toast";
 import { FormspreeProvider } from "@formspree/react";
 import { ThemeProvider } from "next-themes";
 import { useRouteSkeleton } from "src/hooks/useRouteSkeleton";
+import { SkeletonCrossfade } from "src/components/skeletons/SkeletonCrossfade";
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
@@ -102,13 +103,18 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }: AppProps) => {
           <FormspreeProvider project="2913445847263870687">
             <Helmet pageTitle={router.pathname} />
             <HeaderNav />
-            {pendingSkeleton ? (
-              <pendingSkeleton.module.RouteSkeleton
-                route={pendingSkeleton.route}
-              />
-            ) : (
+            <SkeletonCrossfade
+              loading={pendingSkeleton !== null}
+              skeleton={
+                pendingSkeleton && (
+                  <pendingSkeleton.module.RouteSkeleton
+                    route={pendingSkeleton.route}
+                  />
+                )
+              }
+            >
               <Component {...pageProps} key={router.asPath} />
-            )}
+            </SkeletonCrossfade>
             <Footer />
             <Toaster />
             <Analytics />
