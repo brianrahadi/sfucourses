@@ -85,8 +85,9 @@ export const InstructorCard: React.FC<InstructorCardProps> = ({
   if (isLink) {
     return (
       <Link
-        href={`/instructors/${instructor.name}`}
+        href={`/instructors/${encodeURIComponent(instructor.name)}`}
         className="course-card instructor-card"
+        prefetch={false}
       >
         <InstructorCardContent />
       </Link>

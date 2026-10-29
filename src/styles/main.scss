@@ -40,6 +40,8 @@
 @use "./components/instructor-stats-tooltip.scss";
 @use "./components/feedback-form.scss";
 @use "./components/draggable-panel.scss";
+@use "./components/bones.scss";
+@use "./components/mini-bar-chart.scss";
 
 :root {
   --colour-sosy-green-900: #07221c;

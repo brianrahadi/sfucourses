@@ -1,4 +1,11 @@
 /**
+ * Origin of the SFU Courses API. Override with SFUCOURSES_API_URL (e.g.
+ * http://localhost:8080) to develop against a local API.
+ */
+export const API_ORIGIN =
+  process.env.SFUCOURSES_API_URL || "https://api.sfucourses.com";
+
+/**
  * Fetch JSON from the SFU Courses API. Caching is handled by Vercel's CDN
  * (see Cache-Control in pages/api/proxy.ts) and Next.js ISR.
  *

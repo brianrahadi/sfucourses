@@ -1,5 +1,6 @@
 import { Button, Highlight } from "@components";
-import { RotatingLines } from "react-loader-spinner";
+import { BoneFile, BoneRegion, BoneShell } from "./bones/BoneShell";
+import sectionBones from "src/bones/section-details.bones.json";
 import {
   CourseWithSectionDetails,
   SectionDetail,
@@ -19,8 +20,10 @@ import {
   useState,
   useRef,
   useMemo,
+  useContext,
   Fragment,
 } from "react";
+import { InstructorRatingsContext } from "./InstructorRatingsContext";
 import { BsFillPersonFill } from "react-icons/bs";
 import { CiCalendar, CiClock1 } from "react-icons/ci";
 import { FaTimeline } from "react-icons/fa6";
@@ -83,11 +86,16 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
 }) => {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const { data: instructorReviewsData } = useQuery({
+  // The course page provides its instructors' ratings; elsewhere fetch the
+  // full list (shared, cached) for the tooltips.
+  const pageRatings = useContext(InstructorRatingsContext);
+  const { data: fetchedRatings } = useQuery({
     queryKey: ["instructorReviews"],
     queryFn: () => getCourseAPIData("/reviews/instructors"),
     staleTime: 60 * 60 * 1000,
+    enabled: !pageRatings,
   });
+  const instructorReviewsData = pageRatings ?? fetchedRatings;
 
   const processedSections = useMemo(
     () =>
@@ -151,321 +159,327 @@ export const SectionDetails: React.FC<SectionDetailsProps> = ({
 
   if (offering.isLoading) {
     return (
-      <div
+      <BoneShell
         key={"loading-" + offering.term}
-        className="offering-loading-container"
-      >
-        <RotatingLines visible={true} strokeColor="#24a98b" width="40" />
-      </div>
+        name="section-details"
+        bones={sectionBones as BoneFile}
+        className="offering"
+      />
     );
   }
 
   return (
-    <div
-      key={"s" + offering.term + offering.dept + offering.number}
-      className={`offering ${
-        type === "SELECTED_COURSES" ? "selected-courses-offering" : ""
-      }`}
-    >
-      {shownSections.map((section, index) => {
-        const schedules = section.schedules || [];
-        const instructors =
-          section.instructors
-            ?.map((instructor) => instructor.name)
-            .join(", ") || "N/A";
-        const baseOutlinePath = generateBaseOutlinePath(offering);
+    <BoneRegion name="section-details">
+      <div
+        key={"s" + offering.term + offering.dept + offering.number}
+        className={`offering ${
+          type === "SELECTED_COURSES" ? "selected-courses-offering" : ""
+        }`}
+      >
+        {shownSections.map((section, index) => {
+          const schedules = section.schedules || [];
+          const instructors =
+            section.instructors
+              ?.map((instructor) => instructor.name)
+              .join(", ") || "N/A";
+          const baseOutlinePath = generateBaseOutlinePath(offering);
 
-        const courseWithSection = { ...offering };
-        courseWithSection.sections = courseWithSection.sections.filter(
-          (item) => item.classNumber === section.classNumber
-        );
+          const courseWithSection = { ...offering };
+          courseWithSection.sections = courseWithSection.sections.filter(
+            (item) => item.classNumber === section.classNumber
+          );
 
-        const uniqueInstructors =
-          section.instructors.length > 0
-            ? section.instructors.map((i) => i.name).filter(onlyUnique)
-            : [];
+          const uniqueInstructors =
+            section.instructors.length > 0
+              ? section.instructors.map((i) => i.name).filter(onlyUnique)
+              : [];
 
-        const handleAddSection = () => {
-          if (!setOfferings) return;
-          if (setOfferings.type === "ADD") {
-            setOfferings.fn((prev) => {
-              const hasExistingSection = prev
-                .flatMap((course) => course.sections)
-                .includes(courseWithSection.sections[0]);
+          const handleAddSection = () => {
+            if (!setOfferings) return;
+            if (setOfferings.type === "ADD") {
+              setOfferings.fn((prev) => {
+                const hasExistingSection = prev
+                  .flatMap((course) => course.sections)
+                  .includes(courseWithSection.sections[0]);
 
-              if (hasExistingSection) {
-                return prev;
-              }
+                if (hasExistingSection) {
+                  return prev;
+                }
 
-              const existingCourseIndex = prev.findIndex(
-                (course) =>
-                  course.dept + course.number ===
-                  courseWithSection.dept + courseWithSection.number
-              );
+                const existingCourseIndex = prev.findIndex(
+                  (course) =>
+                    course.dept + course.number ===
+                    courseWithSection.dept + courseWithSection.number
+                );
 
-              if (existingCourseIndex !== -1) {
-                // If the course exists, merge the sections
-                const updatedCourses = [...prev];
-                updatedCourses[existingCourseIndex] = {
-                  ...updatedCourses[existingCourseIndex],
-                  sections: [
-                    ...updatedCourses[existingCourseIndex].sections,
-                    ...courseWithSection.sections,
-                  ],
-                };
-                return updatedCourses;
-              }
-
-              return [...prev, courseWithSection];
-            });
-          } else {
-            setOfferings.fn((prev) => {
-              return prev
-                .flatMap((course) => {
-                  if (
-                    course.dept + course.number !==
-                    offering.dept + offering.number
-                  ) {
-                    return course;
-                  }
-
-                  const updatedSections = course.sections.filter(
-                    (section) =>
-                      section.classNumber !==
-                      courseWithSection.sections[0].classNumber
-                  );
-
-                  if (updatedSections.length === 0) {
-                    return [];
-                  }
-
-                  return {
-                    ...course,
-                    sections: updatedSections,
+                if (existingCourseIndex !== -1) {
+                  // If the course exists, merge the sections
+                  const updatedCourses = [...prev];
+                  updatedCourses[existingCourseIndex] = {
+                    ...updatedCourses[existingCourseIndex],
+                    sections: [
+                      ...updatedCourses[existingCourseIndex].sections,
+                      ...courseWithSection.sections,
+                    ],
                   };
-                })
-                .filter(Boolean); // Remove any null entries (courses with no sections)
-            });
+                  return updatedCourses;
+                }
+
+                return [...prev, courseWithSection];
+              });
+            } else {
+              setOfferings.fn((prev) => {
+                return prev
+                  .flatMap((course) => {
+                    if (
+                      course.dept + course.number !==
+                      offering.dept + offering.number
+                    ) {
+                      return course;
+                    }
+
+                    const updatedSections = course.sections.filter(
+                      (section) =>
+                        section.classNumber !==
+                        courseWithSection.sections[0].classNumber
+                    );
+
+                    if (updatedSections.length === 0) {
+                      return [];
+                    }
+
+                    return {
+                      ...course,
+                      sections: updatedSections,
+                    };
+                  })
+                  .filter(Boolean); // Remove any null entries (courses with no sections)
+              });
+            }
+          };
+          if (schedules.length === 0) {
+            return <></>;
           }
-        };
-        if (schedules.length === 0) {
-          return <></>;
-        }
 
-        return (
-          <div
-            key={section.classNumber}
-            className={`section-container ${
-              type === "SELECTED_COURSES" ? "selected-course-section" : ""
-            }`}
-          >
-            <div className="section-header">
-              <div className="section-header__first">
-                <span className="icon-text-container">
-                  {notLabOrTut(section.schedules[0]?.sectionCode) ? (
-                    <Link
-                      className="no-underline"
-                      href={`${baseOutlinePath}/${section.section.toLowerCase()}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      data-tooltip-id="new-tab-tooltip"
-                      data-tooltip-content="New tab"
-                    >
-                      {section.schedules[0]?.sectionCode} {section.section}
-                    </Link>
+          return (
+            <div
+              key={section.classNumber}
+              className={`section-container ${
+                type === "SELECTED_COURSES" ? "selected-course-section" : ""
+              }`}
+            >
+              <div className="section-header">
+                <div className="section-header__first">
+                  <span className="icon-text-container">
+                    {notLabOrTut(section.schedules[0]?.sectionCode) ? (
+                      <Link
+                        className="no-underline"
+                        href={`${baseOutlinePath}/${section.section.toLowerCase()}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        data-tooltip-id="new-tab-tooltip"
+                        data-tooltip-content="New tab"
+                      >
+                        {section.schedules[0]?.sectionCode} {section.section}
+                      </Link>
+                    ) : (
+                      <>
+                        {section.schedules[0]?.sectionCode} {section.section}
+                      </>
+                    )}
+                  </span>
+                  {setOfferings ? (
+                    <Button
+                      className="section-btn"
+                      icon={
+                        setOfferings.type === "ADD" ? (
+                          <IoAddCircle />
+                        ) : (
+                          <IoRemoveCircle />
+                        )
+                      }
+                      label={`#${section.classNumber}`}
+                      onMouseDown={handleAddSection}
+                      onMouseEnter={() => {
+                        if (timeoutRef.current) {
+                          clearTimeout(timeoutRef.current);
+                        }
+                        if (
+                          previewCourse &&
+                          previewCourse.dept + previewCourse.number ===
+                            courseWithSection.dept + courseWithSection.number
+                        ) {
+                          return;
+                        }
+                        setPreviewCourse?.(courseWithSection);
+                      }}
+                      onMouseLeave={() => {
+                        timeoutRef.current = setTimeout(() => {
+                          setPreviewCourse?.(null);
+                        }, 100);
+                      }}
+                    />
                   ) : (
-                    <>
-                      {section.schedules[0]?.sectionCode} {section.section}
-                    </>
+                    <span>#{section.classNumber}</span>
                   )}
-                </span>
-                {setOfferings ? (
-                  <Button
-                    className="section-btn"
-                    icon={
-                      setOfferings.type === "ADD" ? (
-                        <IoAddCircle />
-                      ) : (
-                        <IoRemoveCircle />
-                      )
-                    }
-                    label={`#${section.classNumber}`}
-                    onMouseDown={handleAddSection}
-                    onMouseEnter={() => {
-                      if (timeoutRef.current) {
-                        clearTimeout(timeoutRef.current);
-                      }
-                      if (
-                        previewCourse &&
-                        previewCourse.dept + previewCourse.number ===
-                          courseWithSection.dept + courseWithSection.number
-                      ) {
-                        return;
-                      }
-                      setPreviewCourse?.(courseWithSection);
-                    }}
-                    onMouseLeave={() => {
-                      timeoutRef.current = setTimeout(() => {
-                        setPreviewCourse?.(null);
-                      }, 100);
-                    }}
-                  />
-                ) : (
-                  <span>#{section.classNumber}</span>
-                )}
-              </div>
-              <div className="section-header__second">
-                <span className="icon-text-container instructor">
-                  <BsFillPersonFill className="person-fill-icon" />
-                  {uniqueInstructors.length > 0
-                    ? uniqueInstructors.map((instructorName, i) => {
-                        const instructorReviewData = getInstructorReviewData(
-                          instructorName,
-                          instructorReviewsData
-                        );
-                        const instructorTooltipId = `instructor-tooltip-${
-                          section.classNumber
-                        }-${instructorName.replace(/\s+/g, "-")}`;
+                </div>
+                <div className="section-header__second">
+                  <span className="icon-text-container instructor">
+                    <BsFillPersonFill className="person-fill-icon" />
+                    {uniqueInstructors.length > 0
+                      ? uniqueInstructors.map((instructorName, i) => {
+                          const instructorReviewData = getInstructorReviewData(
+                            instructorName,
+                            instructorReviewsData
+                          );
+                          const instructorTooltipId = `instructor-tooltip-${
+                            section.classNumber
+                          }-${instructorName.replace(/\s+/g, "-")}`;
 
-                        return (
-                          <Fragment key={instructorName}>
-                            {i > 0 && ", "}
-                            <Link
-                              href={`/instructors/${instructorName}`}
-                              className="no-underline"
-                              target="_blank"
-                              rel="noreferrer"
-                              data-tooltip-id={
-                                instructorReviewData
-                                  ? instructorTooltipId
-                                  : "new-tab-tooltip"
-                              }
-                              data-tooltip-content={
-                                instructorReviewData ? undefined : "New tab"
-                              }
-                            >
-                              {query ? (
-                                <Highlight
-                                  text={instructorName}
-                                  query={query}
-                                  className="green-text"
-                                />
-                              ) : (
-                                instructorName
-                              )}
-                            </Link>
-                          </Fragment>
-                        );
-                      })
-                    : "N/A"}
-                </span>
-                <span className="icon-text-container">
-                  <MdPlace />
-                  {section.deliveryMethod !== "Online"
-                    ? section.schedules[0].campus || "-"
-                    : "Online"}
-                </span>
+                          return (
+                            <Fragment key={instructorName}>
+                              {i > 0 && ", "}
+                              <Link
+                                prefetch={false}
+                                href={`/instructors/${instructorName}`}
+                                className="no-underline"
+                                target="_blank"
+                                rel="noreferrer"
+                                data-tooltip-id={
+                                  instructorReviewData
+                                    ? instructorTooltipId
+                                    : "new-tab-tooltip"
+                                }
+                                data-tooltip-content={
+                                  instructorReviewData ? undefined : "New tab"
+                                }
+                              >
+                                {query ? (
+                                  <Highlight
+                                    text={instructorName}
+                                    query={query}
+                                    className="green-text"
+                                  />
+                                ) : (
+                                  instructorName
+                                )}
+                              </Link>
+                            </Fragment>
+                          );
+                        })
+                      : "N/A"}
+                  </span>
+                  <span className="icon-text-container">
+                    <MdPlace />
+                    {section.deliveryMethod !== "Online"
+                      ? section.schedules[0].campus || "-"
+                      : "Online"}
+                  </span>
+                </div>
               </div>
+
+              {/* Only show schedule details for non-selected courses */}
+              {type !== "SELECTED_COURSES" && (
+                <div className="section-schedule-container">
+                  {section.schedules.map((sched) => (
+                    <div
+                      key={
+                        sched.days +
+                        sched.startDate +
+                        sched.startTime +
+                        sched.sectionCode
+                      }
+                      className="section-schedule-row"
+                    >
+                      <span
+                        className="icon-text-container"
+                        style={{ minWidth: "3rem" }}
+                      >
+                        <CiCalendar />
+                        {sched.days || "-"}
+                      </span>
+                      <span
+                        className="icon-text-container"
+                        style={{ minWidth: "7.5rem" }}
+                      >
+                        <CiClock1 />
+                        {`${sched.startTime} - ${sched.endTime}`}
+                      </span>
+                      <span
+                        className="icon-text-container"
+                        style={{ minWidth: "2rem" }}
+                      >
+                        <FaTimeline />
+                        {`${formatShortDate(
+                          sched.startDate
+                        )} - ${formatShortDate(sched.endDate)}`}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-
-            {/* Only show schedule details for non-selected courses */}
-            {type !== "SELECTED_COURSES" && (
-              <div className="section-schedule-container">
-                {section.schedules.map((sched) => (
-                  <div
-                    key={
-                      sched.days +
-                      sched.startDate +
-                      sched.startTime +
-                      sched.sectionCode
-                    }
-                    className="section-schedule-row"
-                  >
-                    <span
-                      className="icon-text-container"
-                      style={{ minWidth: "3rem" }}
-                    >
-                      <CiCalendar />
-                      {sched.days || "-"}
-                    </span>
-                    <span
-                      className="icon-text-container"
-                      style={{ minWidth: "7.5rem" }}
-                    >
-                      <CiClock1 />
-                      {`${sched.startTime} - ${sched.endTime}`}
-                    </span>
-                    <span
-                      className="icon-text-container"
-                      style={{ minWidth: "2rem" }}
-                    >
-                      <FaTimeline />
-                      {`${formatShortDate(sched.startDate)} - ${formatShortDate(
-                        sched.endDate
-                      )}`}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        );
-      })}
-      {(hasOnlyLabTut && processedSections.length > 2) ||
-        (!hasLabTut && initialShownSections.length > 2 && (
+          );
+        })}
+        {(hasOnlyLabTut && processedSections.length > 2) ||
+          (!hasLabTut && initialShownSections.length > 2 && (
+            <button
+              className="toggle-row btn"
+              onClick={() => onToggleShowAllSections()}
+            >
+              {showAllSections ? (
+                <>
+                  <IoChevronUp /> Show Less Sections
+                </>
+              ) : (
+                <>
+                  <IoChevronDown /> Show More Sections
+                </>
+              )}
+            </button>
+          ))}
+        {hasLabTut && (
           <button
             className="toggle-row btn"
-            onClick={() => onToggleShowAllSections()}
+            onClick={() => onToggleShowLabTut()}
           >
-            {showAllSections ? (
+            {showLabTut ? (
               <>
-                <IoChevronUp /> Show Less Sections
+                <IoChevronUp /> Hide Lab/Tutorial Sections
               </>
             ) : (
               <>
-                <IoChevronDown /> Show More Sections
+                <IoChevronDown /> Show Lab/Tutorial Sections
               </>
             )}
           </button>
-        ))}
-      {hasLabTut && (
-        <button className="toggle-row btn" onClick={() => onToggleShowLabTut()}>
-          {showLabTut ? (
-            <>
-              <IoChevronUp /> Hide Lab/Tutorial Sections
-            </>
-          ) : (
-            <>
-              <IoChevronDown /> Show Lab/Tutorial Sections
-            </>
-          )}
-        </button>
-      )}
-      <Tooltip id="new-tab-tooltip" place="top" />
-      {Array.from(instructorTooltips.entries()).map(
-        ([tooltipId, reviewData]) => (
-          <Tooltip key={tooltipId} id={tooltipId} place="top">
-            <div className="instructor-stats-tooltip">
-              <div className="instructor-stats-tooltip__stat">
-                <StarIcon className="instructor-stats-tooltip__icon" />
-                <span>{reviewData.Quality}</span>
+        )}
+        <Tooltip id="new-tab-tooltip" place="top" />
+        {Array.from(instructorTooltips.entries()).map(
+          ([tooltipId, reviewData]) => (
+            <Tooltip key={tooltipId} id={tooltipId} place="top">
+              <div className="instructor-stats-tooltip">
+                <div className="instructor-stats-tooltip__stat">
+                  <StarIcon className="instructor-stats-tooltip__icon" />
+                  <span>{reviewData.Quality}</span>
+                </div>
+                <div className="instructor-stats-tooltip__stat">
+                  <BrainIcon className="instructor-stats-tooltip__icon" />
+                  <span>{reviewData.Difficulty}</span>
+                </div>
+                <div className="instructor-stats-tooltip__stat">
+                  <CheckIcon className="instructor-stats-tooltip__icon" />
+                  <span>{reviewData.WouldTakeAgain}</span>
+                </div>
+                <div className="instructor-stats-tooltip__stat">
+                  <CommentIcon className="instructor-stats-tooltip__icon" />
+                  <span>{reviewData.Ratings}</span>
+                </div>
               </div>
-              <div className="instructor-stats-tooltip__stat">
-                <BrainIcon className="instructor-stats-tooltip__icon" />
-                <span>{reviewData.Difficulty}</span>
-              </div>
-              <div className="instructor-stats-tooltip__stat">
-                <CheckIcon className="instructor-stats-tooltip__icon" />
-                <span>{reviewData.WouldTakeAgain}</span>
-              </div>
-              <div className="instructor-stats-tooltip__stat">
-                <CommentIcon className="instructor-stats-tooltip__icon" />
-                <span>{reviewData.Ratings}</span>
-              </div>
-            </div>
-          </Tooltip>
-        )
-      )}
-    </div>
+            </Tooltip>
+          )
+        )}
+      </div>
+    </BoneRegion>
   );
 };

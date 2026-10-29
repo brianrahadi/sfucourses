@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { fetchFromApi } from "../../lib/api-wrapper";
+import { API_ORIGIN, fetchFromApi } from "../../lib/api-wrapper";
 
 // Let Vercel's CDN cache proxied responses, so repeat requests are served from
 // the edge without running this function or calling the API.
@@ -18,8 +18,14 @@ export default async function handler(
     return res.status(400).json({ error: "Path parameter is required" });
   }
 
+  // Only API-relative paths, so `path` can't change the target host
+  // (e.g. "@attacker.example/x" or "//attacker.example").
+  if (!path.startsWith("/") || path.startsWith("//") || path.includes("\\")) {
+    return res.status(400).json({ error: "Invalid path parameter" });
+  }
+
   // Build the full target URL relative to the API root
-  const targetUrl = `https://api.sfucourses.com${path}`;
+  const targetUrl = `${API_ORIGIN}${path}`;
 
   try {
     const data = await fetchFromApi(targetUrl);

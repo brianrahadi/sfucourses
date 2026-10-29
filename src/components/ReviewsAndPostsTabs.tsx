@@ -11,15 +11,7 @@ import { BiSolidUpvote } from "react-icons/bi";
 import { Review } from "../types";
 import { formatShortDate } from "../utils/format";
 import { StarIcon, BrainIcon } from "./ReviewIcons";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip as RechartsTooltip,
-  ResponsiveContainer,
-} from "recharts";
+import { MiniBarChart } from "./MiniBarChart";
 
 type ContextType = "instructor" | "course";
 
@@ -269,32 +261,18 @@ const ReviewsAndPostsTabs: React.FC<ReviewsAndPostsTabsProps> = ({
                               Rating Distribution ({reviewData.reviews.length}{" "}
                               total reviews)
                             </h4>
-                            <ResponsiveContainer width="100%" height={200}>
-                              <BarChart data={getChartData().ratingData}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="rating" />
-                                <YAxis />
-                                <RechartsTooltip
-                                  formatter={(value: number) => [
-                                    `${value} (${(
-                                      (value / reviewData.reviews.length) *
-                                      100
-                                    ).toFixed(0)}%)`,
-                                    "Count",
-                                  ]}
-                                  labelFormatter={(label: string) => ``}
-                                  contentStyle={{
-                                    backgroundColor:
-                                      "var(--colour-neutral-1100)",
-                                    border:
-                                      "1px solid var(--colour-neutral-900)",
-                                    borderRadius: "0.5rem",
-                                    color: "var(--colour-neutral-200)",
-                                  }}
-                                />
-                                <Bar dataKey="count" fill="#f59e0b" />
-                              </BarChart>
-                            </ResponsiveContainer>
+                            <MiniBarChart
+                              data={getChartData().ratingData.map((d) => ({
+                                label: d.rating,
+                                count: d.count,
+                              }))}
+                              total={reviewData.reviews.length}
+                              colour="#f59e0b"
+                              height={200}
+                              showYAxis
+                              barSize={60}
+                              ariaLabel="Rating distribution"
+                            />
                           </div>
                         </div>
                       )}
@@ -328,32 +306,18 @@ const ReviewsAndPostsTabs: React.FC<ReviewsAndPostsTabsProps> = ({
                               Difficulty Distribution (
                               {reviewData.reviews.length} total reviews)
                             </h4>
-                            <ResponsiveContainer width="100%" height={200}>
-                              <BarChart data={getChartData().difficultyData}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="difficulty" />
-                                <YAxis />
-                                <RechartsTooltip
-                                  formatter={(value: number) => [
-                                    `${value} (${(
-                                      (value / reviewData.reviews.length) *
-                                      100
-                                    ).toFixed(0)}%)`,
-                                    "Count",
-                                  ]}
-                                  labelFormatter={(label: string) => ``}
-                                  contentStyle={{
-                                    backgroundColor:
-                                      "var(--colour-neutral-1100)",
-                                    border:
-                                      "1px solid var(--colour-neutral-900)",
-                                    borderRadius: "0.5rem",
-                                    color: "var(--colour-neutral-200)",
-                                  }}
-                                />
-                                <Bar dataKey="count" fill="#ff6b6b" />
-                              </BarChart>
-                            </ResponsiveContainer>
+                            <MiniBarChart
+                              data={getChartData().difficultyData.map((d) => ({
+                                label: d.difficulty,
+                                count: d.count,
+                              }))}
+                              total={reviewData.reviews.length}
+                              colour="#ff6b6b"
+                              height={200}
+                              showYAxis
+                              barSize={60}
+                              ariaLabel="Difficulty distribution"
+                            />
                           </div>
                         </div>
                       )}
@@ -392,6 +356,7 @@ const ReviewsAndPostsTabs: React.FC<ReviewsAndPostsTabsProps> = ({
                         <div className="course-instructor-info">
                           {context === "course" ? (
                             <Link
+                              prefetch={false}
                               href={`/instructors/${encodeURIComponent(
                                 review.instructor_name ?? ""
                               )}`}
@@ -401,6 +366,7 @@ const ReviewsAndPostsTabs: React.FC<ReviewsAndPostsTabsProps> = ({
                             </Link>
                           ) : (
                             <Link
+                              prefetch={false}
                               href={`/explore/${review.course_code
                                 .toLowerCase()
                                 .replace(/([a-z])([0-9])/g, "$1-$2")}`}

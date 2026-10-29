@@ -24,8 +24,8 @@ async function proxiedFetch(pathWithQuery: string) {
 
   if (isServer) {
     // On the server, call the API directly
-    const { fetchFromApi } = await import("../lib/api-wrapper");
-    return fetchFromApi(`https://api.sfucourses.com${pathWithQuery}`);
+    const { fetchFromApi, API_ORIGIN } = await import("../lib/api-wrapper");
+    return fetchFromApi(`${API_ORIGIN}${pathWithQuery}`);
   }
 
   // On the client, we call the proxy API route

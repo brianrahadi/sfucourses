@@ -2,8 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { SearchBar } from "./SearchBar";
 import { useRouter } from "next/router";
-import { useQuery } from "@tanstack/react-query";
-import { getCourseAPIData } from "@utils";
+import { useSearchIndex } from "src/hooks/useSearchIndex";
 import Link from "next/link";
 
 interface MinimalCourseData {
@@ -14,7 +13,6 @@ interface MinimalCourseData {
 
 interface MinimalInstructorData {
   name: string;
-  offerings: { dept: string; number: string; term: string; title: string }[];
 }
 
 type SearchResult =
@@ -31,43 +29,11 @@ export const HeroSearch: React.FC = () => {
   const resultsRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
-  const { data: courseData } = useQuery({
-    queryKey: ["globalSearchIndex"],
-    queryFn: async () => {
-      try {
-        const response = await getCourseAPIData("/outlines");
-        return response.map((course: any) => ({
-          dept: course.dept,
-          number: course.number,
-          title: course.title,
-        }));
-      } catch (error) {
-        console.error("Error fetching search data:", error);
-        return [];
-      }
-    },
-    refetchOnMount: true,
-    staleTime: 15 * 60 * 1000,
-    retry: 2,
-    refetchOnWindowFocus: false,
-  });
-
-  const { data: instructorData } = useQuery({
-    queryKey: ["globalInstructorSearchIndex"],
-    queryFn: async () => {
-      try {
-        const response = await getCourseAPIData("/instructors");
-        return response as MinimalInstructorData[];
-      } catch (error) {
-        console.error("Error fetching instructor data:", error);
-        return [];
-      }
-    },
-    refetchOnMount: true,
-    staleTime: 15 * 60 * 1000,
-    retry: 2,
-    refetchOnWindowFocus: false,
-  });
+  const {
+    courses: courseData,
+    instructors: instructorData,
+    isLoading: isLoadingIndex,
+  } = useSearchIndex(isFocused || query.length > 0);
 
   // Close dropdown on click outside
   useEffect(() => {
@@ -227,6 +193,8 @@ export const HeroSearch: React.FC = () => {
                 </li>
               ))}
             </ul>
+          ) : isLoadingIndex ? (
+            <div className="hero-search__no-results">Loading…</div>
           ) : (
             <div className="hero-search__no-results">
               No results found for &quot;{query}&quot;

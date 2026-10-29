@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import { MiniBarChart } from "./MiniBarChart";
 import { StarIcon, BrainIcon } from "./ReviewIcons";
 
 interface ChartDataPoint {
@@ -47,7 +40,7 @@ export const ReviewCharts: React.FC<ReviewChartsProps> = ({
               <span className="score-text">
                 {overallRating.toFixed(2).replace(/\.00$/, "")}/5
               </span>
-              <div className="score-bar-bg">
+              <div className="score-bar-bg" data-bones-block>
                 <div
                   className="score-bar-fill"
                   style={{
@@ -57,43 +50,17 @@ export const ReviewCharts: React.FC<ReviewChartsProps> = ({
               </div>
             </div>
           </div>
-          <ResponsiveContainer width="100%" height={height}>
-            <BarChart data={ratingData}>
-              <CartesianGrid
-                strokeDasharray="3 3"
-                stroke="var(--colour-neutral-800)"
-              />
-              <XAxis
-                dataKey="rating"
-                stroke="var(--colour-neutral-400)"
-                fontSize={fontSize}
-                tickLine={false}
-                axisLine={false}
-              />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "var(--colour-neutral-1100)",
-                  border: "1px solid var(--colour-neutral-800)",
-                  borderRadius: "0.5rem",
-                  color: "var(--colour-neutral-200)",
-                }}
-                formatter={(value: number) => {
-                  if (totalReviews === 0) return [`${value} (0%)`, "Count"];
-                  return [
-                    `${value} (${((value / totalReviews) * 100).toFixed(0)}%)`,
-                    "Count",
-                  ];
-                }}
-                labelFormatter={() => ``}
-              />
-              <Bar
-                dataKey="count"
-                fill="#f59e0b"
-                radius={[2, 2, 0, 0]}
-                barSize={30}
-              />
-            </BarChart>
-          </ResponsiveContainer>
+          <MiniBarChart
+            data={ratingData.map((d) => ({
+              label: d.rating ?? "",
+              count: d.count,
+            }))}
+            total={totalReviews}
+            colour="#f59e0b"
+            height={height}
+            fontSize={fontSize}
+            ariaLabel="Rating distribution"
+          />
         </div>
 
         <div className="chart-container">
@@ -106,7 +73,7 @@ export const ReviewCharts: React.FC<ReviewChartsProps> = ({
               <span className="score-text">
                 {overallDifficulty.toFixed(2).replace(/\.00$/, "")}/5
               </span>
-              <div className="score-bar-bg">
+              <div className="score-bar-bg" data-bones-block>
                 <div
                   className="score-bar-fill"
                   style={{
@@ -116,43 +83,17 @@ export const ReviewCharts: React.FC<ReviewChartsProps> = ({
               </div>
             </div>
           </div>
-          <ResponsiveContainer width="100%" height={height}>
-            <BarChart data={difficultyData}>
-              <CartesianGrid
-                strokeDasharray="3 3"
-                stroke="var(--colour-neutral-800)"
-              />
-              <XAxis
-                dataKey="difficulty"
-                stroke="var(--colour-neutral-400)"
-                fontSize={fontSize}
-                tickLine={false}
-                axisLine={false}
-              />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "var(--colour-neutral-1100)",
-                  border: "1px solid var(--colour-neutral-800)",
-                  borderRadius: "0.5rem",
-                  color: "var(--colour-neutral-200)",
-                }}
-                formatter={(value: number) => {
-                  if (totalReviews === 0) return [`${value} (0%)`, "Count"];
-                  return [
-                    `${value} (${((value / totalReviews) * 100).toFixed(0)}%)`,
-                    "Count",
-                  ];
-                }}
-                labelFormatter={() => ``}
-              />
-              <Bar
-                dataKey="count"
-                fill="#f05f5f"
-                radius={[2, 2, 0, 0]}
-                barSize={30}
-              />
-            </BarChart>
-          </ResponsiveContainer>
+          <MiniBarChart
+            data={difficultyData.map((d) => ({
+              label: d.difficulty ?? "",
+              count: d.count,
+            }))}
+            total={totalReviews}
+            colour="#f05f5f"
+            height={height}
+            fontSize={fontSize}
+            ariaLabel="Difficulty distribution"
+          />
         </div>
       </div>
     </div>

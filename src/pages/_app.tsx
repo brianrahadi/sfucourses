@@ -17,6 +17,7 @@ import { Toaster } from "react-hot-toast";
 
 import { FormspreeProvider } from "@formspree/react";
 import { ThemeProvider } from "next-themes";
+import { useRouteSkeleton } from "src/hooks/useRouteSkeleton";
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
@@ -32,6 +33,16 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }: AppProps) => {
         },
       })
   );
+
+  // During in-app navigation, show the destination's skeleton right away.
+  const pendingSkeleton = useRouteSkeleton();
+
+  // `npm run bones` loads pages in capture mode; install the bone extractor.
+  useEffect(() => {
+    if ((window as any).__BONEYARD_BUILD) {
+      import("src/components/bones/capture").then((m) => m.install());
+    }
+  }, []);
 
   // Keyboard shortcuts for navigation
   useEffect(() => {
@@ -91,7 +102,13 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }: AppProps) => {
           <FormspreeProvider project="2913445847263870687">
             <Helmet pageTitle={router.pathname} />
             <HeaderNav />
-            <Component {...pageProps} key={router.asPath} />
+            {pendingSkeleton ? (
+              <pendingSkeleton.module.RouteSkeleton
+                route={pendingSkeleton.route}
+              />
+            ) : (
+              <Component {...pageProps} key={router.asPath} />
+            )}
             <Footer />
             <Toaster />
             <Analytics />

@@ -1,0 +1,97 @@
+// src/components/MiniBarChart.tsx
+.mini-bar-chart {
+  display: flex;
+  width: 100%;
+  gap: 0.25rem;
+  color: var(--colour-neutral-400);
+
+  &__y-axis {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+    // Leave room for the x-axis labels so ticks line up with grid lines.
+    padding-bottom: 1.75em;
+    margin-top: -0.5em;
+
+    span {
+      line-height: 1;
+      color: inherit;
+    }
+  }
+
+  &__body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__plot {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+    border-bottom: 1px dashed var(--colour-neutral-800);
+  }
+
+  &__grid-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    border-top: 1px dashed var(--colour-neutral-800);
+    pointer-events: none;
+  }
+
+  &__column {
+    position: relative;
+    flex: 1;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    border-left: 1px dashed var(--colour-neutral-800);
+
+    &:last-child {
+      border-right: 1px dashed var(--colour-neutral-800);
+    }
+
+    &:hover .mini-bar-chart__tip {
+      opacity: 1;
+    }
+  }
+
+  &__bar {
+    width: 80%;
+    border-radius: 2px 2px 0 0;
+  }
+
+  &__tip {
+    position: absolute;
+    bottom: calc(100% + 4px);
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--colour-neutral-800);
+    background: var(--colour-neutral-1100);
+    color: var(--colour-neutral-200);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.1s;
+    z-index: 2;
+  }
+
+  &__x-axis {
+    display: flex;
+    padding-top: 0.5em;
+
+    span {
+      flex: 1;
+      text-align: center;
+      line-height: 1.25em;
+      color: inherit;
+    }
+  }
+}

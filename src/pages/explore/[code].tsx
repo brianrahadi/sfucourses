@@ -5,330 +5,183 @@ import {
   ReviewsAndPostsTabs,
   ReviewCharts,
 } from "@components";
-import { useEffect, useState, useCallback, useRef } from "react";
-import { getCourseAPIData } from "@utils";
-import { CourseOutline, Review } from "@types";
+import { useCallback, useMemo, useState } from "react";
+import type { GetStaticPaths, GetStaticProps } from "next";
 import { useRouter } from "next/router";
+import { Review } from "@types";
 import { useCourseOfferings } from "@hooks";
+import { BoneRegion } from "src/components/bones/BoneShell";
+import { InstructorRatingsContext } from "src/components/InstructorRatingsContext";
+import dynamic from "next/dynamic";
 
-interface CoursePageProps {}
+// Only fallback renders need the skeleton, so it's a separate chunk that
+// fully generated pages never download.
+const CoursePageSkeleton = dynamic(
+  () => import("src/components/skeletons/CoursePageSkeleton")
+);
+import {
+  CourseHeaderCard,
+  CoursePrerequisites,
+} from "src/components/CourseSections";
+import {
+  CoursePageProps,
+  loadCoursePage,
+  PAGE_REVALIDATE_SECONDS,
+  popularCourseCodes,
+  prerenderLimit,
+} from "src/lib/pageData";
+import {
+  reviewAverages,
+  reviewDistributions,
+  sortReviews,
+} from "@utils/reviewSort";
 
-interface CourseCode {
-  dept: string | undefined;
-  number: string | undefined;
-}
+const REVIEWS_PER_PAGE = 5;
 
-interface CourseReviewData {
-  course_code: string;
-  total_reviews: number;
-  instructors: InstructorSummary[];
-}
-
-interface InstructorSummary {
-  professor_id: string;
-  professor_name: string;
-  department: string;
-  avg_rating: number;
-  avg_difficulty: number;
-  review_count: number;
-  would_take_again: string;
-  reviews: Review[];
-}
-
-const CoursePage: React.FC<CoursePageProps> = () => {
-  const router = useRouter();
-  const { code } = router.query;
-
-  const courseStrs =
-    typeof code === "string" ? code.toLowerCase().split("-") : [];
-  const courseCode: CourseCode = {
-    dept: courseStrs[0] || undefined,
-    number: courseStrs[1] || undefined,
+// Course pages are generated on first visit and then served from the CDN,
+// refreshed in the background at most hourly. The most-reviewed courses are
+// generated at build time.
+export const getStaticPaths: GetStaticPaths = async () => {
+  const limit = prerenderLimit(process.env.PRERENDER_COURSE_PAGES, 100);
+  let codes: string[] = [];
+  try {
+    codes = await popularCourseCodes(limit);
+  } catch (err) {
+    console.error("Could not list popular courses to prerender:", err);
+  }
+  return {
+    paths: codes.map((code) => ({ params: { code } })),
+    fallback: true,
   };
+};
 
-  const [course, setCourse] = useState<CourseOutline | undefined>();
-  const [showInvalid, setShowInvalid] = useState(false);
+export const getStaticProps: GetStaticProps<CoursePageProps> = async ({
+  params,
+}) => {
+  const data = await loadCoursePage(params?.code as string | undefined);
+  if (!data) {
+    return { notFound: true, revalidate: PAGE_REVALIDATE_SECONDS };
+  }
+  return { props: data, revalidate: PAGE_REVALIDATE_SECONDS };
+};
+
+const CoursePage: React.FC<Partial<CoursePageProps>> = ({
+  course,
+  reviews,
+  instructorRatings,
+}) => {
+  const router = useRouter();
+
+  // First visit to a course that hasn't been generated yet.
+  if (router.isFallback || !course) {
+    const code = typeof router.query.code === "string" ? router.query.code : "";
+    return (
+      <>
+        <Helmet pageTitle={code ? code.replace("-", " ") : "course details"} />
+        <CoursePageSkeleton />
+      </>
+    );
+  }
+
+  return (
+    <InstructorRatingsContext.Provider value={instructorRatings ?? null}>
+      <CourseView
+        course={course}
+        reviews={reviews ?? null}
+        instructorRatings={instructorRatings ?? []}
+      />
+    </InstructorRatingsContext.Provider>
+  );
+};
+
+const CourseView: React.FC<Omit<CoursePageProps, "dehydratedState">> = ({
+  course,
+  reviews: courseReviewData,
+}) => {
   const [showPrereqVis, setShowPrereqVis] = useState(false);
-
-  // Course review state
-  const [courseReviewData, setCourseReviewData] =
-    useState<CourseReviewData | null>(null);
-  const [reviewLoading, setReviewLoading] = useState(true);
-  const [reviewError, setReviewError] = useState<string | null>(null);
-  const [displayedReviews, setDisplayedReviews] = useState<Review[]>([]);
-  const [reviewsPage, setReviewsPage] = useState(1);
   const [selectedInstructorFilter, setSelectedInstructorFilter] =
     useState("all");
   const [selectedSortOption, setSelectedSortOption] = useState("most-recent");
-  const reviewsPerPage = 5;
+  const [visibleReviews, setVisibleReviews] = useState(REVIEWS_PER_PAGE);
 
-  // Fetch course review data
-  const fetchCourseReviews = useCallback(async () => {
-    if (!courseCode.dept || !courseCode.number) return;
+  const reviewError = courseReviewData
+    ? null
+    : "No reviews found for this course";
 
-    const courseCodeStr = `${courseCode.dept.toUpperCase()}${
-      courseCode.number
-    }`;
-    setReviewLoading(true);
-    setReviewError(null);
+  const allReviews: Review[] = useMemo(
+    () =>
+      courseReviewData?.instructors.flatMap((instructor) =>
+        instructor.reviews.map((review) => ({
+          ...review,
+          instructor_name: instructor.professor_name,
+        }))
+      ) ?? [],
+    [courseReviewData]
+  );
 
-    try {
-      const data = await getCourseAPIData(`/reviews/courses/${courseCodeStr}`);
-      setCourseReviewData(data);
+  const filteredReviews = useMemo(() => {
+    const reviews =
+      selectedInstructorFilter === "all"
+        ? allReviews
+        : allReviews.filter(
+            (review) => review.instructor_name === selectedInstructorFilter
+          );
+    return sortReviews(reviews, selectedSortOption);
+  }, [allReviews, selectedInstructorFilter, selectedSortOption]);
 
-      // Initialize displayed reviews with first page
-      const allReviews = data.instructors.flatMap(
-        (instructor: InstructorSummary) => instructor.reviews
-      );
-      setDisplayedReviews(allReviews.slice(0, reviewsPerPage));
-    } catch (err) {
-      setReviewError("No reviews found for this course");
-    } finally {
-      setReviewLoading(false);
-    }
-  }, [courseCode.dept, courseCode.number, reviewsPerPage]);
+  const displayedReviews = useMemo(
+    () => filteredReviews.slice(0, visibleReviews),
+    [filteredReviews, visibleReviews]
+  );
 
-  // Get instructors with review counts
-  const getInstructorsWithCounts = useCallback(() => {
-    if (!courseReviewData?.instructors) return [];
-
-    return courseReviewData.instructors
-      .map((instructor) => ({
-        instructorName: instructor.professor_name,
-        count: instructor.review_count,
-      }))
-      .sort((a, b) => a.instructorName.localeCompare(b.instructorName));
-  }, [courseReviewData]);
-
-  // Get filtered reviews based on instructor selection
-  const getFilteredReviews = useCallback(() => {
-    if (!courseReviewData?.instructors) return [];
-
-    const allReviews = courseReviewData.instructors.flatMap((instructor) =>
-      instructor.reviews.map((review) => ({
-        ...review,
-        instructor_name: instructor.professor_name,
-      }))
-    );
-
-    let filteredReviews = allReviews;
-
-    if (selectedInstructorFilter !== "all") {
-      filteredReviews = allReviews.filter(
-        (review) => review.instructor_name === selectedInstructorFilter
-      );
-    }
-
-    // Helper function to parse date strings more reliably
-    const parseDate = (dateStr: string): Date => {
-      // Handle formats like "Aug 19th, 2025" or "Sep 1st, 2020"
-      const cleaned = dateStr.replace(/(\d+)(st|nd|rd|th)/, "$1");
-      const parsed = new Date(cleaned);
-      return isNaN(parsed.getTime()) ? new Date(0) : parsed;
-    };
-
-    // Sort reviews based on selected sort option
-    switch (selectedSortOption) {
-      case "most-recent":
-        filteredReviews.sort((a, b) => {
-          const dateA = parseDate(a.date);
-          const dateB = parseDate(b.date);
-          return dateB.getTime() - dateA.getTime();
-        });
-        break;
-      case "least-recent":
-        filteredReviews.sort((a, b) => {
-          const dateA = parseDate(a.date);
-          const dateB = parseDate(b.date);
-          return dateA.getTime() - dateB.getTime();
-        });
-        break;
-      case "hardest":
-        filteredReviews.sort((a, b) => {
-          const difficultyA = parseFloat(a.difficulty);
-          const difficultyB = parseFloat(b.difficulty);
-          // Primary sort by difficulty (highest first)
-          if (difficultyA !== difficultyB) {
-            return difficultyB - difficultyA;
-          }
-          // Secondary sort by latest date
-          const dateA = parseDate(a.date);
-          const dateB = parseDate(b.date);
-          return dateB.getTime() - dateA.getTime();
-        });
-        break;
-      case "easiest":
-        filteredReviews.sort((a, b) => {
-          const difficultyA = parseFloat(a.difficulty);
-          const difficultyB = parseFloat(b.difficulty);
-          // Primary sort by difficulty (lowest first)
-          if (difficultyA !== difficultyB) {
-            return difficultyA - difficultyB;
-          }
-          // Secondary sort by latest date
-          const dateA = parseDate(a.date);
-          const dateB = parseDate(b.date);
-          return dateB.getTime() - dateA.getTime();
-        });
-        break;
-      case "most-liked":
-        filteredReviews.sort((a, b) => {
-          const helpfulA = parseInt(a.helpful) || 0;
-          const helpfulB = parseInt(b.helpful) || 0;
-          // Primary sort by helpful votes (highest first)
-          if (helpfulA !== helpfulB) {
-            return helpfulB - helpfulA;
-          }
-          // Secondary sort by latest date
-          const dateA = parseDate(a.date);
-          const dateB = parseDate(b.date);
-          return dateB.getTime() - dateA.getTime();
-        });
-        break;
-      case "most-disliked":
-        filteredReviews.sort((a, b) => {
-          const notHelpfulA = parseInt(a.not_helpful) || 0;
-          const notHelpfulB = parseInt(b.not_helpful) || 0;
-          // Primary sort by not helpful votes (highest first)
-          if (notHelpfulA !== notHelpfulB) {
-            return notHelpfulB - notHelpfulA;
-          }
-          // Secondary sort by latest date
-          const dateA = parseDate(a.date);
-          const dateB = parseDate(b.date);
-          return dateB.getTime() - dateA.getTime();
-        });
-        break;
-      default:
-        break;
-    }
-
-    return filteredReviews;
-  }, [courseReviewData, selectedInstructorFilter, selectedSortOption]);
-
-  // Get filter stats for current selection
-  const getFilterStats = useCallback(() => {
-    const filteredReviews = getFilteredReviews();
-
-    if (filteredReviews.length === 0) {
-      return { avgRating: 0, avgDifficulty: 0 };
-    }
-
-    const totalRating = filteredReviews.reduce(
-      (sum, review) => sum + parseFloat(review.rating),
-      0
-    );
-    const totalDifficulty = filteredReviews.reduce(
-      (sum, review) => sum + parseFloat(review.difficulty),
-      0
-    );
-
-    return {
-      avgRating: totalRating / filteredReviews.length,
-      avgDifficulty: totalDifficulty / filteredReviews.length,
-    };
-  }, [getFilteredReviews]);
-
-  // Load more reviews
   const loadMoreReviews = useCallback(() => {
-    const filteredReviews = getFilteredReviews();
-    const startIndex = reviewsPage * reviewsPerPage;
-    const endIndex = startIndex + reviewsPerPage;
-    const newReviews = filteredReviews.slice(startIndex, endIndex);
-
-    if (newReviews.length > 0) {
-      setDisplayedReviews((prev) => [...prev, ...newReviews]);
-      setReviewsPage((prev) => prev + 1);
-    }
-  }, [getFilteredReviews, reviewsPage, reviewsPerPage]);
-
-  // Get chart data for rating and difficulty distribution
-  const getChartData = useCallback(() => {
-    if (!courseReviewData?.instructors) {
-      return {
-        ratingData: Array.from({ length: 5 }, (_, i) => ({
-          rating: (i + 1).toString(),
-          count: 0,
-        })),
-        difficultyData: Array.from({ length: 5 }, (_, i) => ({
-          difficulty: (i + 1).toString(),
-          count: 0,
-        })),
-      };
-    }
-
-    const allReviews = courseReviewData.instructors.flatMap(
-      (instructor) => instructor.reviews
+    setVisibleReviews((count) =>
+      count < filteredReviews.length ? count + REVIEWS_PER_PAGE : count
     );
+  }, [filteredReviews.length]);
 
-    // Initialize rating distribution (1-5)
-    const ratingDistribution = Array.from({ length: 5 }, (_, i) => ({
-      rating: (i + 1).toString(),
-      count: 0,
-    }));
+  const onInstructorFilterChange = (value: string) => {
+    setSelectedInstructorFilter(value);
+    setVisibleReviews(REVIEWS_PER_PAGE);
+  };
+  const onSortOptionChange = (value: string) => {
+    setSelectedSortOption(value);
+    setVisibleReviews(REVIEWS_PER_PAGE);
+  };
 
-    // Initialize difficulty distribution (1-5)
-    const difficultyDistribution = Array.from({ length: 5 }, (_, i) => ({
-      difficulty: (i + 1).toString(),
-      count: 0,
-    }));
+  const getInstructorsWithCounts = useCallback(
+    () =>
+      (courseReviewData?.instructors ?? [])
+        .map((instructor) => ({
+          courseCode: instructor.professor_name,
+          count: instructor.review_count,
+        }))
+        .sort((a, b) => a.courseCode.localeCompare(b.courseCode)),
+    [courseReviewData]
+  );
 
-    // Count ratings and difficulties
-    allReviews.forEach((review) => {
-      const rating = Math.round(parseFloat(review.rating));
-      const difficulty = Math.round(parseFloat(review.difficulty));
+  const getFilterStats = useCallback(
+    () => reviewAverages(filteredReviews),
+    [filteredReviews]
+  );
 
-      if (rating >= 1 && rating <= 5) {
-        ratingDistribution[rating - 1].count++;
-      }
-
-      if (difficulty >= 1 && difficulty <= 5) {
-        difficultyDistribution[difficulty - 1].count++;
-      }
-    });
-
+  const charts = useMemo(() => {
+    const plain = courseReviewData?.instructors.flatMap((i) => i.reviews) ?? [];
+    const { ratingCounts, difficultyCounts } = reviewDistributions(plain);
+    const { avgRating, avgDifficulty } = reviewAverages(plain);
     return {
-      ratingData: ratingDistribution,
-      difficultyData: difficultyDistribution,
+      ratingData: ratingCounts.map((count, i) => ({
+        rating: (i + 1).toString(),
+        count,
+      })),
+      difficultyData: difficultyCounts.map((count, i) => ({
+        difficulty: (i + 1).toString(),
+        count,
+      })),
+      overallRating: avgRating,
+      overallDifficulty: avgDifficulty,
     };
   }, [courseReviewData]);
-
-  useEffect(() => {
-    if (courseCode.dept && courseCode.number) {
-      getCourseAPIData(
-        `/outlines?dept=${courseCode.dept}&number=${courseCode.number}`
-      ).then((res) => {
-        setCourse(res[0]);
-      });
-
-      // Fetch course reviews
-      fetchCourseReviews();
-    }
-  }, [courseCode.dept, courseCode.number, fetchCourseReviews]);
-
-  // Update displayed reviews when filter or sort changes
-  useEffect(() => {
-    if (courseReviewData) {
-      const filteredReviews = getFilteredReviews();
-      setDisplayedReviews(filteredReviews.slice(0, reviewsPerPage));
-      setReviewsPage(1);
-    }
-  }, [
-    selectedInstructorFilter,
-    selectedSortOption,
-    courseReviewData,
-    getFilteredReviews,
-    reviewsPerPage,
-  ]);
-
-  useEffect(() => {
-    if (!courseCode.dept || !courseCode.number) {
-      const timer = setTimeout(() => setShowInvalid(true), 3000);
-      return () => clearTimeout(timer);
-    } else {
-      setShowInvalid(false);
-    }
-  }, [courseCode.dept, courseCode.number]);
 
   const { offerings, errorOfferings } = useCourseOfferings(course);
 
@@ -339,29 +192,6 @@ const CoursePage: React.FC<CoursePageProps> = () => {
     {}
   );
 
-  if (showInvalid) {
-    return (
-      <div className="page courses-page">
-        <main className="container">
-          <div className="center">
-            <h2>Whoopsie! Invalid course code provided</h2>
-          </div>
-        </main>
-      </div>
-    );
-  }
-
-  if (!course) {
-    return (
-      <div className="page courses-page">
-        <main className="container">
-          <div className="center loading-spinner-container"></div>
-        </main>
-      </div>
-    );
-  }
-
-  // Prepare tabs for the TabContainer
   const tabs = offerings.map((offering) => {
     const key = offering.term;
 
@@ -393,162 +223,70 @@ const CoursePage: React.FC<CoursePageProps> = () => {
   return (
     <div className="page courses-page">
       <Helmet pageTitle={`${course.dept.toLowerCase()} ${course.number}`} />
-      {/* <Hero
-        title={`${course.dept.toLowerCase()} ${course.number} @ sfucourses`}
-        backgroundImage={HeroImage.src}
-      /> */}
       <main className="container course-container">
         <div className="course-main-header">
-          <div className="course-page-card">
-            <div className="course-header-row">
-              <span className="course-code-title">
-                {course.dept} {course.number}
-              </span>
-              {course.units &&
-                course.units !== "0" &&
-                course.units !== "N/A" && (
-                  <span className="course-credits">{course.units} Credits</span>
-                )}
-            </div>
-            <div className="course-title">{course.title}</div>
-            <div className="course-page-card__connt">
-              <p className="course-description">
-                {course.description}
-                {course.designation && course.designation != "N/A"
-                  ? " " + course.designation
-                  : ""}
-              </p>
-              {courseReviewData && (
-                <p className="course-reviews-count">
-                  {courseReviewData.total_reviews} reviews
-                </p>
-              )}
-            </div>
-          </div>
+          <BoneRegion name="course-header-card">
+            <CourseHeaderCard
+              course={course}
+              totalReviews={courseReviewData?.total_reviews}
+            />
+          </BoneRegion>
 
-          {courseReviewData &&
-            (() => {
-              const allReviews =
-                courseReviewData.instructors?.flatMap(
-                  (instructor) => instructor.reviews
-                ) || [];
-              let totalRating = 0;
-              let totalDiff = 0;
-              if (allReviews.length > 0) {
-                totalRating =
-                  allReviews.reduce(
-                    (sum, review) => sum + parseFloat(review.rating),
-                    0
-                  ) / allReviews.length;
-                totalDiff =
-                  allReviews.reduce(
-                    (sum, review) => sum + parseFloat(review.difficulty),
-                    0
-                  ) / allReviews.length;
-              }
-              return (
-                <ReviewCharts
-                  ratingData={getChartData().ratingData}
-                  difficultyData={getChartData().difficultyData}
-                  totalReviews={courseReviewData.total_reviews}
-                  overallRating={totalRating}
-                  overallDifficulty={totalDiff}
-                />
-              );
-            })()}
+          {courseReviewData && (
+            <BoneRegion name="course-charts">
+              <ReviewCharts
+                ratingData={charts.ratingData}
+                difficultyData={charts.difficultyData}
+                totalReviews={courseReviewData.total_reviews}
+                overallRating={charts.overallRating}
+                overallDifficulty={charts.overallDifficulty}
+              />
+            </BoneRegion>
+          )}
         </div>
 
         <div className="course-bottom-container">
-          <div className="course-bottom-left">
-            <ReviewsAndPostsTabs
-              context="course"
-              reviewData={
-                courseReviewData ? { reviews: getFilteredReviews() } : null
-              }
-              reviewLoading={reviewLoading}
-              reviewError={reviewError}
-              displayedReviews={displayedReviews}
-              onLoadMoreReviews={loadMoreReviews}
-              getCourseCodesWithCounts={() =>
-                getInstructorsWithCounts().map((item) => ({
-                  courseCode: item.instructorName,
-                  count: item.count,
-                }))
-              }
-              getFilterStats={getFilterStats}
-              selectedCourseFilter={selectedInstructorFilter}
-              onCourseFilterChange={setSelectedInstructorFilter}
-              selectedSortOption={selectedSortOption}
-              onSortOptionChange={setSelectedSortOption}
-            />
-          </div>
+          <BoneRegion name="course-reviews">
+            <div className="course-bottom-left">
+              <ReviewsAndPostsTabs
+                context="course"
+                reviewData={
+                  courseReviewData ? { reviews: filteredReviews } : null
+                }
+                reviewLoading={false}
+                reviewError={reviewError}
+                displayedReviews={displayedReviews}
+                onLoadMoreReviews={loadMoreReviews}
+                getCourseCodesWithCounts={getInstructorsWithCounts}
+                getFilterStats={getFilterStats}
+                selectedCourseFilter={selectedInstructorFilter}
+                onCourseFilterChange={onInstructorFilterChange}
+                selectedSortOption={selectedSortOption}
+                onSortOptionChange={onSortOptionChange}
+              />
+            </div>
+          </BoneRegion>
 
           <div className="course-bottom-right">
-            <div className="prerequisites-section">
-              <div className="prereq-header">
-                {!showPrereqVis ? <h2>Prerequisites</h2> : <div></div>}
-                <button
-                  className="prereq-toggle-btn"
-                  onClick={() => setShowPrereqVis(!showPrereqVis)}
-                >
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M21 12V7H5a2 2 0 0 1-2-2V3" />
-                    <path d="M21 12H13a2 2 0 0 0-2 2v2" />
-                    <circle cx="21" cy="12" r="2" />
-                    <circle cx="21" cy="7" r="2" />
-                    <circle cx="11" cy="16" r="2" />
-                  </svg>
-                </button>
+            <BoneRegion name="course-prereqs">
+              <CoursePrerequisites
+                course={course}
+                showVisualization={showPrereqVis}
+                onToggleVisualization={() => setShowPrereqVis((v) => !v)}
+              />
+            </BoneRegion>
+
+            <BoneRegion name="course-offerings">
+              <div className="course-offerings">
+                {errorOfferings ? (
+                  `Error loading offerings: ${errorOfferings.message}`
+                ) : offerings.length === 0 ? (
+                  "No offerings available"
+                ) : (
+                  <CourseTabContainer tabs={tabs} />
+                )}
               </div>
-
-              {showPrereqVis ? (
-                <iframe
-                  src={`https://prerequisites-visualization.vercel.app/sfu/courses/${courseCode.dept}/${courseCode.number}`}
-                  style={{
-                    width: "100%",
-                    height: "350px",
-                    border: "none",
-                    borderRadius: "8px",
-                  }}
-                  title="Prerequisites Visualization"
-                ></iframe>
-              ) : (
-                <div className="prereq-content">
-                  <p className="prereq-text">
-                    {course.prerequisites ||
-                      "This course has no prerequisites."}
-                  </p>
-
-                  {course.corequisites && (
-                    <>
-                      <h2 className="coreq-heading">Corequisites</h2>
-                      <p className="prereq-text">
-                        {course.corequisites || "None"}
-                      </p>
-                    </>
-                  )}
-                </div>
-              )}
-            </div>
-
-            <div className="course-offerings">
-              {errorOfferings ? (
-                `Error loading offerings: ${errorOfferings.message}`
-              ) : offerings.length === 0 ? (
-                "No offerings available"
-              ) : (
-                <CourseTabContainer tabs={tabs} />
-              )}
-            </div>
+            </BoneRegion>
           </div>
         </div>
       </main>
