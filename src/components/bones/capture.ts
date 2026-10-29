@@ -109,6 +109,13 @@ export function snapshotBones(el: Element, name = "component") {
     if (isHidden(style)) return;
     if (node.closest("[data-bones-ignore]")) return;
 
+    // Data-shaped regions (chart plots, score bars) are drawn as one block so
+    // the skeleton doesn't imply the template page's numbers.
+    if (node.hasAttribute("data-bones-block")) {
+      push(node.getBoundingClientRect(), radiusOf(style) || 4);
+      return;
+    }
+
     const tag = node.tagName.toLowerCase();
     const children = Array.from(node.children).filter(
       (child) => !isHidden(getComputedStyle(child))
