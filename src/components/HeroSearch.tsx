@@ -29,9 +29,11 @@ export const HeroSearch: React.FC = () => {
   const resultsRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
-  const { courses: courseData, instructors: instructorData } = useSearchIndex(
-    isFocused || query.length > 0
-  );
+  const {
+    courses: courseData,
+    instructors: instructorData,
+    isLoading: isLoadingIndex,
+  } = useSearchIndex(isFocused || query.length > 0);
 
   // Close dropdown on click outside
   useEffect(() => {
@@ -191,6 +193,8 @@ export const HeroSearch: React.FC = () => {
                 </li>
               ))}
             </ul>
+          ) : isLoadingIndex ? (
+            <div className="hero-search__no-results">Loading…</div>
           ) : (
             <div className="hero-search__no-results">
               No results found for &quot;{query}&quot;

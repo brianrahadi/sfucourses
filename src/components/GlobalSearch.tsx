@@ -306,7 +306,18 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = () => {
     <>
       <div
         className="global-search-button"
+        role="button"
+        tabIndex={0}
+        aria-label="Search courses and instructors"
+        aria-haspopup="dialog"
         onClick={openSearchModal}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            openSearchModal();
+          }
+        }}
+        onFocus={() => setSearchIntent(true)}
         onMouseEnter={() => setSearchIntent(true)}
         onTouchStart={() => setSearchIntent(true)}
       >

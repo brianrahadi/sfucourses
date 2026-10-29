@@ -18,6 +18,12 @@ export default async function handler(
     return res.status(400).json({ error: "Path parameter is required" });
   }
 
+  // Only API-relative paths, so `path` can't change the target host
+  // (e.g. "@attacker.example/x" or "//attacker.example").
+  if (!path.startsWith("/") || path.startsWith("//") || path.includes("\\")) {
+    return res.status(400).json({ error: "Invalid path parameter" });
+  }
+
   // Build the full target URL relative to the API root
   const targetUrl = `${API_ORIGIN}${path}`;
 

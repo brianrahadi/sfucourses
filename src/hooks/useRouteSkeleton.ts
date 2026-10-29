@@ -12,7 +12,11 @@ let loading: Promise<SkeletonModule> | null = null;
 
 /** Loads the skeleton components (a separate chunk, kept off every page). */
 function loadSkeletons() {
-  loading ??= import("src/components/skeletons/RouteSkeleton");
+  loading ??= import("src/components/skeletons/RouteSkeleton").catch((err) => {
+    // Let a later call retry instead of caching the failure.
+    loading = null;
+    throw err;
+  });
   return loading;
 }
 
@@ -33,7 +37,9 @@ export function useRouteSkeleton() {
 
   useEffect(() => {
     // Fetch the skeleton chunk once the page is idle so it's ready in time.
-    const idle = setTimeout(loadSkeletons, 2000);
+    const idle = setTimeout(() => {
+      loadSkeletons().catch(() => {});
+    }, 2000);
     let timer: ReturnType<typeof setTimeout> | undefined;
     let navigatingTo: string | null = null;
     let isPopState = false;
@@ -54,8 +60,15 @@ export function useRouteSkeleton() {
 
       navigatingTo = url;
       timer = setTimeout(async () => {
-        const mod = await loadSkeletons();
-        const route = mod.skeletonRouteFor(url);
+        let mod: SkeletonModule;
+        let route: SkeletonRoute | null | undefined;
+        try {
+          mod = await loadSkeletons();
+          route = mod.skeletonRouteFor(url);
+        } catch {
+          // Chunk failed to load or the URL is malformed: no skeleton.
+          return;
+        }
         // The navigation may have finished while the chunk loaded.
         if (!route || navigatingTo !== url) return;
         setPending({ route, module: mod });

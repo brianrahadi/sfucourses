@@ -72,7 +72,13 @@ const CoursePage: React.FC<Partial<CoursePageProps>> = ({
 
   // First visit to a course that hasn't been generated yet.
   if (router.isFallback || !course) {
-    return <CoursePageSkeleton />;
+    const code = typeof router.query.code === "string" ? router.query.code : "";
+    return (
+      <>
+        <Helmet pageTitle={code ? code.replace("-", " ") : "course details"} />
+        <CoursePageSkeleton />
+      </>
+    );
   }
 
   return <CourseView course={course} reviews={reviews ?? null} />;

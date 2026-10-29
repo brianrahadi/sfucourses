@@ -24,20 +24,30 @@ import {
 export const PAGE_REVALIDATE_SECONDS = 60 * 60;
 
 const TIMEOUT_MS = 10_000;
+/** Budget for the optional sections prefetch; the browser refetches misses. */
+const PREFETCH_TIMEOUT_MS = 3_000;
 
 class NotFoundError extends Error {}
 
+interface ApiOptions {
+  timeoutMs?: number;
+  retries?: number;
+}
+
 /** Fetch from the API with a timeout and one retry on transient failures. */
-async function api<T>(path: string): Promise<T> {
+async function api<T>(
+  path: string,
+  { timeoutMs = TIMEOUT_MS, retries = 1 }: ApiOptions = {}
+): Promise<T> {
   const url = `${API_ORIGIN}/v1/rest${path}`;
   for (let attempt = 0; ; attempt++) {
     try {
-      return await fetchFromApi(url, { timeoutMs: TIMEOUT_MS });
+      return await fetchFromApi(url, { timeoutMs });
     } catch (err: any) {
       if (String(err?.message).includes("External API error: 404")) {
         throw new NotFoundError(path);
       }
-      if (attempt >= 1) throw err;
+      if (attempt >= retries) throw err;
     }
   }
 }
@@ -77,10 +87,15 @@ export interface CoursePageProps {
   dehydratedState: DehydratedState;
 }
 
+const COURSE_CODE_PART = /^[a-z0-9]{1,8}$/i;
+
 /** Parses "cmpt-225" into its department and number. */
 export function parseCourseCode(code: string | undefined) {
   const [dept, number, ...rest] = (code ?? "").split("-");
   if (!dept || !number || rest.length > 0) return null;
+  if (!COURSE_CODE_PART.test(dept) || !COURSE_CODE_PART.test(number)) {
+    return null;
+  }
   return { dept: dept.toLowerCase(), number: number.toLowerCase() };
 }
 
@@ -92,9 +107,15 @@ export async function loadCoursePage(
   const { dept, number } = parsed;
 
   const [outlines, reviews] = await Promise.all([
-    api<CourseOutline[]>(`/outlines?dept=${dept}&number=${number}`),
+    apiOrNull<CourseOutline[]>(
+      `/outlines?dept=${encodeURIComponent(dept)}&number=${encodeURIComponent(
+        number
+      )}`
+    ),
     apiOrNull<CourseReviewData>(
-      `/reviews/courses/${dept.toUpperCase()}${number.toUpperCase()}`
+      `/reviews/courses/${encodeURIComponent(
+        `${dept.toUpperCase()}${number.toUpperCase()}`
+      )}`
     ),
   ]);
   const course = outlines?.[0];
@@ -113,7 +134,10 @@ export async function loadCoursePage(
           offering.term
         );
         try {
-          const sections = await api<unknown[]>(queryUrl);
+          const sections = await api<unknown[]>(queryUrl, {
+            timeoutMs: PREFETCH_TIMEOUT_MS,
+            retries: 0,
+          });
           if (sections?.[0]) queryClient.setQueryData(queryKey, sections[0]);
         } catch {
           // Missing sections are fetched by the browser instead.

@@ -15,7 +15,7 @@
  * Re-run it whenever the course, instructor or explore page layout changes.
  * Set CHROMIUM_PATH to use a specific Chromium build.
  */
-import { chromium } from "playwright";
+import { chromium } from "@playwright/test";
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 

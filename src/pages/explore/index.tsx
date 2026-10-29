@@ -52,6 +52,7 @@ const EXPLORE_COURSE_FIELDS = [
   "designation",
   "deliveryMethod",
   "prerequisites",
+  "corequisites",
   "offerings",
 ] as const;
 
@@ -494,7 +495,7 @@ const ExplorePage: React.FC = () => {
   const isLoadingList =
     (mode === "courses" && isLoadingCourses && courses.length === 0) ||
     (mode === "instructors" &&
-      (isLoadingInstructors || !instructorData) &&
+      isLoadingInstructors &&
       instructors.length === 0);
 
   return (

@@ -70,12 +70,8 @@ export const CoursePrerequisites: React.FC<{
     {showVisualization ? (
       <iframe
         src={`https://prerequisites-visualization.vercel.app/sfu/courses/${course.dept.toLowerCase()}/${course.number.toLowerCase()}`}
-        style={{
-          width: "100%",
-          height: "350px",
-          border: "none",
-          borderRadius: "8px",
-        }}
+        className="prereq-visualization"
+        sandbox="allow-scripts allow-same-origin"
         title="Prerequisites Visualization"
       ></iframe>
     ) : (
