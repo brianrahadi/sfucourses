@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { flushSync } from "react-dom";
 import { SearchBar } from "./SearchBar";
 import { useRouter } from "next/router";
 import { useSearchIndex } from "src/hooks/useSearchIndex";
@@ -108,9 +109,13 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = () => {
 
   useEffect(() => {
     if (showModal) {
-      setTimeout(() => {
+      // Fallback for opens that don't go through openSearchModal (Cmd/Ctrl+K).
+      // Taps/clicks already focused synchronously in openSearchModal.
+      if (document.activeElement === searchInputRef.current) return;
+      const t = setTimeout(() => {
         searchInputRef.current?.focus();
       }, 50);
+      return () => clearTimeout(t);
     } else {
       setQuery("");
       setSelectedIndex(-1);
@@ -292,10 +297,17 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = () => {
   };
 
   const openSearchModal = () => {
-    setSelectedIndex(-1);
-    setResults([]);
-    setQuery("");
-    setShowModal(true);
+    // Render the modal synchronously so the input exists while we are still
+    // inside the user's tap/click. Mobile browsers (iOS Safari in particular)
+    // only open the on-screen keyboard when focus() is called within the
+    // user gesture — the delayed focus in the showModal effect is too late.
+    flushSync(() => {
+      setSelectedIndex(-1);
+      setResults([]);
+      setQuery("");
+      setShowModal(true);
+    });
+    searchInputRef.current?.focus();
   };
 
   const closeSearchModal = () => {
