@@ -125,17 +125,21 @@ export const ExploreCourseCard: React.FC<ExploreCourseCardProps> = ({
   );
 
   if (isLink) {
+    // The card holds instructor links, and links can't nest (the browser
+    // would restructure the HTML and break hydration), so the card's link is
+    // a layer underneath the badges instead of a wrapper.
     return (
-      <Link
-        href={`/explore/${course.dept.toLowerCase()}-${course.number}`}
-        key={course.dept + course.number}
-        className="course-card is-link"
-        // Prefetch on hover/touch only: viewport prefetching would generate
-        // every listed course page.
-        prefetch={false}
-      >
+      <div key={course.dept + course.number} className="course-card is-link">
+        <Link
+          href={`/explore/${course.dept.toLowerCase()}-${course.number}`}
+          className="course-card__link"
+          aria-label={header}
+          // Prefetch on hover/touch only: viewport prefetching would generate
+          // every listed course page.
+          prefetch={false}
+        />
         <CardContent />
-      </Link>
+      </div>
     );
   }
 

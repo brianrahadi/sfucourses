@@ -27,6 +27,14 @@
     }
   }
 
+  // Covers the whole card; inner links (instructor badges) sit above it.
+  &__link {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
+  }
+
   .course-title {
     margin-bottom: 0.5rem;
     font-weight: bold;
