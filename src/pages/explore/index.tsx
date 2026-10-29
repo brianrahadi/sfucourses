@@ -24,8 +24,12 @@ import { SortState } from "src/hooks/UseExploreFilters";
 import { InstructorSortState } from "src/hooks/useInstructorExploreFilters";
 import { GetStaticProps } from "next";
 import { useQuery } from "@tanstack/react-query";
-import { dehydrate, QueryClient } from "@tanstack/react-query";
 import { getCourseAPIData } from "@utils";
+import {
+  EXPLORE_DATA_KEY,
+  fetchExploreData,
+  loadExploreData,
+} from "src/lib/exploreData";
 import {
   filterCoursesByQuery,
   filterCourseBySubjects,
@@ -42,66 +46,47 @@ import { BoneRegion } from "src/components/bones/BoneShell";
 import { BASE_URL, INSTRUCTOR_RMP_NAME_MAPPING } from "@const";
 import { useExploreStore } from "src/store/useExploreStore";
 
-// Only the fields the explore list uses (it has ~3,600 courses).
-const EXPLORE_COURSE_FIELDS = [
-  "dept",
-  "number",
-  "title",
-  "units",
-  "description",
-  "designation",
-  "deliveryMethod",
-  "prerequisites",
-  "corequisites",
-  "offerings",
-] as const;
-
-const fetchExploreCourses = async () => {
-  const res: CourseOutline[] = await getCourseAPIData("/outlines");
-  return res.map(
-    (course) =>
-      Object.fromEntries(
-        EXPLORE_COURSE_FIELDS.filter(
-          (field) => course[field] !== undefined
-        ).map((field) => [field, course[field]])
-      ) as unknown as CourseOutline
-  );
-};
-
 const fetchInstructors = async () =>
   (await getCourseAPIData("/instructors")) as Instructor[];
 
 const fetchInstructorReviews = () => getCourseAPIData("/reviews/instructors");
-const fetchCourseReviews = () => getCourseAPIData("/reviews/courses");
 
-// The page is prerendered with what courses mode needs. Instructor data
-// (~1.9 MB) is loaded only when it's needed, so it no longer weighs down
-// every visit to /explore.
-export const getStaticProps: GetStaticProps = async () => {
-  const queryClient = new QueryClient();
+const CHUNK_SIZE = 20;
 
-  await Promise.all([
-    queryClient.prefetchQuery({
-      queryKey: ["exploreCourses"],
-      queryFn: fetchExploreCourses,
-    }),
-    queryClient.prefetchQuery({
-      queryKey: ["courseReviews"],
-      queryFn: fetchCourseReviews,
-    }),
-  ]);
+interface ExplorePageProps {
+  /** The first page of courses (unfiltered order), rendered into the HTML. */
+  initialCourses: CourseOutline[];
+  /** Review summaries for initialCourses only. */
+  initialCourseReviews: CourseReviewSummary[];
+  totalCourses: number;
+}
 
+// The HTML carries only the first page of cards. The full list (~2.6 MB)
+// loads in parallel from /api/explore-data, which the CDN and browser cache,
+// and instructor data loads only when it's needed.
+export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
+  const { courses, courseReviews } = await loadExploreData();
+  const initialCourses = courses.slice(0, CHUNK_SIZE);
+  const codes = new Set(
+    initialCourses.map((c) => `${c.dept}${c.number}`.toLowerCase())
+  );
   return {
     props: {
-      dehydratedState: dehydrate(queryClient),
+      initialCourses,
+      initialCourseReviews: courseReviews.filter((r) =>
+        codes.has(r.course_code.toLowerCase())
+      ),
+      totalCourses: courses.length,
     },
     revalidate: 60 * 60 * 24, // daily
   };
 };
 
-const CHUNK_SIZE = 20;
-
-const ExplorePage: React.FC = () => {
+const ExplorePage: React.FC<Partial<ExplorePageProps>> = ({
+  initialCourses = [],
+  initialCourseReviews = [],
+  totalCourses,
+}) => {
   // Store Connections
   const mode = useExploreStore((state) => state.mode);
   const setMode = useExploreStore((state) => state.setMode);
@@ -116,9 +101,9 @@ const ExplorePage: React.FC = () => {
   const needInstructors = mode === "instructors" || preloadInstructors;
 
   // Queries
-  const { data: courseData, isLoading: isLoadingCourses } = useQuery({
-    queryKey: ["exploreCourses"],
-    queryFn: fetchExploreCourses,
+  const { data: exploreData } = useQuery({
+    queryKey: EXPLORE_DATA_KEY,
+    queryFn: fetchExploreData,
     staleTime: 60 * 60 * 1000,
   });
   const { data: instructorData, isLoading: isLoadingInstructors } = useQuery({
@@ -135,11 +120,10 @@ const ExplorePage: React.FC = () => {
     enabled: needInstructors,
   });
 
-  const { data: courseReviewsData } = useQuery<CourseReviewSummary[]>({
-    queryKey: ["courseReviews"],
-    queryFn: fetchCourseReviews,
-    staleTime: 60 * 60 * 1000,
-  });
+  // Until the full list arrives, show the first page from the HTML.
+  const hasAllCourses = !!exploreData;
+  const courseData = exploreData?.courses ?? initialCourses;
+  const courseReviewsData = exploreData?.courseReviews ?? initialCourseReviews;
 
   const courses = useMemo(() => courseData ?? [], [courseData]);
   const instructors = useMemo(() => instructorData ?? [], [instructorData]);
@@ -482,7 +466,23 @@ const ExplorePage: React.FC = () => {
     [visibleInstructors, instructorReviewMap]
   );
 
-  const maxVisibleCoursesLength = filteredAndSortedCourses.length;
+  // Before the full list arrives only the first page is here: that's fine
+  // unfiltered, but filters, search and sorting need every course.
+  const courseFiltersActive =
+    !!query ||
+    courseSubjects.length > 0 ||
+    courseLevels.length > 0 ||
+    courseTerms.length > 0 ||
+    courseDeliveries.length > 0 ||
+    courseDesignations.length > 0 ||
+    !!coursePrereqSearchQuery ||
+    coursePrereqHasNone ||
+    courseMinReviews > 0 ||
+    !!courseSortValue;
+
+  const maxVisibleCoursesLength = hasAllCourses
+    ? filteredAndSortedCourses.length
+    : totalCourses ?? filteredAndSortedCourses.length;
   const maxVisibleInstructors = filteredAndSortedInstructors.length;
 
   const loadMoreCourses = () => {
@@ -493,7 +493,9 @@ const ExplorePage: React.FC = () => {
   };
 
   const isLoadingList =
-    (mode === "courses" && isLoadingCourses && courses.length === 0) ||
+    (mode === "courses" &&
+      !hasAllCourses &&
+      (courseFiltersActive || courses.length === 0)) ||
     (mode === "instructors" &&
       isLoadingInstructors &&
       instructors.length === 0);

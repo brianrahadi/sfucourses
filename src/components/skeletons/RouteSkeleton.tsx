@@ -1,6 +1,6 @@
 import React from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { CourseOutline, CourseReviewSummary } from "@types";
+import { EXPLORE_DATA_KEY, ExploreData } from "src/lib/exploreData";
 import { Hero } from "@components";
 import HeroImage from "@images/resources-page/hero-laptop.jpeg";
 import { useExploreStore } from "src/store/useExploreStore";
@@ -35,12 +35,11 @@ export const RouteSkeleton: React.FC<{ route: SkeletonRoute }> = ({
     // Coming from /explore, the outline is already in the cache: show the
     // real header and prerequisites now and skeletons for the rest.
     const [dept, number] = route.code.toUpperCase().split("-");
-    const course = queryClient
-      .getQueryData<CourseOutline[]>(["exploreCourses"])
-      ?.find((c) => c.dept === dept && c.number.toUpperCase() === number);
-    const summaries = queryClient.getQueryData<CourseReviewSummary[]>([
-      "courseReviews",
-    ]);
+    const explore = queryClient.getQueryData<ExploreData>(EXPLORE_DATA_KEY);
+    const course = explore?.courses.find(
+      (c) => c.dept === dept && c.number.toUpperCase() === number
+    );
+    const summaries = explore?.courseReviews;
     const summary = summaries?.find(
       (s) => s.course_code.toUpperCase() === `${dept}${number}`
     );
